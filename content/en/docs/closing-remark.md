@@ -9,8 +9,6 @@ draft: false
 toc: true
 ---
 
-# Closing Remark
-
 You have reached the end of **Modern Data Structures and Algorithms in Go** — a journey through 60 chapters spanning 12 parts, from the ancient origins of algorithms to the cutting edge of computational thinking.
 
 ## What You Have Learned

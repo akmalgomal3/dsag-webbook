@@ -9,8 +9,6 @@ draft: false
 toc: true
 ---
 
-# How to Use DSAG
-
 This guide helps you navigate **Modern Data Structures and Algorithms in Go** based on your goals.
 
 ## Reading Strategies

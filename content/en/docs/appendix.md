@@ -9,8 +9,6 @@ draft: false
 toc: true
 ---
 
-# Appendix
-
 This appendix contains supplementary material from chapters that were integrated into other sections.
 
 ---

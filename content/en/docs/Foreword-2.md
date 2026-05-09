@@ -9,8 +9,6 @@ draft: false
 toc: true
 ---
 
-# Foreword
-
 In academia, we often teach data structures and algorithms as a ladder of abstraction — each concept building on the previous, each proof rigorous, each analysis asymptotically tight. This is beautiful. It is also incomplete.
 
 What we rarely teach is **judgment**: the ability to look at a real problem with real constraints and choose the right approach. Theory tells you that Dijkstra runs in O((V + E) log V). Practice tells you that for a sparse graph with millions of nodes, A* with a good heuristic will feel instant while Dijkstra will feel broken. Both statements are true. Both matter.
