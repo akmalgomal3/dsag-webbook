@@ -115,7 +115,9 @@ weight: <chapter_weight>  # e.g., 1100 for Ch 1, 2100 for Ch 5
 # Format: <part_number><chapter_in_part><00>
 # Part I: 1000-1500, Part II: 2100-2400, Part III: 3100-3400
 # Part IV: 4100-4600, Part V: 5100-5400, Part VI: 6100-6600
-# Part VII: 7100-8100
+# Part VII: 7100-8100, Part VIII: 8000-8400
+# Part IX: 9000-9500, Part X: 10000-10300
+# Part XI: 11000-11200, Part XII: 12000-12200
 title: "Chapter <N> - <Description>"
 description: "<One-line description>"
 icon: "article"
@@ -198,19 +200,50 @@ content/
         │   ├── Chapter-26.md
         │   ├── Chapter-27.md
         │   └── Chapter-28.md
-        └── Part-VII/         # Ch 29-39
+        ├── Part-VII/         # Ch 29-39
+        │   ├── _index.md
+        │   ├── Chapter-29.md
+        │   ├── Chapter-30.md
+        │   ├── Chapter-31.md
+        │   ├── Chapter-32.md
+        │   ├── Chapter-33.md
+        │   ├── Chapter-34.md
+        │   ├── Chapter-35.md
+        │   ├── Chapter-36.md
+        │   ├── Chapter-37.md
+        │   ├── Chapter-38.md
+        │   └── Chapter-39.md
+        ├── Part-VIII/        # Ch 40-44
+        │   ├── _index.md
+        │   ├── Chapter-40.md
+        │   ├── Chapter-41.md
+        │   ├── Chapter-42.md
+        │   ├── Chapter-43.md
+        │   └── Chapter-44.md
+        ├── Part-IX/          # Ch 45-50
+        │   ├── _index.md
+        │   ├── Chapter-45.md
+        │   ├── Chapter-46.md
+        │   ├── Chapter-47.md
+        │   ├── Chapter-48.md
+        │   ├── Chapter-49.md
+        │   └── Chapter-50.md
+        ├── Part-X/           # Ch 51-54
+        │   ├── _index.md
+        │   ├── Chapter-51.md
+        │   ├── Chapter-52.md
+        │   ├── Chapter-53.md
+        │   └── Chapter-54.md
+        ├── Part-XI/          # Ch 55-57
+        │   ├── _index.md
+        │   ├── Chapter-55.md
+        │   ├── Chapter-56.md
+        │   └── Chapter-57.md
+        └── Part-XII/         # Ch 58-60
             ├── _index.md
-            ├── Chapter-29.md
-            ├── Chapter-30.md
-            ├── Chapter-31.md
-            ├── Chapter-32.md
-            ├── Chapter-33.md
-            ├── Chapter-34.md
-            ├── Chapter-35.md
-            ├── Chapter-36.md
-            ├── Chapter-37.md
-            ├── Chapter-38.md
-            └── Chapter-39.md
+            ├── Chapter-58.md
+            ├── Chapter-59.md
+            └── Chapter-60.md
 ```
 
 ## Common Issues
@@ -232,6 +265,7 @@ Common corruptions:
 - `{{% /alert %}} %}}` → extra trailing `%}}`
 - `{{% /alert %}})}}` → extra `)}` after close
 - `{{%/alert%}}` → missing spaces
+- `{{% /alert %}` → missing closing brace
 
 ### Empty Content Crash
 If Hugo crashes with:
