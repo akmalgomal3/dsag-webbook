@@ -31,14 +31,6 @@ Chapter 3 focuses on why Go is an exceptional language for data structures and a
 | Map | Hash table, `O(1)` avg | Unordered, not concurrent-safe |
 | Goroutine | Lightweight concurrency | Scheduling overhead |
 
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-Comparison between array and slice:
-
-
 ### Decision Matrix
 
 | Use Go When... | Avoid Go If... |
@@ -49,8 +41,8 @@ Comparison between array and slice:
 
 ### Edge Cases & Pitfalls
 - **Case array vs slice:** Arrays are passed by value (copy); slices are passed by reference (header copy, sharing the backing array).
-- **Case nil slice:** A ... slice is different from an empty slice ...; len/cap are safe to call, and appending to ... works.
-- **Case map race:** Concurrent read/write to a map without a ... causes a fatal error.
+- **Case nil slice:** A nil slice is different from an empty slice; len/cap are safe to call, and appending to nil works.
+- **Case map race:** Concurrent read/write to a map without synchronization causes a fatal error.
 
 ## 3.2. Overview of Essential Data Structures
 

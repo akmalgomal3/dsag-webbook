@@ -20,7 +20,15 @@ Chapter 6 focuses on building elementary data structures (Stacks, Queues, Deques
 
 ## 6.1. Stacks (LIFO)
 
-**Definition:** A LIFO (Last-In-First-Out) data structure where the last element added is the first one removed. 
+**Definition:** A LIFO (Last-In-First-Out) data structure where the last element added is the first one removed.
+
+### Operations & Complexity
+
+| Operation | Complexity | Description |
+|---------|--------------|------------|
+| Push | `O(1)` | Add to top |
+| Pop | `O(1)` | Remove from top |
+| Peek | `O(1)` | View top element |
 
 ### Idiomatic Go 1.18+ Generic Implementation
 
