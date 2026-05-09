@@ -5,8 +5,6 @@ description: "Complete book documentation"
 icon: "menu_book"
 ---
 
-# Documentation
-
 Welcome to **Modern Data Structures and Algorithms in Go**.
 
 Browse by part:
