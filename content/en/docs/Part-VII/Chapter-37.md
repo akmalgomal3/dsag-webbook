@@ -106,6 +106,30 @@ package main
 
 import "fmt"
 
+type TrieNode struct {
+	Children map[rune]*TrieNode
+	IsEnd    bool
+}
+
+type Trie struct {
+	Root *TrieNode
+}
+
+func NewTrie() *Trie {
+	return &Trie{Root: &TrieNode{Children: make(map[rune]*TrieNode)}}
+}
+
+func (t *Trie) Insert(word string) {
+	node := t.Root
+	for _, ch := range word {
+		if node.Children[ch] == nil {
+			node.Children[ch] = &TrieNode{Children: make(map[rune]*TrieNode)}
+		}
+		node = node.Children[ch]
+	}
+	node.IsEnd = true
+}
+
 func (t *Trie) AutoComplete(prefix string) []string {
 	node := t.Root
 	for _, ch := range prefix {

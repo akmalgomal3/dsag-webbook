@@ -32,18 +32,18 @@ Chapter 11 focuses on <abbr title="A search algorithm that finds the position of
 
 ### Idiomatic Go 1.18+ Generic Implementation
 
-A classic Go anti-pattern is creating trees using `interface{}` to hold arbitrary values, destroying type-safety and hurting performance. Utilizing Go 1.18 Generics (`[K constraints.Ordered, V any]`) creates a reusable, strongly-typed BST.
+A classic Go anti-pattern is creating trees using `interface{}` to hold arbitrary values, destroying type-safety and hurting performance. Utilizing Go 1.18 Generics (`[K cmp.Ordered, V any]`) creates a reusable, strongly-typed BST.
 
 ```go
 package main
 
 import (
 	"fmt"
-	"golang.org/x/exp/constraints"
+	"cmp"
 )
 
 // Node is a generic tree node holding an ordered Key and an arbitrary Value.
-type Node[K constraints.Ordered, V any] struct {
+type Node[K cmp.Ordered, V any] struct {
 	Key   K
 	Value V
 	Left  *Node[K, V]
@@ -113,10 +113,15 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/exp/constraints"
+	"cmp"
 )
 
-type AVLNode[K constraints.Ordered, V any] struct {
+func main() {
+	// AVL tree demonstration
+	fmt.Println("AVL tree operations")
+}
+
+type AVLNode[K cmp.Ordered, V any] struct {
 	Key    K
 	Value  V
 	Height int
@@ -124,7 +129,7 @@ type AVLNode[K constraints.Ordered, V any] struct {
 	Right  *AVLNode[K, V]
 }
 
-func height[K constraints.Ordered, V any](n *AVLNode[K, V]) int {
+func height[K cmp.Ordered, V any](n *AVLNode[K, V]) int {
 	if n == nil {
 		return 0
 	}
@@ -138,7 +143,7 @@ func max(a, b int) int {
 	return b
 }
 
-func rotateRight[K constraints.Ordered, V any](y *AVLNode[K, V]) *AVLNode[K, V] {
+func rotateRight[K cmp.Ordered, V any](y *AVLNode[K, V]) *AVLNode[K, V] {
 	x := y.Left
 	T2 := x.Right
 
@@ -177,15 +182,22 @@ func rotateRight[K constraints.Ordered, V any](y *AVLNode[K, V]) *AVLNode[K, V] 
 ```go
 package main
 
-import "golang.org/x/exp/constraints"
+import (
+	"fmt"
+	"cmp"
+)
 
-type AugNode[K constraints.Ordered] struct {
+func main() {
+	fmt.Println("Augmented BST rank operations")
+}
+
+type AugNode[K cmp.Ordered] struct {
 	Key         K
 	SubtreeSize int
 	Left, Right *AugNode[K]
 }
 
-func size[K constraints.Ordered](n *AugNode[K]) int {
+func size[K cmp.Ordered](n *AugNode[K]) int {
 	if n == nil {
 		return 0
 	}
@@ -229,5 +241,5 @@ func (n *AugNode[K]) Rank(key K) int {
 | Sorted Slice | `[]T` | <code>O(log n)</code> search | Zero GC overhead | Read-heavy, static data |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 11:</strong> Utilizing Generics `[K constraints.Ordered]` makes <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> implementations in Go radically safer and vastly more reusable. However, always remain fiercely aware of the architectural cost of trees in Go: allocating millions of tiny structs generates heavy GC tracing pressure. If your <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> is static, a simple sorted slice paired with `sort.Search` is infinitely faster and friendlier to the CPU <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr>.
+<strong>Summary Chapter 11:</strong> Utilizing Generics `[K cmp.Ordered]` makes <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> implementations in Go radically safer and vastly more reusable. However, always remain fiercely aware of the architectural cost of trees in Go: allocating millions of tiny structs generates heavy GC tracing pressure. If your <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> is static, a simple sorted slice paired with `sort.Search` is infinitely faster and friendlier to the CPU <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr>.
 {{% /alert %}}

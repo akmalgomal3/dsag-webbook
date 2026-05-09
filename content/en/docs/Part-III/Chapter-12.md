@@ -60,6 +60,11 @@ func (g *Graph) AddEdge(u, v int) {
 func (g *Graph) Neighbors(u int) []int {
     return g.adj[u]
 }
+
+func main() {
+    g := NewGraph(5)
+    g.AddEdge(0, 1)
+}
 ```
 
 ### Decision Matrix
@@ -120,7 +125,14 @@ BFS(g, start):
 ```go
 package main
 
-import "container/list"
+import (
+    "container/list"
+    "fmt"
+)
+
+type Graph struct {
+    adj [][]int
+}
 
 func (g *Graph) DFS(start int, visit func(int)) {
     seen := make([]bool, len(g.adj))
@@ -159,6 +171,11 @@ func (g *Graph) BFS(start int, visit func(int)) {
             }
         }
     }
+}
+
+func main() {
+    g := &Graph{adj: [][]int{{1}, {0, 2}, {1}}}
+    g.DFS(0, func(v int) { fmt.Print(v, " ") })
 }
 ```
 
@@ -213,6 +230,7 @@ package main
 
 import (
     "container/heap"
+    "fmt"
     "math"
 )
 
@@ -259,6 +277,11 @@ func (g *WGraph) Dijkstra(src int) []int {
         }
     }
     return dist
+}
+
+func main() {
+    g := &WGraph{adj: [][][2]int{{{1, 4}, {2, 1}}, {{3, 1}}, {{1, 2}, {3, 5}}, {}}}
+    fmt.Println(g.Dijkstra(0))
 }
 ```
 
