@@ -1,6 +1,12 @@
 # DSAG — Data Structures and Algorithms in Go
 
-A comprehensive, practitioner-focused book on data structures and algorithms, implemented idiomatically in Go. Built as a Hugo static site and deployed at [GitHub Pages](https://github.com/akmalgomal3/dsag-webbook).
+[![Chapters](https://img.shields.io/badge/Chapters-60-blue)](./)
+[![Parts](https://img.shields.io/badge/Parts-12-blue)](./)
+[![Hugo](https://img.shields.io/badge/Hugo-0.161%2B-ff4088)](https://gohugo.io/)
+[![Go](https://img.shields.io/badge/Go-1.21%2B-00ADD8)](https://golang.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
+A comprehensive, practitioner-focused book on data structures and algorithms, implemented idiomatically in Go. Built as a Hugo static site.
 
 ---
 
