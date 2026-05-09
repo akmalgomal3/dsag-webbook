@@ -966,42 +966,7 @@ li > ul, li > ol {
         page-break-inside: avoid;
     }
 }
-/* Custom Support Card Styles */
-.btn-outline-support {
-    color: #3c5fd7;
-    border: 2px solid #3c5fd7;
-    background-color: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 25px;
-    width: 200px;
-    text-align: center;
-    transition: all 0.3s ease-in-out;
-}
-.btn-outline-support:hover {
-    background-color: #3c5fd7;
-    color: white;
-    border-color: #3c5fd7;
-}
-.support-logo-image {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 16px;
-}
-.support-btn {
-    width: 300px;
-}
-.support-btn-text {
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-.support-card {
-    transition: box-shadow 0.3s ease-in-out;
-}
-.support-card:hover {
-    box-shadow: 0 0 20px #3c5fd7;
-}
+
 
 /* Search */
 .search-container {
