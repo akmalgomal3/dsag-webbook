@@ -22,6 +22,11 @@ theme = []
 [params]
   description = "Modern Data Structures and Algorithms in Go"
 
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
+
 [menu]
 [[menu.primary]]
     name  = "Docs"
