@@ -10,7 +10,7 @@ This is a Hugo-based static site for "Modern Data Structures and Algorithms in G
 
 ## Book Structure
 
-The book contains **39 chapters** organized into **7 parts**:
+The book contains **60 chapters** organized into **12 parts**:
 
 | Part | Title | Chapters | Description |
 |------|-------|----------|-------------|
@@ -21,6 +21,11 @@ The book contains **39 chapters** organized into **7 parts**:
 | **Part V** | Sorting & Searching | 19–22 | Sorting algorithms, search techniques |
 | **Part VI** | Algorithmic Paradigms | 23–28 | DP, greedy, backtracking, divide & conquer |
 | **Part VII** | Advanced Topics | 29–39 | Parallel, crypto, blockchain, tries, bit manipulation |
+| **Part VIII** | History & Philosophy | 40–44 | Origins of algorithms, complexity theory, philosophy |
+| **Part IX** | Advanced Data Structures | 45–50 | B-trees, skip lists, Bloom filters, LRU, suffix arrays, persistent DS |
+| **Part X** | Advanced Graph Algorithms | 51–54 | Topological sort, SCC, A*, bridge-finding |
+| **Part XI** | Specialized Sorting & Techniques | 55–57 | Counting/radix/bucket sort, sliding window, Kadane's |
+| **Part XII** | Advanced Topics | 58–60 | Minimax, Mo's algorithm, convex hull |
 
 ## Chapter Writing Style Guide
 
