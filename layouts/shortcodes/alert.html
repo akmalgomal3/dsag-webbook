@@ -1,0 +1,9 @@
+{{ $context := .Get "context" | default "info" }}
+{{ $icon := .Get "icon" | default "" }}
+{{ $class := "alert-info" }}
+{{ if eq $context "success" }}{{ $class = "alert-success" }}{{ end }}
+{{ if eq $context "warning" }}{{ $class = "alert-warning" }}{{ end }}
+{{ if eq $context "danger" }}{{ $class = "alert-danger" }}{{ end }}
+<div class="alert {{ $class }}">
+{{ .Inner }}
+</div>

@@ -1,0 +1,12 @@
+{{ $docs := .Site.GetPage "section" "docs" }}
+{{ range $docs.Sections.ByWeight }}
+  {{ if in .Title "Part" }}
+    <hr>
+    <h3><strong>{{ .Title }}</strong></h3>
+    <ul>
+    {{ range .Pages.ByWeight }}
+      <li><a href="{{ .RelPermalink }}"><strong>{{ .Title }}</strong></a></li>
+    {{ end }}
+    </ul>
+  {{ end }}
+{{ end }}

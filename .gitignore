@@ -1,0 +1,26 @@
+# Hugo
+public/
+resources/_gen/
+.hugo_build.lock
+
+# Go
+vendor/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Node
+node_modules/
+
+# Temporary files
+*.tmp
+*.temp

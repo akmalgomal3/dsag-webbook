@@ -1,0 +1,176 @@
+---
+weight: 8100
+title: "Chapter 39 - Bit Manipulation"
+description: "Bit Manipulation"
+icon: "article"
+date: "2024-08-24T23:42:09+07:00"
+lastmod: "2024-08-24T23:42:09+07:00"
+draft: false
+toc: true
+---
+
+{{% alert icon="💡" context="info" %}}
+<strong>"<em>There are 10 types of people in the world: those who understand binary and those who don't.</em>" — Unknown</strong>
+{{% /alert %}}
+
+{{% alert icon="📘" context="success" %}}
+Chapter 39 covers bit manipulation techniques in Go: bitwise operators, common tricks, and algorithms that exploit binary representation for efficiency.
+{{% /alert %}}
+
+## 39.1. Bitwise Operators
+
+**Definition:** Bitwise operators manipulate individual bits of integers. They are fundamental for low-level optimization, flags, and compact data representation.
+
+### Go Bitwise Operators
+
+| Operator | Name | Example | Result |
+|----------|------|---------|--------|
+| `&` | AND | `5 & 3` | `1` (0101 & 0011 = 0001) |
+| `\|` | OR | `5 \| 3` | `7` (0101 \| 0011 = 0111) |
+| `^` | XOR | `5 ^ 3` | `6` (0101 ^ 0011 = 0110) |
+| `&^` | AND NOT | `5 &^ 3` | `4` (clears bits) |
+| `<<` | Left Shift | `1 << 3` | `8` |
+| `>>` | Right Shift | `8 >> 2` | `2` |
+
+## 39.2. Common Bit Tricks
+
+### Check if Power of Two
+
+A power of two has exactly one bit set. `n & (n-1)` clears the lowest set bit.
+
+```go
+package main
+
+import "fmt"
+
+func isPowerOfTwo(n int) bool {
+	return n > 0 && (n&(n-1)) == 0
+}
+
+func main() {
+	fmt.Println(isPowerOfTwo(16)) // true
+	fmt.Println(isPowerOfTwo(18)) // false
+}
+```
+
+### Count Set Bits (Hamming Weight)
+
+```go
+package main
+
+import "fmt"
+
+func countBits(n int) int {
+	count := 0
+	for n != 0 {
+		n &= n - 1 // clear lowest set bit
+		count++
+	}
+	return count
+}
+
+func main() {
+	fmt.Println(countBits(0b101101)) // 4
+}
+```
+
+### Get Lowest Set Bit
+
+```go
+func lowestSetBit(n int) int {
+	return n & -n
+}
+```
+
+### Swap Without Temporary Variable
+
+```go
+func swap(a, b int) (int, int) {
+	a = a ^ b
+	b = a ^ b
+	a = a ^ b
+	return a, b
+}
+```
+
+## 39.3. Bit Masking Applications
+
+### Subset Enumeration
+
+Generate all subsets of a set using bit masks.
+
+```go
+package main
+
+import "fmt"
+
+func subsets(nums []int) [][]int {
+	n := len(nums)
+	var result [][]int
+	for mask := 0; mask < (1 << n); mask++ {
+		var subset []int
+		for i := 0; i < n; i++ {
+			if mask&(1<<i) != 0 {
+				subset = append(subset, nums[i])
+			}
+		}
+		result = append(result, subset)
+	}
+	return result
+}
+
+func main() {
+	fmt.Println(len(subsets([]int{1, 2, 3}))) // 8
+}
+```
+
+### Toggle Bit
+
+```go
+func toggleBit(n, i int) int {
+	return n ^ (1 << i)
+}
+
+func setBit(n, i int) int {
+	return n | (1 << i)
+}
+
+func clearBit(n, i int) int {
+	return n &^ (1 << i)
+}
+
+func isBitSet(n, i int) bool {
+	return (n & (1 << i)) != 0
+}
+```
+
+## 39.4. Decision Matrix
+
+| Use Bit Manipulation When... | Avoid If... |
+|------------------------------|-------------|
+| Need compact boolean flags | Code readability is more important than micro-optimization |
+| Solving subset/combination problems | Operations involve non-integer data |
+| Optimizing known bottlenecks | Premature optimization without profiling |
+| Working with hardware/Protocol flags | Team unfamiliar with bitwise operations |
+
+### Edge Cases & Pitfalls
+
+- **Sign extension:** Right shift of negative numbers preserves sign bit in Go (arithmetic shift).
+- **Overflow:** Left shift can overflow; use `uint` for bit manipulation to avoid sign issues.
+- **Precedence:** Bitwise operators have lower precedence than arithmetic; use parentheses.
+- **Go's `int` size:** `int` is 32 or 64 bits depending on architecture; use explicit sizes when needed.
+
+## 39.5. Quick Reference
+
+| Operation | Expression | Use Case |
+|-----------|-----------|----------|
+| Power of two | `(n & (n-1)) == 0` | Capacity checks |
+| Count bits | `n & (n-1)` loop | Hamming distance |
+| Isolate lowest bit | `n & -n` | Fenwick tree |
+| Clear lowest bit | `n & (n-1)` | Bit counting |
+| Toggle bit | `n ^ (1 << i)` | Flag flipping |
+| Subset enumeration | `for mask := 0; mask < (1<<n); mask++` | Combinatorics |
+
+{{% alert icon="🎯" context="success" %}}
+<strong>Summary Chapter 39:</strong> Bit manipulation provides compact and efficient solutions for specific problem classes. Master the core tricks: power-of-two checks, bit counting, and subset enumeration. In Go, prefer `uint` for bitwise operations to avoid sign extension surprises, and always prioritize code clarity over clever bit tricks unless performance is critical.
+{{% /alert %}}

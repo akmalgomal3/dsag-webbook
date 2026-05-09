@@ -1,0 +1,10 @@
+{{ $lang := .Get "lang" | default "text" }}
+{{ $id := .Get "id" | default "" }}
+{{ $lineNumbers := .Get "line-numbers" | default "" }}
+<div class="code-block"{{ with $id }} id="{{ . }}"{{ end }}>
+    <div class="code-header">
+        <span class="code-lang">{{ $lang }}</span>
+        <button class="copy-btn" aria-label="Copy code">Copy</button>
+    </div>
+    <pre class="line-numbers{{ with $lineNumbers }} {{ . }}{{ end }}"><code class="language-{{ $lang }}">{{ .Inner }}</code></pre>
+</div>

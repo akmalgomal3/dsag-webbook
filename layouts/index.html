@@ -1,0 +1,33 @@
+{{ define "header" }}{{ end }}
+
+{{ define "content" }}
+<article class="home-page">
+    <h1>{{ .Site.Title }}</h1>
+    <p class="subtitle">A comprehensive guide to data structures and algorithms in Go</p>
+
+    <div class="home-sections">
+        <section class="home-section">
+            <h2>About This Book</h2>
+            <p>This book covers the fundamental concepts of data structures and algorithms, implemented in Go. You'll learn about:</p>
+            <ul>
+                <li><strong>Fundamentals</strong> - Complexity analysis, asymptotic notation, and algorithm design principles</li>
+                <li><strong>Sorting &amp; Searching</strong> - Common sorting algorithms, search trees, and hash tables</li>
+                <li><strong>Complex Data Structures</strong> - Graphs, heaps, tries, and advanced tree structures</li>
+                <li><strong>Graph Algorithms</strong> - Traversal, shortest paths, and network flows</li>
+                <li><strong>Selected Topics</strong> - Advanced concepts including caching, bloom filters, and concurrent data structures</li>
+            </ul>
+        </section>
+
+        <section class="home-section">
+            <h2>Get Started</h2>
+            <div class="home-links">
+                <a href="/docs/Preface/" class="home-link">Preface →</a>
+                <a href="/docs/Part-I/Chapter-1/" class="home-link">Chapter 1: Complexity Analysis →</a>
+                <a href="/docs/" class="home-link">Browse All Chapters →</a>
+            </div>
+        </section>
+    </div>
+</article>
+{{ end }}
+
+{{ define "footer" }}{{ end }}

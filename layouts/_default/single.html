@@ -1,0 +1,85 @@
+{{ define "header" }}
+<header class="site-header">
+    <div class="header-inner">
+        <a href="/" class="site-logo">{{ .Site.Title }}</a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/docs/" {{ if eq .Section "docs" }}class="active"{{ end }}>Docs</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+{{ end }}
+
+{{ define "content" }}
+<article class="content-page">
+    {{ if .Params.weight }}
+    <nav class="breadcrumb">
+        <a href="/docs/">Docs</a>
+        <span>/</span>
+        {{ with .Parent }}
+          {{ if and (ne .Title "Docs") (ne .RelPermalink "/docs/") }}
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          <span>/</span>
+          {{ end }}
+        {{ end }}
+        <span>{{ .Title }}</span>
+    </nav>
+    {{ end }}
+
+    <header style="margin-bottom: 32px;">
+        <h1 style="margin-top: 0;">{{ .Title }}</h1>
+        {{ with .Description }}<p class="section-description">{{ . }}</p>{{ end }}
+    </header>
+
+    <div class="content-body">
+        {{ .Content }}
+    </div>
+
+    {{ $chapters := slice }}
+    {{ range .Site.RegularPages }}
+        {{ if and .Params.weight (in .File.Path "Chapter-") }}
+            {{ $numStr := replaceRE "Chapter-(\\d+)" "$1" .File.BaseFileName }}
+            {{ $num := int $numStr }}
+            {{ $chapters = $chapters | append (dict "page" . "num" $num) }}
+        {{ end }}
+    {{ end }}
+    {{ $chapters = sort $chapters "num" }}
+    
+    {{ $prev := false }}
+    {{ $next := false }}
+    {{ range $i, $entry := $chapters }}
+        {{ if eq $entry.page.RelPermalink $.RelPermalink }}
+            {{ if gt $i 0 }}
+                {{ $prev = (index $chapters (sub $i 1)).page }}
+            {{ end }}
+            {{ if lt $i (sub (len $chapters) 1) }}
+                {{ $next = (index $chapters (add $i 1)).page }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+
+    <nav class="page-nav">
+        {{ if $prev }}
+        <a href="{{ $prev.RelPermalink }}" class="page-nav-link prev">
+            <div class="page-nav-label">Previous</div>
+            <div class="page-nav-title">{{ $prev.Title }}</div>
+        </a>
+        {{ end }}
+        {{ if $next }}
+        <a href="{{ $next.RelPermalink }}" class="page-nav-link next">
+            <div class="page-nav-label">Next</div>
+            <div class="page-nav-title">{{ $next.Title }}</div>
+        </a>
+        {{ end }}
+    </nav>
+</article>
+{{ end }}
+
+{{ define "footer" }}
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; {{ now.Year }} {{ .Site.Title }}. Built with Hugo.</p>
+    </div>
+</footer>
+{{ end }}

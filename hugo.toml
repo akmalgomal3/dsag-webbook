@@ -1,0 +1,30 @@
+baseURL = 'http://localhost:1313/'
+locale = 'en-us'
+title = 'Modern Data Structures and Algorithms in Go'
+theme = []
+
+[languages]
+  [languages.en]
+    title = "Modern Data Structures and Algorithms in Go"
+    label = "English"
+    weight = 1
+    contentDir = "content/en"
+
+[markup]
+  defaultMarkdownHandler = "goldmark"
+  [markup.tableOfContents]
+      endLevel = 3
+      startLevel = 1
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[params]
+  description = "Modern Data Structures and Algorithms in Go"
+
+[menu]
+[[menu.primary]]
+    name  = "Docs"
+    url = "/docs/"
+    identifier = "docs"
+    weight = 10

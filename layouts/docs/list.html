@@ -1,0 +1,50 @@
+{{ define "header" }}
+<header class="site-header">
+    <div class="header-inner">
+        <a href="/" class="site-logo">{{ .Site.Title }}</a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/docs/" {{ if eq .Section "docs" }}class="active"{{ end }}>Docs</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+{{ end }}
+
+{{ define "content" }}
+<article class="content-page">
+    <header class="section-header">
+        <h1 class="section-title">{{ .Title }}</h1>
+        {{ with .Description }}<p class="section-description">{{ . }}</p>{{ end }}
+    </header>
+
+    <div class="content-body">
+        {{ .Content }}
+    </div>
+
+    {{ if .Pages }}
+    <nav aria-label="Chapters">
+        <ul class="chapter-list">
+            {{ range .Pages.ByWeight }}
+            <li>
+                <a href="{{ .RelPermalink }}" class="chapter-card">
+                    <div class="chapter-card-inner">
+                        <span class="chapter-title">{{ .Title }}</span>
+                        <span class="chapter-number">{{ .Description }}</span>
+                    </div>
+                </a>
+            </li>
+            {{ end }}
+        </ul>
+    </nav>
+    {{ end }}
+</article>
+{{ end }}
+
+{{ define "footer" }}
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; {{ now.Year }} {{ .Site.Title }}. Built with Hugo.</p>
+    </div>
+</footer>
+{{ end }}
