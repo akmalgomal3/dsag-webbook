@@ -3,9 +3,24 @@
 ## Project Overview
 
 This is a Hugo-based static site for "Modern Data Structures and Algorithms in Go" (DSAG).
-- **Framework:** Hugo v0.161+ with Docsy-like theme
+- **Framework:** Hugo v0.161+ with custom theme
 - **Language:** Go (for code examples), Markdown (for content)
 - **Build:** `hugo --quiet` or `hugo server --port 1313`
+- **Repository:** `https://github.com/akmalgomal3/dsag-webbook.git`
+
+## Book Structure
+
+The book contains **39 chapters** organized into **7 parts**:
+
+| Part | Title | Chapters | Description |
+|------|-------|----------|-------------|
+| **Part I** | Foundations & Go Mechanics | 1–4 | Complexity, Go basics, fundamentals |
+| **Part II** | Basic Data Structures | 5–8 | Arrays, slices, linked lists, hashing |
+| **Part III** | Trees, Graphs & Representations | 9–12 | BST, heaps, disjoint sets, graphs |
+| **Part IV** | Graph Algorithms | 13–18 | Traversal, shortest paths, MST, flows |
+| **Part V** | Sorting & Searching | 19–22 | Sorting algorithms, search techniques |
+| **Part VI** | Algorithmic Paradigms | 23–28 | DP, greedy, backtracking, divide & conquer |
+| **Part VII** | Advanced Topics | 29–39 | Parallel, crypto, blockchain, tries, bit manipulation |
 
 ## Chapter Writing Style Guide
 
@@ -23,8 +38,8 @@ Every chapter MUST follow this structure:
 
 ```markdown
 ---
-weight: <chapter_number>00
-title: "Chapter <N>"
+weight: <chapter_weight>
+title: "Chapter <N> - <Description>"
 description: "<Short description>"
 icon: "article"
 date: "2024-08-24T..."
@@ -36,16 +51,16 @@ katex: true
 
 ## <N>.<M>. <Topic Name>
 
-**Definisi:** 1–2 kalimat yang jelas dan actionable. Contoh:
+**Definition:** 1–2 kalimat yang jelas dan actionable. Contoh:
 > "Stack adalah struktur data LIFO (Last-In-First-Out) — elemen terakhir masuk adalah pertama keluar."
 
-### Operasi & Kompleksitas
+### Operations & Complexity
 
-| Operasi | Kompleksitas | Keterangan |
+| Operation | Complexity | Description |
 |---------|--------------|------------|
 | Op1     | O(...)       | Penjelasan singkat |
 
-### Implementasi Idiomatik Go
+### Idiomatic Go Implementation
 
 - Gunakan `[]T` (slice) untuk dynamic arrays
 - Gunakan `container/list` untuk linked list
@@ -91,8 +106,12 @@ katex: true
 
 ```yaml
 ---
-weight: <chapter_number>00  # e.g., 1000 for Ch 10
-title: "Chapter <N>"
+weight: <chapter_weight>  # e.g., 1100 for Ch 1, 2100 for Ch 5
+# Format: <part_number><chapter_in_part><00>
+# Part I: 1000-1500, Part II: 2100-2400, Part III: 3100-3400
+# Part IV: 4100-4600, Part V: 5100-5400, Part VI: 6100-6600
+# Part VII: 7100-8100
+title: "Chapter <N> - <Description>"
 description: "<One-line description>"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -123,27 +142,70 @@ hugo server --port 1313
 ## Content Directory Structure
 
 ```
-content/docs/
-├── Table-of-Contents.md
-├── how-to-use-dsag.md
-├── Preface.md
-├── Foreword.md
-├── Foreword-2.md
-├── closing-remark.md
-├── Part-I/
-│   ├── Chapter-1.md
-│   ├── Chapter-2.md
-│   ├── ...
-├── Part-II/
-│   ├── Chapter-6.md
-│   ├── ...
-├── Part-III/
-│   ├── Chapter-9.md
-│   ├── Chapter-10.md  # Example: Elementary Data Structures
-│   └── ...
-└── Part-IV/
-    ├── Chapter-16.md
-    └── ...
+content/
+├── _index.md                              # Landing page
+└── en/
+    └── docs/
+        ├── Preface.md
+        ├── Foreword.md
+        ├── Foreword-2.md
+        ├── Table-of-Contents.md
+        ├── how-to-use-dsag.md
+        ├── closing-remark.md
+        ├── appendix.md
+        ├── Part-I/           # Ch 1-4
+        │   ├── _index.md
+        │   ├── Chapter-1.md
+        │   ├── Chapter-2.md
+        │   ├── Chapter-3.md
+        │   └── Chapter-4.md
+        ├── Part-II/          # Ch 5-8
+        │   ├── _index.md
+        │   ├── Chapter-5.md
+        │   ├── Chapter-6.md
+        │   ├── Chapter-7.md
+        │   └── Chapter-8.md
+        ├── Part-III/         # Ch 9-12
+        │   ├── _index.md
+        │   ├── Chapter-9.md
+        │   ├── Chapter-10.md
+        │   ├── Chapter-11.md
+        │   └── Chapter-12.md
+        ├── Part-IV/          # Ch 13-18
+        │   ├── _index.md
+        │   ├── Chapter-13.md
+        │   ├── Chapter-14.md
+        │   ├── Chapter-15.md
+        │   ├── Chapter-16.md
+        │   ├── Chapter-17.md
+        │   └── Chapter-18.md
+        ├── Part-V/           # Ch 19-22
+        │   ├── _index.md
+        │   ├── Chapter-19.md
+        │   ├── Chapter-20.md
+        │   ├── Chapter-21.md
+        │   └── Chapter-22.md
+        ├── Part-VI/          # Ch 23-28
+        │   ├── _index.md
+        │   ├── Chapter-23.md
+        │   ├── Chapter-24.md
+        │   ├── Chapter-25.md
+        │   ├── Chapter-26.md
+        │   ├── Chapter-27.md
+        │   └── Chapter-28.md
+        └── Part-VII/         # Ch 29-39
+            ├── _index.md
+            ├── Chapter-29.md
+            ├── Chapter-30.md
+            ├── Chapter-31.md
+            ├── Chapter-32.md
+            ├── Chapter-33.md
+            ├── Chapter-34.md
+            ├── Chapter-35.md
+            ├── Chapter-36.md
+            ├── Chapter-37.md
+            ├── Chapter-38.md
+            └── Chapter-39.md
 ```
 
 ## Common Issues
@@ -181,6 +243,15 @@ Add a minimal placeholder to the markdown body:
 <!-- empty -->
 ```
 
+### Missing Part Section
+If a Part does not appear in sidebar or TOC, check that the Part directory has an `_index.md` file with proper frontmatter:
+```yaml
+---
+weight: <part_weight>  # e.g., 6000 for Part VI
+title: "Part VI - <Title>"
+---
+```
+
 ## Checklist Before Committing
 
 - [ ] Hugo builds without errors (`hugo --quiet`)
@@ -192,3 +263,6 @@ Add a minimal placeholder to the markdown body:
 - [ ] Edge cases listed
 - [ ] Go stdlib references included
 - [ ] No empty content without placeholder
+- [ ] Chapter title format: `Chapter N - [Description]`
+- [ ] Weight follows part numbering convention
+- [ ] Summary alert icon="🎯" context="success" included
