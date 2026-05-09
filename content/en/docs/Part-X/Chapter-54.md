@@ -125,3 +125,10 @@ Similar logic: vertex u is an articulation point if:
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 54:</strong> Tarjan's bridge-finding algorithm exemplifies the power of DFS: a single linear traversal reveals the critical vulnerabilities of an entire network. By tracking discovery times and lowest reachable ancestors, it identifies every bridge in O(V + E) time. In network reliability, infrastructure planning, and system design, knowing your bridges is knowing your risks.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 51 — Topological Sort](/docs/Part-X/Chapter-51/)
+- [Chapter 52 — Strongly Connected Components](/docs/Part-X/Chapter-52/)
+- [Chapter 12 — Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
+

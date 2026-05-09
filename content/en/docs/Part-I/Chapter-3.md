@@ -175,3 +175,9 @@ Simple benchmarking with ...:
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 3:</strong> This chapter explores why Go is well-suited for data structures and algorithms, covering fundamental structures such as arrays, slices, maps, linked lists, and graphs. It discusses algorithmic paradigms including <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, and greedy strategies, along with Go's built-in testing and benchmarking tools for performance measurement.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 1 — The Role of Algorithms in Modern Software](/docs/Part-I/Chapter-1/)
+- [Chapter 2 — Complexity Analysis](/docs/Part-I/Chapter-2/)
+- [Chapter 4 — Fundamentals of Go Programming for Algorithms](/docs/Part-I/Chapter-4/)

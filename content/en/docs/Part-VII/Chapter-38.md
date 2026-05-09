@@ -177,3 +177,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 38:</strong> Segment trees and Fenwick trees solve range query problems efficiently. Use Fenwick trees for sum queries due to their simplicity and space efficiency. Use segment trees for min/max queries or when lazy propagation is needed. In Go, implement Fenwick trees with 1-based indexing for cleaner code.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 9 — Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+- [Chapter 33 — Linear Programming](/docs/Part-VII/Chapter-33/)
+- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
+

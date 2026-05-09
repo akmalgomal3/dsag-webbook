@@ -112,3 +112,10 @@ The <abbr title="An array storing the length of the longest common prefix betwee
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 49:</strong> Suffix arrays prove that sorting can solve complex string problems elegantly. By lexicographically sorting all suffixes, they transform pattern matching into binary search — a beautiful reduction from string complexity to array simplicity. For static text search, they offer the best balance of speed, space, and implementation clarity.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 35 — String Matching Algorithms](/docs/Part-VII/Chapter-35/)
+- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
+- [Chapter 50 — Persistent Data Structures](/docs/Part-IX/Chapter-50/)
+

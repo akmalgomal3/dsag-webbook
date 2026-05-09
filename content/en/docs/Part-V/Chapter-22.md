@@ -201,3 +201,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 22:</strong> This chapter presents Floyd-Warshall for dense graphs and Johnson's algorithm for sparse graphs with negative weights. Use Floyd-Warshall for small dense graphs requiring all-pairs shortest paths; prefer Johnson's for large sparse graphs to achieve better <abbr title="Relating to values or properties approached as a limit, used in algorithm analysis.">asymptotic</abbr> performance.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 10 — Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
+- [Chapter 21 — Searching Algorithms](/docs/Part-V/Chapter-21/)
+- [Chapter 33 — Linear Programming](/docs/Part-VII/Chapter-33/)

@@ -116,3 +116,10 @@ func mosAlgorithm(arr []int, queries []Query) []int {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 59:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms O(Q × N) brute force into O((N+Q)√N). It is a niche but powerful technique for competitive programming and offline batch processing.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 55 — Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+- [Chapter 57 — Kadane's Algorithm](/docs/Part-XI/Chapter-57/)
+- [Chapter 58 — Minimax and Game Trees](/docs/Part-XII/Chapter-58/)
+

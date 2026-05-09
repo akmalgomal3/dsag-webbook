@@ -165,3 +165,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 24:</strong> Dynamic programming transforms exponential-time recursive problems into polynomial-time solutions by storing subproblem results. Master the pattern: define states, write the recurrence, initialize base cases, and fill the table. In Go, use slices for tabulation and maps for sparse memoization.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 23 — Divide and Conquer](/docs/Part-VI/Chapter-23/)
+- [Chapter 25 — Greedy Algorithms](/docs/Part-VI/Chapter-25/)
+- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
+

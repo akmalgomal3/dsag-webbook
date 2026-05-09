@@ -175,3 +175,10 @@ func isBitSet(n, i int) bool {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 39:</strong> Bit manipulation provides compact and efficient solutions for specific problem classes. Master the core tricks: power-of-two checks, bit counting, and subset enumeration. In Go, prefer `uint` for bitwise operations to avoid sign extension surprises, and always prioritize code clarity over clever bit tricks unless performance is critical.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 29 — Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
+- [Chapter 34 — Polynomial and FFT](/docs/Part-VII/Chapter-34/)
+- [Chapter 43 — Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-43/)
+

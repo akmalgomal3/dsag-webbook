@@ -124,3 +124,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 9:</strong> Binary search trees provide efficient ordered storage but require balancing for guaranteed performance. AVL trees offer strict balance with more rotations; Red-Black trees trade slightly less balance for simpler insertion/deletion. In Go, prefer the standard library's <code>container/rbtree</code> (if available) or implement generics-based trees for type safety.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 10 — Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
+- [Chapter 11 — Disjoint Sets](/docs/Part-III/Chapter-11/)
+- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
+

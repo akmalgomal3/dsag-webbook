@@ -269,3 +269,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 18:</strong> This chapter covers bipartite <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> validation, the Hungarian algorithm for weighted assignment, and Hopcroft-Karp for maximum cardinality matching. Use Hungarian for square cost matrices and Hopcroft-Karp for large unweighted bipartite matching problems.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 16 — Minimum Spanning Trees](/docs/Part-IV/Chapter-16/)
+- [Chapter 17 — Network Flow Algorithms](/docs/Part-IV/Chapter-17/)
+- [Chapter 52 — Strongly Connected Components](/docs/Part-X/Chapter-52/)

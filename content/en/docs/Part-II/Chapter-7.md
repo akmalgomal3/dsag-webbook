@@ -251,3 +251,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 7:</strong> This chapter explores hashing and hash tables in Go, including built-in maps, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and consistent hashing for distributed systems. Use built-in maps for general key-value storage, FNV for checksums, SHA-256 for data integrity, and consistent hashing when nodes frequently join or leave a cluster.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 5 — Fundamental Data Structures in Go](/docs/Part-II/Chapter-5/)
+- [Chapter 6 — Elementary Data Structures](/docs/Part-II/Chapter-6/)
+- [Chapter 47 — Bloom Filters](/docs/Part-IX/Chapter-47/)

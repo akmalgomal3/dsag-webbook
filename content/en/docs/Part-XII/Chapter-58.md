@@ -107,3 +107,10 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 58:</strong> Minimax is the algorithmic embodiment of strategic thinking: assume your opponent is as smart as you, and plan accordingly. Alpha-beta pruning proves that even in exhaustive search, clever ordering can eliminate the impossible. From chess engines to checkers bots, minimax remains the conceptual foundation of competitive game AI.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 59 — Mo's Algorithm](/docs/Part-XII/Chapter-59/)
+

@@ -339,3 +339,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 1:</strong> This chapter covers algorithmic complexity analysis with <abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O notation</abbr> and the fundamental relationship between algorithms and data structures. It introduces how to evaluate time and <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">space complexity</abbr>, choose appropriate algorithms for different input sizes, and considers ethical implications such as bias, transparency, and sustainability in algorithm design.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 2 — Complexity Analysis](/docs/Part-I/Chapter-2/)
+- [Chapter 3 — Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
+- [Chapter 40 — Origins of Algorithms](/docs/Part-VIII/Chapter-40/)

@@ -110,3 +110,10 @@ Modern CPUs have memory hierarchies. Structures now optimize for:
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 42:</strong> Data structures evolved in response to hardware limitations and application needs — from arrays for physical memory to hash tables for speed to cache-aware structures for modern CPUs. Understanding this evolution prevents choosing obsolete structures and reveals that the "best" structure is always relative to the hardware and workload.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 40 — Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
+- [Chapter 41 — The Algorithmic Revolution](/docs/Part-VIII/Chapter-41/)
+- [Chapter 43 — Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-43/)
+

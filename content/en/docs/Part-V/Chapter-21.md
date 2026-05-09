@@ -166,3 +166,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 21:</strong> Choose linear search for unsorted or small datasets, binary search for sorted data requiring repeated queries, and interpolation search for large uniformly distributed datasets. In Go, always prefer `sort.Search` for binary search in production code.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 7 — Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
+- [Chapter 19 — Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
+- [Chapter 22 — Median and Order Statistics](/docs/Part-V/Chapter-22/)
+

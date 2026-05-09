@@ -678,3 +678,9 @@ Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 27:</strong> This chapter covers advanced recursive algorithms: <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> (<abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>, <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>), recursive data structures (BST), <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> and <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (Fibonacci, knapsack), <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr> (N-Queens), and recursive parallelism with goroutines. Use <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> for naturally dividing problems, <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> for overlapping sub-problems, and bottom-up <abbr title="A bottom-up dynamic programming technique filling a table iteratively.">tabulation</abbr> for large scales.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 23 — Divide and Conquer](/docs/Part-VI/Chapter-23/)
+- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 28 — Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-28/)

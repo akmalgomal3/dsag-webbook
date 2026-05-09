@@ -270,3 +270,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 6:</strong> Elementary data structures in Go must be built with **Generics** to maintain strict type safety and eliminate <abbr title="A shared boundary across which two or more separate components exchange information.">interface</abbr> boxing overhead. Due to CPU <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> locality and Go's Garbage Collector architecture, contiguous slice-based ring buffers ruthlessly outperform pointer-based linked lists.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 5 — Fundamental Data Structures in Go](/docs/Part-II/Chapter-5/)
+- [Chapter 7 — Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
+- [Chapter 48 — LRU Cache](/docs/Part-IX/Chapter-48/)

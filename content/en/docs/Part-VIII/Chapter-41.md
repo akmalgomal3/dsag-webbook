@@ -97,3 +97,10 @@ The most important open problem in computer science: If a solution can be verifi
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 41:</strong> The 20th-century algorithmic revolution transformed computation from abstract mathematics into engineering reality. Turing machines defined what is computable; complexity theory defined what is efficiently computable. The P vs NP question remains unsolved, but its implications guide every algorithmic decision we make — from choosing heuristics to accepting approximations.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 40 — Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
+- [Chapter 42 — Evolution of Data Structures](/docs/Part-VIII/Chapter-42/)
+- [Chapter 43 — Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-43/)
+

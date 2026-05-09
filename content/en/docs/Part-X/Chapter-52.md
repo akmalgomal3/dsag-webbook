@@ -143,3 +143,10 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 52:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. Kosaraju's elegant two-pass approach and Tarjan's single-pass efficiency both achieve O(V + E) — proving that deep structural insights often come from simple traversals.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 51 — Topological Sort](/docs/Part-X/Chapter-51/)
+- [Chapter 53 — A* Search](/docs/Part-X/Chapter-53/)
+- [Chapter 54 — Tarjan's Bridge-Finding Algorithm](/docs/Part-X/Chapter-54/)
+

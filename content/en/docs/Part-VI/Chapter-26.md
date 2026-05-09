@@ -198,3 +198,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 26:</strong> Backtracking systematically explores the solution space using depth-first search with pruning. Master the template: build candidates incrementally, validate constraints, recurse, and undo changes. In Go, use slices for state tracking and ensure proper cleanup after each recursive call.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 25 — Greedy Algorithms](/docs/Part-VI/Chapter-25/)
+- [Chapter 58 — Minimax and Game Trees](/docs/Part-XII/Chapter-58/)
+

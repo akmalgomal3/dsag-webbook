@@ -233,3 +233,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 8:</strong> Linked lists provide flexible <code>O(1)</code> insertion and deletion at known positions but sacrifice random access and cache locality. In Go, prefer slices for most use cases due to superior cache performance and simpler memory layout. Use linked lists only when frequent insertions/deletions at arbitrary positions are required.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 5 — Fundamental Data Structures in Go](/docs/Part-II/Chapter-5/)
+- [Chapter 6 — Elementary Data Structures](/docs/Part-II/Chapter-6/)
+- [Chapter 9 — Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+

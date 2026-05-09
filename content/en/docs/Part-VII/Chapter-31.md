@@ -400,3 +400,10 @@ Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 31:</strong> This chapter dissects cryptographic primitives in Go: hashing (SHA-256), symmetric encryption (AES-GCM), asymmetric encryption (ECDSA/Ed25519), HMACs, digital signatures, and password hashing (bcrypt/Argon2). Rely exclusively on the standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> `crypto/` package for cryptographic operations and rigorously avoid MD5/SHA-1 for anything security-related.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 30 — Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
+- [Chapter 32 — Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-32/)
+- [Chapter 47 — Bloom Filters](/docs/Part-IX/Chapter-47/)
+

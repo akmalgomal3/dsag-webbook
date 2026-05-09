@@ -103,3 +103,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 10:</strong> Heaps provide <code>O(log n)</code> insertion and extraction of extreme elements, making them ideal for priority queues and graph algorithms. In Go, use <code>container/heap</code> with a generic wrapper for type-safe priority queues. Remember that heaps excel at extreme-value access, not general searching.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 9 — Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+- [Chapter 16 — Minimum Spanning Trees](/docs/Part-IV/Chapter-16/)
+- [Chapter 22 — Median and Order Statistics](/docs/Part-V/Chapter-22/)
+

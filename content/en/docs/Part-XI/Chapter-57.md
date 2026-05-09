@@ -106,3 +106,10 @@ The recurrence captures the essence of dynamic programming: the optimal solution
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 57:</strong> Kadane's algorithm is a masterpiece of dynamic programming simplicity. In a single pass with O(1) space, it solves a problem that seems to require examining all O(n²) subarrays. The lesson transcends the specific problem: when facing "best subarray" questions, always ask if the optimal ending at position i can be derived from position i-1. If so, Kadane's insight applies.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 55 — Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+- [Chapter 56 — Sliding Window and Two Pointers](/docs/Part-XI/Chapter-56/)
+

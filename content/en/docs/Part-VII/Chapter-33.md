@@ -287,3 +287,9 @@ The Dual LP proves highly beneficial for intensive sensitivity analysis and driv
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 33:</strong> This chapter discusses linear programming: grasping standard formulations, applying the Simplex algorithm conceptually for 2 variables, tackling integer linear programming through branch and bound (and DP for knapsack variants), and examining duality for sensitivity analysis. Strongly prefer external solvers for production environments; reserve manual implementations purely for deep educational exercises.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 2 — Complexity Analysis](/docs/Part-I/Chapter-2/)
+- [Chapter 15 — All-Pairs Shortest Paths](/docs/Part-IV/Chapter-15/)
+- [Chapter 29 — Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)

@@ -164,3 +164,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 14:</strong> Dijkstra's algorithm is the go-to for non-negative weighted shortest paths with its efficient <code>O((V+E) log V)</code> complexity. Bellman-Ford handles negative weights and detects negative cycles at the cost of <code>O(VE)</code> time. In Go, use <code>container/heap</code> for Dijkstra's priority queue.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 12 — Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
+- [Chapter 13 — Graph Traversal Algorithms](/docs/Part-IV/Chapter-13/)
+- [Chapter 53 — A* Search](/docs/Part-X/Chapter-53/)
+

@@ -121,3 +121,10 @@ func cross(o, a, b Point) int {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 60:</strong> The convex hull is computational geometry's gateway problem. Andrew's monotone chain algorithm achieves optimal O(n log n) time with elegant simplicity — sort, then sweep. The cross product, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 33 — Linear Programming](/docs/Part-VII/Chapter-33/)
+- [Chapter 53 — A* Search](/docs/Part-X/Chapter-53/)
+- [Chapter 59 — Mo's Algorithm](/docs/Part-XII/Chapter-59/)
+

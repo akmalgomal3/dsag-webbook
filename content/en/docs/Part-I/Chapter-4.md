@@ -314,3 +314,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 4:</strong> This chapter covers Go's memory model, type system with generics, functional programming patterns with slices, and concurrency primitives for parallel algorithms. It explains how pointers, slices, goroutines, channels, and mutexes enable efficient and safe algorithm implementations in Go.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 2 — Complexity Analysis](/docs/Part-I/Chapter-2/)
+- [Chapter 3 — Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
+- [Chapter 6 — Elementary Data Structures](/docs/Part-II/Chapter-6/)

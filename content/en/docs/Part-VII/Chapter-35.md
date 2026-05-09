@@ -600,3 +600,9 @@ Aho-Corasick savagely consumes a heavy footprint of <code>O(alphabet × nodes)</
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 35:</strong> This chapter dissects <abbr title="A field or set of fields used to identify a record.">key</abbr> string matching algorithms: the Naive approach achieving <code>O(nm)</code>, KMP reliably offering <code>O(n+m)</code>, Boyer-Moore's rapid <code>O(n/m)</code> average, Rabin-Karp utilizing efficient rolling hashes, and the powerful Aho-Corasick for dense multiple-pattern environments. Leverage KMP to lock down a strict <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantee, Boyer-Moore to aggressively handle wide alphabets, and Aho-Corasick for sweeping dictionary matches.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 34 — Polynomial and FFT](/docs/Part-VII/Chapter-34/)
+- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
+- [Chapter 49 — Suffix Arrays](/docs/Part-IX/Chapter-49/)

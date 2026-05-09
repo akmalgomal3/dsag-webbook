@@ -342,3 +342,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 17:</strong> This chapter discusses network flow algorithms: Ford-Fulkerson, Edmonds-Karp, Dinic's, and min-cost flow. Use Edmonds-Karp for <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">polynomial time</abbr> guarantees, Dinic's for dense networks requiring high performance, and min-cost flow when minimizing transportation or assignment cost.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 16 — Minimum Spanning Trees](/docs/Part-IV/Chapter-16/)
+- [Chapter 18 — Matchings in Bipartite Graphs](/docs/Part-IV/Chapter-18/)
+- [Chapter 33 — Linear Programming](/docs/Part-VII/Chapter-33/)

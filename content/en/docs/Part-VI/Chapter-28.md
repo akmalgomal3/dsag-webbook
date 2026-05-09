@@ -342,3 +342,9 @@ Reservoir sampling guarantees that every single item possesses an exact mathemat
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 28:</strong> This chapter dissects probabilistic algorithms: randomized quicksort yielding <code>O(n log n)</code> expected, skip lists hitting <code>O(log n)</code> expected, the Miller-Rabin primality test (a Monte Carlo approach), and powerful reservoir sampling specifically for boundless, infinite streams. Leverage skip lists for creating a straightforward ordered set, Miller-Rabin for rapidly evaluating massive primes, and reservoir sampling to manage torrential data streams.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 27 — Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)
+- [Chapter 46 — Skip Lists](/docs/Part-IX/Chapter-46/)

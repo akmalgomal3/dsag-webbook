@@ -310,3 +310,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 12:</strong> This chapter covers <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> representations (<abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency list</abbr>, matrix, <abbr title="A connection between two vertices in a graph.">edge</abbr> list), traversal algorithms (DFS and BFS), and shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> with Dijkstra. Use adjacency lists for sparse graphs, DFS for topological <abbr title="The process of arranging elements in a specific order.">sorting</abbr>, BFS for shortest paths in unweighted graphs, and Dijkstra for weighted shortest paths.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 11 — Disjoint Sets](/docs/Part-III/Chapter-11/)
+- [Chapter 13 — Graph Traversal Algorithms](/docs/Part-IV/Chapter-13/)
+- [Chapter 14 — Single-Source Shortest Paths](/docs/Part-IV/Chapter-14/)

@@ -103,3 +103,10 @@ func approximateSolution(data []Item) Solution {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 43:</strong> Modern algorithmic thinking transcends Big-O, embracing cache efficiency, parallelism, approximation, and randomization. The 21st-century algorithm designer must balance theoretical guarantees with hardware realities — knowing when exact solutions are necessary and when "good enough" wins.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 41 — The Algorithmic Revolution](/docs/Part-VIII/Chapter-41/)
+- [Chapter 42 — Evolution of Data Structures](/docs/Part-VIII/Chapter-42/)
+- [Chapter 44 — Philosophy of Computation](/docs/Part-VIII/Chapter-44/)
+

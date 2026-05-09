@@ -100,3 +100,10 @@ Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchan
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 50:</strong> Persistent data structures trade space for time travel — preserving every version of data by sharing unchanged parts and copying only modified paths. They enable the functional programming paradigm, version control systems, and undo functionality. The insight is profound: immutability is not a limitation but a superpower that eliminates entire classes of bugs.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
+- [Chapter 49 — Suffix Arrays](/docs/Part-IX/Chapter-49/)
+- [Chapter 42 — Evolution of Data Structures](/docs/Part-VIII/Chapter-42/)
+

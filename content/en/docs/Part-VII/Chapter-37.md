@@ -183,3 +183,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 37:</strong> Tries excel at prefix-based string operations with <code>O(m)</code> time complexity. In Go, use `map[rune]*TrieNode` for flexibility or fixed-size arrays for performance. Apply tries to autocomplete, spell checking, and any problem involving shared string prefixes.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 9 — Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+- [Chapter 35 — String Matching Algorithms](/docs/Part-VII/Chapter-35/)
+- [Chapter 49 — Suffix Arrays](/docs/Part-IX/Chapter-49/)
+

@@ -113,3 +113,10 @@ Push vertices onto a stack after exploring all descendants, then reverse.
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 51:</strong> Topological sort transforms a web of dependencies into a linear execution plan. Whether building software, scheduling courses, or orchestrating data pipelines, it answers the fundamental question: "What comes first?" The elegance of Kahn's algorithm lies in its simplicity — repeatedly doing what has no prerequisites until everything is done.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 12 — Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
+- [Chapter 52 — Strongly Connected Components](/docs/Part-X/Chapter-52/)
+- [Chapter 54 — Tarjan's Bridge-Finding Algorithm](/docs/Part-X/Chapter-54/)
+

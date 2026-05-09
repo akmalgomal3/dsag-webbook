@@ -264,3 +264,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 5:</strong> This chapter covers fundamental data structures in Go: arrays, slices, maps, linked lists, and structs with methods. Use slices for dynamic collections, maps for fast key-value lookups, linked lists for frequent insertions/deletions at ends, and structs with methods to build custom abstractions like stacks.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 6 — Elementary Data Structures](/docs/Part-II/Chapter-6/)
+- [Chapter 7 — Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
+- [Chapter 8 — Linked Lists](/docs/Part-II/Chapter-8/)

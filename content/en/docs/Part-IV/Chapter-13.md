@@ -129,3 +129,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 13:</strong> DFS and BFS are fundamental graph traversal techniques. DFS excels at exploration and cycle detection using recursion or an explicit stack. BFS guarantees shortest paths in unweighted graphs using a queue. In Go, use slices as stacks and queues for efficient traversal.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 12 — Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
+- [Chapter 14 — Single-Source Shortest Paths](/docs/Part-IV/Chapter-14/)
+- [Chapter 15 — All-Pairs Shortest Paths](/docs/Part-IV/Chapter-15/)
+

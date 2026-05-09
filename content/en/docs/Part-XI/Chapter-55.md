@@ -115,3 +115,10 @@ Distribute elements into buckets based on range, sort each bucket individually (
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 55:</strong> Linear-time sorting algorithms prove that the O(n log n) comparison lower bound applies only when you know nothing about your data. By exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and bucket sort achieve O(n) — a powerful reminder that algorithmic efficiency often comes from understanding your problem domain, not just your algorithm textbook.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 19 — Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
+- [Chapter 20 — Advanced Sorting Algorithms](/docs/Part-V/Chapter-20/)
+- [Chapter 57 — Kadane's Algorithm](/docs/Part-XI/Chapter-57/)
+

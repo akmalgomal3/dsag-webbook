@@ -243,3 +243,9 @@ func (n *AugNode[K]) Rank(key K) int {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 11:</strong> Utilizing Generics `[K cmp.Ordered]` makes <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> implementations in Go radically safer and vastly more reusable. However, always remain fiercely aware of the architectural cost of trees in Go: allocating millions of tiny structs generates heavy GC tracing pressure. If your <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> is static, a simple sorted slice paired with `sort.Search` is infinitely faster and friendlier to the CPU <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr>.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 9 — Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+- [Chapter 12 — Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
+- [Chapter 45 — B-Trees](/docs/Part-IX/Chapter-45/)

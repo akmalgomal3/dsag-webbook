@@ -205,3 +205,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 20:</strong> Advanced sorting algorithms achieve <code>O(n log n)</code> through fundamentally different strategies: Merge Sort divides and conquers with guaranteed performance, Quick Sort partitions for cache-friendly in-place sorting, and Heap Sort uses a binary heap for minimal memory usage. In Go, always default to <code>sort.Ints()</code> or <code>slices.Sort()</code> for production.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 19 — Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
+- [Chapter 21 — Searching Algorithms](/docs/Part-V/Chapter-21/)
+- [Chapter 55 — Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+

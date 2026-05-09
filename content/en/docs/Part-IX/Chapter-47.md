@@ -109,3 +109,10 @@ p ≈ (1 - e^(-kn/m))^k
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 47:</strong> Bloom filters sacrifice absolute certainty for massive space savings. They answer membership queries with no false negatives and tunable false positives — ideal when memory is scarce and a small error rate is acceptable. Every large-scale system from databases to CDNs uses Bloom filters to avoid expensive lookups.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 7 — Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
+- [Chapter 45 — B-Trees](/docs/Part-IX/Chapter-45/)
+- [Chapter 48 — LRU Cache](/docs/Part-IX/Chapter-48/)
+

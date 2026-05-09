@@ -249,3 +249,9 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 16:</strong> This chapter covers Kruskal's, Prim's, and Borůvka's algorithms for <abbr title="A spanning tree with the minimum possible total edge weight.">Minimum Spanning Tree</abbr>. Use Kruskal when you have an <abbr title="A connection between two vertices in a graph.">edge</abbr> list, Prim for dense graphs with adjacency lists, and Borůvka for parallel or distributed computation scenarios.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 10 — Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
+- [Chapter 17 — Network Flow Algorithms](/docs/Part-IV/Chapter-17/)
+- [Chapter 18 — Matchings in Bipartite Graphs](/docs/Part-IV/Chapter-18/)

@@ -337,3 +337,9 @@ This code represents an aggressively simplified PoS simulation. True production 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 32:</strong> This chapter dissects foundational blockchain data structures: linked blocks utilizing SHA-256 hashes, Merkle trees engineered for transaction subset verification, Proof of Work (PoW), and foundational Proof of Stake (PoS) consensus strategies. Leverage Merkle trees for light clients, PoW for uncompromising decentralization, and PoS when maximizing energy efficiency.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 30 — Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
+- [Chapter 31 — Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-31/)
+- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)

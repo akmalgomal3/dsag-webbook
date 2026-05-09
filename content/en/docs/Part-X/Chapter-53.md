@@ -121,3 +121,10 @@ func aStar(grid [][]int, start, goal [2]int) []Node {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 53:</strong> A* is the gold standard for informed pathfinding, combining the optimality of Dijkstra with the efficiency of heuristic guidance. The quality of the heuristic determines its performance — a perfect heuristic makes A* instant, while a zero heuristic reduces it to Dijkstra. In game development, robotics, and mapping, A* dominates because it respects both correctness and speed.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 14 — Single-Source Shortest Paths](/docs/Part-IV/Chapter-14/)
+- [Chapter 51 — Topological Sort](/docs/Part-X/Chapter-51/)
+- [Chapter 52 — Strongly Connected Components](/docs/Part-X/Chapter-52/)
+

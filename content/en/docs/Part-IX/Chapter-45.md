@@ -118,3 +118,10 @@ When a node overflows (exceeds m-1 keys), it splits into two nodes and promotes 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 45:</strong> B-trees bridge the gap between algorithmic theory and physical reality — optimizing not for CPU cycles but for disk seeks. By matching node size to disk blocks and keeping all leaves at the same depth, B-trees transformed database performance. The B+ tree variant, with its linked leaves, makes range queries as fast as sequential scans.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 9 — Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+- [Chapter 11 — Disjoint Sets](/docs/Part-III/Chapter-11/)
+- [Chapter 47 — Bloom Filters](/docs/Part-IX/Chapter-47/)
+

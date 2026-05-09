@@ -204,3 +204,10 @@ func main() {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 25:</strong> Greedy algorithms provide fast, elegant solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 36 — Approximate Algorithms](/docs/Part-VII/Chapter-36/)
+

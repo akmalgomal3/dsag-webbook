@@ -249,3 +249,9 @@ Parallel merge sort:
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 23:</strong> This chapter introduces the <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> paradigm with implementations of <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>, <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>, and <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> in Go. It covers recursive decomposition, in-place partitioning techniques, and parallelization using goroutines for CPU-bound problems on multi-core systems.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 27 — Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)

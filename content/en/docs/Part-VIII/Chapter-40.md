@@ -94,3 +94,10 @@ The first <abbr title="An algorithmic paradigm that solves problems by breaking 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 40:</strong> Algorithms are not a modern invention — they are the crystallization of thousands of years of human problem-solving. From Babylonian clay tablets to Babbage's gears, the essential insight remains: break complex problems into simple, repeatable steps. Understanding this history prevents reinventing wheels and reveals the timeless nature of good algorithmic design.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 41 — The Algorithmic Revolution](/docs/Part-VIII/Chapter-41/)
+- [Chapter 42 — Evolution of Data Structures](/docs/Part-VIII/Chapter-42/)
+- [Chapter 44 — Philosophy of Computation](/docs/Part-VIII/Chapter-44/)
+

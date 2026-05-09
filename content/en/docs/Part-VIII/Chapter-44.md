@@ -101,3 +101,10 @@ Go's design mirrors algorithmic virtues:
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 44:</strong> Algorithms are philosophy executed in code. They teach us that efficiency is about choosing the right trade-offs, that simplicity outlives complexity, and that understanding limitations is as important as achieving optimality. The best algorithm designers are not just engineers — they are thinkers who understand the human and ethical dimensions of their creations.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 40 — Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
+- [Chapter 41 — The Algorithmic Revolution](/docs/Part-VIII/Chapter-41/)
+- [Chapter 43 — Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-43/)
+

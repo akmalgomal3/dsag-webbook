@@ -128,3 +128,10 @@ func lengthOfLongestSubstring(s string) int {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 56:</strong> Two pointers and sliding window are the bread and butter of linear-time array and string processing. They replace nested loops with elegant single passes, exploiting ordering or contiguous structure. Mastering these patterns means recognizing when a problem asks for "pairs," "subarrays," or "substrings" — then choosing the right traversal strategy.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 55 — Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+- [Chapter 57 — Kadane's Algorithm](/docs/Part-XI/Chapter-57/)
+- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
+

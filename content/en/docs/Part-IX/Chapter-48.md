@@ -123,3 +123,10 @@ func (c *LRUCache) Put(key, val int) {
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 48:</strong> The LRU cache is a masterclass in combining data structures — hash tables for O(1) lookup and doubly linked lists for O(1) reordering. It powers databases, operating systems, and web servers. Understanding LRU means understanding that the best eviction strategy depends on your access patterns, not abstract perfection.
 {{% /alert %}}
+
+## See Also
+
+- [Chapter 6 — Elementary Data Structures](/docs/Part-II/Chapter-6/)
+- [Chapter 7 — Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
+- [Chapter 47 — Bloom Filters](/docs/Part-IX/Chapter-47/)
+
