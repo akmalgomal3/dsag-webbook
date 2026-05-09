@@ -381,8 +381,22 @@ Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute 
 
 ### Idiomatic Go Implementation
 
+```go
+package main
 
-... (10) might be insufficient for modern computing speeds. Consider bumping the cost to 12-14. For entirely greenfield projects, employ Argon2id.
+import (
+	"crypto/sha256"
+	"fmt"
+)
+
+func main() {
+	data := []byte("sensitive data")
+	hashed := sha256.Sum256(data)
+	fmt.Printf("SHA-256: %x\n", hashed)
+}
+```
+
+For password hashing, use bcrypt with a cost factor of at least 12:
 
 ## Quick Reference
 

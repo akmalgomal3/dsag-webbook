@@ -146,7 +146,7 @@ Go lacks operator overloading. Define explicit functions for every vector operat
 
 ### Decision Matrix
 
-| Use ... When... | Implement Manually When... |
+| Use Gonum When... | Implement Manually When... |
 |----------------------|------------------------------|
 | Working with dense matrices and standard operations | Building custom sparse matrices |
 | Needing SVD or eigenvalue decomposition | Running under extremely strict memory constraints |
@@ -209,7 +209,7 @@ Rank-3 tensors formulated via nested slices in Go carry heavy pointer overhead. 
 ### Idiomatic Go Implementation
 
 
-A loop ordering of ... proves significantly faster than ... specifically due to cache locality on matrix b's rows. Thoroughly profile your code prior to declaring a complete optimization.
+A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically due to cache locality on matrix b's rows. Thoroughly profile your code prior to declaring a complete optimization.
 
 ### Decision Matrix
 

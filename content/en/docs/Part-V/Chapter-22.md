@@ -136,7 +136,7 @@ Johnson(adj, n):
 package main
 
 import (
-	"container/<abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>"
+	"container/heap"
 	"fmt"
 	"math"
 )

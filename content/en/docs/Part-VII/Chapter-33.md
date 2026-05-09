@@ -23,7 +23,10 @@ Chapter 33 covers linear programming: fundamental formulation, the Simplex algor
 **Definition:** Linear Programming (LP) aims to maximize or minimize a linear objective function subject strictly to linear equality and inequality constraints.
 
 Standard form:
-<code></code>\text{maximize } c^T x \text{ subject to } Ax \leq b, \; x \geq 0<code></code>
+```
+maximize: cᵀx
+subject to: Ax ≤ b, x ≥ 0
+```
 
 ### Operations & Complexity
 

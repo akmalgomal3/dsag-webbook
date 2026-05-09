@@ -119,8 +119,8 @@ Go's <abbr title="The period during which a computer program is executing.">runt
 
 ### Edge Cases & Pitfalls
 
-- **Goroutine leak:** Always verify that channels are closed or ... is guaranteed to be called.
-- **Data race:** Extensively use ... for detection. Rely on ... or channels for safety.
+- **Goroutine leak:** Always verify that channels are closed or `defer close()` is guaranteed to be called.
+- **Data race:** Extensively use `go test -race` for detection. Rely on `sync.Mutex` or channels for safety.
 - **Too many goroutines:** While millions of goroutines are permissible, they can consume massive amounts of stack memory (starting at 2KB each).
 
 ## 30.2. Synchronization and Concurrency

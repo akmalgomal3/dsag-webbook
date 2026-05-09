@@ -111,12 +111,12 @@ func main() {
 
 ### Edge Cases & Pitfalls
 
-- **Integer capacities:** Ensure ... does not trigger an integer overflow.
+- **Integer capacities:** Ensure `bottleneck := 1 << 30` does not trigger an integer overflow.
 - **Augmenting path DFS:** This can be extremely slow for large capacities; use Edmonds-Karp instead.
 
 ## 17.2. Edmonds-Karp Algorithm
 
-**Definition:** Edmonds-Karp is an implementation of the Ford-Fulkerson method that uses BFS to find the shortest augmenting path, guaranteeing a polynomial complexity of ....
+**Definition:** Edmonds-Karp is an implementation of the Ford-Fulkerson method that uses BFS to find the shortest augmenting path, guaranteeing a polynomial complexity of `O(V E²)`.
 
 ### Operations & Complexity
 
