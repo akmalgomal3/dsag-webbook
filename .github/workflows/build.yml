@@ -1,0 +1,37 @@
+name: Build and Validate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v3
+      with:
+        hugo-version: '0.161.1'
+        extended: true
+
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+
+    - name: Generate Search Index
+      run: python3 scripts/generate-search-index.py
+
+    - name: Build Site
+      run: hugo --quiet
+
+    - name: Verify Build Output
+      run: |
+        test -f public/index.html
+        test -f public/sitemap.xml
+        test -f public/search.json
+        echo "Build verification passed"
