@@ -17,7 +17,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+      id: pages
 
     - name: Setup Hugo
       uses: peaceiris/actions-hugo@v3
@@ -34,7 +41,16 @@ jobs:
       run: python3 scripts/generate-search-index.py
 
     - name: Build Site
-      run: hugo --baseURL 'https://akmalgomal3.github.io/dsag-webbook/' --minify --quiet
+      run: hugo --baseURL "${{ steps.pages.outputs.base_url }}" --minify --quiet
+
+    - name: Verify Build Output
+      run: |
+        test -f public/index.html
+        test -f public/sitemap.xml
+        test -f public/search.json
+        echo "Build OK"
+        echo "Site size:"
+        du -sh public/
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
