@@ -9,6 +9,10 @@ draft: false
 toc: true
 ---
 
+Most books on data structures and algorithms fall into one of two traps: they are either dense theoretical tomes that bury intuition under formalism, or shallow tutorials that teach syntax without substance. This book aims for a third path — **practical depth with conceptual clarity**.
+
+Written for software engineers who build real systems, not just solve interview puzzles, this book answers the question that matters most: **"When should I use this, and when should I avoid it?"**
+
 ## How to Use This Book
 
 This book contains **60 chapters** across **12 parts**. Each chapter is self-contained and designed for a 7–10 minute reading time.
