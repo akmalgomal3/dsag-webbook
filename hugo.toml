@@ -1,4 +1,5 @@
-baseURL = 'http://localhost:1313/'
+baseURL = 'https://akmalgomal3.github.io/dsag-webbook/'
+relativeURLs = true
 locale = 'en-us'
 title = 'Modern Data Structures and Algorithms in Go'
 theme = []

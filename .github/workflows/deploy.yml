@@ -41,7 +41,7 @@ jobs:
       run: python3 scripts/generate-search-index.py
 
     - name: Build Site
-      run: hugo --baseURL "${{ steps.pages.outputs.base_url }}" --minify --quiet
+      run: hugo --baseURL "https://akmalgomal3.github.io/dsag-webbook/" --minify --quiet
 
     - name: Verify Build Output
       run: |
