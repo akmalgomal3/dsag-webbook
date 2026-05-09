@@ -988,6 +988,29 @@ li > ul, li > ol {
 #search-input:focus {
     border-color: var(--accent-color);
 }
+
+/* Accessibility: Focus indicators */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--accent-color);
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    z-index: 10000;
+    border-radius: 0 0 4px 0;
+}
+.skip-link:focus {
+    top: 0;
+}
 .search-results {
     display: none;
     position: absolute;

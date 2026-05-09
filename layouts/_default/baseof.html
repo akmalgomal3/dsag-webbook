@@ -54,6 +54,7 @@
     </script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     {{ block "header" . }}
     <header class="site-header">
         <div class="header-inner">
@@ -85,7 +86,7 @@
             </nav>
         </aside>
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
-        <main class="main-content container">
+        <main id="main-content" class="main-content container">
             {{ block "content" . }}{{ end }}
         </main>
     </div>
