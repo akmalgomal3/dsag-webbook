@@ -1,5 +1,5 @@
 ---
-weight: 7100
+weight: 70100
 title: "Chapter 29 - Vector, Matrix, and Tensor Operations"
 description: "Vector, Matrix, and Tensor Operations"
 icon: "article"

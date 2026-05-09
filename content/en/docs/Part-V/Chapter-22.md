@@ -1,5 +1,5 @@
 ---
-weight: 5400
+weight: 50400
 title: "Chapter 22 - Median and Order Statistics"
 description: "Median and Order Statistics"
 icon: "article"

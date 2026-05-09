@@ -1,5 +1,5 @@
 ---
-weight: 8100
+weight: 80200
 title: "Chapter 41 - The Algorithmic Revolution"
 description: "The Algorithmic Revolution"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

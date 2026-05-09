@@ -1,5 +1,5 @@
 ---
-weight: 3400
+weight: 30400
 title: "Chapter 12 - Graphs and Graph Representations"
 description: "Graphs and Graph Representations"
 icon: "article"

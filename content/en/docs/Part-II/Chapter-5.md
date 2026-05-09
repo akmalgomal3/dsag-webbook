@@ -1,5 +1,5 @@
 ---
-weight: 2100
+weight: 20100
 title: "Chapter 5 - Fundamental Data Structures in Go"
 description: "Fundamental Data Structures in Go"
 icon: "article"

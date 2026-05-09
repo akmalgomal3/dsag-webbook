@@ -1,5 +1,5 @@
 ---
-weight: 11100
+weight: 110200
 title: "Chapter 56 - Sliding Window and Two Pointers"
 description: "Sliding Window and Two Pointers"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
@@ -15,7 +16,7 @@ toc: true
 
 {{% alert icon="📘" context="success" %}}
 Chapter 56 covers sliding window and two pointers — two fundamental techniques for solving subarray/substring problems in linear time.
-{{% /alert %}
+{{% /alert %}}
 
 ## 56.1. The Two Pointers Technique
 

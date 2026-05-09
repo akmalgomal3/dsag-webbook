@@ -1,5 +1,5 @@
 ---
-weight: 1000
+weight: 10000
 title: "Part I - Foundations & Go Mechanics"
 description: ""
 icon: "build"

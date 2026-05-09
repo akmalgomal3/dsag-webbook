@@ -1,6 +1,6 @@
 ---
-weight: 9000
-title: "Part IX: Advanced Data Structures"
+weight: 90000
+title: "Part 9 - Advanced Data Structures"
 description: "Advanced Data Structures"
 icon: "book"
 date: "2024-08-24T23:42:09+07:00"

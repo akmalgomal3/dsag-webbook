@@ -1,5 +1,5 @@
 ---
-weight: 7300
+weight: 70300
 title: "Chapter 31 - Cryptographic Foundations Algorithms"
 description: "Cryptographic Foundations Algorithms"
 icon: "article"

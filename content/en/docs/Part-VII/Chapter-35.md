@@ -1,5 +1,5 @@
 ---
-weight: 7700
+weight: 70700
 title: "Chapter 35 - String Matching Algorithms"
 description: "String Matching Algorithms"
 icon: "article"

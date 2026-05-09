@@ -1,5 +1,5 @@
 ---
-weight: 12200
+weight: 120300
 title: "Chapter 60 - Convex Hull"
 description: "Convex Hull"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
@@ -15,7 +16,7 @@ toc: true
 
 {{% alert icon="📘" context="success" %}}
 Chapter 60 covers the convex hull — the smallest convex shape containing a set of points, and Graham's and Andrew's algorithms for computing it.
-{{% /alert %}
+{{% /alert %}}
 
 ## 60.1. What Is a Convex Hull?
 
@@ -119,4 +120,4 @@ func cross(o, a, b Point) int {
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 60:</strong> The convex hull is computational geometry's gateway problem. Andrew's monotone chain algorithm achieves optimal O(n log n) time with elegant simplicity — sort, then sweep. The cross product, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
-{{% /alert %}
+{{% /alert %}}

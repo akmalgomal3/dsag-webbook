@@ -1,5 +1,5 @@
 ---
-weight: 7600
+weight: 70600
 title: "Chapter 34 - Polynomial and FFT"
 description: "Polynomial and FFT"
 icon: "article"

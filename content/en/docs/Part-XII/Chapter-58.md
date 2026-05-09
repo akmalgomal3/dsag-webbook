@@ -1,5 +1,5 @@
 ---
-weight: 12000
+weight: 120100
 title: "Chapter 58 - Minimax and Game Trees"
 description: "Minimax and Game Trees"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
@@ -15,7 +16,7 @@ toc: true
 
 {{% alert icon="📘" context="success" %}}
 Chapter 58 explores minimax — the foundational algorithm for two-player zero-sum games, and alpha-beta pruning that makes it practical.
-{{% /alert %}
+{{% /alert %}}
 
 ## 58.1. Game Trees
 
@@ -105,4 +106,4 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 58:</strong> Minimax is the algorithmic embodiment of strategic thinking: assume your opponent is as smart as you, and plan accordingly. Alpha-beta pruning proves that even in exhaustive search, clever ordering can eliminate the impossible. From chess engines to checkers bots, minimax remains the conceptual foundation of competitive game AI.
-{{% /alert %}
+{{% /alert %}}

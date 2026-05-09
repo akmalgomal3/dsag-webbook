@@ -1,5 +1,5 @@
 ---
-weight: 1400
+weight: 10400
 title: "Chapter 4 - Fundamentals of Go Programming for Algorithms"
 description: "Fundamentals of Go Programming for Algorithms"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:41:36+07:00"
 lastmod: "2024-08-24T23:41:36+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

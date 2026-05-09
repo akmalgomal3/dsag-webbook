@@ -1,5 +1,5 @@
 ---
-weight: 7400
+weight: 70400
 title: "Chapter 32 - Blockchain Data Structures and Algorithms"
 description: "Blockchain Data Structures and Algorithms"
 icon: "article"

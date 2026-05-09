@@ -1,5 +1,5 @@
 ---
-weight: 4300
+weight: 40300
 title: "Chapter 15 - All-Pairs Shortest Paths"
 description: "All-Pairs Shortest Paths"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

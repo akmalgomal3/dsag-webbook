@@ -1,5 +1,5 @@
 ---
-weight: 2200
+weight: 20200
 title: "Chapter 6 - Elementary Data Structures"
 description: "Elementary Data Structures"
 icon: "article"
@@ -239,6 +239,23 @@ func main() {
 	fmt.Println("Deque operational.")
 }
 ```
+
+## Decision Matrix
+
+| Use This When... | Avoid When... |
+|------------------|---------------|
+| Stack (`[]T`) — LIFO access only | Need FIFO or random access |
+| Queue (`[]T` circular) — strict FIFO, high throughput | Need access to middle elements |
+| Deque (`[]T` circular) — double-ended ops | Simple stack/queue suffices |
+| `container/list` — standard library needed | Performance critical (GC pressure) |
+
+### Edge Cases & Pitfalls
+
+- **Empty structure:** Always check length before Pop/Peek.
+- **Slice growth:** `append` may reallocate — capacity planning matters for queues.
+- **Memory leaks:** Naive `slice[1:]` queues leak memory; use circular buffers.
+- **Zero-capacity:** Operations on zero-cap structures panic if not handled.
+- **Type constraints:** Generics `[T any]` fine for stacks; ordered constraints needed for priority queues.
 
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 

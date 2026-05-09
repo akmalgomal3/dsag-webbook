@@ -1,5 +1,5 @@
 ---
-weight: 1100
+weight: 10100
 title: "Chapter 1 - The Role of Algorithms in Modern Software"
 description: "The Role of Algorithms in Modern Software"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:41:35+07:00"
 lastmod: "2024-08-24T23:41:35+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

@@ -1,5 +1,5 @@
 ---
-weight: 4400
+weight: 40400
 title: "Chapter 16 - Minimum Spanning Trees"
 description: "Minimum Spanning Trees"
 icon: "article"

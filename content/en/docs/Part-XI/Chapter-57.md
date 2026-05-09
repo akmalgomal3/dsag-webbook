@@ -1,5 +1,5 @@
 ---
-weight: 11200
+weight: 110300
 title: "Chapter 57 - Kadane's Algorithm"
 description: "Kadane's Algorithm"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
@@ -15,7 +16,7 @@ toc: true
 
 {{% alert icon="📘" context="success" %}}
 Chapter 57 presents Kadane's algorithm — the elegant O(n) solution to the maximum subarray problem, foundational to dynamic programming thinking.
-{{% /alert %}
+{{% /alert %}}
 
 ## 57.1. The Maximum Subarray Problem
 

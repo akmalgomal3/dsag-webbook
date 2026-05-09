@@ -1,5 +1,5 @@
 ---
-weight: 6100
+weight: 60100
 title: "Chapter 23 - Divide and Conquer"
 description: "Divide and Conquer"
 icon: "article"

@@ -1,5 +1,5 @@
 ---
-weight: 8200
+weight: 80300
 title: "Chapter 42 - Evolution of Data Structures"
 description: "Evolution of Data Structures"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

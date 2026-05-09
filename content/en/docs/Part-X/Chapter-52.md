@@ -1,5 +1,5 @@
 ---
-weight: 10100
+weight: 100200
 title: "Chapter 52 - Strongly Connected Components"
 description: "Strongly Connected Components"
 icon: "article"
@@ -7,9 +7,10 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
-{{% alert icon="💡" context="info" %}
+{{% alert icon="💡" context="info" %}}
 <strong>"<em>To understand a directed graph, first find its strongly connected components.</em>" — Robert Tarjan</strong>
 {{% /alert %}}
 

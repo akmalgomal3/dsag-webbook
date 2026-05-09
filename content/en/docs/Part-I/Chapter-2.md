@@ -1,5 +1,5 @@
 ---
-weight: 1200
+weight: 10200
 title: "Chapter 2 - Complexity Analysis"
 description: "Complexity Analysis"
 icon: "article"

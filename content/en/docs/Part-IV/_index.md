@@ -1,5 +1,5 @@
 ---
-weight: 4000
+weight: 40000
 title: "Part IV - Graph Algorithms"
 description: ""
 icon: "bar_chart"

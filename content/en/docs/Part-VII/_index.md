@@ -1,5 +1,5 @@
 ---
-weight: 7000
+weight: 70000
 title: "Part VII - Advanced Topics"
 description: ""
 icon: "library_books"

@@ -1,5 +1,5 @@
 ---
-weight: 3000
+weight: 30000
 title: "Part III - Trees, Graphs & Representations"
 description: ""
 icon: "device_hub"

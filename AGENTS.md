@@ -111,13 +111,14 @@ katex: true
 
 ```yaml
 ---
-weight: <chapter_weight>  # e.g., 1100 for Ch 1, 2100 for Ch 5
-# Format: <part_number><chapter_in_part><00>
-# Part I: 1000-1500, Part II: 2100-2400, Part III: 3100-3400
-# Part IV: 4100-4600, Part V: 5100-5400, Part VI: 6100-6600
-# Part VII: 7100-8100, Part VIII: 8000-8400
-# Part IX: 9000-9500, Part X: 10000-10300
-# Part XI: 11000-11200, Part XII: 12000-12200
+weight: <chapter_weight>
+# Format: Part_N * 10000 + chapter_in_part * 100
+# Part index: N * 10000
+# Part I: 10000-10400, Part II: 20000-20400, Part III: 30000-30400
+# Part IV: 40000-40600, Part V: 50000-50400, Part VI: 60000-60600
+# Part VII: 70000-71100, Part VIII: 80000-80500
+# Part IX: 90000-90600, Part X: 100000-100400
+# Part XI: 110000-110300, Part XII: 120000-120300
 title: "Chapter <N> - <Description>"
 description: "<One-line description>"
 icon: "article"

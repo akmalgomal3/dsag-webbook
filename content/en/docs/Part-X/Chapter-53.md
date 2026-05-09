@@ -1,5 +1,5 @@
 ---
-weight: 10200
+weight: 100300
 title: "Chapter 53 - A* Search"
 description: "A* Search"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
@@ -15,7 +16,7 @@ toc: true
 
 {{% alert icon="📘" context="success" %}}
 Chapter 53 covers A* (A-Star) search — the dominant pathfinding algorithm combining Dijkstra's completeness with heuristic guidance for optimal and efficient navigation.
-{{% /alert %}
+{{% /alert %}}
 
 ## 53.1. From Dijkstra to A*
 

@@ -1,5 +1,5 @@
 ---
-weight: 2000
+weight: 20000
 title: "Part II - Basic Data Structures"
 description: ""
 icon: "sort"

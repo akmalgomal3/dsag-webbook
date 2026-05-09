@@ -1,5 +1,5 @@
 ---
-weight: 9000
+weight: 90100
 title: "Chapter 45 - B-Trees"
 description: "B-Trees"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

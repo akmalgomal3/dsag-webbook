@@ -1,6 +1,6 @@
 ---
-weight: 8000
-title: "Part VIII: History & Philosophy"
+weight: 80000
+title: "Part 8 - History & Philosophy"
 description: "History & Philosophy of Algorithms"
 icon: "book"
 date: "2024-08-24T23:42:09+07:00"

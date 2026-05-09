@@ -1,5 +1,5 @@
 ---
-weight: 7800
+weight: 70800
 title: "Chapter 36 - Approximate Algorithms"
 description: "Approximate Algorithms"
 icon: "article"

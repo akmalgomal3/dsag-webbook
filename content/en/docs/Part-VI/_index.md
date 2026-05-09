@@ -1,5 +1,5 @@
 ---
-weight: 6000
+weight: 60000
 title: "Part VI - Algorithmic Paradigms"
 description: ""
 icon: "share"

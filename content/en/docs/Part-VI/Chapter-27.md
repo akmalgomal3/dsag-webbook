@@ -1,5 +1,5 @@
 ---
-weight: 6500
+weight: 60500
 title: "Chapter 27 - Advanced Recursive Algorithms"
 description: "Advanced Recursive Algorithms"
 icon: "article"

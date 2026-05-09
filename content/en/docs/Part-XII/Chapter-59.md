@@ -1,5 +1,5 @@
 ---
-weight: 12100
+weight: 120200
 title: "Chapter 59 - Mo's Algorithm"
 description: "Mo's Algorithm"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
@@ -15,7 +16,7 @@ toc: true
 
 {{% alert icon="📘" context="success" %}}
 Chapter 59 introduces Mo's algorithm — a sqrt-decomposition technique for efficiently answering offline range queries by reordering them to minimize recalculation.
-{{% /alert %}
+{{% /alert %}}
 
 ## 59.1. The Offline Query Problem
 
@@ -114,4 +115,4 @@ func mosAlgorithm(arr []int, queries []Query) []int {
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 59:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms O(Q × N) brute force into O((N+Q)√N). It is a niche but powerful technique for competitive programming and offline batch processing.
-{{% /alert %}
+{{% /alert %}}

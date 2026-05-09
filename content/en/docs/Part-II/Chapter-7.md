@@ -1,5 +1,5 @@
 ---
-weight: 2300
+weight: 20300
 title: "Chapter 7 - Hashing and Hash Tables"
 description: "Hashing and Hash Tables"
 icon: "article"

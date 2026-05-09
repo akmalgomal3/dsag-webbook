@@ -1,5 +1,5 @@
 ---
-weight: 6600
+weight: 60600
 title: "Chapter 28 - Probabilistic and Randomized Algorithms"
 description: "Probabilistic and Randomized Algorithms"
 icon: "article"

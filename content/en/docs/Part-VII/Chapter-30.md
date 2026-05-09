@@ -1,5 +1,5 @@
 ---
-weight: 7200
+weight: 70200
 title: "Chapter 30 - Parallel and Distributed Algorithms"
 description: "Parallel and Distributed Algorithms"
 icon: "article"

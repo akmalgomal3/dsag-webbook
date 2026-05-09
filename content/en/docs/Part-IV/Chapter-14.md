@@ -1,5 +1,5 @@
 ---
-weight: 4200
+weight: 40200
 title: "Chapter 14 - Single-Source Shortest Paths"
 description: "Single-Source Shortest Paths"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

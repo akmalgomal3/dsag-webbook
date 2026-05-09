@@ -1,5 +1,5 @@
 ---
-weight: 1300
+weight: 10300
 title: "Chapter 3 - Introduction to Data Structures and Algorithms in Go"
 description: "Introduction to Data Structures and Algorithms in Go"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:41:35+07:00"
 lastmod: "2024-08-24T23:41:35+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

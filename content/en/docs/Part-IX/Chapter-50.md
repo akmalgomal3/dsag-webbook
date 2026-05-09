@@ -1,5 +1,5 @@
 ---
-weight: 9500
+weight: 90600
 title: "Chapter 50 - Persistent Data Structures"
 description: "Persistent Data Structures"
 icon: "article"
@@ -7,6 +7,7 @@ date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}

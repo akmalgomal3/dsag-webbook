@@ -1,5 +1,5 @@
 ---
-weight: 7500
+weight: 70500
 title: "Chapter 33 - Linear Programming"
 description: "Linear Programming"
 icon: "article"

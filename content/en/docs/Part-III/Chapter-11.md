@@ -1,5 +1,5 @@
 ---
-weight: 3300
+weight: 30300
 title: "Chapter 11 - Disjoint Sets"
 description: "Disjoint Sets"
 icon: "article"
@@ -210,6 +210,15 @@ func (n *AugNode[K]) Rank(key K) int {
 	return leftSize + 1 + n.Right.Rank(key)
 }
 ```
+
+### Edge Cases & Pitfalls
+
+- **Empty tree:** `Search`, `Min`, `Max` panic or return zero value if tree is nil.
+- **Duplicate keys:** Standard BST rejects duplicates; decide policy (overwrite or multiset).
+- **Unbalanced input:** Sorted input degenerates BST to O(n) linked list.
+- **Deep recursion:** Recursive traversal overflows stack on deep trees — use iterative DFS.
+- **GC pressure:** Millions of tree nodes = heavy GC tracing; prefer sorted slices for static data.
+- **Nil pointer dereference:** Always check node != nil before accessing fields.
 
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
