@@ -999,17 +999,19 @@ input:focus-visible {
 
 .skip-link {
     position: absolute;
-    top: -40px;
-    left: 0;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -100%);
     background: var(--accent-color);
     color: white;
     padding: 8px 16px;
     text-decoration: none;
     z-index: 10000;
-    border-radius: 0 0 4px 0;
+    border-radius: 0 0 4px 4px;
+    transition: transform 0.1s;
 }
 .skip-link:focus {
-    top: 0;
+    transform: translate(-50%, 0);
 }
 .search-results {
     display: none;
