@@ -1,14 +1,14 @@
 {{ $currentPage := . }}
-{{ $currentURL := $currentPage.RelPermalink }}
+{{ $currentRel := $currentPage.RelPermalink }}
 
 <nav class="sidebar-nav">
     <ul class="sidebar-list">
-        <li><a href="/docs/" class="sidebar-link{{ if eq $currentURL "/docs/" }} active{{ end }}">Documentation</a></li>
-        <li><a href="/docs/preface/" class="sidebar-link{{ if eq $currentURL "/docs/preface/" }} active{{ end }}">Preface</a></li>
-        <li><a href="/docs/foreword/" class="sidebar-link{{ if eq $currentURL "/docs/foreword/" }} active{{ end }}">Foreword</a></li>
-        <li><a href="/docs/foreword-2/" class="sidebar-link{{ if eq $currentURL "/docs/foreword-2/" }} active{{ end }}">Foreword 2</a></li>
-        <li><a href="/docs/table-of-contents/" class="sidebar-link{{ if eq $currentURL "/docs/table-of-contents/" }} active{{ end }}">Table of Contents</a></li>
-        <li><a href="/docs/how-to-use-dsag/" class="sidebar-link{{ if eq $currentURL "/docs/how-to-use-dsag/" }} active{{ end }}">How to Use DSAG</a></li>
+        <li><a href="{{ "docs/" | absURL }}" class="sidebar-link">Documentation</a></li>
+        <li><a href="{{ "docs/preface/" | absURL }}" class="sidebar-link">Preface</a></li>
+        <li><a href="{{ "docs/foreword/" | absURL }}" class="sidebar-link">Foreword</a></li>
+        <li><a href="{{ "docs/foreword-2/" | absURL }}" class="sidebar-link">Foreword 2</a></li>
+        <li><a href="{{ "docs/table-of-contents/" | absURL }}" class="sidebar-link">Table of Contents</a></li>
+        <li><a href="{{ "docs/how-to-use-dsag/" | absURL }}" class="sidebar-link">How to Use DSAG</a></li>
     </ul>
 
     {{ $docs := .Site.GetPage "section" "docs" }}
@@ -17,14 +17,14 @@
       <ul class="sidebar-list">
           <li class="sidebar-section-title">{{ .Title }}</li>
           {{ range .Pages.ByWeight }}
-          <li><a href="{{ .RelPermalink }}" class="sidebar-link{{ if eq $currentURL .RelPermalink }} active{{ end }}" style="font-size: 0.875rem; padding-left: 16px;">{{ .Title }}</a></li>
+          <li><a href="{{ .RelPermalink }}" class="sidebar-link{{ if eq $currentRel .RelPermalink }} active{{ end }}" style="font-size: 0.875rem; padding-left: 16px;">{{ .Title }}</a></li>
           {{ end }}
       </ul>
       {{ end }}
     {{ end }}
 
     <ul class="sidebar-list">
-        <li><a href="/docs/closing-remark/" class="sidebar-link{{ if eq $currentURL "/docs/closing-remark/" }} active{{ end }}">Closing Remark</a></li>
-        <li><a href="/docs/appendix/" class="sidebar-link{{ if eq $currentURL "/docs/appendix/" }} active{{ end }}">Appendix</a></li>
+        <li><a href="{{ "docs/closing-remark/" | absURL }}" class="sidebar-link">Closing Remark</a></li>
+        <li><a href="{{ "docs/appendix/" | absURL }}" class="sidebar-link">Appendix</a></li>
     </ul>
 </nav>

@@ -5,8 +5,8 @@
         Page not found. The algorithm you are looking for does not exist in this data structure.
     </p>
     <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-        <a href="/" class="page-nav-link" style="display: inline-block; text-decoration: none;">Go Home</a>
-        <a href="/docs/" class="page-nav-link" style="display: inline-block; text-decoration: none;">Browse Docs</a>
+        <a href="{{ .Site.BaseURL }}" class="page-nav-link" style="display: inline-block; text-decoration: none;">Go Home</a>
+        <a href="{{ "docs/" | absURL }}" class="page-nav-link" style="display: inline-block; text-decoration: none;">Browse Docs</a>
     </div>
 </article>
 {{ end }}

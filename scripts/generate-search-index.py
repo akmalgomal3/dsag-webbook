@@ -42,7 +42,7 @@ for md_file in sorted(glob.glob('content/en/docs/**/*.md', recursive=True)):
     
     # Generate URL from file path
     rel_path = md_file.replace('content/en/', '').replace('.md', '/')
-    url = '/' + rel_path.lower().replace('_', '-')
+    url = '/dsag-webbook/' + rel_path.lower().replace('_', '-')
     
     title = fm.get('title', '')
     description = fm.get('description', '')
