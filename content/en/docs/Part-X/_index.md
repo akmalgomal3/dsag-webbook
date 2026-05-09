@@ -1,6 +1,6 @@
 ---
 weight: 100000
-title: "Part 10 - Advanced Graph Algorithms"
+title: "Part X - Advanced Graph Algorithms"
 description: "Advanced Graph Algorithms"
 icon: "book"
 date: "2024-08-24T23:42:09+07:00"

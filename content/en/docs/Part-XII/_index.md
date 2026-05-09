@@ -1,6 +1,6 @@
 ---
 weight: 120000
-title: "Part 12 - Advanced Topics"
+title: "Part XII - Advanced Topics"
 description: "Advanced Topics"
 icon: "book"
 date: "2024-08-24T23:42:09+07:00"
