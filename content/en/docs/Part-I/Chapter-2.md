@@ -255,7 +255,7 @@ func main() {
 | Probabilistic | Expected performance | Randomized QuickSort <code>O(n log n)</code> expected |
 | P-Class | <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">Polynomial time</abbr> solvable | <code>O(n^k)</code> |
 | <abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr> | Verifiable in poly time | No known poly-time algorithm exists |
-| Parameterized | Fixed-parameter tractable | <code>O(f(k) \cdot n^c)</code> |
+| Parameterized | Fixed-parameter tractable | <code>O(f(k) × n<sup>c</sup>)</code> |
 
 ### Pseudocode
 
