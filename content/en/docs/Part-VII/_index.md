@@ -1,7 +1,7 @@
 ---
 weight: 70000
 title: "Part VII - Advanced Topics"
-description: ""
+description: "Advanced Topics"
 icon: "library_books"
 date: "2024-08-25T20:56:06+07:00"
 lastmod: "2024-08-25T20:56:06+07:00"

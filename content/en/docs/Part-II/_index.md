@@ -1,7 +1,7 @@
 ---
 weight: 20000
 title: "Part II - Basic Data Structures"
-description: ""
+description: "Basic Data Structures"
 icon: "sort"
 date: "2024-08-24T23:41:01+07:00"
 lastmod: "2024-08-24T23:41:01+07:00"
