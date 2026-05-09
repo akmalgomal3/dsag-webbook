@@ -27,7 +27,7 @@ jobs:
       run: python3 scripts/generate-search-index.py
 
     - name: Build Site
-      run: hugo --quiet
+      run: hugo --minify --quiet
 
     - name: Verify Build Output
       run: |

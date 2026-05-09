@@ -140,8 +140,8 @@ Gunakan alert sesuai konteks:
 ## Build & Deploy
 
 ```bash
-# Build
-hugo --quiet
+# Build (with minification)
+hugo --minify --quiet
 
 # Development server
 hugo server --port 1313

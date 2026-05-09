@@ -34,7 +34,7 @@ jobs:
       run: python3 scripts/generate-search-index.py
 
     - name: Build Site
-      run: hugo --baseURL 'https://akmalgomal3.github.io/dsag-webbook/' --quiet
+      run: hugo --baseURL 'https://akmalgomal3.github.io/dsag-webbook/' --minify --quiet
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
