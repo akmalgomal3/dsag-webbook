@@ -947,23 +947,77 @@ li > ul, li > ol {
     .page-nav,
     .breadcrumb,
     .theme-toggle,
-    .code-header {
-        display: none;
+    .code-header,
+    .search-container,
+    #sidebar-toggle,
+    .sidebar,
+    .sidebar-overlay {
+        display: none !important;
     }
 
     body {
-        font-size: 12pt;
+        font-size: 11pt;
+        line-height: 1.5;
         background: white;
+        color: black;
+        margin: 0;
+        padding: 0;
+    }
+
+    .main-content {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1, h2, h3 {
+        page-break-after: avoid;
         color: black;
     }
 
-    pre {
-        white-space: pre-wrap;
-        border: 1px solid #ccc;
+    table {
+        page-break-inside: avoid;
+        font-size: 10pt;
     }
 
-    .code-block {
+    pre, .code-block, .highlight {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        border: 1px solid #ccc;
+        background: #f5f5f5 !important;
+        color: black !important;
         page-break-inside: avoid;
+    }
+
+    code {
+        background: #f5f5f5 !important;
+        color: black !important;
+    }
+
+    a {
+        color: black;
+        text-decoration: none;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        color: #666;
+    }
+
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    .alert {
+        border: 1px solid #ccc;
+        background: #f9f9f9 !important;
+        color: black !important;
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+        font-size: 9pt;
     }
 }
 
