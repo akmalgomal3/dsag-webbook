@@ -159,11 +159,11 @@ func main() {
 
 | Technique | Strategy | Example | Time | Space |
 |--------|----------|--------|------|-------|
-| Divide and Conquer | Divide, solve, merge | Merge sort | ... | ... |
-| Dynamic Programming | Subproblem + memo | Fibonacci DP | ... | ... |
-| Greedy | Local optimal | Activity selection | ... | ... |
-| Backtracking | DFS + prune | N-Queens | ... | ... |
-| Randomized | Random choice | Randomized quicksort | ... expected | ... |
+| Divide and Conquer | Divide, solve, merge | Merge sort | `O(n log n)` | `O(n)` |
+| Dynamic Programming | Subproblem + memo | Fibonacci DP | `O(n)` | `O(n)` |
+| Greedy | Local optimal | Activity selection | `O(n log n)` | `O(n)` |
+| Backtracking | DFS + prune | N-Queens | `O(n!)` worst | `O(n)` |
+| Randomized | Random choice | Randomized quicksort | `O(n log n)` expected | `O(log n)` |
 
 ### Pseudocode
 
@@ -196,10 +196,10 @@ Dynamic programming for Fibonacci:
 
 | Tool/Technique | Command | Usage |
 |-------------|----------|----------|
-| Benchmark | ... | Measure throughput |
-| CPU Profile | ... | Hotspot detection |
-| Memory Profile | ... | Allocation tracking |
-| Trace | ... | Goroutine visualization |
+| Benchmark | `go test -bench=.` | Measure throughput |
+| CPU Profile | `go tool pprof cpu.prof` | Hotspot detection |
+| Memory Profile | `go tool pprof mem.prof` | Allocation tracking |
+| Trace | `go tool trace trace.out` | Goroutine visualization |
 | Inlining | Compiler auto | Reduce call overhead |
 
 ### Pseudocode
@@ -207,7 +207,7 @@ Dynamic programming for Fibonacci:
 
 ### Idiomatic Go Implementation
 
-Benchmarking with ...:
+Benchmarking with `testing.B` and `go test -bench=.`:
 
 
 ### Decision Matrix

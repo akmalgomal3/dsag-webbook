@@ -27,8 +27,8 @@ Chapter 3 focuses on why Go is an exceptional language for data structures and a
 | Feature | Advantage | Trade-off |
 |-------|------------|-----------|
 | <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> | Automatic, no use-after-free | Pause time (typically <1ms) |
-| Slice | Dynamic array, amortized ... append | Reallocates when capacity is full |
-| Map | Hash table, ... avg | Unordered, not concurrent-safe |
+| Slice | Dynamic array, amortized `O(1)` append | Reallocates when capacity is full |
+| Map | Hash table, `O(1)` avg | Unordered, not concurrent-safe |
 | Goroutine | Lightweight concurrency | Scheduling overhead |
 
 ### Pseudocode
@@ -60,12 +60,12 @@ Comparison between array and slice:
 
 | Structure | Go Type | Access | Insert | Delete | Search |
 |----------|---------|--------|--------|--------|--------|
-| Array | ... | ... | — | — | ... |
-| Slice | ... | ... | ...* | ... | ... |
-| Linked List | ... | ... | ... | ... | ... |
-| Map | ... | ... avg | ... avg | ... avg | ... avg |
-| Binary Tree | custom struct | ... | ... | ... | ... |
-| Graph | ... | ... adj | ... edge | ... edge | ... |
+| Array | `[N]T` | `O(1)` | — | — | `O(n)` |
+| Slice | `[]T` | `O(1)` | `O(n)`* | `O(n)`* | `O(n)` |
+| Linked List | `list.List` | `O(n)` | `O(1)` | `O(n)` | `O(n)` |
+| Map | `map[K]V` | `O(1)` avg | `O(1)` avg | `O(1)` avg | `O(1)` avg |
+| Binary Tree | custom struct | `O(log n)` | `O(log n)` | `O(log n)` | `O(log n)` |
+| Graph | `[][]int` adj | `O(1)` adj | `O(1)` edge | `O(1)` edge | `O(V+E)` |
 
 *amortized
 
@@ -88,7 +88,7 @@ Linked lists and graphs using the standard library and structs:
 ### Edge Cases & Pitfalls
 - **Case slice capacity:** Appending beyond capacity causes reallocation and copying of all elements.
 - **Case map key:** Key types must be comparable; slices and maps cannot be used as keys.
-- **Case list iteration:** Do not modify a list during iteration without storing ... first.
+- **Case list iteration:** Do not modify a list during iteration without storing the next node first.
 
 ## 3.3. Algorithmic Paradigms and Their Go Implementations
 
@@ -98,10 +98,10 @@ Linked lists and graphs using the standard library and structs:
 
 | Paradigm | Characteristic | Example | Complexity |
 |-----------|---------------|--------|--------------|
-| Divide and Conquer | Divide, solve, merge | Merge sort | ... |
-| Dynamic Programming | Overlapping subproblems | Knapsack | ... |
-| Greedy | Locally optimal choices | Prim's MST | ... |
-| Backtracking | Explore & prune | N-Queens | ... worst |
+| Divide and Conquer | Divide, solve, merge | Merge sort | `O(n log n)` |
+| Dynamic Programming | Overlapping subproblems | Knapsack | `O(nW)` |
+| Greedy | Locally optimal choices | Prim's MST | `O(E log V)` |
+| Backtracking | Explore & prune | N-Queens | `O(n!)` worst |
 
 ### Pseudocode
 
@@ -132,19 +132,19 @@ Divide and conquer using slices:
 
 | Tool | Command | Usage |
 |------|----------|----------|
-| Go modules | ... | Dependency management |
-| Testing | ... | Unit testing |
-| Benchmark | ... | Performance measurement |
-| Format | ... | Code formatting |
-| Vet | ... | Static analysis |
-| Profile | ... | Bottleneck detection |
+| Go modules | `go mod init` | Dependency management |
+| Testing | `go test -v` | Unit testing |
+| Benchmark | `go test -bench=.` | Performance measurement |
+| Format | `go fmt` | Code formatting |
+| Vet | `go vet` | Static analysis |
+| Profile | `go tool pprof` | Bottleneck detection |
 
 ### Pseudocode
 
 
 ### Idiomatic Go Implementation
 
-Simple benchmarking with ...:
+Simple benchmarking with `testing.B` and `go test -bench=.`:
 
 
 ### Decision Matrix
@@ -156,21 +156,21 @@ Simple benchmarking with ...:
 | The team needs a consistent code style | Solo project with personal style preferences |
 
 ### Edge Cases & Pitfalls
-- **Case benchmark without reset:** Setup time is included in the measurement; isolate it by capturing ... after the setup phase.
+- **Case benchmark without reset:** Setup time is included in the measurement; isolate it by capturing `time.Since(start)` after the setup phase.
 - **Case modifying input:** In-place sorting on benchmark data causes subsequent iterations to differ; copy the data first.
-- **Case ignoring ...:** Always run ... for concurrent code.
+- **Case ignoring races:** Always run `go test -race` for concurrent code.
 
 ## 3.5. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Array | ... | ... search, ... access | — | Fixed buffer, stack allocation |
-| Slice | ... | ... insert/delete | — | Dynamic array, stack/heap |
-| List | ... | ... access | — | Frequent inserts/deletes |
-| Map | ... | ... avg | — | Key-value lookup |
-| Heap | ... | ... push/pop | — | Priority queue |
-| Set | ... | ... avg | — | Uniqueness check |
-| Graph | ... | Network/relationship | ... traversal |
+| Array | `[N]T` | `O(n)` search, `O(1)` access | — | Fixed buffer, stack allocation |
+| Slice | `[]T` | `O(n)` insert/delete | — | Dynamic array, stack/heap |
+| List | `list.List` | `O(n)` access | — | Frequent inserts/deletes |
+| Map | `map[K]V` | `O(1)` avg | — | Key-value lookup |
+| Heap | `container/heap` | `O(log n)` push/pop | — | Priority queue |
+| Set | `map[T]bool` | `O(1)` avg | — | Uniqueness check |
+| Graph | `[][]int` | Network/relationship | `O(V+E)` traversal |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 3:</strong> This chapter explores why Go is well-suited for data structures and algorithms, covering fundamental structures such as arrays, slices, maps, linked lists, and graphs. It discusses algorithmic paradigms including <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, and greedy strategies, along with Go's built-in testing and benchmarking tools for performance measurement.

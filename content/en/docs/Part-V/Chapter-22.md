@@ -188,15 +188,15 @@ func main() {
 ### Edge Cases & Pitfalls
 
 - **Negative cycle:** Bellman-Ford will fail; you must detect this before running Dijkstra.
-- **Reweight error:** Ensure that ... holds true after reweighting.
+- **Reweight error:** Ensure that `h(v) = h(u) + w(u,v)` holds true after reweighting.
 
 ## 22.3. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Floyd-Warshall | ... | ... | ... | Dense, small V |
-| Johnson | ... + ... | ... | ... | Sparse, negative weights |
-| Naive V×Dijkstra | ... | ... | ... | Non-negative, sparse |
+| Floyd-Warshall | `[][]int` matrix | `O(V³)` | `O(V²)` | Dense, small V |
+| Johnson | `[]Edge` + PQ | `O(V² log V + VE)` | `O(V²)` | Sparse, negative weights |
+| Naive V×Dijkstra | `[]Edge` + PQ | `O(VE log V)` | `O(V²)` | Non-negative, sparse |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 22:</strong> This chapter presents Floyd-Warshall for dense graphs and Johnson's algorithm for sparse graphs with negative weights. Use Floyd-Warshall for small dense graphs requiring all-pairs shortest paths; prefer Johnson's for large sparse graphs to achieve better <abbr title="Relating to values or properties approached as a limit, used in algorithm analysis.">asymptotic</abbr> performance.

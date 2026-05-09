@@ -98,8 +98,8 @@ func main() {
 
 ### Edge Cases & Pitfalls
 
-- **Disconnected graph:** An MST only covers the largest component; check if ....
-- **Union-Find without path compression:** This can degenerate to ... per operation, wrecking performance.
+- **Disconnected graph:** An MST only covers the largest component; check connectivity first with BFS/DFS before computing MST.
+- **Union-Find without path compression:** This can degenerate to `O(log V)` per operation, wrecking performance.
 
 ## 16.2. Prim’s Algorithm
 
@@ -109,8 +109,8 @@ func main() {
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Extract-Min | ... | Binary heap |
-| Total | ... | Ideal for dense graphs |
+| Extract-Min | `O(log V)` | Binary heap |
+| Total | `O((V + E) log V)` | Ideal for dense graphs |
 
 ### Pseudocode
 
@@ -242,9 +242,9 @@ func main() {
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Kruskal | ... + Union-Find | ... | ... | Edge list, sparse graph |
-| Prim | ... | ... | ... | Dense graph, adjacency list |
-| Borůvka | Union-Find | ... | ... | Parallel, distributed |
+| Kruskal | `[]Edge` + Union-Find | `O(E log E)` | `O(V)` | Edge list, sparse graph |
+| Prim | `[]Edge` + PQ | `O((V + E) log V)` | `O(V)` | Dense graph, adjacency list |
+| Borůvka | Union-Find | `O(E log V)` | `O(V)` | Parallel, distributed |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 16:</strong> This chapter covers Kruskal's, Prim's, and Borůvka's algorithms for <abbr title="A spanning tree with the minimum possible total edge weight.">Minimum Spanning Tree</abbr>. Use Kruskal when you have an <abbr title="A connection between two vertices in a graph.">edge</abbr> list, Prim for dense graphs with adjacency lists, and Borůvka for parallel or distributed computation scenarios.

@@ -128,18 +128,18 @@ Go inherently lacks operator overloading. Always employ explicit method receiver
 
 ## 34.2. FFT and Convolution
 
-**Definition:** The Fast Fourier Transform (FFT) calculates the Discrete Fourier Transform with a complexity of .... It is heavily utilized for executing polynomial multiplication via convolution.
+**Definition:** The Fast Fourier Transform (FFT) calculates the Discrete Fourier Transform with a complexity of `O(n log n)`. It is heavily utilized for executing polynomial multiplication via convolution.
 
 ### Operations & Complexity
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Naive DFT | ... | ... | Direct mathematical execution |
-| Cooley-Tukey FFT | ... | ... | Standard recursive method |
-| Iterative FFT | ... | ... | Memory-efficient in-place execution |
-| Bluestein | ... | ... | Supports arbitrary input sizes |
+| Naive DFT | `O(n²)` | `O(n)` | Direct mathematical execution |
+| Cooley-Tukey FFT | `O(n log n)` | `O(n)` | Standard recursive method |
+| Iterative FFT | `O(n log n)` | `O(1)` in-place | Memory-efficient in-place execution |
+| Bluestein | `O(n log n)` | `O(n)` | Supports arbitrary input sizes |
 
-Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation demands roughly 100 lines of code. For production integrity, depend on libraries like ... or .... Below is an iterative Cooley-Tukey demonstration.
+Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation demands roughly 100 lines of code. For production integrity, depend on libraries like `github.com/mjibson/go-dsp` or `github.com/cpmech/fftx`. Below is an iterative Cooley-Tukey demonstration.
 
 ### Pseudocode
 
@@ -147,7 +147,7 @@ Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation de
 ### Idiomatic Go Implementation
 
 
-FFT structurally mandates an input length that is a strict power of 2 (pad with zeros if necessary). Utilize ... for complex operations. Floating-point rounding errors often yield minuscule imaginary artifacts; explicitly extract ... and perform manual rounding if necessary.
+FFT structurally mandates an input length that is a strict power of 2 (pad with zeros if necessary). Utilize `math/complex` for complex operations. Floating-point rounding errors often yield minuscule imaginary artifacts; explicitly extract `real()` and perform manual rounding if necessary.
 
 ### Decision Matrix
 
@@ -238,13 +238,13 @@ Lagrange interpolation holds remarkable stability solely for a sparse number of 
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Polynomial | ... | — | ... | Standard coefficient storage |
-| Horner evaluation | func | ... | ... | Hyper-fast value evaluation |
-| Naive multiply | nested loop | ... | ... | Handling tiny polynomial degrees |
-| FFT multiply | ... | ... | ... | Handling massive polynomial degrees |
-| Interpolation | func | ... | ... | Precise data curve fitting |
-| DFT | ... | ... | ... | Thorough signal analysis |
-| FFT | custom/3rd party | ... | ... | Extreme high-speed transformation |
+| Polynomial | `[]float64` | `O(n)` | `O(n)` | Standard coefficient storage |
+| Horner evaluation | func | `O(n)` | `O(1)` | Hyper-fast value evaluation |
+| Naive multiply | nested loop | `O(n²)` | `O(n)` | Handling tiny polynomial degrees |
+| FFT multiply | `O(n log n)` | `O(n log n)` | `O(n)` | Handling massive polynomial degrees |
+| Interpolation | func | `O(n²)` | `O(n)` | Precise data curve fitting |
+| DFT | `O(n²)` | `O(n²)` | `O(n)` | Thorough signal analysis |
+| FFT | custom/3rd party | `O(n log n)` | `O(n)` | Extreme high-speed transformation |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 34:</strong> This chapter dissects polynomial representation employing coefficient slices, hyper-fast Horner evaluation occurring in <code>O(n)</code>, and both naive <code>O(n^2)</code> and advanced FFT <code>O(n log n)</code> multiplications, alongside Lagrange interpolation. Rely on FFT strictly for massive <abbr title="The number of edges incident to a vertex.">degree</abbr> polynomial multiplications and Horner for rapid evaluations.

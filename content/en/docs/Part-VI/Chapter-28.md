@@ -271,8 +271,8 @@ A <abbr title="A probabilistic data structure that allows fast search within an 
 |-----------|------|-------------------|
 | k rounds | <code>O(k log³ n)</code> | ≤ 4^(-k) |
 | k=5 | <code>O(log³ n)</code> | < 0.1% |
-| k=20 | ... | < 10^(-12) |
-| k=40 | ... | < 10^(-24) |
+| k=20 | <code>O(log³ n)</code> | < 10^(-12) |
+| k=40 | <code>O(log³ n)</code> | < 10^(-24) |
 
 ### Pseudocode
 
@@ -292,7 +292,7 @@ A <abbr title="A probabilistic data structure that allows fast search within an 
 ### Edge Cases & Pitfalls
 
 - **Carmichael numbers:** Miller-Rabin successfully identifies these, unlike a naive Fermat test.
-- **Modular multiplication overflow:** Utilize ... vigorously for any n > 2^32.
+- **Modular multiplication overflow:** Utilize `math/big.Int.ModMul` vigorously for any n > 2^32.
 - **Deterministic variant:** For any n < 2^64, testing strictly against the base set {2, 3, 5, 7, 11, 13, 17} is provably deterministic.
 
 ## 28.4. Reservoir Sampling
@@ -303,8 +303,8 @@ A <abbr title="A probabilistic data structure that allows fast search within an 
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Reservoir k | ... | ... | Handles a stream of completely unknown size |
-| Weighted | ... | ... | Executes priority-based sampling |
+| Reservoir k | `O(k)` per item | `O(k)` | Handles a stream of completely unknown size |
+| Weighted | `O(k log k)` per item | `O(k)` | Executes priority-based sampling |
 
 ### Pseudocode
 

@@ -122,9 +122,9 @@ func main() {
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| BFS augmenting | ... | Shortest path by edge count |
-| Iterations | ... | Bound on the number of augmenting paths |
-| Total | ... | Strictly polynomial |
+| BFS augmenting | `O(V)` | Shortest path by edge count |
+| Iterations | `O(VE)` | Bound on the number of augmenting paths |
+| Total | `O(V E²)` | Strictly polynomial |
 
 ### Pseudocode
 
@@ -184,15 +184,15 @@ func main() {
 
 ## 17.3. Dinic’s Algorithm
 
-**Definition:** Dinic's algorithm utilizes a level graph (built via BFS) and blocking flows (found via DFS) to dramatically accelerate maximum flow computations, achieving ... complexity.
+**Definition:** Dinic's algorithm utilizes a level graph (built via BFS) and blocking flows (found via DFS) to dramatically accelerate maximum flow computations, achieving `O(E √V)` complexity.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Build level graph | ... | Using BFS |
-| Blocking flow | ... | Using DFS |
-| Total | ... | Extremely fast for dense graphs |
+| Build level graph | `O(E)` | Using BFS |
+| Blocking flow | `O(VE)` | Using DFS |
+| Total | `O(E √V)` | Extremely fast for dense graphs |
 
 ### Pseudocode
 
@@ -268,8 +268,8 @@ func main() {
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Successive shortest path | ... | F = max flow |
-| Total | ... | Driven by Dijkstra |
+| Successive shortest path | `O(F · E log V)` | F = max flow |
+| Total | `O(F · E log V)` | Driven by Dijkstra |
 
 ### Pseudocode
 
@@ -334,10 +334,10 @@ func main() {
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Ford-Fulkerson | Recursive DFS | ... | ... | Educational / Conceptual |
-| Edmonds-Karp | BFS + Queue | ... | ... | General purpose max flow |
-| Dinic | BFS level + DFS | ... | ... | Dense networks |
-| Min-Cost Flow | ... | ... | ... | Logistics, optimal assignment |
+| Ford-Fulkerson | Recursive DFS | `O(E · maxFlow)` | `O(V²)` | Educational / Conceptual |
+| Edmonds-Karp | BFS + Queue | `O(V E²)` | `O(V²)` | General purpose max flow |
+| Dinic | BFS level + DFS | `O(E √V)` | `O(V²)` | Dense networks |
+| Min-Cost Flow | Dijkstra + PQ | `O(F · E log V)` | `O(V²)` | Logistics, optimal assignment |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 17:</strong> This chapter discusses network flow algorithms: Ford-Fulkerson, Edmonds-Karp, Dinic's, and min-cost flow. Use Edmonds-Karp for <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">polynomial time</abbr> guarantees, Dinic's for dense networks requiring high performance, and min-cost flow when minimizing transportation or assignment cost.

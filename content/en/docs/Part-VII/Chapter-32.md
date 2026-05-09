@@ -300,8 +300,8 @@ The PoW example provided acts purely as a demonstration. A rigorous production P
 |-----------|------------|-----------------|------------|
 | PoW | Broadcast | 51% | E.g., Bitcoin |
 | PoS | Broadcast | 33% | E.g., Ethereum 2.0 |
-| PBFT | <code>O(n^2)</code> | f < n/3 | Ideal for permissioned systems |
-| Raft | ... | Leader failure | Strong for localized Key-value stores |
+| PBFT | `O(n²)` | f < n/3 | Ideal for permissioned systems |
+| Raft | `O(n)` | Leader failure | Strong for localized Key-value stores |
 
 ### Pseudocode
 
@@ -328,11 +328,11 @@ This code represents an aggressively simplified PoS simulation. True production 
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Block | ... | ... create | ... | Core transaction container |
-| Merkle Tree | recursive hash | ... build | ... | Quick subset verification |
-| PoW Mining | brute-force loop | ... | ... | Fundamental consensus |
-| Chain | ... | ... append | ... | Underlying ledger |
-| Hash | ... | ... | 32 bytes | Rigid data integrity |
+| Block | `struct` | `O(1)` create | `O(1)` | Core transaction container |
+| Merkle Tree | recursive hash | `O(n)` build | `O(n)` | Quick subset verification |
+| PoW Mining | brute-force loop | `O(2^k)` | — | Fundamental consensus |
+| Chain | `[]Block` | `O(1)` append | grows | Underlying ledger |
+| Hash | `crypto/sha256` | `O(n)` | 32 bytes | Rigid data integrity |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 32:</strong> This chapter dissects foundational blockchain data structures: linked blocks utilizing SHA-256 hashes, Merkle trees engineered for transaction subset verification, Proof of Work (PoW), and foundational Proof of Stake (PoS) consensus strategies. Leverage Merkle trees for light clients, PoW for uncompromising decentralization, and PoS when maximizing energy efficiency.

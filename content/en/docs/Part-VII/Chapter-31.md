@@ -388,14 +388,14 @@ Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute 
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| SHA-256 | ... | ... | — | Data integrity |
-| AES-GCM | ... + cipher | ... | — | Standard symmetric encryption |
-| HMAC | ... | ... | — | Authenticate messages |
-| ECDSA | ... | ... | — | Standard digital signatures |
-| Ed25519 | ... | ... | — | Fast, modern signatures |
-| bcrypt | ... | ... | — | Hash passwords |
-| Argon2 | golang.org/x/crypto/argon2 | — | — | Advanced password hashing |
-| TLS | ... | — | — | Secure transport layers |
+| SHA-256 | `crypto/sha256` | `O(n)` | 32 bytes | Data integrity |
+| AES-GCM | `crypto/aes` + `crypto/cipher` | `O(n)` | varies | Standard symmetric encryption |
+| HMAC | `crypto/hmac` | `O(n)` | — | Authenticate messages |
+| ECDSA | `crypto/ecdsa` | `O(n)` | — | Standard digital signatures |
+| Ed25519 | `crypto/ed25519` | `O(n)` | — | Fast, modern signatures |
+| bcrypt | `golang.org/x/crypto/bcrypt` | `O(cost)` | — | Hash passwords |
+| Argon2 | `golang.org/x/crypto/argon2` | — | — | Advanced password hashing |
+| TLS | `crypto/tls` | — | — | Secure transport layers |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 31:</strong> This chapter dissects cryptographic primitives in Go: hashing (SHA-256), symmetric encryption (AES-GCM), asymmetric encryption (ECDSA/Ed25519), HMACs, digital signatures, and password hashing (bcrypt/Argon2). Rely exclusively on the standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> `crypto/` package for cryptographic operations and rigorously avoid MD5/SHA-1 for anything security-related.

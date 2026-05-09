@@ -186,9 +186,9 @@ func main() {
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| BFS level | ... | Per phase |
-| DFS augment | ... | Per phase |
-| Total | ... | Up to ... phases |
+| BFS level | `O(E)` | Per phase |
+| DFS augment | `O(V)` | Per phase |
+| Total | `O(E √V)` | Up to `√V` phases |
 
 ### Pseudocode
 
@@ -255,16 +255,16 @@ func main() {
 
 ### Edge Cases & Pitfalls
 
-- **Left-right partition:** Double-check that ... and ... sizes accurately match your inputs.
+- **Left-right partition:** Double-check that left and right partition sizes accurately match your inputs.
 - **Multiple edges:** Hopcroft-Karp handles duplicate edges gracefully without breaking.
 
 ## 18.4. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Bipartite Check | ... color | ... | ... | Structure validation |
-| Hungarian | ... | ... | ... | Weighted assignment |
-| Hopcroft-Karp | ... adj | ... | ... | Max cardinality matching |
+| Bipartite Check | `[]int` color | `O(V + E)` | `O(V)` | Structure validation |
+| Hungarian | `[][]int` matrix | `O(V³)` | `O(V²)` | Weighted assignment |
+| Hopcroft-Karp | `[][]int` adj | `O(E √V)` | `O(V)` | Max cardinality matching |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 18:</strong> This chapter covers bipartite <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> validation, the Hungarian algorithm for weighted assignment, and Hopcroft-Karp for maximum cardinality matching. Use Hungarian for square cost matrices and Hopcroft-Karp for large unweighted bipartite matching problems.

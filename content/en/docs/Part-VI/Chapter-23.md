@@ -176,10 +176,10 @@ func main() {
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Merge sort | ... | ... | Stable, predictable |
-| Quick sort | ... avg | ... | In-place, fast avg |
-| Binary search | ... | ... | Sorted data required |
-| Strassen | ... | ... | Large matrices only |
+| Merge sort | `O(n log n)` | `O(n)` | Stable, predictable |
+| Quick sort | `O(n log n)` avg | `O(log n)` | In-place, fast avg |
+| Binary search | `O(log n)` | `O(1)` | Sorted data required |
+| Strassen | `O(n^2.81)` | `O(n²)` | Large matrices only |
 
 ### Pseudocode
 

@@ -131,10 +131,10 @@ Go lacks operator overloading. Define explicit functions for every vector operat
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Transpose | ... | Rows ↔ Columns |
-| Matrix Multiply | ... naive, ... Strassen | Standard multiplication |
-| Determinant | ... | LU decomposition |
-| Inverse | ... | Gauss-Jordan elimination |
+| Transpose | `O(n²)` | Rows ↔ Columns |
+| Matrix Multiply | `O(n³)` naive, `O(n^2.81)` Strassen | Standard multiplication |
+| Determinant | `O(n³)` | LU decomposition |
+| Inverse | `O(n³)` | Gauss-Jordan elimination |
 
 ### Pseudocode
 
@@ -154,7 +154,7 @@ Go lacks operator overloading. Define explicit functions for every vector operat
 ### Edge Cases & Pitfalls
 
 - **Singular matrix:** Inverses do not exist; you must consistently check for errors.
-- **Floating-point error:** Never perform a strict ... check; always use an epsilon delta.
+- **Floating-point error:** Never perform a strict `==` check; always use an epsilon delta.
 - **Memory layout:** Go slices are row-major. Maintain an awareness of cache locality.
 
 ## 29.3. Tensors and Multidimensional Data
@@ -165,9 +165,9 @@ Go lacks operator overloading. Define explicit functions for every vector operat
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Tensor Add | ... | Element-wise addition |
-| Tensor Contraction | ... | Sum over specific indices |
-| Reshape | ... | Viewing memory without a copy |
+| Tensor Add | `O(n)` | Element-wise addition |
+| Tensor Contraction | `O(n^k)` | Sum over specific indices |
+| Reshape | `O(1)` | Viewing memory without a copy |
 
 ### Pseudocode
 
@@ -175,7 +175,7 @@ Go lacks operator overloading. Define explicit functions for every vector operat
 ### Idiomatic Go Implementation
 
 
-Rank-3 tensors formulated via nested slices in Go carry heavy pointer overhead. For significantly large tensors, utilize a flat 1D slice with manual indexing: ....
+Rank-3 tensors formulated via nested slices in Go carry heavy pointer overhead. For significantly large tensors, utilize a flat 1D slice with manual indexing: `flat[i*H*W + j*W + k]`.
 
 ### Decision Matrix
 
@@ -186,7 +186,7 @@ Rank-3 tensors formulated via nested slices in Go carry heavy pointer overhead. 
 
 ### Edge Cases & Pitfalls
 
-- **Nil slices:** Always verify ... before attempting to access ....
+- **Nil slices:** Always verify `len(slice) > 0` before attempting to access `slice[0]`.
 - **Jagged arrays:** Go slices of slices are not inherently uniform. Mathematical tensors *must* be uniform.
 - **GC pressure:** Deeply nested slices yield countless individual objects. Flat slices dramatically ease Garbage Collection.
 
@@ -201,7 +201,7 @@ Rank-3 tensors formulated via nested slices in Go carry heavy pointer overhead. 
 | Loop reordering | 2-10x | Dramatically enhances cache locality |
 | Block matrix | 2-5x | Ensure operations fit nicely within L1/L2 caches |
 | Goroutine parallel | p× (cores) | Apply row-wise decomposition |
-| Strassen | ... | Theoretical limit, rarely practical for everyday n |
+| Strassen | 0.8-2x | Theoretical limit, rarely practical for everyday n |
 
 ### Pseudocode
 
@@ -226,13 +226,13 @@ A loop ordering of ... proves significantly faster than ... specifically due to 
 
 ## Quick Reference
 
-| Name | Go Type | Time | Space | Use Case |
-|------|---------|------|-------|----------|
-| Vector | ... | ... access | varies | 1D Data |
-| Matrix | ... | ... access | varies | 2D Data |
-| Tensor | ... | ... access | varies | ML batching |
-| Dense Matrix | ... | ... access | varies | Heavy linear algebra |
-| Sparse | ... | ... access | varies | Graphs, NLP sparse arrays |
+| Name | Go Type | Complexity | Access | Use Case |
+|------|---------|------------|--------|----------|
+| Vector | `[]float64` | `O(1)` access | varies | 1D Data |
+| Matrix | `[][]float64` | `O(1)` access | varies | 2D Data |
+| Tensor | `[][][]float64` | `O(1)` access | varies | ML batching |
+| Dense Matrix | `[]float64` flat | `O(1)` access | varies | Heavy linear algebra |
+| Sparse | `map[int]map[int]float64` | `O(1)` access avg | varies | Graphs, NLP sparse arrays |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 29:</strong> This chapter covers vector, matrix, and tensor operations with idiomatic Go implementations. Utilize standard slices for vectors, the `gonum` package for large-scale linear algebra, nested slices for small-scale tensors, and manually indexed flat slices for large tensors. Parallelizing code with goroutines becomes highly effective when matrix dimensions exceed 256×256.

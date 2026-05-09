@@ -131,10 +131,10 @@ Go's <abbr title="The period during which a computer program is executing.">runt
 
 | Primitive | Lock | Unlock | Description |
 |-----------|------|--------|------------|
-| sync.Mutex | ... | ... | Absolute mutual exclusion |
-| sync.RWMutex | ... R, ... W | ... | Multiple concurrent readers, single writer |
-| sync.Map | ... avg | — | Specialized concurrent-safe map |
-| Channel | ... send/recv | — | Pure CSP-style communication |
+| sync.Mutex | `Lock()` | `Unlock()` | Absolute mutual exclusion |
+| sync.RWMutex | `RLock()` R, `Lock()` W | `RUnlock()` / `Unlock()` | Multiple concurrent readers, single writer |
+| sync.Map | `Load()` avg | — | Specialized concurrent-safe map |
+| Channel | `<-ch` send/recv | — | Pure CSP-style communication |
 
 ### Pseudocode
 
@@ -258,9 +258,9 @@ func main() {
 
 | Pattern | Throughput | Latency | Description |
 |---------|------------|---------|------------|
-| Worker Pool | ... | ... | Bounds concurrency |
-| Pipeline | ... | ... | Stream processing architecture |
-| Fan-out/Fan-in | ... | ... | Highly parallel stages |
+| Worker Pool | High | Low | Bounds concurrency |
+| Pipeline | Medium | Low | Stream processing architecture |
+| Fan-out/Fan-in | Very High | Medium | Highly parallel stages |
 
 ### Pseudocode
 
@@ -280,19 +280,19 @@ Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, lar
 ### Edge Cases & Pitfalls
 
 - **Channel deadlock:** Guarantee that there is always an active goroutine reading from every channel.
-- **Panic propagation:** Proactively use ... within worker goroutines or utilize dedicated error channels.
+- **Panic propagation:** Proactively use `defer/recover()` within worker goroutines or utilize dedicated error channels.
 
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Mutex | ... | — | — | Shared state protection |
-| RWMutex | ... | — | — | Read-heavy caching |
-| WaitGroup | ... | — | — | Barrier synchronization |
-| Atomic | ... | ... | — | Lock-free counters and flags |
-| Channel | ... | Blocking | varies | Pure CSP communication |
-| sync.Map | ... | — | — | Highly concurrent maps |
-| Context | ... | — | — | Cancellations and timeouts |
+| Mutex | `sync.Mutex` | — | 1 word | Shared state protection |
+| RWMutex | `sync.RWMutex` | — | 1 word | Read-heavy caching |
+| WaitGroup | `sync.WaitGroup` | — | 1 word | Barrier synchronization |
+| Atomic | `sync/atomic` | `O(1)` | — | Lock-free counters and flags |
+| Channel | `chan T` | Blocking | varies | Pure CSP communication |
+| sync.Map | `sync.Map` | — | — | Highly concurrent maps |
+| Context | `context.Context` | — | — | Cancellations and timeouts |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 30:</strong> This chapter discusses parallelism in Go using goroutines, synchronization primitives (Mutex, RWMutex, atomic, WaitGroup), channels, as well as worker pool and pipeline patterns. Utilize goroutines for independent CPU-bound tasks, channels for coordination, and worker pools to strictly bound concurrency when resources are limited.
