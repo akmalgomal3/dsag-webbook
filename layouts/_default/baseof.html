@@ -35,6 +35,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
             <a href="/" class="site-logo">{{ .Site.Title }}</a>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+                <div id="search-results" class="search-results"></div>
+            </div>
             <nav>
                 <ul class="nav-links">
                     <li><a href="/docs/" {{ if eq .Section "docs" }}class="active"{{ end }}>Docs</a></li>
@@ -182,6 +186,73 @@
         if (localStorage.getItem('sidebar') === 'open') {
             openSidebar();
         }
+
+        // Search functionality
+        var searchInput = document.getElementById('search-input');
+        var searchResults = document.getElementById('search-results');
+        var searchIndex = null;
+
+        fetch('/search.json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) { searchIndex = data; });
+
+        function performSearch(query) {
+            if (!searchIndex || !query) {
+                searchResults.innerHTML = '';
+                searchResults.style.display = 'none';
+                return;
+            }
+            query = query.toLowerCase();
+            var matches = [];
+            for (var i = 0; i < searchIndex.length; i++) {
+                var item = searchIndex[i];
+                var score = 0;
+                if (item.title.toLowerCase().indexOf(query) !== -1) score += 10;
+                if (item.summary && item.summary.toLowerCase().indexOf(query) !== -1) score += 5;
+                if (item.content && item.content.toLowerCase().indexOf(query) !== -1) score += 1;
+                if (score > 0) {
+                    matches.push({ item: item, score: score });
+                }
+            }
+            matches.sort(function(a, b) { return b.score - a.score; });
+            matches = matches.slice(0, 10);
+
+            if (matches.length === 0) {
+                searchResults.innerHTML = '<div class="search-no-results">No results</div>';
+            } else {
+                var html = '';
+                for (var j = 0; j < matches.length; j++) {
+                    var m = matches[j].item;
+                    html += '<a href="' + m.permalink + '" class="search-result-item">' +
+                        '<div class="search-result-title">' + m.title + '</div>' +
+                        '<div class="search-result-summary">' + (m.summary || '').substring(0, 120) + '</div>' +
+                        '</a>';
+                }
+                searchResults.innerHTML = html;
+            }
+            searchResults.style.display = 'block';
+        }
+
+        var searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(function() {
+                performSearch(searchInput.value);
+            }, 150);
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                searchResults.style.display = 'none';
+                searchInput.blur();
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
     });
     </script>
 </body>
