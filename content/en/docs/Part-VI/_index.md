@@ -2,7 +2,7 @@
 weight: 60000
 title: "Part VI - Algorithmic Paradigms"
 description: "Algorithmic Paradigms"
-icon: "share"
+icon: "auto-fix"
 date: "2024-08-24T23:41:03+07:00"
 lastmod: "2024-08-24T23:41:03+07:00"
 draft: false

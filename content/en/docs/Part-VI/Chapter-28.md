@@ -280,7 +280,7 @@ A <abbr title="A probabilistic data structure that allows fast search within an 
 ### Idiomatic Go Implementation
 
 
-... serves as the hyper-optimized Miller-Rabin implementation residing in the Go stdlib. Unequivocally utilize this for production software. The manual implementation presented above serves purely for numbers where n < 2^63.
+Miller-Rabin (probabilistic primality test) is available in `crypto/rand`. Use `big.NewInt()` and `big.Int.ProbablePrime()` for production. The manual implementation above serves purely for educational purposes where n < 2^63.
 
 ### Decision Matrix
 
@@ -305,12 +305,6 @@ A <abbr title="A probabilistic data structure that allows fast search within an 
 |-----------|------|-------|------------|
 | Reservoir k | `O(k)` per item | `O(k)` | Handles a stream of completely unknown size |
 | Weighted | `O(k log k)` per item | `O(k)` | Executes priority-based sampling |
-
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
 
 Reservoir sampling guarantees that every single item possesses an exact mathematical probability of k/n of being selected. For heavily weighted streams, implement exponential random variates.
 

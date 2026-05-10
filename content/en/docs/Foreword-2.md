@@ -1,6 +1,6 @@
 ---
 weight: 500
-title: "Foreword"
+title: "Foreword - A Practitioner's Perspective"
 description: "On the intersection of theory and practice"
 icon: "school"
 date: "2024-08-24T23:23:41+07:00"

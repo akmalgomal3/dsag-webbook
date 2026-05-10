@@ -13,7 +13,7 @@ toc: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Part IV tackles <abbr title="The process of arranging elements in a specific order.">sorting</abbr> and <abbr title="The process of finding a specific element in a data structure.">searching</abbr> mechanisms. Starting from basic quadratic sorts to advanced <code>O(n log n)</code> algorithms like <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge Sort</abbr>, <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr>, and <abbr title="A comparison-based sorting algorithm using a heap data structure.">Heap Sort</abbr>, it culminates with order statistics for finding medians and k-th smallest elements efficiently.
+Part IV tackles <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> traversal, shortest paths, minimum spanning trees, and maximum flow. From BFS/DFS to Dijkstra, Bellman-Ford, and network flow algorithms like Ford-Fulkerson and Edmonds-Karp, it provides the foundation for solving real-world routing and connectivity problems.
 {{% /alert %}}
 
 <center>

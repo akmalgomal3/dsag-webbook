@@ -124,7 +124,7 @@ Go inherently lacks operator overloading. Always employ explicit method receiver
 ### Edge Cases & Pitfalls
 
 - **Leading zeros:** Rigorously trim trailing zeros in the array to prevent generating a false, artificially high degree.
-- **Zero polynomial:** It is represented by ..., not a completely empty slice ....
+- **Zero polynomial:** It is represented by `[]float64{0}`, not a completely empty slice `nil`.
 
 ## 34.2. FFT and Convolution
 

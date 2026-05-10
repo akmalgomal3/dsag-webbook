@@ -17,8 +17,8 @@ Explore the chapters below to dive deep into the advanced programming data struc
 
 - [**Modern Data Structures and Algorithms in Go**](/docs/dsag/)
 - [**Preface**](/docs/preface/)
-- [**Foreword-1**](/docs/foreword/)
-- [**Foreword-2**](/docs/foreword-2/)
+- [**Foreword**](/docs/foreword/)
+- [**Foreword - A Practitioner's Perspective**](/docs/foreword-2/)
 
 {{< dynamic-toc >}}
 

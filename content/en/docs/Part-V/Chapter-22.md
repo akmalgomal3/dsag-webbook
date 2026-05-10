@@ -1,7 +1,7 @@
 ---
 weight: 50400
-title: "Chapter 22 - Median and Order Statistics"
-description: "Median and Order Statistics"
+title: "Chapter 22 - All-Pairs Shortest Paths"
+description: "All-Pairs Shortest Paths"
 icon: "article"
 date: "2024-08-24T23:42:29+07:00"
 lastmod: "2024-08-24T23:42:29+07:00"

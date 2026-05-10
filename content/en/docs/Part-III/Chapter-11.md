@@ -1,7 +1,7 @@
 ---
 weight: 30300
-title: "Chapter 11 - Disjoint Sets"
-description: "Disjoint Sets"
+title: "Chapter 11 - Binary Search Trees and Self-Balancing Trees"
+description: "Binary Search Trees and Self-Balancing Trees"
 icon: "article"
 date: "2024-08-24T23:42:11+07:00"
 lastmod: "2024-08-24T23:42:11+07:00"
@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 11 focuses on <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary Search</abbr> Trees (BST), Self-Balancing Trees (AVL/Red-Black), and <abbr title="A hierarchical data structure with a root node and child nodes.">Tree</abbr> Augmentation. It explores implementing trees safely in Go using 1.18+ Generics while addressing the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> (GC) pressure caused by excessive <abbr title="A variable that stores a memory address.">pointer</abbr> allocations.
+Chapter 11 focuses on <abbr title="An algorithm to perform union and find operations on disjoint sets.">Disjoint Sets</abbr> (Union-Find), path compression, and union by rank. It explores implementing efficient set operations in Go for graph algorithms and Kruskal's MST.
 {{% /alert %}}
 
 ## 11.1. <abbr title="A binary tree where the left child is smaller and the right child is larger than the parent.">Binary Search Tree</abbr> (BST)

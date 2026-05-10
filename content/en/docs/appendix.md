@@ -147,9 +147,9 @@ func main() {
 | Communicating complexity to the team | Over-engineering for n < 100 |
 
 ### Edge Cases & Pitfalls
-- **Case hidden constants:** ... with a large constant can be slower than ... for practical n.
-- **Case average vs worst:** Quick sort is ... worst-case but ... average; consider a randomized pivot.
-- **Case space complexity:** Recursion depth can consume ... stack space; consider an iterative version.
+- **Case hidden constants:** An algorithm with better asymptotic complexity but a large constant can be slower than `O(n log n)` for practical n.
+- **Case average vs worst:** Quick sort is `O(n²)` worst-case but `O(n log n)` average; consider a randomized pivot.
+- **Case space complexity:** Recursion depth can consume `O(n)` stack space; consider an iterative version.
 
 ## 16.2. Algorithm Design Techniques
 
@@ -164,14 +164,6 @@ func main() {
 | Greedy | Local optimal | Activity selection | `O(n log n)` | `O(n)` |
 | Backtracking | DFS + prune | N-Queens | `O(n!)` worst | `O(n)` |
 | Randomized | Random choice | Randomized quicksort | `O(n log n)` expected | `O(log n)` |
-
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-Dynamic programming for Fibonacci:
-
 
 ### Decision Matrix
 
@@ -201,14 +193,6 @@ Dynamic programming for Fibonacci:
 | Memory Profile | `go tool pprof mem.prof` | Allocation tracking |
 | Trace | `go tool trace trace.out` | Goroutine visualization |
 | Inlining | Compiler auto | Reduce call overhead |
-
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-Benchmarking with `testing.B` and `go test -bench=.`:
-
 
 ### Decision Matrix
 

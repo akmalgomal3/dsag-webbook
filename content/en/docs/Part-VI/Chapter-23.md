@@ -181,19 +181,11 @@ func main() {
 | Binary search | `O(log n)` | `O(1)` | Sorted data required |
 | Strassen | `O(n^2.81)` | `O(n²)` | Large matrices only |
 
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-Manual merge sort and binary search:
-
-
 ### Decision Matrix
 
 | Use This When... | Avoid If... |
 |--------------------|------------------|
-| Need stable and predictable sort | ... auxiliary memory is unavailable |
+| Need stable and predictable sort | `O(n)` auxiliary memory is unavailable |
 | Data is sorted and frequently searched | Data is dynamic with many inserts |
 | Large matrices where Strassen is beneficial | Small matrices (overhead > gain) |
 
@@ -213,14 +205,6 @@ Manual merge sort and binary search:
 | <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> | <code>O(n log n)</code> | <code>O(n log n / p)</code> | <code>O(n)</code> merge, goroutine spawn |
 | <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> | <code>O(n log n)</code> avg | <code>O(n log n / p)</code> | Partition is sequential |
 | Granularity | — | Threshold n > 1000 | Spawn cost < sort cost |
-
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-Parallel merge sort:
-
 
 ### Decision Matrix
 

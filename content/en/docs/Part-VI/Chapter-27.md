@@ -659,7 +659,7 @@ Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub
 
 ### Edge Cases & Pitfalls
 
-- **Goroutine leak:** Always verify that ... is invoked, ideally using ....
+- **Goroutine leak:** Always verify that channels are closed or `defer wg.Done()` is invoked, ideally using `sync.WaitGroup`.
 - **Data race:** Goroutines must not write to the identical slice without explicit synchronization.
 - **Too many goroutines:** Restrict the count via thresholding or a bounded worker pool.
 
