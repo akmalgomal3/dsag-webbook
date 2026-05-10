@@ -26,14 +26,14 @@ Quick reference for time and space complexity of common data structures and algo
 | Dynamic Array (Slice) | O(1) | O(n) | O(1) amortized | O(n) | O(n) |
 | Stack | O(n) | O(n) | O(1) | O(1) | O(n) |
 | Queue | O(n) | O(n) | O(1) | O(1) | O(n) |
-| Hash Table | — | O(1) avg | O(1) avg | O(1) avg | O(n) |
+| Hash Table |: | O(1) avg | O(1) avg | O(1) avg | O(n) |
 | BST (balanced) | O(log n) | O(log n) | O(log n) | O(log n) | O(n) |
 | Heap | O(n) | O(n) | O(log n) | O(log n) | O(n) |
 | Trie | O(m) | O(m) | O(m) | O(m) | O(n·m) |
-| Segment Tree | O(log n) | — | O(log n) | O(log n) | O(n) |
+| Segment Tree | O(log n) |: | O(log n) | O(log n) | O(n) |
 | B-Tree | O(log n) | O(log n) | O(log n) | O(log n) | O(n) |
 | Skip List | O(log n) | O(log n) | O(log n) | O(log n) | O(n) |
-| Bloom Filter | — | O(k) | O(k) | — | O(n) |
+| Bloom Filter |: | O(k) | O(k) |: | O(n) |
 
 ### Sorting Algorithms
 
@@ -78,7 +78,7 @@ Quick reference for time and space complexity of common data structures and algo
 
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The art of programming is the skill of controlling complexity.</em>" — Marijn Haverbeke</strong>
+<strong>"<em>The art of programming is the skill of controlling complexity.</em>": Marijn Haverbeke</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -307,15 +307,15 @@ func main() {
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Complexity analysis | Manual / <abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O</abbr> | varies | — | Worst, avg, best analysis |
-| <abbr title="The process of arranging elements in a specific order.">Sorting</abbr> | `sort` package | <code>O(n log n)</code> | — | Ints, Strings, Slice |
-| <abbr title="The process of finding a specific element in a data structure.">Searching</abbr> | `sort.Search` | <code>O(log n)</code> | — | <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary search</abbr> (requires sorted) |
+| Complexity analysis | Manual / <abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O</abbr> | varies |: | Worst, avg, best analysis |
+| <abbr title="The process of arranging elements in a specific order.">Sorting</abbr> | `sort` package | <code>O(n log n)</code> |: | Ints, Strings, Slice |
+| <abbr title="The process of finding a specific element in a data structure.">Searching</abbr> | `sort.Search` | <code>O(log n)</code> |: | <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary search</abbr> (requires sorted) |
 | DP table | `[]T` 2D slice | varies | varies | Bottom-up approach |
-| <abbr title="A specialized tree-based data structure that satisfies the heap property.">Heap</abbr> | `container/heap` | <code>O(log n)</code> ops | — | Implement 5 methods |
+| <abbr title="A specialized tree-based data structure that satisfies the heap property.">Heap</abbr> | `container/heap` | <code>O(log n)</code> ops |: | Implement 5 methods |
 | <abbr title="A tree-like data structure used to store a dynamic set of strings.">Trie</abbr> | custom struct | <code>O(L)</code> | varies | Prefix search |
 | <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">Graph</abbr> | `map[T][]T` | <code>O(V+E)</code> | <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">Adjacency list</abbr> |
-| Profile | `pprof` | — | CPU, memory, goroutine |
-| <abbr title="A test used to compare the performance of computer hardware or software.">Benchmark</abbr> | `testing.B` | — | Built-in |
+| Profile | `pprof` |: | CPU, memory, goroutine |
+| <abbr title="A test used to compare the performance of computer hardware or software.">Benchmark</abbr> | `testing.B` |: | Built-in |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 16:</strong> This chapter focuses on algorithm design techniques and complexity analysis using Big-O, Big-Ω, and Big-Θ notations. It covers <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, greedy algorithms, and <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>, along with performance measurement tools and the critical role of selecting efficient data structures.
@@ -327,7 +327,7 @@ func main() {
 
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The best algorithm designers understand the underlying principles that govern efficient problem-solving.</em>" — Donald Knuth</strong>
+<strong>"<em>The best algorithm designers understand the underlying principles that govern efficient problem-solving.</em>": Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -915,7 +915,7 @@ func main() {
 
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The great thing about graphs is that they give us a way to think about the world in a very powerful and abstract way, which can then be applied to many practical problems.</em>" — Donald E. Knuth</strong>
+<strong>"<em>The great thing about graphs is that they give us a way to think about the world in a very powerful and abstract way, which can then be applied to many practical problems.</em>": Donald E. Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -1073,7 +1073,7 @@ func (g *Graph[T]) BFS(start T) ([]T, map[T]int) {
 
 | Use BFS When... | Avoid If... |
 |-------------------|------------------|
-| Need unweighted shortest paths | Weighted graphs — use Dijkstra instead |
+| Need unweighted shortest paths | Weighted graphs: use Dijkstra instead |
 | Level-order traversal | Memory is extremely limited on very wide graphs (<abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr> bloat) |
 
 ## 19.4. Advanced Traversal Techniques
@@ -1105,7 +1105,7 @@ func (g *Graph[T]) BFS(start T) ([]T, map[T]int) {
 
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithmic thinking and reasoning will make you more effective in solving complex problems, but it’s important to use the right tool for the job.</em>" — Jeff Dean</strong>
+<strong>"<em>Algorithmic thinking and reasoning will make you more effective in solving complex problems, but it’s important to use the right tool for the job.</em>": Jeff Dean</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
