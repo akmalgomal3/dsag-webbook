@@ -1,6 +1,6 @@
 ---
 weight: 40200
-title: "Chapter 14 - Single-Source Shortest Paths"
+title: "Chapter 14: Single-Source Shortest Paths"
 description: "Single-Source Shortest Paths"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The shortest path between two points is a straight line.</em>" — Archimedes</strong>
+<strong>"<em>The shortest path between two points is a straight line.</em>" : Archimedes</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -20,20 +20,29 @@ Chapter 14 covers single-source shortest path algorithms: Dijkstra's algorithm a
 
 ## 14.1. Dijkstra's Algorithm
 
-**Definition:** Dijkstra's algorithm finds the shortest paths from a source vertex to all other vertices in a weighted graph with non-negative edge weights.
+**Definition:** Dijkstra's algorithm finds the shortest paths from a source vertex to all other vertices in a <abbr title="A graph where each edge is assigned a weight or cost.">weighted graph</abbr> with non-negative <abbr title="A connection between two vertices in a graph.">edge</abbr> weights.
+
+**Background & Philosophy:**
+The core philosophy of Dijkstra is "greedy expansion with guaranteed finality." It fundamentally assumes that once the cheapest possible path to a node is discovered from the current frontier, no future path extending from other longer paths can ever be cheaper. This assumption mathematically holds true, but *only* if negative weights do not exist.
+
+**Use Cases:**
+Dijkstra is the foundation of network routing (like OSPF in IP networks) and mapping software (like finding the fastest driving route considering distance and speed limits).
+
+**Memory Mechanics:**
+Dijkstra algorithm's efficiency relies heavily on a Min-Heap (<abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority Queue</abbr>). In Go, this is a dynamically resizing slice that utilizes <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. When the algorithm "relaxes" an edge, it pushes a new `State` struct into the heap. Because the heap is contiguous, <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality during bubbling up/down operations is excellent. However, the `dist` (distance) array is accessed randomly based on graph topology, which can trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> in massive, highly-connected graphs.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
 | Init | <code>O(V)</code> | Set distances to infinity |
-| Extract min | <code>O(log V)</code> per extraction | Priority queue |
+| Extract min | <code>O(log V)</code> per extraction | <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority queue</abbr> |
 | Relax edges | <code>O(E)</code> total | Update distances |
-| Total | <code>O((V + E) log V)</code> | With binary heap |
+| Total | <code>O((V + E) log V)</code> | With <abbr title="A heap implemented using a binary tree.">binary heap</abbr> |
 
 ### Idiomatic Go Implementation
 
-Use `container/heap` for the priority queue.
+Use `container/heap` for the <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr>.
 
 ```go
 package main
@@ -92,14 +101,23 @@ func main() {
 
 ## 14.2. Bellman-Ford Algorithm
 
-**Definition:** Bellman-Ford finds shortest paths from a single source in graphs with negative edge weights (but no negative cycles).
+**Definition:** Bellman-Ford finds shortest paths from a single source in graphs with negative <abbr title="A connection between two vertices in a graph.">edge</abbr> weights (but no negative cycles).
+
+**Background & Philosophy:**
+While Dijkstra is greedy, Bellman-Ford is cautious and exhaustive. Its philosophy is based on dynamic programming: it assumes that any shortest path can have at most `V-1` edges. Therefore, by blindly relaxing all edges `V-1` times, the shortest distances must logically propagate to their final correct states.
+
+**Use Cases:**
+Essential in financial trading systems to detect arbitrage opportunities (currency exchange loops that yield net profit) by identifying negative weight cycles, and in certain distance-vector routing protocols.
+
+**Memory Mechanics:**
+Bellman-Ford doesn't require complex data structures like a Priority Queue. It strictly iterates over a simple 1D slice of distances and an `[]Edge` list. Because it iterates over the linear `[]Edge` list repeatedly, the CPU's branch predictor and prefetcher can stream the edge data from <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> with incredible efficiency. Despite its higher mathematical time complexity `O(VE)`, its memory access pattern is so hardware-friendly that it often performs well on small-to-medium graphs.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
-| Relax all edges | <code>O(E)</code> per iteration | V-1 iterations |
-| Detect negative cycle | <code>O(E)</code> | One extra iteration |
+| Relax all edges | <code>O(E)</code> per <abbr title="The repetition of a process, typically using loops.">iteration</abbr> | V-1 iterations |
+| Detect negative <abbr title="A path that starts and ends at the same vertex.">cycle</abbr> | <code>O(E)</code> | One extra <abbr title="The repetition of a process, typically using loops.">iteration</abbr> |
 | Total | <code>O(VE)</code> | Slower than Dijkstra |
 
 ### Idiomatic Go Implementation
@@ -144,30 +162,29 @@ func main() {
 
 | Use Dijkstra When... | Use Bellman-Ford When... |
 |----------------------|--------------------------|
-| All edge weights non-negative | Negative weights present |
-| Performance is critical | Negative cycle detection needed |
+| All <abbr title="A connection between two vertices in a graph.">edge</abbr> weights non-negative | Negative weights present |
+| Performance is critical | Negative <abbr title="A path that starts and ends at the same vertex.">cycle</abbr> detection needed |
 | Standard routing problems | Sparse graphs with negatives |
 
 ### Edge Cases & Pitfalls
 
 - **Negative weights:** Dijkstra fails with negative weights; use Bellman-Ford.
-- **Disconnected graph:** Distance remains infinity for unreachable vertices.
-- **Heap stale entries:** Lazy deletion in priority queue is common in implementations.
+- **Disconnected <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>:** Distance remains infinity for unreachable vertices.
+- **<abbr title="A specialized tree-based data structure that satisfies the heap property.">Heap</abbr> stale entries:** Lazy deletion in <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr> is common in implementations.
 
-## 14.4. Quick Reference
+## 14.4. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
-| Algorithm | Time | Space | Negative Weights | Cycle Detect |
+| Algorithm | Time | Space | Negative Weights | <abbr title="A path that starts and ends at the same vertex.">Cycle</abbr> Detect |
 |-----------|------|-------|------------------|--------------|
 | Dijkstra | <code>O((V+E) log V)</code> | <code>O(V)</code> | No | No |
 | Bellman-Ford | <code>O(VE)</code> | <code>O(V)</code> | Yes | Yes |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 14:</strong> Dijkstra's algorithm is the go-to for non-negative weighted shortest paths with its efficient <code>O((V+E) log V)</code> complexity. Bellman-Ford handles negative weights and detects negative cycles at the cost of <code>O(VE)</code> time. In Go, use <code>container/heap</code> for Dijkstra's priority queue.
+<strong>Summary Chapter 14:</strong> Dijkstra's algorithm is the go-to for non-negative weighted shortest paths with its efficient <code>O((V+E) log V)</code> complexity. Bellman-Ford handles negative weights and detects negative cycles at the cost of <code>O(VE)</code> time. In Go, use <code>container/heap</code> for Dijkstra's <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr>.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 12 — Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
-- [Chapter 13 — Graph Traversal Algorithms](/docs/Part-IV/Chapter-13/)
-- [Chapter 53 — A* Search](/docs/Part-X/Chapter-53/)
-
+- [Chapter 12: Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
+- [Chapter 13: Graph Traversal Algorithms](/docs/Part-IV/Chapter-13/)
+- [Chapter 53: A* Search](/docs/Part-X/Chapter-53/)

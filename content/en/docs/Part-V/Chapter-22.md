@@ -1,6 +1,6 @@
 ---
 weight: 50400
-title: "Chapter 22 - All-Pairs Shortest Paths"
+title: "Chapter 22: All-Pairs Shortest Paths"
 description: "All-Pairs Shortest Paths"
 icon: "article"
 date: "2024-08-24T23:42:29+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The greatest <abbr title="The data associated with a key in a key-value pair.">value</abbr> of a picture is when it forces us to notice what we never expected to see.</em>" — John Tukey</strong>
+<strong>"<em>The greatest <abbr title="The data associated with a key in a key-value pair.">value</abbr> of a picture is when it forces us to notice what we never expected to see.</em>" : John Tukey</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 22 focuses on All-Pairs Shortest Paths, detailing Floyd-Warshall for den
 ## 22.1. <abbr title="An algorithm for finding shortest paths between all pairs of vertices.">Floyd-Warshall Algorithm</abbr>
 
 **Definition:** Floyd-Warshall uses <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> to compute the shortest paths between all pairs of vertices by iteratively testing intermediate nodes.
+
+**Background & Philosophy:**
+Instead of computing paths from a single starting point, Floyd-Warshall calculates the shortest path between every pair of nodes simultaneously. The philosophy is grounded in Dynamic Programming: solving subproblems incrementally. It asks, "Is the path from A to B shorter if we route it through intermediate node K?" by slowly expanding the set of allowed intermediate nodes.
+
+**Use Cases:**
+Used in analyzing transportation networks (e.g., calculating transit distances between all major cities), computing routing tables in complex network topologies, and analyzing social network connections to determine the "degrees of separation" between all users.
+
+**Memory Mechanics:**
+Floyd-Warshall requires a 2D matrix (in Go, typically a `[][]float64` or `[][]int`). This creates a memory footprint of `O(V^2)`. While an array of slice headers in Go causes slight memory fragmentation, processing rows sequentially leverages <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The three tight nested loops (`k, i, j`) fit perfectly into modern branch predictors. However, for a graph with 10,000 nodes, the distance matrix requires allocating 100 million integers, consuming hundreds of megabytes of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
 
 ### Operations & Complexity
 
@@ -93,7 +102,7 @@ func main() {
 | Use This When... | Avoid If... |
 |-------------------|------------------|
 | Dense graphs | Graph is very large (V > 500) |
-| Need all pairs | Sparse — Johnson's is faster |
+| Need all pairs | Sparse : Johnson's is faster |
 
 ### Edge Cases & Pitfalls
 
@@ -104,6 +113,15 @@ func main() {
 ## 22.2. Johnson’s Algorithm
 
 **Definition:** Johnson's algorithm combines Bellman-Ford (for reweighting edges to be non-negative) and Dijkstra to compute all-pairs shortest paths efficiently for sparse graphs with negative weights, achieving <code>O(V² log V + VE)</code> complexity.
+
+**Background & Philosophy:**
+Johnson's algorithm is a hybrid mathematical trick. Dijkstra is incredibly fast but breaks if negative weights exist. Bellman-Ford handles negative weights but is slow. The philosophy of Johnson's algorithm is to use the slow algorithm (Bellman-Ford) just once to mathematically "reweight" all edges to be positive, allowing the system to safely execute the fast algorithm (Dijkstra) `V` times.
+
+**Use Cases:**
+Essential when calculating all-pairs shortest paths on massive, sparse networks (like road networks or internet routing where nodes only connect to a few neighbors) that happen to include negative weights.
+
+**Memory Mechanics:**
+Johnson's algorithm avoids allocating massive `O(V^2)` matrices upfront. Instead, it relies on <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency lists</abbr> which take `O(V+E)` memory. Running Dijkstra repeatedly means dynamically allocating a <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority Queue</abbr> per node. Go's <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> efficiently manages and recycles this short-lived <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory during the execution.
 
 ### Operations & Complexity
 
@@ -158,9 +176,9 @@ func johnson(adj [][]E, n int) [][]float64 {
 	all := make([][]float64, n)
 	for s := 0; s < n; s++ {
 		d := make([]float64, n); for i := range d { d[i] = math.Inf(1) }; d[s] = 0
-		pq := &Q...; heap.Init(pq)
+		pq := &Q{}; heap.Init(pq)
 		for pq.Len() > 0 {
-			c := <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>.Pop(pq).(It); if c.d > d[c.v] { continue }
+			c := heap.Pop(pq).(It); if c.d > d[c.v] { continue }
 			for _, e := range adj[c.v] {
 				w := e.w + h[c.v] - h[e.to]
 				if d[c.v]+w < d[e.to] { d[e.to] = d[c.v]+w; heap.Push(pq, It{e.to, d[e.to]}) }
@@ -173,8 +191,8 @@ func johnson(adj [][]E, n int) [][]float64 {
 }
 
 func main() {
-	adj := [][]E...
-	fmt.Println(johnson(adj, 4))
+    // Demonstration slice mapping omitted for brevity
+	fmt.Println("Johnson Algorithm implementation")
 }
 {{< /prism >}}
 
@@ -182,8 +200,8 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Sparse graph | Dense — Floyd-Warshall is much simpler |
-| Negative weights exist | Non-negative — Standard V×Dijkstra is faster |
+| Sparse graph | Dense : Floyd-Warshall is much simpler |
+| Negative weights exist | Non-negative : Standard V×Dijkstra is faster |
 
 ### Edge Cases & Pitfalls
 
@@ -204,6 +222,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 10 — Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
-- [Chapter 21 — Searching Algorithms](/docs/Part-V/Chapter-21/)
-- [Chapter 33 — Linear Programming](/docs/Part-VII/Chapter-33/)
+- [Chapter 10: Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
+- [Chapter 21: Searching Algorithms](/docs/Part-V/Chapter-21/)
+- [Chapter 33: Linear Programming](/docs/Part-VII/Chapter-33/)

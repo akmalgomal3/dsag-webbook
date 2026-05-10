@@ -1,6 +1,6 @@
 ---
 weight: 20300
-title: "Chapter 7 - Hashing and Hash Tables"
+title: "Chapter 7: Hashing and Hash Tables"
 description: "Hashing and Hash Tables"
 icon: "article"
 date: "2024-08-24T23:42:10+07:00"
@@ -11,12 +11,21 @@ katex: true
 ---
 
 {{% alert icon="📘" context="success" %}}
-Chapter 7 focuses on hashing and hash tables, covering Go's built-in map, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and consistent hashing architectures for distributed systems.
+Chapter 7 focuses on <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables, covering Go's built-in map, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and consistent hashing architectures for distributed systems.
 {{% /alert %}}
 
 ## 7.1. Hash Tables
 
 **Definition:** A <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> maps keys to values using a hash function. Go provides the built-in `map[K]V` which is backed by a <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr>.
+
+**Background & Philosophy:**
+The primary philosophy of a hash table is trading space for time. By allocating a larger memory footprint than strictly necessary, we can probabilistically guarantee `O(1)` access time. Hash tables convert a search problem (which would otherwise require iterating through elements) into a direct mathematical computation of an index. 
+
+**Use Cases:**
+Hash tables are ubiquitous: from implementing caches (like Redis) and counting word frequencies in a text, to mapping database connections to active session IDs in a web server.
+
+**Memory Mechanics:**
+In Go, a `map` is a <abbr title="A variable that stores a memory address.">pointer</abbr> to a runtime `hmap` struct. The core of this struct is an array of `bmap` (buckets). Each bucket holds up to 8 key-value pairs. When a key is inserted, Go computes a <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hash</abbr> and uses the low-order bits to pick a bucket. The high-order bits are cached inside the bucket array to rapidly check for equality without following <abbr title="A variable that stores a memory address.">pointers</abbr>. If multiple keys fall into the same bucket (a <abbr title="An event when two keys hash to the same index.">collision</abbr>), Go uses a <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr> of overflow buckets. Because these buckets are scattered across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>, map iteration causes frequent <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
 
 ### Operations & Complexity
 
@@ -74,6 +83,15 @@ func main() {
 
 **Definition:** For non-cryptographic hashing needs, use the `hash/fnv` package or implement a manual hash like FNV-1a.
 
+**Background & Philosophy:**
+A hash function is a one-way mathematical meat-grinder. The philosophy behind non-cryptographic hashes like FNV-1a (Fowler-Noll-Vo) or MurmurHash is to prioritize speed, excellent avalanche behavior (changing one input bit flips many output bits), and low <abbr title="An event when two keys hash to the same index.">collision</abbr> rates, explicitly sacrificing cryptographic security.
+
+**Use Cases:**
+Used when writing custom hash tables, distributing network packets evenly across servers (load balancing), or quickly comparing large files by generating checksums.
+
+**Memory Mechanics:**
+Non-cryptographic hash functions process bytes sequentially. FNV-1a, for example, XORs the incoming byte with the current hash value and then multiplies by a large prime number. This algorithm runs entirely in the CPU registers (without touching <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>) and utilizes <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> if the input string is a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> byte slice. Thus, it operates at memory-bandwidth speeds.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -127,6 +145,15 @@ func main() {
 
 **Definition:** A cryptographic hash function produces a fixed-size digest that is computationally infeasible to reverse. Go provides `crypto/sha256` and `crypto/sha512`.
 
+**Background & Philosophy:**
+The philosophy here shifts from "speed" to "resistance". A cryptographic hash function is explicitly designed to resist preimage attacks (finding the input given the hash) and <abbr title="An event when two keys hash to the same index.">collision</abbr> attacks (finding two inputs that yield the same hash). 
+
+**Use Cases:**
+Essential for storing user passwords (using specialized slow hashes like bcrypt), generating digital signatures for JWT tokens, or verifying the integrity of downloaded binaries.
+
+**Memory Mechanics:**
+Algorithms like SHA-256 operate on fixed-size blocks (e.g., 64 bytes). They maintain an internal state array (working variables) that resides in the CPU registers. However, unlike FNV-1a, SHA-256 involves dozens of complex logical operations (rotations, XORs, additions) per block. This heavily taxes the ALU (Arithmetic Logic Unit) of the CPU, making it inherently slower. Go's standard library often uses assembly language to optimize these operations utilizing specific CPU instructions (like Intel SHA extensions).
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -174,6 +201,15 @@ func main() {
 ## 7.4. Consistent Hashing
 
 **Definition:** Consistent hashing minimizes <abbr title="A field or set of fields used to identify a record.">key</abbr> remapping when nodes are added or removed by placing both nodes and keys on a hash ring.
+
+**Background & Philosophy:**
+In a traditional distributed hash table (`hash(key) % N_servers`), adding one server changes the modulo for almost every key, forcing massive data migrations. The philosophy of consistent hashing is to decouple the key's hash from the total number of servers. Instead, both keys and servers are mapped to a massive circular integer space (the "ring").
+
+**Use Cases:**
+The backbone of modern distributed systems, including load balancing in API gateways, data sharding in distributed databases (like Cassandra or DynamoDB), and cache clustering (like Memcached).
+
+**Memory Mechanics:**
+A consistent hashing ring is usually implemented as a sorted slice of integers in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. When a request arrives, the system hashes the key to produce a 32-bit or 64-bit integer, then performs a <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> `O(log n)` on the slice to find the first server whose hash is greater than the key's hash. Because the ring is a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array, the binary search is extremely <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> efficient.
 
 ### Operations & Complexity
 
@@ -243,17 +279,17 @@ func main() {
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Map | built-in | <code>O(1)</code> avg | — | Key-value store |
-| FNV | `hash/fnv` | <code>O(n)</code> | — | Checksum, <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> |
-| SHA-256 | `crypto/sha256` | <code>O(n)</code> | — | Integrity, signing |
-| Consistent Hash | custom | <code>O(log n)</code> | — | Distributed systems |
+| Map | built-in | <code>O(1)</code> avg | . | Key-value store |
+| FNV | `hash/fnv` | <code>O(n)</code> | . | Checksum, <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> |
+| SHA-256 | `crypto/sha256` | <code>O(n)</code> | . | Integrity, signing |
+| Consistent Hash | custom | <code>O(log n)</code> | . | Distributed systems |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 7:</strong> This chapter explores hashing and hash tables in Go, including built-in maps, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and consistent hashing for distributed systems. Use built-in maps for general key-value storage, FNV for checksums, SHA-256 for data integrity, and consistent hashing when nodes frequently join or leave a cluster.
+<strong>Summary Chapter 7:</strong> This chapter explores <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables in Go, including built-in maps, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and consistent hashing for distributed systems. Use built-in maps for general key-value storage, FNV for checksums, SHA-256 for data integrity, and consistent hashing when nodes frequently join or leave a cluster.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 5 — Fundamental Data Structures in Go](/docs/Part-II/Chapter-5/)
-- [Chapter 6 — Elementary Data Structures](/docs/Part-II/Chapter-6/)
-- [Chapter 47 — Bloom Filters](/docs/Part-IX/Chapter-47/)
+- [Chapter 5: Fundamental Data Structures in Go](/docs/Part-II/Chapter-5/)
+- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
+- [Chapter 47: Bloom Filters](/docs/Part-IX/Chapter-47/)

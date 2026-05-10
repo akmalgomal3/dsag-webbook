@@ -1,6 +1,6 @@
 ---
 weight: 50100
-title: "Chapter 19 - Basic Sorting Algorithms"
+title: "Chapter 19: Basic Sorting Algorithms"
 description: "Basic Sorting Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -21,6 +21,15 @@ Chapter 19 covers basic sorting algorithms: Bubble Sort, Selection Sort, and Ins
 ## 19.1. Bubble Sort
 
 **Definition:** Bubble Sort repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. Each pass places the next largest element in its correct position.
+
+**Background & Philosophy:**
+The philosophy is naive local optimization: by repeatedly fixing adjacent inversions, the largest elements naturally "bubble" to the top. It represents the simplest possible translation of the concept of sorting into code.
+
+**Use Cases:**
+Almost exclusively educational. Occasionally used to detect if an array is already sorted (with an early exit optimization) or in computer graphics to sort nearly-sorted polygons in frame rendering.
+
+**Memory Mechanics:**
+Bubble sort operates entirely in-place (<code>O(1)</code> auxiliary space). Because it only swaps adjacent elements, it perfectly exploits <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> prefetcher can load the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array block into L1 cache, meaning that while algorithmically slow (<code>O(n^2)</code>), the actual CPU cycles spent on memory fetches are minimal.
 
 ### Operations & Complexity
 
@@ -63,6 +72,15 @@ func main() {
 
 **Definition:** Selection Sort divides the array into a sorted and unsorted region. It repeatedly selects the smallest element from the unsorted region and appends it to the sorted region.
 
+**Background & Philosophy:**
+The philosophy is absolute minimization of writes. It scans the entire unsorted region to find the absolute minimum, and only then performs a single swap.
+
+**Use Cases:**
+Used in embedded systems where writing to <abbr title="A type of non-volatile memory that wears out with repeated writes.">Flash memory</abbr> or EEPROM is extremely costly or degrades hardware life, as it guarantees exactly `n-1` writes.
+
+**Memory Mechanics:**
+Selection sort reads aggressively but writes minimally. It scans the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array repeatedly, which is <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> friendly for reading. However, the swap operation involves jumping to an arbitrary minimum index, which causes minor <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> compared to the strictly adjacent swaps of Bubble Sort.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -102,6 +120,15 @@ func main() {
 ## 19.3. Insertion Sort
 
 **Definition:** Insertion Sort builds the sorted array one element at a time by taking each element and inserting it into its correct position within the already-sorted portion.
+
+**Background & Philosophy:**
+The philosophy mirrors how humans sort playing cards in their hands: take one card at a time and insert it into its correct position among the already sorted cards. It adapts intelligently to partially sorted input.
+
+**Use Cases:**
+The absolute best algorithm for small datasets (e.g., `n < 20`). It is the heavily optimized base case for hybrid algorithms like Timsort (used in Python and Rust) and pdqsort (used in Go 1.19+).
+
+**Memory Mechanics:**
+Insertion sort continuously shifts elements one position to the right. In <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, this translates to overlapping memory move operations. Because it shifts elements sequentially in a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block, it is incredibly hardware-friendly. On modern CPUs, the branch predictor and cache prefetcher perfectly anticipate this linear memory access pattern, making it blisteringly fast for small arrays.
 
 ### Operations & Complexity
 
@@ -167,7 +194,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 20 — Advanced Sorting Algorithms](/docs/Part-V/Chapter-20/)
-- [Chapter 21 — Searching Algorithms](/docs/Part-V/Chapter-21/)
-- [Chapter 55 — Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
-
+- [Chapter 20: Advanced Sorting Algorithms](/docs/Part-V/Chapter-20/)
+- [Chapter 21: Searching Algorithms](/docs/Part-V/Chapter-21/)
+- [Chapter 55: Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)

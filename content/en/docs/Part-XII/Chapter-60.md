@@ -1,6 +1,6 @@
 ---
 weight: 120300
-title: "Chapter 60 - Convex Hull"
+title: "Chapter 60: Convex Hull"
 description: "Convex Hull"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,16 +11,25 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The convex hull is to computational geometry what sorting is to algorithms.</em>" — Unknown</strong>
+<strong>"<em>The convex hull is to computational geometry what sorting is to algorithms.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 60 covers the convex hull — the smallest convex shape containing a set of points, and Graham's and Andrew's algorithms for computing it.
+Chapter 60 covers the convex hull: the smallest convex shape containing a set of points, mapping Graham's and Andrew's algorithms for computing it.
 {{% /alert %}}
 
 ## 60.1. What Is a Convex Hull?
 
 **Definition:** The <abbr title="The smallest convex set that contains a given set of points, analogous to stretching a rubber band around the points.">convex hull</abbr> of a set of points is the smallest convex polygon containing them all. Imagine stretching a rubber band around nails on a board.
+
+**Background & Philosophy:**
+The philosophy is exterior boundary isolation. When given thousands of chaotic, scattered points, the overwhelming majority are useless interior noise. The convex hull acts as a mathematical shrink-wrap, relentlessly isolating the extremely small subset of points that actually define the geometric perimeter.
+
+**Use Cases:**
+3D collision detection in video games (generating bounding boxes), pattern recognition in computer vision, and mapping physical territory borders in geographic information systems (GIS).
+
+**Memory Mechanics:**
+Andrew's Monotone Chain initially performs an <code>O(n log n)</code> sort on the points array. Because the array (`[]Point`) is completely <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, the sort leverages high <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality. After sorting, the algorithm builds the hull using a simple `[]Point` slice as a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>. Pushing and popping points from the end of this slice executes entirely in <code>O(1)</code> memory access without generating new <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations. Consequently, Andrew's Monotone Chain is blisteringly fast on modern CPUs, operating precisely at memory bus speed.
 
 ### Why It Matters
 
@@ -36,6 +45,13 @@ Chapter 60 covers the convex hull — the smallest convex shape containing a set
 Sort points by x-coordinate, then build lower and upper hulls.
 
 ```go
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
 type Point struct{ x, y int }
 
 func convexHull(points []Point) []Point {
@@ -67,8 +83,21 @@ func convexHull(points []Point) []Point {
     return append(lower[:len(lower)-1], upper[:len(upper)-1]...)
 }
 
+func reverse(points []Point) []Point {
+    reversed := make([]Point, len(points))
+    for i := range points {
+        reversed[i] = points[len(points)-1-i]
+    }
+    return reversed
+}
+
 func cross(o, a, b Point) int {
     return (a.x-o.x)*(b.y-o.y) - (a.y-o.y)*(b.x-o.x)
+}
+
+func main() {
+    points := []Point{{0, 3}, {1, 1}, {2, 2}, {4, 4}, {0, 0}, {1, 2}, {3, 1}, {3, 3}}
+    fmt.Println(convexHull(points))
 }
 ```
 
@@ -76,19 +105,19 @@ func cross(o, a, b Point) int {
 
 | Algorithm | Time | Space | Simplicity |
 |-----------|------|-------|------------|
-| Graham scan | O(n log n) | O(n) | Moderate |
-| Andrew's monotone chain | O(n log n) | O(n) | Simple |
-| Jarvis march | O(nh) | O(1) | Simple (h = hull points) |
-| QuickHull | O(n log n) avg | O(n) | Moderate |
+| Graham scan | <code>O(n log n)</code> | <code>O(n)</code> | Moderate |
+| Andrew's monotone chain | <code>O(n log n)</code> | <code>O(n)</code> | Simple |
+| Jarvis march | <code>O(nh)</code> | <code>O(1)</code> | Simple (h = hull points) |
+| QuickHull | <code>O(n log n)</code> avg | <code>O(n)</code> | Moderate |
 
 ## 60.4. Geometric Primitives
 
 | Primitive | Formula | Meaning |
 |-----------|---------|---------|
 | Cross product | (a-o) × (b-o) | Orientation of o→a→b |
-| Cross > 0 | | Counter-clockwise turn |
-| Cross < 0 | | Clockwise turn |
-| Cross = 0 | | Collinear |
+| Cross > 0 | . | Counter-clockwise turn |
+| Cross < 0 | . | Clockwise turn |
+| Cross = 0 | . | Collinear |
 
 ## 60.5. Decision Matrix
 
@@ -109,7 +138,7 @@ func cross(o, a, b Point) int {
 
 | Concept | Value |
 |---------|-------|
-| Lower bound | Ω(n log n) (reduction from sorting) |
+| Lower bound | <code>Ω(n log n)</code> (reduction from sorting) |
 | Output size | h points (h ≤ n) |
 | Orientation | Cross product sign |
 
@@ -119,12 +148,11 @@ func cross(o, a, b Point) int {
 | `image` | Point representations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 60:</strong> The convex hull is computational geometry's gateway problem. Andrew's monotone chain algorithm achieves optimal O(n log n) time with elegant simplicity — sort, then sweep. The cross product, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
+<strong>Summary Chapter 60:</strong> The convex hull is computational geometry's gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time with elegant simplicity — sort, then sweep. The cross product, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 33 — Linear Programming](/docs/Part-VII/Chapter-33/)
-- [Chapter 53 — A* Search](/docs/Part-X/Chapter-53/)
-- [Chapter 59 — Mo's Algorithm](/docs/Part-XII/Chapter-59/)
-
+- [Chapter 33: Linear Programming](/docs/Part-VII/Chapter-33/)
+- [Chapter 53: A* Search](/docs/Part-X/Chapter-53/)
+- [Chapter 59: Mo's Algorithm](/docs/Part-XII/Chapter-59/)

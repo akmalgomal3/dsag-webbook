@@ -1,6 +1,6 @@
 ---
 weight: 60500
-title: "Chapter 27 - Advanced Recursive Algorithms"
+title: "Chapter 27: Advanced Recursive Algorithms"
 description: "Advanced Recursive Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:45+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A recursive function calls itself, like a mirror facing a mirror, reflecting a problem into simpler and simpler versions of itself until it vanishes.</em>" — Brian Kernighan</strong>
+<strong>"<em>A recursive function calls itself, like a mirror facing a mirror, reflecting a problem into simpler and simpler versions of itself until it vanishes.</em>" : Brian Kernighan</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 27 covers advanced <abbr title="A method where the solution to a problem
 ## 27.1. Fundamentals of <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr>
 
 **Definition:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> is a programming technique where a function calls itself to solve smaller sub-problems until it reaches a base case.
+
+**Background & Philosophy:**
+The philosophy elevates recursion from a simple loop replacement to a structural paradigm. It treats functions as mathematical formulas that map complex states to simpler sub-states, proving algorithmic correctness through induction.
+
+**Use Cases:**
+Tree Traversals, parsing hierarchical data structures like ASTs in compilers, and orchestrating complex distributed tasks.
+
+**Memory Mechanics:**
+Advanced recursion heavily loads the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. In Go, parallel recursion (spawning goroutines for sub-branches) shifts this load from a single deep stack to thousands of shallow, 2KB goroutine stacks spread across the <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. This enables massive horizontal scaling without single-thread <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>, provided the developer sets a threshold to avoid goroutine overhead for trivially small sub-problems.
 
 ### Operations & Complexity
 
@@ -681,6 +690,6 @@ Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub
 
 ## See Also
 
-- [Chapter 23 — Divide and Conquer](/docs/Part-VI/Chapter-23/)
-- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
-- [Chapter 28 — Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-28/)
+- [Chapter 23: Divide and Conquer](/docs/Part-VI/Chapter-23/)
+- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 28: Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-28/)

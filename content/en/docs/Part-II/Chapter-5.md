@@ -1,6 +1,6 @@
 ---
 weight: 20100
-title: "Chapter 5 - Fundamental Data Structures in Go"
+title: "Chapter 5: Fundamental Data Structures in Go"
 description: "Fundamental Data Structures in Go"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,12 +11,21 @@ katex: true
 ---
 
 {{% alert icon="📘" context="success" %}}
-Chapter 5 focuses on fundamental data structures in Go (arrays, slices, maps, linked lists). It contrasts their memory layouts and explains how slices leverage CPU <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> locality for superior performance.
+Chapter 5 focuses on fundamental data structures in Go (arrays, slices, maps, linked lists). It contrasts their memory layouts and explains how slices leverage <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality for superior performance.
 {{% /alert %}}
 
 ## 5.1. Arrays and Slices
 
-**Definition:** An <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> is a collection of elements with the same type and a fixed size. A slice is a dynamic view into an <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> that allows for variable sizing.
+**Definition:** An <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr> is a collection of elements with the same type and a fixed size. A slice is a dynamic view into an array that allows for variable sizing.
+
+**Background & Philosophy:**
+In C and C++, arrays and pointers are tightly coupled, which often leads to buffer overflow vulnerabilities. Go's philosophy introduces the "slice" as a safe, first-class citizen. A slice abstracts away manual <abbr title="Performing mathematical operations on memory addresses.">pointer arithmetic</abbr> and bounds checking, providing the flexibility of dynamic arrays with the safety of modern programming languages.
+
+**Use Cases:**
+Slices are the default choice for almost all ordered collections in Go, used in everything from reading lines of a file, buffering network packets, to returning rows from a database query.
+
+**Memory Mechanics:**
+An array is a single, <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block of memory allocated either on the <abbr title="Memory used to execute functions and store local variables.">stack</abbr> or the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. A slice is a small 24-byte struct (on 64-bit architectures) consisting of a <abbr title="A variable that stores a memory address.">pointer</abbr> to the backing array, an integer representing the current length, and an integer for the capacity. Appending to a slice whose capacity is full forces the runtime to allocate a new, larger contiguous block of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and copy the old elements over, which is an <code>O(n)</code> operation in memory but amortizes to <code>O(1)</code>.
 
 ### Operations & Complexity
 
@@ -63,13 +72,22 @@ func main() {
 
 ### Edge Cases & Pitfalls
 
-- **Slice header leak:** A small slice of a large <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> keeps a <abbr title="A value that enables a program to indirectly access a particular datum.">reference</abbr> to the entire backing <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> in memory.
-- **Append aliasing:** Two slices sharing a backing <abbr title="A collection of items stored at contiguous memory locations.">array</abbr>; appending to one might overwrite data in the other.
+- **Slice header leak:** A small slice of a large array keeps a <abbr title="A value that enables a program to indirectly access a particular datum.">reference</abbr> to the entire backing array in memory.
+- **Append aliasing:** Two slices sharing a backing array; appending to one might overwrite data in the other.
 - **Out of bounds:** Accessing beyond `len()` causes a panic.
 
 ## 5.2. Maps
 
 **Definition:** A map is Go's built-in <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> that stores key-value pairs with an average <code>O(1)</code> access time.
+
+**Background & Philosophy:**
+The philosophy behind Go maps is to provide a highly optimized, built-in associative data structure so developers do not need to rely on external libraries for basic key-value storage. By embedding it in the language, the Go runtime can optimize memory allocation, rehashing, and <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hash</abbr> seed generation to prevent security vulnerabilities like hash collision denial-of-service attacks.
+
+**Use Cases:**
+Used for caching database query results, counting frequency of elements, and building fast lookup tables like routing registries in web frameworks.
+
+**Memory Mechanics:**
+Maps in Go are implemented as an array of buckets. Each bucket typically holds up to 8 key-value pairs. Because maps are <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> data structures, they scatter data across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. When the map grows beyond its load factor, Go allocates a new array of buckets twice the size and incrementally moves the data over. This incremental rehashing prevents massive latency spikes during map insertion, but it still incurs <abbr title="Input/Output operations involving reading from or writing to a physical disk.">memory allocation</abbr> overhead.
 
 ### Operations & Complexity
 
@@ -127,6 +145,15 @@ func main() {
 
 **Definition:** A <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr> is a linear data structure where each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> points to the next <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr>. Go provides `container/list` for a <abbr title="A linked list where each node points to both the next and previous nodes.">doubly linked list</abbr> implementation.
 
+**Background & Philosophy:**
+Before dynamic arrays were highly optimized, linked lists were the standard for variable-length data. The philosophy of a linked list is to optimize for insertions and deletions at arbitrary positions without shifting elements. However, in modern computing, the poor <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> of linked lists often makes slices faster even for insertions, relegating linked lists to highly specialized use cases.
+
+**Use Cases:**
+Used in implementing LRU (Least Recently Used) caches where elements are constantly moved to the front, or in lock-free concurrent queues where node pointers can be atomically swapped.
+
+**Memory Mechanics:**
+Every element in a linked list is a separate struct allocated independently on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This means traversing a linked list forces the CPU to constantly chase pointers across completely random memory addresses, resulting in frequent <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. Additionally, a doubly linked list requires an extra 16 bytes per node just for the `next` and `prev` pointers, introducing significant memory bloat compared to slices.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -172,17 +199,26 @@ func main() {
 | Use This When... | Avoid If... |
 |---------------------|------------------|
 | Frequent inserts/deletes at the ends | Need random access (use slices) |
-| Need a simple <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr>/<abbr title="A double-ended queue allowing insertion and deletion at both ends.">deque</abbr> | Need high <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> locality |
+| Need a simple <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr>/<abbr title="A double-ended queue allowing insertion and deletion at both ends.">deque</abbr> | Need high <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality |
 
 ### Edge Cases & Pitfalls
 
 - **Memory overhead:** Each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> has the overhead of two pointers.
 - **Type assertion:** `container/list` stores `any`; requires type assertions.
-- **<abbr title="A hardware or software component that stores data so future requests can be served faster.">Cache</abbr> miss:** Linked lists are scattered in memory, resulting in poor <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> locality.
+- **Cache miss:** Linked lists are scattered in memory, resulting in poor <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.
 
 ## 5.4. Structs and Methods
 
 **Definition:** A struct is a composite <abbr title="A classification identifying one of various types of data.">data type</abbr> that groups fields. A method is a function attached to a specific type, serving as the equivalent of `impl` blocks or classes.
+
+**Background & Philosophy:**
+Go abandons traditional class-based inheritance in favor of composition. Structs group data, and methods attach behaviors to that data. The philosophy is to keep data structures as plain, transparent records, while interfaces define behaviors. This prevents the deep, tangled inheritance hierarchies common in Java or C++.
+
+**Use Cases:**
+Structs are the building blocks of every complex type in Go: from representing a User model in an ORM, to defining the nodes of a Binary Tree, or holding the configuration state of an HTTP server.
+
+**Memory Mechanics:**
+Fields in a struct are laid out sequentially in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. The Go compiler automatically aligns fields to memory word boundaries (e.g., 8 bytes on a 64-bit system). Changing the order of fields in a struct definition can actually reduce its overall memory footprint by minimizing alignment padding. When a method uses a <abbr title="A variable that stores a memory address.">pointer</abbr> receiver (`*Struct`), no data is copied. When it uses a <abbr title="The data associated with a key in a key-value pair.">value</abbr> receiver, the entire struct is copied byte-by-byte into a new memory location on the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>.
 
 ### Operations & Complexity
 
@@ -247,19 +283,19 @@ func main() {
 
 ### Edge Cases & Pitfalls
 
-- **<abbr title="A variable that stores a memory address.">Pointer</abbr> vs <abbr title="The data associated with a key in a key-value pair.">value</abbr> receiver:** Use <abbr title="A variable that stores a memory address.">pointer</abbr> receivers for modifications; <abbr title="The data associated with a key in a key-value pair.">value</abbr> receivers create copies.
+- **Pointer vs value receiver:** Use <abbr title="A variable that stores a memory address.">pointer</abbr> receivers for modifications; <abbr title="The data associated with a key in a key-value pair.">value</abbr> receivers create copies.
 - **Nil receiver:** Methods can be called on nil pointers if handled properly inside the method.
-- **Zero <abbr title="The data associated with a key in a key-value pair.">value</abbr>:** Structs have zero values; ensure initialization is handled if required.
+- **Zero value:** Structs have zero values; ensure initialization is handled if required.
 
-## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## 5.5. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| <abbr title="A collection of items stored at contiguous memory locations.">Array</abbr> | `[N]T` | <code>O(1)</code> access | — | Fixed size, <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
-| Slice | `[]T` | <code>O(1)</code> access | — | Dynamic <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> |
-| Map | `map[K]V` | <code>O(1)</code> avg | — | Key-value store |
-| <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">Linked List</abbr> | `container/list` | <code>O(n)</code> access | — | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr>, <abbr title="A double-ended queue allowing insertion and deletion at both ends.">deque</abbr> |
-| <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> | `[]T` + methods | <code>O(1)</code> push/pop | — | LIFO |
+| <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">Array</abbr> | `[N]T` | <code>O(1)</code> access | . | Fixed size, <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
+| Slice | `[]T` | <code>O(1)</code> access | . | Dynamic array |
+| Map | `map[K]V` | <code>O(1)</code> avg | . | Key-value store |
+| <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">Linked List</abbr> | `container/list` | <code>O(n)</code> access | . | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr>, <abbr title="A double-ended queue allowing insertion and deletion at both ends.">deque</abbr> |
+| <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> | `[]T` + methods | <code>O(1)</code> push/pop | . | LIFO |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 5:</strong> This chapter covers fundamental data structures in Go: arrays, slices, maps, linked lists, and structs with methods. Use slices for dynamic collections, maps for fast key-value lookups, linked lists for frequent insertions/deletions at ends, and structs with methods to build custom abstractions like stacks.
@@ -267,6 +303,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 6 — Elementary Data Structures](/docs/Part-II/Chapter-6/)
-- [Chapter 7 — Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
-- [Chapter 8 — Linked Lists](/docs/Part-II/Chapter-8/)
+- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
+- [Chapter 7: Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
+- [Chapter 8: Linked Lists](/docs/Part-II/Chapter-8/)

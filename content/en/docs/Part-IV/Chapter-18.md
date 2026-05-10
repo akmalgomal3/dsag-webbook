@@ -1,6 +1,6 @@
 ---
 weight: 40600
-title: "Chapter 18 - Matchings in Bipartite Graphs"
+title: "Chapter 18: Matchings in Bipartite Graphs"
 description: "Matchings in Bipartite Graphs"
 icon: "article"
 date: "2024-08-24T23:42:32+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithms are the most direct way to make our ideas into action.</em>" — Donald Knuth</strong>
+<strong>"<em>Algorithms are the most direct way to make our ideas into action.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 18 focuses on Matchings in Bipartite Graphs, detailing the Hungarian Alg
 ## 18.1. Bipartite Graphs and Matching
 
 **Definition:** A bipartite <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> is a <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> whose vertices can be partitioned into two disjoint sets, U and V, such that every <abbr title="A connection between two vertices in a graph.">edge</abbr> connects a <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> in U to one in V. A matching is a set of edges that do not share any vertices.
+
+**Background & Philosophy:**
+Bipartite graphs model two distinct classes of objects that only interact across class lines. The philosophy of matching is conflict resolution: given a set of resources (U) and a set of consumers (V), how do we pair them exclusively without any overlaps? By mathematically proving a graph is bipartite (using two-coloring), we can unlock hyper-optimized algorithms (like Hopcroft-Karp) that would otherwise fail on general graphs.
+
+**Use Cases:**
+Used in ride-sharing apps (matching Riders to Drivers), dating apps (matching Users), and job scheduling algorithms in cloud infrastructure (matching Pods to available Worker Nodes).
+
+**Memory Mechanics:**
+Checking if a graph is bipartite uses a standard BFS. The `color` array (acting as both the `visited` map and the partition tracker) takes `O(V)` memory. Because BFS explores layer by layer, it accesses the `color` array randomly based on edge connections. However, since the array merely stores small integer states (`-1`, `0`, `1`), the memory footprint is minimal and fits comfortably in the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> even for millions of nodes.
 
 ### Operations & Complexity
 
@@ -53,7 +62,7 @@ IsBipartite(graph):
 ### Idiomatic Go Implementation
 
 Bipartite check using BFS:
-{{< prism lang="go" line-numbers="true">}}
+```go
 package main
 
 import "fmt"
@@ -80,7 +89,7 @@ func main() {
 	g := [][]int{{1, 3}, {0, 2}, {1, 3}, {0, 2}}
 	fmt.Println(isBipartite(g))
 }
-{{< /prism >}}
+```
 
 ### Decision Matrix
 
@@ -97,6 +106,15 @@ func main() {
 ## 18.2. Hungarian Algorithm
 
 **Definition:** The Hungarian Algorithm solves the assignment problem by finding the minimum total cost matching in a weighted bipartite <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>.
+
+**Background & Philosophy:**
+The Hungarian algorithm approaches the assignment problem using matrix manipulation (specifically, adding and subtracting potentials). The philosophy is based on the theorem that if a number is added to or subtracted from all entries of any row or column of a cost matrix, an optimal assignment for the resulting cost matrix is also an optimal assignment for the original matrix. The goal is to manipulate the matrix until a perfect matching of zeroes appears.
+
+**Use Cases:**
+Perfect for allocating tasks to workers where each worker has a different cost or time to complete a specific task, aiming to minimize the overall payroll or execution time.
+
+**Memory Mechanics:**
+The algorithm heavily manipulates a 2D `cost` matrix, making its memory access patterns dense. Go implementations typically use several parallel arrays (`u`, `v`, `p`, `way`, `minv`, `used`) to track dual variables and path construction. By allocating these arrays once upfront (`make([]int, n+1)`), the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead is practically zero during the loop execution. Because it constantly scans rows and columns, <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> happen when scanning columns vertically, leading to the strict `O(V^3)` empirical runtime on large sets.
 
 ### Operations & Complexity
 
@@ -124,7 +142,7 @@ Hungarian(cost):
 
 ### Idiomatic Go Implementation
 
-{{< prism lang="go" line-numbers="true">}}
+```go
 package main
 
 import "fmt"
@@ -161,10 +179,11 @@ func hungarian(cost [][]int) int {
 }
 
 func main() {
-	cost := [][]int...
-	fmt.Println(hungarian(cost))
+    // 2 workers, 2 tasks. Costs: Worker 1 (5, 10), Worker 2 (15, 20)
+	cost := [][]int{{5, 10}, {15, 20}}
+	fmt.Println(hungarian(cost)) // Outputs: 25
 }
-{{< /prism >}}
+```
 
 ### Decision Matrix
 
@@ -182,6 +201,15 @@ func main() {
 
 **Definition:** Hopcroft-Karp finds the maximum cardinality matching in a bipartite graph by combining BFS to build a layered level graph and DFS to find augmenting paths efficiently.
 
+**Background & Philosophy:**
+Hopcroft-Karp mirrors the logic of Dinic's Algorithm (from Network Flow) but applies it exclusively to unweighted bipartite graphs. The philosophy is "batch augmentation." Instead of finding one matching at a time, it runs BFS to partition the un-matched nodes into distance layers, then runs DFS to snatch up every possible disjoint augmenting path of that specific length simultaneously. 
+
+**Use Cases:**
+Massive unweighted assignment problems, such as matching thousands of university students to available courses based purely on their preference lists (without any priority weights).
+
+**Memory Mechanics:**
+Hopcroft-Karp requires an <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency list</abbr> `[][]int` and pairs of tracking arrays (`pairU`, `pairV`, `dist`). Because it operates entirely on 1D slices and avoids complex 2D capacity matrices, it scales exceptionally well. The BFS phase allocates a temporary queue in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Reusing a pre-allocated slice for this queue across the `O(√V)` phases drastically reduces the Go <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector's</abbr> burden, enabling millions of nodes to be matched in milliseconds.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -190,11 +218,9 @@ func main() {
 | DFS augment | `O(V)` | Per phase |
 | Total | `O(E √V)` | Up to `√V` phases |
 
-### Pseudocode
-
-
 ### Idiomatic Go Implementation
 
+```go
 package main
 
 import "fmt"
@@ -242,9 +268,10 @@ func hopcroftKarp(adj [][]int, nLeft, nRight int) int {
 }
 
 func main() {
-	adj := [][]int...
-	fmt.Println(hopcroftKarp(adj, 3, 3))
+	adj := [][]int{{0}, {0, 1}, {1, 2}}
+	fmt.Println(hopcroftKarp(adj, 3, 3)) // Output: 3
 }
+```
 
 ### Decision Matrix
 
@@ -272,6 +299,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 16 — Minimum Spanning Trees](/docs/Part-IV/Chapter-16/)
-- [Chapter 17 — Network Flow Algorithms](/docs/Part-IV/Chapter-17/)
-- [Chapter 52 — Strongly Connected Components](/docs/Part-X/Chapter-52/)
+- [Chapter 16: Minimum Spanning Trees](/docs/Part-IV/Chapter-16/)
+- [Chapter 17: Network Flow Algorithms](/docs/Part-IV/Chapter-17/)
+- [Chapter 52: Strongly Connected Components](/docs/Part-X/Chapter-52/)

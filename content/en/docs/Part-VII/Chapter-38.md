@@ -1,6 +1,6 @@
 ---
 weight: 71000
-title: "Chapter 38 - Segment Tree and Fenwick Tree"
+title: "Chapter 38: Segment Tree and Fenwick Tree"
 description: "Segment Tree and Fenwick Tree"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Efficiency is doing things right; effectiveness is doing the right things.</em>" — Peter Drucker</strong>
+<strong>"<em>Efficiency is doing things right; effectiveness is doing the right things.</em>" : Peter Drucker</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 38 covers segment trees and Fenwick trees (Binary Indexed Trees): data s
 ## 38.1. Segment Tree
 
 **Definition:** A segment tree is a binary tree where each node stores the result of a query (sum, min, max) over a segment of the array. It supports range queries and point updates in <code>O(log n)</code>.
+
+**Background & Philosophy:**
+The philosophy is precomputed aggregation. When an array is repeatedly updated and queried for range sums (e.g., sum from index 100 to 5000), a linear scan <code>O(n)</code> is too slow. Segment and Fenwick trees pre-calculate chunks of the array hierarchically, reducing the scan to a mathematical traversal of <code>O(log n)</code> boundaries.
+
+**Use Cases:**
+Competitive programming, dynamic financial ledgers querying balances over specific date ranges, and mapping visible objects in 2D game rendering.
+
+**Memory Mechanics:**
+Both trees elegantly abandon <abbr title="A variable that stores a memory address.">pointer</abbr>-based nodes. A Segment Tree allocates an array of `4*n` size. A Fenwick Tree (Binary Indexed Tree) is incredibly optimal, allocating exactly `n+1` size array. Fenwick tree uses bitwise operations (`i & -i`) to instantly jump to the next aggregation block. This purely <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> layout guarantees flawless <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> hits and zero <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> overhead during updates.
 
 ### Operations & Complexity
 
@@ -148,7 +157,7 @@ func main() {
 	for i, v := range []int{1, 3, 5, 7, 9, 11} {
 		f.Update(i+1, v)
 	}
-	fmt.Println(f.RangeQuery(2, 4)) // 15 (5+7+3... wait, let me recalculate)
+	fmt.Println(f.RangeQuery(2, 4)) // 15
 }
 ```
 
@@ -172,7 +181,7 @@ func main() {
 |-----------|---------|-------|--------|-------|
 | Segment Tree | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(4n)</code> |
 | Fenwick Tree | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
-| Sparse Table | `[][]int` | <code>O(1)</code> | — | <code>O(n log n)</code> |
+| Sparse Table | `[][]int` | <code>O(1)</code> | . | <code>O(n log n)</code> |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 38:</strong> Segment trees and Fenwick trees solve range query problems efficiently. Use Fenwick trees for sum queries due to their simplicity and space efficiency. Use segment trees for min/max queries or when lazy propagation is needed. In Go, implement Fenwick trees with 1-based indexing for cleaner code.
@@ -180,7 +189,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 9 — Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
-- [Chapter 33 — Linear Programming](/docs/Part-VII/Chapter-33/)
-- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
-
+- [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+- [Chapter 33: Linear Programming](/docs/Part-VII/Chapter-33/)
+- [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)

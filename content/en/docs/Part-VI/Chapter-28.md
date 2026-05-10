@@ -1,6 +1,6 @@
 ---
 weight: 60600
-title: "Chapter 28 - Probabilistic and Randomized Algorithms"
+title: "Chapter 28: Probabilistic and Randomized Algorithms"
 description: "Probabilistic and Randomized Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:52+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A good algorithm is a beautiful thing, but its beauty is often in its simplicity. The most complex algorithms are those that use randomization effectively.</em>" — Donald Knuth</strong>
+<strong>"<em>A good algorithm is a beautiful thing, but its beauty is often in its simplicity. The most complex algorithms are those that use randomization effectively.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 28 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized q
 ## 28.1. Randomized QuickSort
 
 **Definition:** QuickSort utilizing a randomly selected pivot successfully avoids the catastrophic <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n^2)</code> specifically found on already sorted inputs.
+
+**Background & Philosophy:**
+The philosophy is trading absolute certainty for overwhelming probability. Deterministic algorithms often hit pathological worst-cases crafted by malicious inputs or unlucky sequential data. Injecting randomness (Las Vegas method) breaks these deterministic worst-cases mathematically, ensuring that `O(n log n)` execution is highly expected regardless of input distribution.
+
+**Use Cases:**
+Randomized QuickSort is the underlying default sorting strategy in modern standard libraries, used constantly when data comes from untrusted networks where users might submit intentionally sorted arrays to DDOS the server via worst-case CPU burn.
+
+**Memory Mechanics:**
+Randomization heavily relies on Pseudo-Random Number Generators (PRNGs). Fetching from a PRNG requires querying a shared internal state. If multiple goroutines request random numbers from the global `rand.Seed`, it creates massive <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> at the memory level. High-performance randomized algorithms allocate a distinct `rand.New(rand.NewSource())` per goroutine to maintain isolated <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> states, avoiding cross-thread memory stalling.
 
 ### Operations & Complexity
 
@@ -110,6 +119,15 @@ Randomized QuickSort boasts an expected time of <code>O(n log n)</code> across a
 ## 28.2. <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr>
 
 **Definition:** A <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr> acts as a probabilistic data structure that masterfully simulates a balanced <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> utilizing multiple layered linked lists featuring randomized heights.
+
+**Background & Philosophy:**
+Balancing an AVL or Red-Black tree involves extremely complex pointers and structural rotations. Skip lists offer a brilliantly simple philosophy: instead of mathematically guaranteeing balance via rigid rules, they achieve statistical balance via probability. By randomly "promoting" elements to higher layers, they establish express lanes for searching.
+
+**Use Cases:**
+Highly effective in concurrent programming. Because inserting an element doesn't require massive structural rotations, it requires fewer memory locks. Skip lists famously power the backend sorted sets in Redis.
+
+**Memory Mechanics:**
+Skip lists require an array of `next` pointers per node depending on their randomized "height". In Go, `make([]*SkipNode, lvl)` dynamically allocates this array. This makes skip lists heavier in memory usage than standard binary trees and introduces unpredictable memory fragmentation across the <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>. However, the absence of complex `O(log n)` rebalancing operations offsets the cache misses encountered during forward traversal.
 
 ### Operations & Complexity
 
@@ -265,6 +283,15 @@ A <abbr title="A probabilistic data structure that allows fast search within an 
 
 **Definition:** Miller-Rabin stands as a Monte Carlo algorithm utilized for fierce primality testing boasting an error probability firmly ≤ 4^(-k) across k continuous rounds.
 
+**Background & Philosophy:**
+The philosophy is "guilt by association." Since testing true primality for massive 2048-bit numbers takes astronomically long deterministically, Miller-Rabin uses Monte Carlo rules: it randomly selects "witnesses" to testify if a number is composite. If it finds a witness, it is 100% sure the number is not prime. If it fails to find one after `k` random trials, it declares the number "probably prime" with a mathematical certainty near absolute.
+
+**Use Cases:**
+Generating massive RSA or Diffie-Hellman encryption keys safely.
+
+**Memory Mechanics:**
+Miller-Rabin uses modular exponentiation. Since 2048-bit numbers greatly exceed the 64-bit size of standard CPU registers, Go uses the `math/big` package. `big.Int` allocates arrays of underlying `Word` slices in <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap memory</abbr>. These allocations create <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> churn. However, because the operations are mathematically heavy, CPU compute vastly dominates memory IO costs.
+
 ### Operations & Complexity
 
 | Parameter | Time | Error Probability |
@@ -274,13 +301,9 @@ A <abbr title="A probabilistic data structure that allows fast search within an 
 | k=20 | <code>O(log³ n)</code> | < 10^(-12) |
 | k=40 | <code>O(log³ n)</code> | < 10^(-24) |
 
-### Pseudocode
-
-
 ### Idiomatic Go Implementation
 
-
-Miller-Rabin (probabilistic primality test) is available in `crypto/rand`. Use `big.NewInt()` and `big.Int.ProbablePrime()` for production. The manual implementation above serves purely for educational purposes where n < 2^63.
+Miller-Rabin (probabilistic primality test) is available natively in `crypto/rand`. Use `big.NewInt()` and `big.Int.ProbablePrime()` for production.
 
 ### Decision Matrix
 
@@ -298,6 +321,15 @@ Miller-Rabin (probabilistic primality test) is available in `crypto/rand`. Use `
 ## 28.4. Reservoir Sampling
 
 **Definition:** Reservoir sampling elegantly isolates k items entirely uniformly randomly from an infinite stream without necessitating any prior knowledge of the total item volume.
+
+**Background & Philosophy:**
+The philosophy is stream intelligence. When data is infinite or too large to fit in memory (like all logs generated by a server today), you cannot store it to randomly select `k` items later. Reservoir sampling processes items exactly once, maintaining a "reservoir" of size `k`, probabilistically replacing items as new ones stream in, ensuring fair representation continuously.
+
+**Use Cases:**
+Providing live, random analytics samples from continuous Kafka streams or massive network logs.
+
+**Memory Mechanics:**
+It requires strictly `O(k)` memory. A single <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice of size `k` is allocated in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. As new data streams in, it reads one item at a time, making it incredibly hardware friendly since it uses minimal <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes virtually zero <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> during sequential data ingestion.
 
 ### Operations & Complexity
 
@@ -327,7 +359,7 @@ Reservoir sampling guarantees that every single item possesses an exact mathemat
 | Randomized QuickSort | Las Vegas | <code>O(n log n)</code> | <code>O(log n)</code> | General <abbr title="The process of arranging elements in a specific order.">Sorting</abbr> |
 | <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr> | Las Vegas | <code>O(log n)</code> | <code>O(n)</code> | Ordered data set |
 | Miller-Rabin | Monte Carlo | <code>O(k log^3 n)</code> | <code>O(1)</code> | Advanced Primality testing |
-| Reservoir Sampling | — | <code>O(n)</code> | <code>O(k)</code> | Infinite Stream sampling |
+| Reservoir Sampling | . | <code>O(n)</code> | <code>O(k)</code> | Infinite Stream sampling |
 | Randomized Select | Las Vegas | <code>O(n)</code> | <code>O(1)</code> | Isolating the k-th order statistic |
 | <abbr title="A data structure that implements an associative array using a hash function.">Hash Table</abbr> | Las Vegas | <code>O(1)</code> avg | <code>O(n)</code> | High-speed Dictionary |
 | Bloom Filter | Monte Carlo | <code>O(k)</code> | <code>O(m)</code> | Rapid Membership test |
@@ -339,6 +371,6 @@ Reservoir sampling guarantees that every single item possesses an exact mathemat
 
 ## See Also
 
-- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
-- [Chapter 27 — Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)
-- [Chapter 46 — Skip Lists](/docs/Part-IX/Chapter-46/)
+- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 27: Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)
+- [Chapter 46: Skip Lists](/docs/Part-IX/Chapter-46/)

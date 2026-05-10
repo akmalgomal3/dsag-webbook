@@ -1,6 +1,6 @@
 ---
 weight: 60400
-title: "Chapter 26 - Backtracking"
+title: "Chapter 26: Backtracking"
 description: "Backtracking"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>In the middle of difficulty lies opportunity.</em>" — Albert Einstein</strong>
+<strong>"<em>In the middle of difficulty lies opportunity.</em>" : Albert Einstein</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -22,9 +22,18 @@ Chapter 26 covers backtracking: a systematic way to explore all potential soluti
 
 **Definition:** Backtracking is a refined brute-force approach that builds a solution incrementally. If a partial solution violates constraints, the algorithm backtracks and tries the next alternative. It is equivalent to a depth-first search of the solution space.
 
+**Background & Philosophy:**
+The philosophy is exhaustive exploration with intelligent pruning. Unlike pure brute force which blindly evaluates complete solutions (trying every combination regardless of obvious impossibilities), backtracking actively evaluates partial solutions. The moment a partial solution breaks a rule, it abandons that entire branch of the search tree.
+
+**Use Cases:**
+Solving constraint satisfaction problems like Sudoku or crossword puzzles, generating regular expression parsers, discovering passwords, and traversing complex logical state machines (N-Queens).
+
+**Memory Mechanics:**
+Backtracking uses the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> to represent the search space tree. In Go, passing a slice <abbr title="A variable that stores a memory address.">pointer</abbr> or mutating a shared slice across recursive calls avoids allocating millions of small arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. However, the developer must meticulously "undo" the mutation (`path = path[:len(path)-1]`) before returning to the parent frame, otherwise the shared memory state becomes permanently corrupted for adjacent branches.
+
 ### Template Structure
 
-```
+```text
 func backtrack(candidate, path) {
     if isValidSolution(path) {
         recordSolution(path)
@@ -201,7 +210,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
-- [Chapter 25 — Greedy Algorithms](/docs/Part-VI/Chapter-25/)
-- [Chapter 58 — Minimax and Game Trees](/docs/Part-XII/Chapter-58/)
-
+- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 25: Greedy Algorithms](/docs/Part-VI/Chapter-25/)
+- [Chapter 58: Minimax and Game Trees](/docs/Part-XII/Chapter-58/)

@@ -1,6 +1,6 @@
 ---
 weight: 40500
-title: "Chapter 17 - Network Flow Algorithms"
+title: "Chapter 17: Network Flow Algorithms"
 description: "Network Flow Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:30+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithms are the intellectual property of computer science; they are the critical tools for understanding how to solve complex problems effectively.</em>" — Donald Knuth</strong>
+<strong>"<em>Algorithms are the intellectual property of computer science; they are the critical tools for understanding how to solve complex problems effectively.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 17 focuses on Network Flow Algorithms (Ford-Fulkerson, Edmonds-Karp, Din
 ## 17.1. Ford-Fulkerson Method
 
 **Definition:** Ford-Fulkerson iteratively increases flow by finding an augmenting <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> from the source to the sink using DFS, until no such <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> exists.
+
+**Background & Philosophy:**
+Network flow problems model the transport of goods, liquids, or data across a constrained network. Ford-Fulkerson is a "method" rather than an algorithm because it does not strictly specify how to find the path. The philosophy is greedy incrementation: find any path that can take more flow, fill it up to its bottleneck, and crucially, create "residual" back-edges. These back-edges act as an "undo" button, allowing future paths to push flow back the other way if it leads to a globally higher total flow.
+
+**Use Cases:**
+Used in pipeline logistics (water or oil routing), allocating bandwidth in telecom networks, and calculating maximum bipartite matching (e.g., matching job applicants to open positions).
+
+**Memory Mechanics:**
+The algorithm heavily relies on a "Residual Graph", typically implemented as an <abbr title="A 2D array representing a graph, where rows and columns correspond to vertices.">Adjacency Matrix</abbr> (`[][]int`). In Go, mutating a 2D slice directly modifies the underlying <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. DFS traverses this matrix recursively, adding to the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Because Ford-Fulkerson uses DFS, it can pathologically ping-pong back and forth between two nodes if the capacities are chosen poorly, making it incredibly inefficient in terms of CPU cycles, though its <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">space complexity</abbr> remains a steady `O(V^2)`.
 
 ### Operations & Complexity
 
@@ -58,7 +67,7 @@ DFS(u, minFlow):
 
 ### Idiomatic Go Implementation
 
-{{< prism lang="go" line-numbers="true">}}
+```go
 package main
 
 import "fmt"
@@ -100,7 +109,7 @@ func main() {
 	}
 	fmt.Println(fordFulkerson(cap, 0, 5))
 }
-{{< /prism >}}
+```
 
 ### Decision Matrix
 
@@ -118,6 +127,15 @@ func main() {
 
 **Definition:** Edmonds-Karp is an implementation of the Ford-Fulkerson method that uses BFS to find the shortest augmenting path, guaranteeing a polynomial complexity of `O(V E²)`.
 
+**Background & Philosophy:**
+Edmonds-Karp fixes the pathological flaw in Ford-Fulkerson by formalizing the path-finding rule: "Always take the shortest path by edge count." This philosophy of Breadth-First traversal eliminates the possibility of bouncing back and forth on large capacity edges, bounding the algorithm's runtime mathematically to the number of nodes and edges, regardless of how massive the integer capacities are.
+
+**Use Cases:**
+The standard fallback algorithm for general-purpose max flow calculations when the graph is small to medium-sized and capacity numbers vary wildly.
+
+**Memory Mechanics:**
+By using BFS, Edmonds-Karp replaces the DFS <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> with a heap-allocated Queue (`[]int`). In Go, tracking the path requires a `parent` array. As the BFS scans the matrix, it constantly reads from the queue, checks the capacity matrix, and updates the parent slice. Since these slices are accessed dynamically, <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> misses are common on large graphs, making Edmonds-Karp strictly slower than Dinic's for dense configurations.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -126,11 +144,9 @@ func main() {
 | Iterations | `O(VE)` | Bound on the number of augmenting paths |
 | Total | `O(V E²)` | Strictly polynomial |
 
-### Pseudocode
-
-
 ### Idiomatic Go Implementation
 
+```go
 package main
 
 import "fmt"
@@ -144,15 +160,15 @@ func edmondsKarp(cap [][]int, s, t int) int {
 		parent := make([]int, n)
 		for i := range parent { parent[i] = -1 }
 		q := []int{s}; parent[s] = s
-		for len(q) > 0 && <abbr title="A node that has a child node.">parent</abbr>[t] == -1 {
+		for len(q) > 0 && parent[t] == -1 {
 			u := q[0]; q = q[1:]
 			for v := 0; v < n; v++ {
 				if parent[v] == -1 && cap[u][v]-flow[u][v] > 0 {
-					<abbr title="A node that has a child node.">parent</abbr>[v] = u; q = append(q, v)
+					parent[v] = u; q = append(q, v)
 				}
 			}
 		}
-		if <abbr title="A node that has a child node.">parent</abbr>[t] == -1 { break }
+		if parent[t] == -1 { break }
 		bottleneck := 1 << 30
 		for v := t; v != s; v = parent[v] {
 			u := parent[v]
@@ -174,6 +190,7 @@ func main() {
 	}
 	fmt.Println(edmondsKarp(cap, 0, 5))
 }
+```
 
 ### Decision Matrix
 
@@ -186,6 +203,15 @@ func main() {
 
 **Definition:** Dinic's algorithm utilizes a level graph (built via BFS) and blocking flows (found via DFS) to dramatically accelerate maximum flow computations, achieving `O(E √V)` complexity.
 
+**Background & Philosophy:**
+Dinic's philosophy is "batch processing". Instead of finding one path at a time (like Edmonds-Karp), it builds a "Level Graph" mapping distance from the source. Then, it pushes multiple flows simultaneously through this graph until the entire level structure is blocked. It combines the rigorous pathing of BFS with the aggressive exploration of DFS.
+
+**Use Cases:**
+The absolute gold standard for competitive programming and heavy-duty network calculations, such as bipartite matching where its time complexity drops miraculously to `O(E √V)`.
+
+**Memory Mechanics:**
+Dinic’s introduces a `level` slice alongside the `flow` and `capacity` matrices. During the DFS phase, a `ptr` (or `dead-end`) array is often used to avoid re-exploring edges that can no longer take flow. This requires slightly more <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> than Edmonds-Karp, but the avoidance of redundant memory fetches makes Dinic's algorithm remarkably sympathetic to the CPU architecture. The combination of state arrays forces Go's Garbage Collector to trace slightly more data, but the execution speedup heavily outweighs this.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -194,11 +220,9 @@ func main() {
 | Blocking flow | `O(VE)` | Using DFS |
 | Total | `O(E √V)` | Extremely fast for dense graphs |
 
-### Pseudocode
-
-
 ### Idiomatic Go Implementation
 
+```go
 package main
 
 import "fmt"
@@ -215,11 +239,11 @@ func dinic(cap [][]int, s, t int) int {
 			u := q[0]; q = q[1:]
 			for v := 0; v < n; v++ {
 				if level[v] == -1 && cap[u][v]-flow[u][v] > 0 {
-					<abbr title="The set of all nodes at a given depth.">level</abbr>[v] = <abbr title="The set of all nodes at a given depth.">level</abbr>[u]+1; q = append(q, v)
+					level[v] = level[u]+1; q = append(q, v)
 				}
 			}
 		}
-		return <abbr title="The set of all nodes at a given depth.">level</abbr>[t] >= 0
+		return level[t] >= 0
 	}
 	var dfs func(u, f int) int
 	dfs = func(u, f int) int {
@@ -252,6 +276,7 @@ func main() {
 	}
 	fmt.Println(dinic(cap, 0, 5))
 }
+```
 
 ### Decision Matrix
 
@@ -264,6 +289,15 @@ func main() {
 
 **Definition:** Minimum-cost flow finds the maximum flow that incurs the absolute minimum total cost, utilizing the successive shortest path algorithm equipped with Dijkstra on the residual graph.
 
+**Background & Philosophy:**
+Max flow tells you *how much* you can ship; Min-Cost Flow tells you the *cheapest way* to ship it. The philosophy combines the greedy routing of Dijkstra with the residual tracking of Ford-Fulkerson. It proves that by always pushing flow through the cheapest available path until capacity is met, the final flow configuration is mathematically optimal in cost.
+
+**Use Cases:**
+Supply chain optimization (e.g., shipping goods from multiple factories to multiple warehouses at the lowest freight cost), and the assignment problem (e.g., assigning Uber drivers to riders minimizing total travel distance).
+
+**Memory Mechanics:**
+Min-Cost Flow requires tracking `capacity`, `flow`, and `cost` matrices. It runs a Priority Queue (Min-Heap) for Dijkstra in every phase. Because Go creates a new slice for the Priority Queue upon every Dijkstra invocation, the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> experiences high churn. Allocating the `dist` and `parent` arrays outside the loop and reusing them avoids unnecessary heap allocations and stabilizes memory performance.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -271,11 +305,9 @@ func main() {
 | Successive shortest path | `O(F · E log V)` | F = max flow |
 | Total | `O(F · E log V)` | Driven by Dijkstra |
 
-### Pseudocode
-
-
 ### Idiomatic Go Implementation
 
+```go
 package main
 
 import (
@@ -285,43 +317,69 @@ import (
 
 type MI struct{ v, d int }
 type MPQ []MI
-func (q MPQ) Len() int { return len(q) }
+
+func (q MPQ) Len() int           { return len(q) }
 func (q MPQ) Less(i, j int) bool { return q[i].d < q[j].d }
-func (q MPQ) Swap(i, j int) { q[i], q[j] = q[j], q[i] }
+func (q MPQ) Swap(i, j int)      { q[i], q[j] = q[j], q[i] }
 func (q *MPQ) Push(x interface{}) { *q = append(*q, x.(MI)) }
-func (q *MPQ) Pop() interface{} { old := *q; n := len(old); *q = old[:n-1]; return old[n-1] }
+func (q *MPQ) Pop() interface{} {
+	old := *q
+	n := len(old)
+	*q = old[:n-1]
+	return old[n-1]
+}
 
 func minCostFlow(cap, cost [][]int, s, t, maxf int) int {
 	n := len(cap)
-	flow := make([][]int, n); for i := range flow { flow[i] = make([]int, n) }
+	flow := make([][]int, n)
+	for i := range flow { flow[i] = make([]int, n) }
 	total := 0
 	for maxf > 0 {
-		dist := make([]int, n); par := make([]int, n)
+		dist := make([]int, n)
+		par := make([]int, n)
 		for i := range dist { dist[i] = -1; par[i] = -1 }
-		dist[s] = 0; pq := &MPQ{{s, 0}}; <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>.Init(pq)
+		dist[s] = 0
+		pq := &MPQ{{s, 0}}
+		heap.Init(pq)
 		for pq.Len() > 0 {
-			c := <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>.Pop(pq).(MI); if c.d > dist[c.v] { continue }
+			c := heap.Pop(pq).(MI)
+			if c.d > dist[c.v] { continue }
 			for v := 0; v < n; v++ {
 				if cap[c.v][v]-flow[c.v][v] > 0 {
 					nd := dist[c.v] + cost[c.v][v]
-					if dist[v] == -1 || nd < dist[v] { dist[v] = nd; par[v] = c.v; heap.Push(pq, MI{v, nd}) }
+					if dist[v] == -1 || nd < dist[v] {
+						dist[v] = nd
+						par[v] = c.v
+						heap.Push(pq, MI{v, nd})
+					}
 				}
 			}
 		}
 		if dist[t] == -1 { break }
 		b := maxf
-		for v := t; v != s; v = par[v] { if cap[par[v]][v]-flow[par[v]][v] < b { b = cap[par[v]][v]-flow[par[v]][v] } }
-		for v := t; v != s; v = par[v] { u := par[v]; flow[u][v] += b; flow[v][u] -= b; total += b*cost[u][v] }
+		for v := t; v != s; v = par[v] {
+			if cap[par[v]][v]-flow[par[v]][v] < b {
+				b = cap[par[v]][v] - flow[par[v]][v]
+			}
+		}
+		for v := t; v != s; v = par[v] {
+			u := par[v]
+			flow[u][v] += b
+			flow[v][u] -= b
+			total += b * cost[u][v]
+		}
 		maxf -= b
 	}
 	return total
 }
 
 func main() {
-	cap := [][]int...
-	cost := [][]int...
-	fmt.Println(minCostFlow(cap, cost, 0, 3, 3))
+    // Basic demonstration values
+	cap := [][]int{{0, 3}, {0, 0}}
+	cost := [][]int{{0, 5}, {0, 0}}
+	fmt.Println(minCostFlow(cap, cost, 0, 1, 3))
 }
+```
 
 ### Decision Matrix
 
@@ -345,6 +403,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 16 — Minimum Spanning Trees](/docs/Part-IV/Chapter-16/)
-- [Chapter 18 — Matchings in Bipartite Graphs](/docs/Part-IV/Chapter-18/)
-- [Chapter 33 — Linear Programming](/docs/Part-VII/Chapter-33/)
+- [Chapter 16: Minimum Spanning Trees](/docs/Part-IV/Chapter-16/)
+- [Chapter 18: Matchings in Bipartite Graphs](/docs/Part-IV/Chapter-18/)
+- [Chapter 33: Linear Programming](/docs/Part-VII/Chapter-33/)

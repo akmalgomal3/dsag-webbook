@@ -1,6 +1,6 @@
 ---
 weight: 80500
-title: "Chapter 44 - Philosophy of Computation"
+title: "Chapter 44: Philosophy of Computation"
 description: "Philosophy of Computation"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The purpose of computing is insight, not numbers.</em>" — Richard Hamming</strong>
+<strong>"<em>The purpose of computing is insight, not numbers.</em>" : Richard Hamming</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -24,6 +24,15 @@ Chapter 44 reflects on what algorithms and data structures reveal about thinking
 - What matters (optimization criteria)
 - What is knowable (information available)
 - What is computable (resources and time)
+
+**Background & Philosophy:**
+The core philosophy of software engineering is managing complexity. Abstraction allows us to build colossal structures (like internet routing or generative AI) by hiding the microscopic details inside black boxes. The danger arises when the abstraction leaks.
+
+**Use Cases:**
+Translating ambiguous, contradictory human business requirements into flawlessly executing software states.
+
+**Memory Mechanics:**
+The ultimate philosophical boundary of computation is memory state tracking. Every variable, every lock, every goroutine consumes <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Complex architectures attempt to abstract this away (via the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>). The pragmatic engineer respects that no abstraction can perfectly shield them from physical hardware limits; uncontrolled recursion still blows the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>, and fragmented objects still choke the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr>.
 
 ### The Algorithmic Mindset
 
@@ -104,7 +113,6 @@ Go's design mirrors algorithmic virtues:
 
 ## See Also
 
-- [Chapter 40 — Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
-- [Chapter 41 — The Algorithmic Revolution](/docs/Part-VIII/Chapter-41/)
-- [Chapter 43 — Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-43/)
-
+- [Chapter 40: Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
+- [Chapter 41: The Algorithmic Revolution](/docs/Part-VIII/Chapter-41/)
+- [Chapter 43: Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-43/)

@@ -1,6 +1,6 @@
 ---
 weight: 80100
-title: "Chapter 40 - Origins of Algorithms"
+title: "Chapter 40: Origins of Algorithms"
 description: "Origins of Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.</em>" — Edsger Dijkstra</strong>
+<strong>"<em>The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.</em>" : Edsger Dijkstra</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 40 explores the ancient origins of algorithms — from Babylonian clay t
 ## 40.1. What Is an Algorithm?
 
 **Definition:** An <abbr title="A finite sequence of well-defined, computer-implementable instructions to solve a class of problems.">algorithm</abbr> is a finite sequence of well-defined instructions to solve a problem. The word derives from the Latinized name of the Persian mathematician <abbr title="A Persian polymath who lived c. 780–850 CE, considered the father of algebra.">al-Khwarizmi</abbr>.
+
+**Background & Philosophy:**
+Algorithms exist independently of computing machinery. The philosophy is procedural determinism: breaking a complex, overwhelming problem into mechanical, unambiguous steps that guarantee a result, regardless of the intelligence of the entity executing those steps.
+
+**Use Cases:**
+Translating human intent into reproducible mathematical models, enabling early astronomy, tax collection, and structural engineering.
+
+**Memory Mechanics:**
+Before electronic <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> existed, the "memory" for ancient algorithms was clay tablets, abacuses, or human short-term memory. The limitation of human working memory heavily influenced ancient algorithms to require tracking very few variables (state) simultaneously, directly analogous to an algorithm running with <code>O(1)</code> space complexity.
 
 ### The Three Pillars
 
@@ -36,7 +45,7 @@ Chapter 40 explores the ancient origins of algorithms — from Babylonian clay t
 
 Babylonians on clay tablets computed square roots using iterative approximation — essentially the precursor to Newton's method:
 
-```
+```text
 To find √A:
 1. Guess x
 2. Compute y = A / x
@@ -46,11 +55,29 @@ To find √A:
 
 ### Euclid's Algorithm (c. 300 BCE)
 
-The oldest non-trivial algorithm still in use. Euclid's <abbr title="Greatest Common Divisor: the largest positive integer that divides each of the integers.">GCD</abbr> algorithm demonstrates the power of reduction — transforming a hard problem into a smaller instance of itself.
+**Definition:** An algorithm to find the greatest common divisor (GCD) of two numbers by repeatedly replacing the larger number by its remainder when divided by the smaller.
+
+**Background & Philosophy:**
+The philosophy is mathematical reduction. Euclid realized that `GCD(A, B) == GCD(B, A mod B)`, turning a massive search problem into a rapid geometric collapse, shrinking the problem space exponentially in each step.
+
+**Use Cases:**
+Essential today in cryptography (RSA key generation heavily relies on the Extended Euclidean Algorithm) and simplifying fractions in computer algebra systems.
+
+**Memory Mechanics:**
+Euclid's algorithm requires strictly <code>O(1)</code> memory. Because it only tracks two integer variables (`A` and `B`), these values never need to touch the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> or main <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> during execution. They reside entirely within the ultra-fast registers of the CPU, making the algorithm bound only by ALU (Arithmetic Logic Unit) instruction speed, not memory latency.
 
 ### Sieve of Eratosthenes (c. 200 BCE)
 
-The first <abbr title="An algorithmic paradigm that solves problems by breaking them into smaller subproblems and storing solutions.">dynamic programming</abbr>-like algorithm: iteratively mark multiples to find primes, avoiding redundant work.
+**Definition:** An ancient algorithm for finding all prime numbers up to any given limit by iteratively marking multiples.
+
+**Background & Philosophy:**
+The philosophy is elimination rather than verification. Instead of testing if a number is prime (which is computationally expensive), it assumes all numbers are prime and crosses out the guaranteed composites. This is the earliest manifestation of <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> and caching.
+
+**Use Cases:**
+Generating prime number lookup tables for scientific computing, factorization, and low-level mathematical sieving.
+
+**Memory Mechanics:**
+The Sieve fundamentally trades time for space. It requires an <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> of size `N`. In modern computers, representing this array as booleans takes N bytes, but representing it as a bit-vector (Bitset) compresses it heavily. Scanning the contiguous bit-vector to cross out multiples leverages perfect <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>, allowing the CPU to execute the algorithm entirely inside the lightning-fast L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> for ranges under a few million.
 
 ## 40.3. Medieval to Renaissance (500–1600)
 
@@ -97,7 +124,6 @@ The first <abbr title="An algorithmic paradigm that solves problems by breaking 
 
 ## See Also
 
-- [Chapter 41 — The Algorithmic Revolution](/docs/Part-VIII/Chapter-41/)
-- [Chapter 42 — Evolution of Data Structures](/docs/Part-VIII/Chapter-42/)
-- [Chapter 44 — Philosophy of Computation](/docs/Part-VIII/Chapter-44/)
-
+- [Chapter 41: The Algorithmic Revolution](/docs/Part-VIII/Chapter-41/)
+- [Chapter 42: Evolution of Data Structures](/docs/Part-VIII/Chapter-42/)
+- [Chapter 44: Philosophy of Computation](/docs/Part-VIII/Chapter-44/)

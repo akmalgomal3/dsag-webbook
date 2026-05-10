@@ -1,6 +1,6 @@
 ---
 weight: 70300
-title: "Chapter 31 - Cryptographic Foundations Algorithms"
+title: "Chapter 31: Cryptographic Foundations Algorithms"
 description: "Cryptographic Foundations Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:47+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>To keep a system secure, we need to be always on our toes. If we wait for the attackers to find vulnerabilities, it's already too late.</em>" — Whitfield Diffie</strong>
+<strong>"<em>To keep a system secure, we need to be always on our toes. If we wait for the attackers to find vulnerabilities, it's already too late.</em>" : Whitfield Diffie</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 31 explores cryptographic primitives: hash functions, symmetric encrypti
 ## 31.1. Hash Functions
 
 **Definition:** A hash function maps arbitrary inputs to deterministic fixed-size outputs. Cryptographic hashes must be robustly preimage-resistant and collision-resistant.
+
+**Background & Philosophy:**
+The philosophy is mathematical asymmetry and mathematical impossibility. Cryptography relies on one-way functions (like factoring large primes or elliptic curve discrete logarithms) that are trivial to compute in one direction but take billions of years to reverse without a key.
+
+**Use Cases:**
+HTTPS encryption, securing user passwords via bcrypt, and verifying blockchain transactions through ECDSA signatures.
+
+**Memory Mechanics:**
+Cryptographic hashing requires constant-time memory execution to prevent "timing attacks". If comparing an unauthorized hash `A` against a stored password hash `B`, a naive string comparison exits early on the first mismatched byte. An attacker can precisely measure this execution time to deduce the correct bytes one by one. The `subtle.ConstantTimeCompare` function forces the CPU to iterate through the entire memory slice regardless of matches, neutralizing the timing side-channel.
 
 ### Operations & Complexity
 
@@ -376,9 +385,6 @@ Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute 
 | scrypt | N, r, p | Configurable | Memory-hard defense |
 | Argon2 | Time, Memory | High | PHC winner, highly recommended |
 
-### Pseudocode
-
-
 ### Idiomatic Go Implementation
 
 ```go
@@ -396,7 +402,7 @@ func main() {
 }
 ```
 
-For password hashing, use bcrypt with a cost factor of at least 12:
+For password hashing, use bcrypt with a cost factor of at least 12.
 
 ## Quick Reference
 
@@ -404,12 +410,12 @@ For password hashing, use bcrypt with a cost factor of at least 12:
 |------|---------|------|-------|----------|
 | SHA-256 | `crypto/sha256` | `O(n)` | 32 bytes | Data integrity |
 | AES-GCM | `crypto/aes` + `crypto/cipher` | `O(n)` | varies | Standard symmetric encryption |
-| HMAC | `crypto/hmac` | `O(n)` | — | Authenticate messages |
-| ECDSA | `crypto/ecdsa` | `O(n)` | — | Standard digital signatures |
-| Ed25519 | `crypto/ed25519` | `O(n)` | — | Fast, modern signatures |
-| bcrypt | `golang.org/x/crypto/bcrypt` | `O(cost)` | — | Hash passwords |
-| Argon2 | `golang.org/x/crypto/argon2` | — | — | Advanced password hashing |
-| TLS | `crypto/tls` | — | — | Secure transport layers |
+| HMAC | `crypto/hmac` | `O(n)` | . | Authenticate messages |
+| ECDSA | `crypto/ecdsa` | `O(n)` | . | Standard digital signatures |
+| Ed25519 | `crypto/ed25519` | `O(n)` | . | Fast, modern signatures |
+| bcrypt | `golang.org/x/crypto/bcrypt` | `O(cost)` | . | Hash passwords |
+| Argon2 | `golang.org/x/crypto/argon2` | . | . | Advanced password hashing |
+| TLS | `crypto/tls` | . | . | Secure transport layers |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 31:</strong> This chapter dissects cryptographic primitives in Go: hashing (SHA-256), symmetric encryption (AES-GCM), asymmetric encryption (ECDSA/Ed25519), HMACs, digital signatures, and password hashing (bcrypt/Argon2). Rely exclusively on the standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> `crypto/` package for cryptographic operations and rigorously avoid MD5/SHA-1 for anything security-related.
@@ -417,7 +423,6 @@ For password hashing, use bcrypt with a cost factor of at least 12:
 
 ## See Also
 
-- [Chapter 30 — Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
-- [Chapter 32 — Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-32/)
-- [Chapter 47 — Bloom Filters](/docs/Part-IX/Chapter-47/)
-
+- [Chapter 30: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
+- [Chapter 32: Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-32/)
+- [Chapter 47: Bloom Filters](/docs/Part-IX/Chapter-47/)

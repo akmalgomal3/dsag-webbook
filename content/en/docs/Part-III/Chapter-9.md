@@ -1,6 +1,6 @@
 ---
 weight: 30100
-title: "Chapter 9 - Trees and Balanced Trees"
+title: "Chapter 9: Trees and Balanced Trees"
 description: "Trees and Balanced Trees"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The oak fought the wind and was broken, the willow bent when it must and survived.</em>" — Robert Jordan</strong>
+<strong>"<em>The oak fought the wind and was broken, the willow bent when it must and survived.</em>" : Robert Jordan</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 9 covers tree data structures: binary search trees, self-balancing trees
 ## 9.1. Binary Search Tree (BST)
 
 **Definition:** A BST is a binary tree where each node's left subtree contains only values less than the node, and the right subtree contains only values greater.
+
+**Background & Philosophy:**
+Trees mirror the hierarchical nature of human logic and decision-making. The philosophy of a <abbr title="A binary tree where the left child is smaller and the right child is larger than the parent.">Binary Search Tree (BST)</abbr> is to combine the dynamic memory allocation flexibility of a linked list with the `O(log n)` search speed of a sorted array. It achieves this by enforcing a strict invariant: left is always smaller, right is always larger.
+
+**Use Cases:**
+Used in implementing sets and dictionaries, executing fast range queries (e.g., "find all users aged 20 to 30"), and powering the underlying autocomplete logic in modern search engines via Tries.
+
+**Memory Mechanics:**
+A standard BST is <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>. Each `TreeNode` is allocated independently on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> using `new` or `&TreeNode{}`. Because the nodes are scattered randomly in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, traversing a tree forces the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to constantly fetch new memory lines, resulting in high latency compared to scanning a flat array. Furthermore, every node carries the overhead of two 64-bit <abbr title="A variable that stores a memory address.">pointers</abbr> (`Left` and `Right`), which significantly increases the memory footprint per element.
 
 ### Operations & Complexity
 
@@ -81,6 +90,15 @@ func main() {
 
 **Definition:** An AVL tree is a self-balancing BST where the height difference between subtrees of any node is at most 1. Balance is maintained through rotations.
 
+**Background & Philosophy:**
+The philosophical problem with a standard BST is that sequential insertions (e.g., 1, 2, 3, 4) degrade the tree into a linked list, ruining the `O(log n)` guarantee. The AVL tree (named after Adelson-Velsky and Landis) solves this by enforcing a strict balance invariant. The philosophy is "correctness over insertion speed": it willingly sacrifices `O(1)` CPU cycles during insertion to perform rotations, ensuring that future search operations never degrade to `O(n)`.
+
+**Use Cases:**
+Ideal for read-heavy applications where searches vastly outnumber insertions and deletions, such as in-memory dictionary lookups or static indexing.
+
+**Memory Mechanics:**
+An AVL tree node requires an additional memory field to store the `Height` or `BalanceFactor` integer. This increases the struct size. During a rotation, memory addresses themselves do not change; only the <abbr title="A variable that stores a memory address.">pointers</abbr> (`Left` and `Right`) are reassigned. This <abbr title="Performing mathematical operations on memory addresses.">pointer swapping</abbr> is an `O(1)` operation and requires no new <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations, making rotations extremely memory-efficient despite looking algorithmically complex.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -110,7 +128,7 @@ func main() {
 
 - **Degenerate tree:** Sorted input creates a linked list; always use balanced trees for dynamic data.
 - **Go generics:** Go 1.18+ enables type-safe generic trees using `constraints.Ordered`.
-- **GC overhead:** Tree nodes are individually allocated; large trees create GC pressure.
+- **GC overhead:** Tree nodes are individually allocated; large trees create <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
 
 ## 9.4. Quick Reference
 
@@ -127,7 +145,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 10 — Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
-- [Chapter 11 — Disjoint Sets](/docs/Part-III/Chapter-11/)
-- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
-
+- [Chapter 10: Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
+- [Chapter 11: Disjoint Sets](/docs/Part-III/Chapter-11/)
+- [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)

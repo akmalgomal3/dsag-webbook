@@ -1,6 +1,6 @@
 ---
 weight: 70600
-title: "Chapter 34 - Polynomial and FFT"
+title: "Chapter 34: Polynomial and FFT"
 description: "Polynomial and FFT"
 icon: "article"
 date: "2024-08-24T23:42:49+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithms are the backbone of modern computing. Without them, even the most powerful hardware would be rendered useless.</em>" — Donald Knuth</strong>
+<strong>"<em>Algorithms are the backbone of modern computing. Without them, even the most powerful hardware would be rendered useless.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 34 explores polynomials and the Fast Fourier Transform (FFT). Go's stdli
 ## 34.1. Polynomial Representation
 
 **Definition:** A polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n is gracefully represented as a slice of coefficients: `[a₀, a₁, ..., aₙ]`.
+
+**Background & Philosophy:**
+The philosophy is the dual representation of data. A polynomial can be represented either by its coefficients or by its evaluated points. Multiplying coefficients takes `O(n^2)` time, but multiplying evaluated points takes `O(n)` time. FFT translates coefficients into points in `O(n log n)`, allowing blisteringly fast math.
+
+**Use Cases:**
+Digital signal processing (audio/image compression), quantum mechanics, and multiplying incredibly large numbers (e.g., 100,000 digits) efficiently.
+
+**Memory Mechanics:**
+FFT's memory access pattern is governed by the "butterfly" operation, which intertwines elements mathematically using a bit-reversal permutation. This creates a highly <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory read pattern that brutally thrashes the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> if implemented naively. High-performance FFT libraries pre-calculate and cache the sine/cosine "twiddle factors" into an array and heavily optimize memory strides to keep data trapped in the L1/L2 caches.
 
 ### Operations & Complexity
 
@@ -139,15 +148,7 @@ Go inherently lacks operator overloading. Always employ explicit method receiver
 | Iterative FFT | `O(n log n)` | `O(1)` in-place | Memory-efficient in-place execution |
 | Bluestein | `O(n log n)` | `O(n)` | Supports arbitrary input sizes |
 
-Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation demands roughly 100 lines of code. For production integrity, depend on libraries like `github.com/mjibson/go-dsp` or `github.com/cpmech/fftx`. Below is an iterative Cooley-Tukey demonstration.
-
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-
-FFT structurally mandates an input length that is a strict power of 2 (pad with zeros if necessary). Utilize `math/complex` for complex operations. Floating-point rounding errors often yield minuscule imaginary artifacts; explicitly extract `real()` and perform manual rounding if necessary.
+Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation demands roughly 100 lines of code. For production integrity, depend on libraries like `github.com/mjibson/go-dsp` or `github.com/cpmech/fftx`.
 
 ### Decision Matrix
 
@@ -252,6 +253,6 @@ Lagrange interpolation holds remarkable stability solely for a sparse number of 
 
 ## See Also
 
-- [Chapter 29 — Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
-- [Chapter 35 — String Matching Algorithms](/docs/Part-VII/Chapter-35/)
-- [Chapter 39 — Bit Manipulation](/docs/Part-VII/Chapter-39/)
+- [Chapter 29: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
+- [Chapter 35: String Matching Algorithms](/docs/Part-VII/Chapter-35/)
+- [Chapter 39: Bit Manipulation](/docs/Part-VII/Chapter-39/)

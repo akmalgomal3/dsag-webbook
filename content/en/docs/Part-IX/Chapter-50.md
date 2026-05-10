@@ -1,6 +1,6 @@
 ---
 weight: 90600
-title: "Chapter 50 - Persistent Data Structures"
+title: "Chapter 50: Persistent Data Structures"
 description: "Persistent Data Structures"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Persistence is the path to immutability.</em>" — Chris Okasaki</strong>
+<strong>"<em>Persistence is the path to immutability.</em>" : Chris Okasaki</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 50 explores persistent data structures — structures that preserve prev
 ## 50.1. What Is Persistence?
 
 **Definition:** A <abbr title="A data structure that always preserves the previous version of itself when it is modified, enabling access to any version.">persistent data structure</abbr> preserves all previous versions after modification. There are two flavors:
+
+**Background & Philosophy:**
+The philosophy is absolute immutability. In standard data structures, an update destroys the past. Persistent structures treat data like a timeline: an update does not overwrite the old data; it creates a new "version" of the world that points back to the unchanged parts of the old world.
+
+**Use Cases:**
+Git version control (trees and blobs), functional programming languages (Clojure, Haskell), and time-travel debugging tools.
+
+**Memory Mechanics:**
+Persistent structures rely heavily on "Path Copying". Instead of deep-copying an entire 1-million node tree (which would instantly exhaust memory), they only copy the <code>O(log n)</code> nodes along the path from the root to the modified leaf. This structural sharing heavily depends on the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> to reclaim versions that are no longer referenced. Because nodes are never modified in-place, persistent structures completely eliminate data races, making them inherently thread-safe without any memory locks.
 
 | Type | Behavior | Example |
 |------|----------|---------|
@@ -34,6 +43,10 @@ The key technique: when updating a node, copy the path from root to that node, s
 ### Persistent Linked List
 
 ```go
+package main
+
+import "fmt"
+
 type List struct {
     val  int
     next *List
@@ -44,10 +57,14 @@ func (l *List) Prepend(v int) *List {
     return &List{val: v, next: l}
 }
 
-// Original list still valid
-list1 := &List{val: 1}
-list2 := list1.Prepend(2)
-// list1: [1], list2: [2, 1]
+func main() {
+    // Original list still valid
+    list1 := &List{val: 1}
+    list2 := list1.Prepend(2)
+    
+    fmt.Println(list1.val) // 1
+    fmt.Println(list2.val) // 2
+}
 ```
 
 ## 50.3. Persistent Binary Tree
@@ -56,8 +73,8 @@ Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchan
 
 | Operation | Time | Space |
 |-----------|------|-------|
-| Update | O(log n) | O(log n) new nodes |
-| Access | O(log n) | O(1) |
+| Update | <code>O(log n)</code> | <code>O(log n)</code> new nodes |
+| Access | <code>O(log n)</code> | <code>O(1)</code> |
 
 ## 50.4. Applications
 
@@ -80,18 +97,18 @@ Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchan
 
 ### Edge Cases & Pitfalls
 
-- **Space growth:** n updates create O(n log n) nodes — garbage collection essential.
-- **Node sharing:** Modifying a "shared" node corrupts all versions — immutability must be enforced.
+- **Space growth:** n updates create <code>O(n log n)</code> nodes — garbage collection essential.
+- **Node sharing:** Modifying a "shared" node corrupts all versions — immutability must be stringently enforced.
 - **Amortization:** Some persistent structures (queues) use lazy evaluation for efficiency.
 
 ## 50.6. Quick Reference
 
 | Structure | Persistent Variant | Overhead |
 |-----------|-------------------|----------|
-| Linked list | Fully persistent | O(1) per update |
-| Binary tree | Path copying | O(log n) per update |
-| Array | Fat nodes / copy-on-write | O(1)–O(n) |
-| Queue | Banker's method | O(1) amortized |
+| Linked list | Fully persistent | <code>O(1)</code> per update |
+| Binary tree | Path copying | <code>O(log n)</code> per update |
+| Array | Fat nodes / copy-on-write | <code>O(1)</code>–<code>O(n)</code> |
+| Queue | Banker's method | <code>O(1)</code> amortized |
 
 | Go stdlib | Usage |
 |-----------|-------|
@@ -103,7 +120,6 @@ Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchan
 
 ## See Also
 
-- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
-- [Chapter 49 — Suffix Arrays](/docs/Part-IX/Chapter-49/)
-- [Chapter 42 — Evolution of Data Structures](/docs/Part-VIII/Chapter-42/)
-
+- [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)
+- [Chapter 49: Suffix Arrays](/docs/Part-IX/Chapter-49/)
+- [Chapter 42: Evolution of Data Structures](/docs/Part-VIII/Chapter-42/)

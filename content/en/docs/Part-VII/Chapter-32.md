@@ -1,6 +1,6 @@
 ---
 weight: 70400
-title: "Chapter 32 - Blockchain Data Structures and Algorithms"
+title: "Chapter 32: Blockchain Data Structures and Algorithms"
 description: "Blockchain Data Structures and Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:48+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Blockchain is the tech. Bitcoin is merely the first mainstream manifestation of its potential.</em>" — Marc Kenigsberg</strong>
+<strong>"<em>Blockchain is the tech. Bitcoin is merely the first mainstream manifestation of its potential.</em>" : Marc Kenigsberg</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 32 explores fundamental blockchain data structures: hash chains, Merkle 
 ## 32.1. Block Structure
 
 **Definition:** A block acts as a container for transactions, maintaining a cryptographic hash that directly references the preceding block, thus creating an immutable chain.
+
+**Background & Philosophy:**
+The philosophy is cryptographic immutability and trustless verification. Instead of relying on a centralized database that can be secretly altered, a blockchain strings state changes together via cryptographic hashes, guaranteeing that modifying any past data instantly invalidates the entire subsequent chain.
+
+**Use Cases:**
+Bitcoin, Ethereum smart contracts, supply chain tracking, and decentralized voting systems where a transparent public ledger is demanded.
+
+**Memory Mechanics:**
+Blockchain operations primarily rely on cryptographic hashing functions (like SHA-256). These functions load small chunks of data (typically 64-byte blocks) directly into CPU registers to perform massive amounts of bitwise operations. This requires very little <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory but maximizes ALU (Arithmetic Logic Unit) utilization. For mining (PoW), the tight loop alters only the `nonce` integer in memory, ensuring that the hash payload stays hot inside the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
 
 ### Operations & Complexity
 
@@ -303,14 +312,6 @@ The PoW example provided acts purely as a demonstration. A rigorous production P
 | PBFT | `O(n²)` | f < n/3 | Ideal for permissioned systems |
 | Raft | `O(n)` | Leader failure | Strong for localized Key-value stores |
 
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-
-This code represents an aggressively simplified PoS simulation. True production PoS logic demands stringent slashing conditions, concrete finality gadgets, and completely unpredictable random beacons.
-
 ### Decision Matrix
 
 | Use Raft/PBFT When... | Use PoW/PoS When... |
@@ -330,7 +331,7 @@ This code represents an aggressively simplified PoS simulation. True production 
 |------|---------|------|-------|----------|
 | Block | `struct` | `O(1)` create | `O(1)` | Core transaction container |
 | Merkle Tree | recursive hash | `O(n)` build | `O(n)` | Quick subset verification |
-| PoW Mining | brute-force loop | `O(2^k)` | — | Fundamental consensus |
+| PoW Mining | brute-force loop | `O(2^k)` | . | Fundamental consensus |
 | Chain | `[]Block` | `O(1)` append | grows | Underlying ledger |
 | Hash | `crypto/sha256` | `O(n)` | 32 bytes | Rigid data integrity |
 
@@ -340,6 +341,6 @@ This code represents an aggressively simplified PoS simulation. True production 
 
 ## See Also
 
-- [Chapter 30 — Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
-- [Chapter 31 — Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-31/)
-- [Chapter 37 — Trie Data Structures](/docs/Part-VII/Chapter-37/)
+- [Chapter 30: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
+- [Chapter 31: Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-31/)
+- [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)

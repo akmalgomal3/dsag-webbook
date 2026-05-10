@@ -1,6 +1,6 @@
 ---
 weight: 70500
-title: "Chapter 33 - Linear Programming"
+title: "Chapter 33: Linear Programming"
 description: "Linear Programming"
 icon: "article"
 date: "2024-08-24T23:42:49+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Optimization is a powerful tool for solving many types of problems, and linear programming provides one of the most fundamental approaches.</em>" — John Nash</strong>
+<strong>"<em>Optimization is a powerful tool for solving many types of problems, and linear programming provides one of the most fundamental approaches.</em>" : John Nash</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 33 covers linear programming: fundamental formulation, the Simplex algor
 ## 33.1. Linear Programming Formulation
 
 **Definition:** Linear Programming (LP) aims to maximize or minimize a linear objective function subject strictly to linear equality and inequality constraints.
+
+**Background & Philosophy:**
+The philosophy is geometric optimization. Linear constraints form a convex polygon (or polytope in N-dimensions) representing the "feasible region". The fundamental theorem of LP states that the optimal solution *always* lies on a vertex (corner) of this polytope. Because of this mathematical certainty, solvers do not need to check infinite interior points; they only need to "walk" along the edges from corner to corner until they find the peak.
+
+**Use Cases:**
+Airline crew scheduling, financial portfolio optimization, manufacturing supply chains, and routing massive logistical fleets.
+
+**Memory Mechanics:**
+LP solvers (like Simplex) use a tableau (a 2D matrix) to represent equations. Modifying this tableau involves Gaussian elimination, scanning and updating entire rows. Because the matrix elements are <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, the CPU processes them efficiently using SIMD instructions. However, in enormous real-world models with millions of variables, these matrices are hyper-sparse (mostly zeros). Efficient LP solvers discard the 2D array format entirely, using specialized sparse memory maps to prevent exhausting system <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
 
 Standard form:
 ```
@@ -283,8 +292,8 @@ The Dual LP proves highly beneficial for intensive sensitivity analysis and driv
 |------|---------|------|-------|----------|
 | LP Solver | External / custom | <code>O(n^3)</code> avg | varies | Continuous variable optimization |
 | Knapsack DP | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | Integer-based programming |
-| Constraints | `[]float64` | — | — | Defining mathematical bounds |
-| Objective | `[]float64` | — | — | Establishing coefficients |
+| Constraints | `[]float64` | . | . | Defining mathematical bounds |
+| Objective | `[]float64` | . | . | Establishing coefficients |
 | Dual | Formulation | <code>O(mn)</code> | varies | Executing sensitivity analysis |
 
 {{% alert icon="🎯" context="success" %}}
@@ -293,6 +302,6 @@ The Dual LP proves highly beneficial for intensive sensitivity analysis and driv
 
 ## See Also
 
-- [Chapter 2 — Complexity Analysis](/docs/Part-I/Chapter-2/)
-- [Chapter 15 — All-Pairs Shortest Paths](/docs/Part-IV/Chapter-15/)
-- [Chapter 29 — Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
+- [Chapter 2: Complexity Analysis](/docs/Part-I/Chapter-2/)
+- [Chapter 15: All-Pairs Shortest Paths](/docs/Part-IV/Chapter-15/)
+- [Chapter 29: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)

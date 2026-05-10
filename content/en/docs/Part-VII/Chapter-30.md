@@ -1,6 +1,6 @@
 ---
 weight: 70200
-title: "Chapter 30 - Parallel and Distributed Algorithms"
+title: "Chapter 30: Parallel and Distributed Algorithms"
 description: "Parallel and Distributed Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:46+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Parallel programming is not about making programs faster, but about creating solutions that can solve larger problems.</em>" — Jeff Dean</strong>
+<strong>"<em>Parallel programming is not about making programs faster, but about creating solutions that can solve larger problems.</em>" : Jeff Dean</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 30 discusses parallel and distributed algorithms employing goroutines, c
 ## 30.1. Parallelism in Go
 
 **Definition:** Parallelism involves executing computations simultaneously across multiple CPU cores. Go provides goroutines (lightweight threads) and channels for inter-process communication.
+
+**Background & Philosophy:**
+The philosophy stems from Amdahl's Law: hardware clock speeds have plateaued, so to compute faster, we must compute wider. It trades the straightforwardness of sequential programming for the complexities of coordination, state sharing, and consensus.
+
+**Use Cases:**
+Processing terabytes of logs asynchronously, distributing HTTP requests across clusters, and parallel matrix multiplication.
+
+**Memory Mechanics:**
+Parallelism directly exposes the harsh reality of hardware <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> coherence. When two goroutines on different CPU cores write to adjacent array elements simultaneously, they cause "False Sharing". The CPU hardware must lock and invalidate the L1 cache lines across the entire motherboard, destroying performance. Properly padding memory structures or isolating data chunks to avoid false sharing is mandatory for true parallel speedup.
 
 ### Operations & Complexity
 
@@ -133,14 +142,8 @@ Go's <abbr title="The period during which a computer program is executing.">runt
 |-----------|------|--------|------------|
 | sync.Mutex | `Lock()` | `Unlock()` | Absolute mutual exclusion |
 | sync.RWMutex | `RLock()` R, `Lock()` W | `RUnlock()` / `Unlock()` | Multiple concurrent readers, single writer |
-| sync.Map | `Load()` avg | — | Specialized concurrent-safe map |
-| Channel | `<-ch` send/recv | — | Pure CSP-style communication |
-
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
+| sync.Map | `Load()` avg | . | Specialized concurrent-safe map |
+| Channel | `<-ch` send/recv | . | Pure CSP-style communication |
 
 Hierarchical preference: channels > `sync/atomic` > `sync.Mutex`. Utilize `sync.Map` exclusively for intensely read-heavy concurrent access; otherwise, standard maps protected by a mutex are generally faster.
 
@@ -262,12 +265,6 @@ func main() {
 | Pipeline | Medium | Low | Stream processing architecture |
 | Fan-out/Fan-in | Very High | Medium | Highly parallel stages |
 
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-
 Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, large buffers mitigate blocking. For purely CPU-bound tasks, very small buffers often suffice.
 
 ### Decision Matrix
@@ -286,13 +283,13 @@ Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, lar
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Mutex | `sync.Mutex` | — | 1 word | Shared state protection |
-| RWMutex | `sync.RWMutex` | — | 1 word | Read-heavy caching |
-| WaitGroup | `sync.WaitGroup` | — | 1 word | Barrier synchronization |
-| Atomic | `sync/atomic` | `O(1)` | — | Lock-free counters and flags |
+| Mutex | `sync.Mutex` | . | 1 word | Shared state protection |
+| RWMutex | `sync.RWMutex` | . | 1 word | Read-heavy caching |
+| WaitGroup | `sync.WaitGroup` | . | 1 word | Barrier synchronization |
+| Atomic | `sync/atomic` | `O(1)` | . | Lock-free counters and flags |
 | Channel | `chan T` | Blocking | varies | Pure CSP communication |
-| sync.Map | `sync.Map` | — | — | Highly concurrent maps |
-| Context | `context.Context` | — | — | Cancellations and timeouts |
+| sync.Map | `sync.Map` | . | . | Highly concurrent maps |
+| Context | `context.Context` | . | . | Cancellations and timeouts |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 30:</strong> This chapter discusses parallelism in Go using goroutines, synchronization primitives (Mutex, RWMutex, atomic, WaitGroup), channels, as well as worker pool and pipeline patterns. Utilize goroutines for independent CPU-bound tasks, channels for coordination, and worker pools to strictly bound concurrency when resources are limited.
@@ -300,6 +297,6 @@ Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, lar
 
 ## See Also
 
-- [Chapter 29 — Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
-- [Chapter 31 — Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-31/)
-- [Chapter 32 — Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-32/)
+- [Chapter 29: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
+- [Chapter 31: Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-31/)
+- [Chapter 32: Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-32/)

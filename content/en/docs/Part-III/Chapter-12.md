@@ -1,6 +1,6 @@
 ---
 weight: 30400
-title: "Chapter 12 - Graphs and Graph Representations"
+title: "Chapter 12: Graphs and Graph Representations"
 description: "Graphs and Graph Representations"
 icon: "article"
 date: "2024-08-24T23:42:24+07:00"
@@ -17,6 +17,15 @@ Chapter 12 focuses on advanced <abbr title="A non-linear data structure consisti
 ## 12.1. <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">Graph</abbr> Representations
 
 **Definition:** A <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> can be represented as an <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency list</abbr> (a slice of slices), an <abbr title="A 2D array representing a graph, where rows and columns correspond to vertices.">adjacency matrix</abbr> (a 2D slice), or an <abbr title="A connection between two vertices in a graph.">edge</abbr> list. The <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency list</abbr> is the most common and idiomatic representation in Go.
+
+**Background & Philosophy:**
+Graphs model relationships. The philosophy of graph representation is managing the trade-off between edge query speed and memory sparseness. A matrix explicitly records every possible relationship (even non-existent ones), trading massive memory for instant `O(1)` query speed. An adjacency list only records what actually exists, saving memory but taking slightly longer to confirm if a specific edge is present.
+
+**Use Cases:**
+Adjacency lists are heavily favored in social networks (where one person has 500 friends out of 1 billion users, highly sparse). Matrices are used in specific dense network simulations or when mathematical matrix operations (like eigenvector centrality) are required on the GPU.
+
+**Memory Mechanics:**
+In Go, an adjacency matrix `[][]bool` or `[][]int` allocates an array of slice headers. If `V` is 10,000, it allocates 10,000 slice headers pointing to 10,000 separate <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> arrays of 10,000 integers. This consumes gigabytes of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. An adjacency list, `[][]int`, allocates slice headers, but the inner slices only consume enough memory to hold actual edges. Slices are dynamically resized, meaning they trigger <abbr title="Input/Output operations involving reading from or writing to a physical disk.">memory allocation</abbr> occasionally as a node gains more connections, but overall they keep the memory footprint radically smaller.
 
 ### Operations & Complexity
 
@@ -83,6 +92,15 @@ func main() {
 ## 12.2. <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">Graph</abbr> Traversal
 
 **Definition:** DFS (<abbr title="A graph traversal algorithm that explores as far as possible along each branch before backtracking.">Depth-First Search</abbr>) and BFS (<abbr title="A graph traversal algorithm that explores neighbors level by level.">Breadth-First Search</abbr>) are fundamental <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> traversal algorithms. DFS utilizes a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> (or <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>), while BFS utilizes a <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr>.
+
+**Background & Philosophy:**
+Traversal algorithms are the engines of graph theory. The philosophy of DFS is "go deep fast", mirroring maze-solving tactics by exploring paths to their logical end before retreating. BFS embodies "concentric expansion", acting like a ripple in water. Because BFS processes uniformly, it natively guarantees the shortest path in unweighted graphs.
+
+**Use Cases:**
+DFS is used for topological sorting (like resolving package dependencies in `npm` or `go mod`) and detecting cycles in directed graphs (detecting deadlocks). BFS is used in peer-to-peer networking (finding the shortest route between nodes) and web crawlers gathering links.
+
+**Memory Mechanics:**
+DFS is inherently recursive, leaning heavily on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. A deep graph (e.g., a straight line of 1 million nodes) will push 1 million frames onto the call stack, potentially causing a stack overflow. To prevent this, DFS is often written iteratively using an explicit slice as a stack in <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap memory</abbr>. BFS requires a queue, which in Go is efficiently modeled using a pre-allocated slice acting as a ring buffer to minimize memory reallocations.
 
 ### Operations & Complexity
 
@@ -195,6 +213,15 @@ func main() {
 ## 12.3. Shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">Path</abbr> & MST
 
 **Definition:** Dijkstra finds the shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> from a source to all nodes. Kruskal and Prim algorithms find the <abbr title="A spanning tree with the minimum possible total edge weight.">Minimum Spanning Tree</abbr> (MST).
+
+**Background & Philosophy:**
+While BFS finds the shortest path by counting edges, reality introduces cost: a highway toll, network latency, or fuel consumption. The philosophy of Dijkstra's algorithm is greedy optimization: always process the cheapest available route first using a Priority Queue.
+
+**Use Cases:**
+Dijkstra powers Google Maps routing and OSPF routing protocols. MST algorithms are used in designing laying out electrical grids or telecom networks to minimize the total length of wire used while ensuring every node is connected.
+
+**Memory Mechanics:**
+Dijkstra relies fundamentally on a Min-Heap. Because the Min-Heap is backed by a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice `[]State`, inserting and extracting minimum weights happens almost entirely within the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. However, as the graph expands, the `dist` slice is randomly accessed depending on edge connections. This can cause some cache thrashing, but the speed of the array-backed heap usually masks this penalty.
 
 ### Operations & Complexity
 
@@ -313,6 +340,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 11 — Disjoint Sets](/docs/Part-III/Chapter-11/)
-- [Chapter 13 — Graph Traversal Algorithms](/docs/Part-IV/Chapter-13/)
-- [Chapter 14 — Single-Source Shortest Paths](/docs/Part-IV/Chapter-14/)
+- [Chapter 11: Disjoint Sets](/docs/Part-III/Chapter-11/)
+- [Chapter 13: Graph Traversal Algorithms](/docs/Part-IV/Chapter-13/)
+- [Chapter 14: Single-Source Shortest Paths](/docs/Part-IV/Chapter-14/)

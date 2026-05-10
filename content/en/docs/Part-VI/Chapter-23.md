@@ -1,6 +1,6 @@
 ---
 weight: 60100
-title: "Chapter 23 - Divide and Conquer"
+title: "Chapter 23: Divide and Conquer"
 description: "Divide and Conquer"
 icon: "article"
 date: "2024-08-24T23:41:51+07:00"
@@ -11,7 +11,7 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A recursive method is often the most natural way to solve a problem that can be broken down into smaller problems of the same type.</em>" — Donald Knuth</strong>
+<strong>"<em>A recursive method is often the most natural way to solve a problem that can be broken down into smaller problems of the same type.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 23 focuses on the <abbr title="An algorithmic paradigm that breaks a pro
 ## 23.1. Introduction to <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr>
 
 **Definition:** <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and conquer</abbr> breaks down a problem into smaller independent subproblems, solves them recursively, and combines their results.
+
+**Background & Philosophy:**
+The philosophy is breaking seemingly insurmountable problems into trivial base cases. Instead of attacking a fortress directly, you divide it into manageable stones. Because it maps problems to independent execution branches, it natively supports mathematical induction for correctness proofs and parallel processing.
+
+**Use Cases:**
+Essential for recursive sorting (Merge Sort, Quick Sort), fast multiplication (Karatsuba), and processing independent queries in massive distributed databases via MapReduce architectures.
+
+**Memory Mechanics:**
+Divide and Conquer relies heavily on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Each recursive split pushes a new frame onto the stack. In Go, goroutine stacks start at 2KB and grow dynamically, preventing overflow for moderate depth `O(log n)`. When the divide step requires creating new slices `arr[:mid]`, Go merely copies a 24-byte slice header (pointer, length, capacity) without allocating new arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This makes Go's slice splitting an incredibly fast `O(1)` memory operation that does not trigger the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>.
 
 ### Operations & Complexity
 
@@ -93,7 +102,7 @@ func main() {
 | Slice split | `arr[:mid]` | <code>O(1)</code> | Shared backing <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> |
 | In-place partition | Swap | <code>O(n)</code> | <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> |
 | Merge auxiliary | `make([]T, n)` | <code>O(n)</code> | <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> space |
-| Tail <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> | Not optimized | — | Go does not optimize tail calls |
+| Tail <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> | Not optimized | . | Go does not optimize tail calls |
 
 ### Pseudocode
 
@@ -204,7 +213,7 @@ func main() {
 |-------|------------|----------|----------|
 | <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> | <code>O(n log n)</code> | <code>O(n log n / p)</code> | <code>O(n)</code> merge, goroutine spawn |
 | <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> | <code>O(n log n)</code> avg | <code>O(n log n / p)</code> | Partition is sequential |
-| Granularity | — | Threshold n > 1000 | Spawn cost < sort cost |
+| Granularity | . | Threshold n > 1000 | Spawn cost < sort cost |
 
 ### Decision Matrix
 
@@ -236,6 +245,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
-- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
-- [Chapter 27 — Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)
+- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 27: Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)

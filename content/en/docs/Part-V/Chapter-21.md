@@ -1,6 +1,6 @@
 ---
 weight: 50300
-title: "Chapter 21 - Searching Algorithms"
+title: "Chapter 21: Searching Algorithms"
 description: "Searching Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The art of programming is the art of organizing complexity.</em>" — Edsger Dijkstra</strong>
+<strong>"<em>The art of programming is the art of organizing complexity.</em>" : Edsger Dijkstra</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 21 covers searching algorithms: linear search, binary search, and interp
 ## 21.1. Linear Search
 
 **Definition:** Linear search sequentially checks each element until the target is found or the end is reached. It works on any data structure supporting traversal.
+
+**Background & Philosophy:**
+The philosophy is exhaustive brute-force checking. It assumes absolutely no structure or order in the data, making it the most resilient but least efficient searching method.
+
+**Use Cases:**
+Used when searching through unindexed data, short arrays, or streams of data where sorting is impossible or more expensive than a single linear scan.
+
+**Memory Mechanics:**
+Linear search exhibits perfect <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> prefetcher predicts the access pattern flawlessly, loading <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory blocks into the L1 cache ahead of the CPU. Thus, for very small arrays (e.g., `n < 64`), Linear Search is often faster than Binary Search due to zero branch misprediction overhead.
 
 ### Operations & Complexity
 
@@ -56,6 +65,15 @@ func main() {
 ## 21.2. Binary Search
 
 **Definition:** Binary search repeatedly divides a sorted array in half, eliminating half of the remaining elements with each comparison. It requires the data to be sorted.
+
+**Background & Philosophy:**
+The philosophy is elimination. By demanding that the input is sorted, Binary Search safely eliminates half of the remaining search space with every comparison, reducing a million elements to a mere 20 comparisons.
+
+**Use Cases:**
+The absolute standard for querying ordered data, finding elements in B-Trees (databases), and resolving numerical ranges in graphics and geometry.
+
+**Memory Mechanics:**
+Binary Search jumps across the array. The first jump is `n/2`, the next is `n/4`, etc. These large jumps easily break out of the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> line, causing repeated <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. This means Binary Search's performance is bottlenecked by <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> latency rather than CPU speed. Despite this, its `O(log n)` algorithmic advantage overwhelmingly dominates for large datasets.
 
 ### Operations & Complexity
 
@@ -120,6 +138,15 @@ func main() {
 
 **Definition:** Interpolation search estimates the position of the target value using linear interpolation, making it <code>O(log log n)</code> for uniformly distributed data.
 
+**Background & Philosophy:**
+Interpolation Search mimics how humans use a physical dictionary. We don't open the dictionary exactly in the middle to find "Zebra"; we open it near the end. The philosophy relies on guessing the position based on the data's uniform distribution.
+
+**Use Cases:**
+Used in massive, uniformly distributed datasets where computing a linear formula is cheaper than performing multiple <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> via Binary Search.
+
+**Memory Mechanics:**
+Interpolation search uses complex arithmetic (multiplication and division) to guess the index. Modern ALUs perform this math incredibly fast. If the guess is accurate, it jumps directly to the target memory address, minimizing the number of <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> compared to the strict halving pattern of Binary Search.
+
 ### Operations & Complexity
 
 | Case | Complexity | Condition |
@@ -169,7 +196,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 7 — Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
-- [Chapter 19 — Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
-- [Chapter 22 — Median and Order Statistics](/docs/Part-V/Chapter-22/)
-
+- [Chapter 7: Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
+- [Chapter 19: Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
+- [Chapter 22: All-Pairs Shortest Paths](/docs/Part-V/Chapter-22/)

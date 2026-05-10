@@ -1,6 +1,6 @@
 ---
 weight: 70100
-title: "Chapter 29 - Vector, Matrix, and Tensor Operations"
+title: "Chapter 29: Vector, Matrix, and Tensor Operations"
 description: "Vector, Matrix, and Tensor Operations"
 icon: "article"
 date: "2024-08-24T23:42:45+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Linear algebra is the mathematics of data. Matrices and vectors are the language in which modern algorithms speak.</em>" — Gilbert Strang</strong>
+<strong>"<em>Linear algebra is the mathematics of data. Matrices and vectors are the language in which modern algorithms speak.</em>" : Gilbert Strang</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 29 covers vector, matrix, and tensor operations with idiomatic Go implem
 ## 29.1. Vector Operations
 
 **Definition:** A vector is a one-dimensional <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> representing a directed magnitude. Basic operations include addition, scalar multiplication, dot product, and cross product.
+
+**Background & Philosophy:**
+The philosophy is representing data mathematically. Instead of isolated variables, numbers are grouped into spatial structures (Vectors, Matrices), enabling batch transformations that hardware GPUs and SIMD CPU instructions are structurally designed to optimize flawlessly.
+
+**Use Cases:**
+Core foundation for 3D Graphics programming, deep learning backpropagation, and PageRank algorithms determining internet search results.
+
+**Memory Mechanics:**
+Vectors map perfectly to 1D slices in Go. Because `[]float64` is a strictly <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, operations like dot product exhibit perfect <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The CPU prefetcher can rapidly stream the bytes into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>.
 
 ### Operations & Complexity
 
@@ -127,6 +136,9 @@ Go lacks operator overloading. Define explicit functions for every vector operat
 
 **Definition:** A matrix is a two-dimensional array. Critical operations include transposition, multiplication, determinant calculation, and inversion.
 
+**Memory Mechanics:**
+In Go, matrices are often modeled naively as `[][]float64`, which creates `V` slice headers scattered across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. High-performance numerical packages like `gonum` use a 1D flat slice `[]float64` for a matrix and manually index via `stride * row + col`. This ensures strict <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory layout, enabling the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch matrix rows efficiently and preventing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> fragmentation.
+
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
@@ -136,13 +148,9 @@ Go lacks operator overloading. Define explicit functions for every vector operat
 | Determinant | `O(n³)` | LU decomposition |
 | Inverse | `O(n³)` | Gauss-Jordan elimination |
 
-### Pseudocode
-
-
 ### Idiomatic Go Implementation
 
-
-... serves as the de facto standard library for linear algebra in Go. Do not implement matrix operations from scratch unless specifically for educational purposes.
+`gonum.org/v1/gonum/mat` serves as the de facto standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> for linear algebra in Go. Do not implement matrix operations from scratch unless specifically for educational purposes.
 
 ### Decision Matrix
 
@@ -169,13 +177,7 @@ Go lacks operator overloading. Define explicit functions for every vector operat
 | Tensor Contraction | `O(n^k)` | Sum over specific indices |
 | Reshape | `O(1)` | Viewing memory without a copy |
 
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-
-Rank-3 tensors formulated via nested slices in Go carry heavy pointer overhead. For significantly large tensors, utilize a flat 1D slice with manual indexing: `flat[i*H*W + j*W + k]`.
+Rank-3 tensors formulated via nested slices in Go carry heavy <abbr title="A variable that stores a memory address.">pointer</abbr> overhead. For significantly large tensors, utilize a flat 1D slice with manual indexing: `flat[i*H*W + j*W + k]`.
 
 ### Decision Matrix
 
@@ -203,13 +205,7 @@ Rank-3 tensors formulated via nested slices in Go carry heavy pointer overhead. 
 | Goroutine parallel | p× (cores) | Apply row-wise decomposition |
 | Strassen | 0.8-2x | Theoretical limit, rarely practical for everyday n |
 
-### Pseudocode
-
-
-### Idiomatic Go Implementation
-
-
-A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically due to cache locality on matrix b's rows. Thoroughly profile your code prior to declaring a complete optimization.
+A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically due to <abbr title="The tendency of a processor to access memory addresses that are near each other.">cache</abbr> locality on matrix b's rows. Thoroughly profile your code prior to declaring a complete optimization.
 
 ### Decision Matrix
 
@@ -240,6 +236,6 @@ A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically
 
 ## See Also
 
-- [Chapter 30 — Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
-- [Chapter 34 — Polynomial and FFT](/docs/Part-VII/Chapter-34/)
-- [Chapter 39 — Bit Manipulation](/docs/Part-VII/Chapter-39/)
+- [Chapter 30: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
+- [Chapter 34: Polynomial and FFT](/docs/Part-VII/Chapter-34/)
+- [Chapter 39: Bit Manipulation](/docs/Part-VII/Chapter-39/)

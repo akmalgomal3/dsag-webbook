@@ -1,6 +1,6 @@
 ---
 weight: 60300
-title: "Chapter 25 - Greedy Algorithms"
+title: "Chapter 25: Greedy Algorithms"
 description: "Greedy Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Greed, for lack of a better word, is good.</em>" — Gordon Gekko</strong>
+<strong>"<em>Greed, for lack of a better word, is good.</em>" : Gordon Gekko</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -21,6 +21,15 @@ Chapter 25 covers greedy algorithms: making locally optimal choices at each step
 ## 25.1. Greedy Strategy
 
 **Definition:** A greedy algorithm builds a solution piece by piece, always choosing the next piece that offers the most immediate benefit. It works only when the problem has the **greedy choice property** and **optimal substructure**.
+
+**Background & Philosophy:**
+The philosophy of Greed is local optimization. Instead of examining all possible futures (like Backtracking) or storing all past states (like DP), a greedy algorithm makes the mathematically best choice right now and never reconsiders it. It trades guarantees of absolute correctness for blinding speed.
+
+**Use Cases:**
+Network packet routing (Dijkstra), data compression (Huffman coding), and resource scheduling where constraints allow sorting to define priority.
+
+**Memory Mechanics:**
+Greedy algorithms almost always require the data to be sorted first. This means their memory profile is dictated by the sorting algorithm (usually <code>O(log n)</code> auxiliary space for Quick Sort). Once sorted, the greedy phase is a simple linear scan (<code>O(n)</code>). This sequential access pattern provides flawless <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> performance.
 
 ### When Greedy Works
 
@@ -199,7 +208,7 @@ func main() {
 | Fractional Knapsack | Max value/weight | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
 | Activity Selection | Earliest finish | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
 | Huffman Coding | Min frequency pair | <code>O(n log n)</code> | <code>O(n)</code> | Yes |
-| 0/1 Knapsack | — | — | — | No (use DP) |
+| 0/1 Knapsack | . | . | . | No (use DP) |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 25:</strong> Greedy algorithms provide fast, elegant solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
@@ -207,7 +216,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 24 — Dynamic Programming](/docs/Part-VI/Chapter-24/)
-- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
-- [Chapter 36 — Approximate Algorithms](/docs/Part-VII/Chapter-36/)
-
+- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 36: Approximate Algorithms](/docs/Part-VII/Chapter-36/)

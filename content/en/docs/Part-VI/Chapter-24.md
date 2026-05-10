@@ -1,6 +1,6 @@
 ---
 weight: 60200
-title: "Chapter 24 - Dynamic Programming"
+title: "Chapter 24: Dynamic Programming"
 description: "Dynamic Programming"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Those who cannot remember the past are condemned to repeat it.</em>" — George Santayana</strong>
+<strong>"<em>Those who cannot remember the past are condemned to repeat it.</em>" : George Santayana</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -22,12 +22,21 @@ Chapter 24 covers dynamic programming (DP): a method for solving complex problem
 
 **Definition:** Dynamic programming solves problems by breaking them into smaller overlapping subproblems, solving each subproblem once, and storing the result for reuse. It applies when a problem exhibits **optimal substructure** and **overlapping subproblems**.
 
+**Background & Philosophy:**
+"Those who cannot remember the past are condemned to repeat it." DP is the philosophy of trading space for time. It recognizes that in many recursive problems, the exact same subproblems are evaluated millions of times. By explicitly memoizing (caching) these results, it transforms exponential `O(2^n)` chaos into polynomial `O(n)` order.
+
+**Use Cases:**
+Sequence alignment in bioinformatics (DNA matching), pricing complex financial derivatives, and solving optimization problems like the Knapsack problem for resource allocation.
+
+**Memory Mechanics:**
+DP introduces severe memory demands. A 2D DP table for LCS allocates `m * n` memory cells. In Go, `[][]int` allocates a slice of slice headers, each pointing to a separate underlying array. This scatters memory and causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. A powerful memory optimization trick in DP is "state reduction": since calculating row `i` often only requires row `i-1`, developers can discard the rest of the matrix and only keep two 1D slices in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, drastically improving <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and reducing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
+
 ### Two Approaches
 
 | Approach | Method | Space | Use Case |
 |----------|--------|-------|----------|
-| Top-down (Memoization) | Recursion + cache | <code>O(n)</code> | Natural recursive formulation |
-| Bottom-up (Tabulation) | Iterative table filling | <code>O(n)</code> or <code>O(n^2)</code> | Better constant factors, no recursion stack |
+| Top-down (Memoization) | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> | <code>O(n)</code> | Natural recursive formulation |
+| Bottom-up (Tabulation) | Iterative table filling | <code>O(n)</code> or <code>O(n^2)</code> | Better constant factors, no <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
 
 ## 24.2. Fibonacci and Memoization
 
@@ -168,7 +177,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 23 — Divide and Conquer](/docs/Part-VI/Chapter-23/)
-- [Chapter 25 — Greedy Algorithms](/docs/Part-VI/Chapter-25/)
-- [Chapter 26 — Backtracking](/docs/Part-VI/Chapter-26/)
-
+- [Chapter 23: Divide and Conquer](/docs/Part-VI/Chapter-23/)
+- [Chapter 25: Greedy Algorithms](/docs/Part-VI/Chapter-25/)
+- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
