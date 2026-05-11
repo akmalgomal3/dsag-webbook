@@ -1709,14 +1709,25 @@ input:focus-visible {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     background: var(--accent-color);
     color: white;
     font-weight: 700;
     font-size: 1rem;
     flex-shrink: 0;
+    overflow: hidden;
+    line-height: 1;
+    padding: 4px;
+}
+
+@media (max-width: 640px) {
+    .part-header-badge {
+        width: 44px;
+        height: 44px;
+        font-size: 0.875rem;
+    }
 }
 
 [data-theme="dark"] .part-header-badge {
