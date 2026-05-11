@@ -1,0 +1,288 @@
+{
+  "review_meta": {
+    "project": "Modern Data Structures and Algorithms in Go (DSAG) — Hugo static site",
+    "reviewer": "Hermes Agent",
+    "date": "2026-05-11",
+    "files_reviewed": [
+      "AGENTS.md",
+      "README.md",
+      "go.mod",
+      "LICENSE",
+      ".caveman-rules.md",
+      "archetypes/default.md",
+      "hugo.toml",
+      "content/en/docs/Part-I/_index.md",
+      "content/en/docs/Part-II/_index.md",
+      "content/en/docs/Part-III/_index.md",
+      "content/en/docs/Part-IV/_index.md",
+      "content/en/docs/Part-V/_index.md",
+      "content/en/docs/Part-VI/_index.md",
+      "content/en/docs/Part-VII/_index.md",
+      "content/en/docs/Part-VIII/_index.md",
+      "content/en/docs/Part-IX/_index.md",
+      "content/en/docs/Part-X/_index.md",
+      "content/en/docs/Part-XI/_index.md",
+      "content/en/docs/Part-XII/_index.md"
+    ],
+    "spot_check_chapters": [
+      "Chapter-1.md (Part I)",
+      "Chapter-19.md (Part V)",
+      "Chapter-20.md (Part V)",
+      "Chapter-23.md (Part VI)",
+      "Chapter-40.md (Part VIII)",
+      "Chapter-58.md (Part XII)"
+    ]
+  },
+
+  "AGENTS_md": {
+    "completeness": {
+      "rating": "good",
+      "gaps": [
+        "Section 'Background & Philosophy' appears in every sampled chapter but is NOT defined in the template — new sections grew organically outside the spec",
+        "Section 'Use Cases' appears in every sampled chapter but is NOT defined in the template",
+        "Section 'Memory Mechanics' appears in every sampled chapter but is NOT defined in the template",
+        "Template mandates 'Decision Matrix' but ZERO of 6 sampled chapters have one",
+        "Template mandates 'Edge Cases & Pitfalls' but ZERO of 6 sampled chapters have one",
+        "Template mandates 'Quick Reference' table but ZERO of 6 sampled chapters have one",
+        "No guidance on Indonesian-vs-English language choice — template uses Indonesian ('Pakai <Ini> Kalau...') but chapters are entirely in English",
+        "No style guide for alert icon choices — inconsistent usage across parts"
+      ]
+    },
+    "template_compliance": {
+      "rating": "partial",
+      "chapters_follow_template": false,
+      "explanation": "Chapters follow a different structure from what AGENTS.md mandates. Chapters have 'Background & Philosophy', 'Use Cases', 'Memory Mechanics' sections not in the template. Chapters lack 'Decision Matrix', 'Edge Cases & Pitfalls', 'Quick Reference' sections that ARE in the template. The template appears aspirational; actual chapters evolved differently.",
+      "sections_present_in_chapters_but_not_template": [
+        "Background & Philosophy",
+        "Use Cases",
+        "Memory Mechanics"
+      ],
+      "sections_mandated_but_missing_from_chapters": [
+        "Decision Matrix",
+        "Edge Cases & Pitfalls",
+        "Quick Reference (per chapter)"
+      ]
+    },
+    "rules_compliance": {
+      "rating": "partial",
+      "rule_1_no_pseudocode": "VIOLATED — Chapter 1 uses pseudocode blocks (lines 48-61)",
+      "rule_2_no_language_mixing": "PASS — Go code is idiomatic Go",
+      "rule_3_no_verbose_narratives": "PASS — reasonable paragraph lengths",
+      "rule_4_no_historical_background": "VIOLATED — EVERY sampled chapter has a 'Background & Philosophy' section that includes history. Part VIII is entirely historical. Rule contradicts actual content and Part VIII's existence.",
+      "rule_5_no_mathematical_proofs": "PASS — intuitive explanations only",
+      "rule_6_must_include_decision_matrix": "FAIL — none of 6 sampled chapters include one",
+      "rule_7_must_include_Go_stdlib_refs": "PASS — standard library references present",
+      "rule_8_must_include_anti_patterns": "FAIL — no dedicated anti-patterns section found in sampled chapters",
+      "rule_9_must_include_Big_O_table": "PASS — Big-O tables present in all sampled chapters",
+      "rule_10_code_max_40_lines": "PASS — code blocks are reasonably sized"
+    },
+    "frontmatter_weight_scheme": {
+      "rating": "correct",
+      "scheme": "Part_N * 10000 + chapter_in_part * 100",
+      "verified_examples": {
+        "Chapter_1_weight_10100": "1*10000 + 1*100 = 10100 ✓",
+        "Chapter_19_weight_50100": "5*10000 + 1*100 = 50100 ✓",
+        "Chapter_40_weight_80100": "8*10000 + 1*100 = 80100 ✓",
+        "Chapter_58_weight_120100": "12*10000 + 1*100 = 120100 ✓"
+      },
+      "part_index_weights": {
+        "Part_I_10000": "1*10000 ✓",
+        "Part_II_20000": "2*10000 ✓",
+        "Part_III_30000": "3*10000 ✓",
+        "Part_IV_40000": "4*10000 ✓",
+        "Part_V_50000": "5*10000 ✓",
+        "Part_VI_60000": "6*10000 ✓",
+        "Part_VII_70000": "7*10000 ✓",
+        "Part_VIII_80000": "8*10000 ✓",
+        "Part_IX_90000": "9*10000 ✓",
+        "Part_X_100000": "10*10000 ✓",
+        "Part_XI_110000": "11*10000 ✓",
+        "Part_XII_120000": "12*10000 ✓"
+      }
+    },
+    "recommendations": [
+      "Update template in AGENTS.md to match actual chapter structure (add Background & Philosophy, Use Cases, Memory Mechanics sections)",
+      "OR update all chapters to include missing Decision Matrix, Edge Cases, and Quick Reference sections",
+      "Reconcile Rule 4 (NO historical background) with Part VIII (History & Philosophy) and 'Background & Philosophy' sections present in all chapters — either remove the rule or rename/restructure Part VIII",
+      "Add a language policy section (English vs Indonesian for section headers)",
+      "Add guidance on alert icon selection consistency",
+      "Clarify the template is a 'recommended structure' vs 'strict requirement'"
+    ]
+  },
+
+  "README_md": {
+    "completeness": "good",
+    "issues": [
+      {
+        "severity": "medium",
+        "description": "Hugo version mismatch: README says v0.161+, hugo.toml does not specify a minimum version, no theme.lock or go.sum to verify actual compatibility"
+      },
+      {
+        "severity": "low",
+        "description": "Go version mismatch: README says Go 1.21+, but go.mod says go 1.24.4. Update README to match actual requirement."
+      },
+      {
+        "severity": "medium",
+        "description": "Build command inconsistency: README says 'hugo --quiet' (line 85) but AGENTS.md says 'hugo --minify --quiet' (line 144). Two documents disagree on build flags."
+      },
+      {
+        "severity": "low",
+        "description": "License section vague: 'See the repository for license details' — but LICENSE file exists in the repo. Should reference it directly."
+      },
+      {
+        "severity": "low",
+        "description": "Project structure diagram missing files: .caveman-rules.md, archetypes/default.md not shown in directory tree"
+      },
+      {
+        "severity": "low",
+        "description": "Repository URL in README points to github.com/akmalgomal3/dsag-webbook, but go.mod uses github.com/g45p2l60gg/dsag — fork or local rename mismatch"
+      }
+    ],
+    "recommendations": [
+      "Align Go version to 1.24 (or update README to match go.mod)",
+      "Align build command between README and AGENTS.md (add --minify or remove it consistently)",
+      "Update license section to directly reference LICENSE file",
+      "Update project structure diagram to include archetypes/ and .caveman-rules.md"
+    ]
+  },
+
+  "part_index_md_files": {
+    "total_files": 12,
+    "chapters_listed_correctly": true,
+    "file_count_matches_listings": true,
+    "total_chapters_confirmed": 60,
+    "issues": [
+      {
+        "part": "Part V",
+        "file": "content/en/docs/Part-V/_index.md",
+        "severity": "critical",
+        "description": "Description text is WRONG. Part V title is 'Sorting & Searching' (Ch 19-22) but the description paragraph talks about 'Divide and Conquer, Dynamic Programming, Greedy Algorithms, and Backtracking' — this is the description for Part VI (Algorithmic Paradigms). Clear copy-paste error.",
+        "fix": "Replace the description alert with text about sorting algorithms and search techniques."
+      },
+      {
+        "part": "Part V",
+        "file": "content/en/docs/Part-V/_index.md",
+        "severity": "medium",
+        "description": "Quote formatting inconsistent: missing <strong> and <em> tags around quote text, has extra leading space, uses en-dash (--) instead of em-dash (---) like other parts",
+        "fix": "Wrap quote in <strong><em>...</em></strong> tags, remove leading space, use em-dash consistently"
+      },
+      {
+        "part": "Parts VIII-XII",
+        "file": "content/en/docs/Part-VIII/_index.md through Part-XII/_index.md",
+        "severity": "high",
+        "description": "Format INCONSISTENCY: Parts I-VII use modern format with {{% alert %}} shortcodes, <center> section header, and {{< chapter-list >}} shortcode. Parts VIII-XII use older format with plain text, no alert shortcodes, markdown bullet-list chapters, and no chapter-list shortcode. This creates visual inconsistency in the book.",
+        "fix": "Convert Parts VIII-XII to match the Parts I-VII format with alert shortcodes, <center> headers, and {{< chapter-list >}} shortcode."
+      },
+      {
+        "part": "Part VIII",
+        "file": "content/en/docs/Part-VIII/_index.md",
+        "severity": "low",
+        "description": "No {{% alert %}} shortcodes at all — uses plain text description unlike Parts I-VII",
+        "fix": "Convert to alert shortcode format for consistency"
+      },
+      {
+        "part": "Part I",
+        "file": "content/en/docs/Part-I/_index.md",
+        "severity": "low",
+        "description": "Quote uses colon instead of em-dash (': Albert Einstein' vs '— Albert Einstein') and lacks <em> tags around quote text unlike parts II-IV",
+        "fix": "Standardize to <strong><em>...</em></strong> pattern with em-dash"
+      },
+      {
+        "part": "Part IV",
+        "file": "content/en/docs/Part-IV/_index.md",
+        "severity": "low",
+        "description": "Missing blank line before {{% alert icon=\"📘\"...%}} block (line 10-11 have no blank line after frontmatter)",
+        "fix": "Add blank line after closing --- before {{% alert %}}"
+      },
+      {
+        "part": "Part V",
+        "file": "content/en/docs/Part-V/_index.md",
+        "severity": "low",
+        "description": "Missing blank line between the two alert shortcode blocks (line 14 has no blank line before {{% alert icon=\"📘\"...%}})",
+        "fix": "Add blank line between alert blocks for readability"
+      }
+    ],
+    "recommendations": [
+      "Fix Part V description immediately (critical content error)",
+      "Migrate Parts VIII-XII to consistent alert-shortcode format",
+      "Standardize quote formatting across ALL 12 parts",
+      "Consider using a Hugo partial for the part header template to enforce consistency"
+    ]
+  },
+
+  "go_mod": {
+    "file": "go.mod",
+    "module_path": "github.com/g45p2l60gg/dsag",
+    "go_version": "1.24.4",
+    "issue": {
+      "severity": "info",
+      "description": "Module path uses 'g45p2l60gg' while AGENTS.md and README reference 'akmalgomal3/dsag-webbook'. This is expected if the local working copy is a fork or the user's personal clone. Flagged in case it causes build issues or confusion.",
+      "note_on_dependency": "Single dependency on hugo-mod-bootstrap-scss/v5 v5.20300.20800 — reasonable for a Hugo theme"
+    }
+  },
+
+  "LICENSE": {
+    "file": "LICENSE",
+    "type": "MIT",
+    "status": "correct",
+    "copyright": "2024 DSAG Contributors",
+    "issues": []
+  },
+
+  "caveman_rules_md": {
+    "file": ".caveman-rules.md",
+    "status": "ok",
+    "note": "AI assistant communication style guide, orthogonal to book content. No issues."
+  },
+
+  "archetypes_default_md": {
+    "file": "archetypes/default.md",
+    "status": "ok",
+    "note": "Standard Hugo archetype using TOML (+++) frontmatter. Note: AGENTS.md chapter template uses YAML (---) frontmatter. Archetype format doesn't match book chapter format, but archetypes are rarely used directly in this project.",
+    "recommendation": "Consider updating to YAML frontmatter to match actual chapter format, or remove if unused"
+  },
+
+  "hugo_toml": {
+    "file": "hugo.toml",
+    "base_url": "https://akmalgomal3.github.io/dsag-webbook/",
+    "theme": "[]",
+    "issues": [
+      {
+        "severity": "low",
+        "description": "theme is set to empty array '[]'. No theme is defined. If the site relies on a custom theme or the hugo-mod-bootstrap-scss module, this should be explicitly configured."
+      },
+      {
+        "severity": "info",
+        "description": "No min_version specified for Hugo, while AGENTS.md and README require v0.161+"
+      }
+    ]
+  },
+
+  "summary": {
+    "overall_health": "fair",
+    "chapter_count_confirmed": "60 chapters across 12 parts — all files present",
+    "critical_issues": [
+      "Part V _index.md has WRONG description (copied from Part VI)",
+      "Template vs Reality: AGENTS.md template and rules significantly differ from actual chapter structure"
+    ],
+    "high_priority_issues": [
+      "Parts VIII-XII formatting inconsistency with Parts I-VII",
+      "Rule 4 (NO historical background) conflicts with actual content and Part VIII existence"
+    ],
+    "medium_priority_issues": [
+      "Build command inconsistency between README and AGENTS.md",
+      "Go version mismatch between README (1.21+) and go.mod (1.24.4)",
+      "Template mandates sections (Decision Matrix, Edge Cases, Quick Reference) missing from all sampled chapters",
+      "Quote formatting inconsistencies across Part _index.md files"
+    ],
+    "recommendations": [
+      "Fix Part V description immediately",
+      "Decide: update AGENTS.md template to match reality, OR update all chapters to match template — then do it consistently",
+      "Migrate Parts VIII-XII to modern format for visual consistency",
+      "Standardize quote formatting across all Part _index.md files",
+      "Align README version numbers with actual go.mod and hugo.toml",
+      "Add Hugo min_version to hugo.toml",
+      "Reconcile Rule 4 with actual content approach"
+    ]
+  }
+}

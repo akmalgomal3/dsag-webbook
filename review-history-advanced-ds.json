@@ -1,0 +1,520 @@
+[
+  {
+    "filename": "Chapter-40.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Historically accurate. Covers Babylonian, Euclid, Eratosthenes, and medieval contributions. Good use of abbr tags for terminology. Some oversimplification is inevitable given brevity constraints, but no factual errors."
+    },
+    "go_idom": {
+      "score": 10,
+      "issues": [
+        "No Go code in this chapter (history/philosophy chapter — acceptable for the genre)."
+      ]
+    },
+    "template_compliance": {
+      "score": 5,
+      "missing_sections": [
+        "Missing 'Operations & Complexity' table — not applicable to history content but template mandates it.",
+        "Missing 'Idiomatic Go Implementation' section — no Go code, but template mandates this section.",
+        "Decision Matrix format differs from template spec ('Pakai...Kalau' pattern); uses English 'Study History When...' format.",
+        "Quick Reference table format does not match template (Struktur | Go Type | Akses | Insert | Delete | Use Case)."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Chapter is well-structured with good use of alerts, tables, and abbr definitions.",
+        "The pseudocode block for Babylonian square root is acceptable since it illustrates an ancient algorithm.",
+        "See Also section omits Chapter 43 link."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go language constructs found. No Python, Rust, or C++ code present."
+      }
+    ],
+    "critical_findings": [
+      "Template compliance is low because the history genre inherently doesn't fit the standard code-focused template. This is a structural issue across all Part VIII chapters.",
+      "Chapter 40 redirects to a nonexistent editor URL in the 'Lastmod' info — not a content issue but a metadata issue."
+    ],
+    "recommendations": [
+      "Either create a separate template for history/philosophy chapters or add a note that these chapters follow a relaxed template.",
+      "Add Chapter 43 to the See Also section.",
+      "Consider adding a small Go snippet showing Euclid's GCD algorithm to partially satisfy the Go Implementation requirement."
+    ]
+  },
+  {
+    "filename": "Chapter-41.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate coverage of Gödel, Church, Turing, and complexity theory. Good explanation of the Halting Problem and P vs NP. NP-Complete vs NP-Hard distinction is correctly maintained."
+    },
+    "go_idom": {
+      "score": 10,
+      "issues": [
+        "No Go code in this chapter (history/philosophy — acceptable)."
+      ]
+    },
+    "template_compliance": {
+      "score": 5,
+      "missing_sections": [
+        "Missing 'Operations & Complexity' table.",
+        "Missing 'Idiomatic Go Implementation' section.",
+        "Decision Matrix format deviates from template.",
+        "Quick Reference table does not match template format."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Well-organized with clear thinker tables.",
+        "Good practical examples linking theory to real-world impact (e.g., halting problem → debugger limitations)."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "Same template compliance issue as other Part VIII chapters.",
+      "No Go code — would benefit from a small Go snippet demonstrating complexity limits (e.g., a timeout-based solver)."
+    ],
+    "recommendations": [
+      "Consider adding a Go code example illustrating exponential complexity blowup or a simple Halting Problem demonstration.",
+      "Create a relaxed template variant for history/philosophy chapters."
+    ]
+  },
+  {
+    "filename": "Chapter-42.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate evolutionary history of data structures from arrays through cache-aware structures. Good explanation of why each structure emerged."
+    },
+    "go_idom": {
+      "score": 10,
+      "issues": [
+        "No Go code in this chapter. Acceptable for a history chapter, but a Go array/slice example would be welcome."
+      ]
+    },
+    "template_compliance": {
+      "score": 5,
+      "missing_sections": [
+        "Missing 'Operations & Complexity' table.",
+        "Missing 'Idiomatic Go Implementation' section.",
+        "Decision Matrix format deviates from template.",
+        "Quick Reference table does not match template format."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Good narrative flow. Well-organized era-by-era.",
+        "The quote by Rob Pike is relevant and well-chosen."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No Python 'self.' found despite prior claim in task description. The only 'self' occurrences are English phrases ('self-evident' in a quote, 'data itself'). This prior finding appears to be a false positive."
+      }
+    ],
+    "critical_findings": [
+      "Task claimed 'Python self. found' — investigation showed this is incorrect. The only 'self' matches are English text ('self-evident', 'data itself'), not Python code.",
+      "Same template compliance issue as other Part VIII chapters."
+    ],
+    "recommendations": [
+      "Add a Go code example showing array vs linked list traversal performance to bridge history with practical Go.",
+      "Correct the prior finding record regarding Python self."
+    ]
+  },
+  {
+    "filename": "Chapter-43.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate coverage of modern algorithmic concepts: cache efficiency, branch prediction, complexity zoo, approximation, randomization. Well-grounded in practical concerns."
+    },
+    "go_idom": {
+      "score": 8,
+      "issues": [
+        "The 'Idiomatic Go: When to Approximate' code block is a stub function returning an empty placeholder — not a working example.",
+        "No import statements shown in the Go snippet.",
+        "The function `approximateSolution` lacks real logic — it's essentially a TODO comment."
+      ]
+    },
+    "template_compliance": {
+      "score": 6,
+      "missing_sections": [
+        "Missing explicit 'Operations & Complexity' table (though the chapter covers Big-O concepts throughout).",
+        "Decision Matrix and Quick Reference formats deviate from template spec.",
+        "Quick Reference uses 'Paradigm | When to Use | Go Example' instead of template format."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Chapter has good breadth of topics but feels slightly disjointed — transitions between topics could be smoother.",
+        "The Go code example could be more substantive — a real approximation algorithm demo would strengthen the chapter."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "The 'Idiomatic Go' code block is a non-functional stub — it compiles but does nothing. This undermines the 'Idiomatic Go Implementation' requirement.",
+      "Missing an Operations & Complexity table; the chapter discusses complexity qualitatively but lacks the required tabular format."
+    ],
+    "recommendations": [
+      "Replace the stub Go function with a real example (e.g., a greedy TSP approximation or randomized quicksort).",
+      "Add an Operations & Complexity summary table.",
+      "Standardize Quick Reference to template format if desired."
+    ]
+  },
+  {
+    "filename": "Chapter-44.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Good philosophical reflection on algorithms. Covers efficiency, simplicity, ethics, and Go philosophy. Content is thoughtful and accurate. NOTE: Task claimed this chapter is 'EMPTY (0 words, placeholder only)' — this is INCORRECT. The file has 118 lines, 6100 bytes of substantial content."
+    },
+    "go_idom": {
+      "score": 10,
+      "issues": [
+        "No Go code in this chapter (philosophy chapter — acceptable)."
+      ]
+    },
+    "template_compliance": {
+      "score": 5,
+      "missing_sections": [
+        "Missing 'Operations & Complexity' table.",
+        "Missing 'Idiomatic Go Implementation' section.",
+        "Decision Matrix and Quick Reference formats deviate from template."
+      ]
+    },
+    "editorial": {
+      "score": 9,
+      "issues": [
+        "Well-written with strong philosophical depth.",
+        "The 'Go Philosophy' section connecting Go's design to algorithmic virtues is a nice touch.",
+        "Ethics of algorithms section adds contemporary relevance."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "Task claimed this chapter is empty — this is FALSE. The chapter has full content across 118 lines.",
+      "Same template compliance issue as other Part VIII chapters.",
+      "No Go code example; would benefit from a small Go snippet demonstrating an ethical consideration (e.g., biased sorting)."
+    ],
+    "recommendations": [
+      "Correct the record: Chapter 44 is NOT empty — it has 6100 bytes of content.",
+      "Consider adding a Go code example demonstrating an ethical algorithm design choice (e.g., fair ranking)."
+    ]
+  },
+  {
+    "filename": "Chapter-45.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate coverage of B-trees and B+ trees. Good explanation of disk I/O alignment. Height calculation for 1M items is correct. B+ tree comparison table is useful."
+    },
+    "go_idom": {
+      "score": 8,
+      "issues": [
+        "Go code is limited to a node struct and search method only — no Insert or Delete implementations shown.",
+        "The code has a `package main` with a `main()` function that is just a placeholder comment, not a runnable example.",
+        "No error handling or edge case coverage in the code."
+      ]
+    },
+    "template_compliance": {
+      "score": 7,
+      "missing_sections": [
+        "Quick Reference uses custom format (Concept | Value | Rationale) instead of template spec (Struktur | Go Type | Akses | Insert | Delete | Use Case).",
+        "'Idiomatic Go Implementation' heading is present but implementation is incomplete (only search, no insert/delete)."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Chapter is relatively short (~1000 words).",
+        "Good use of disk latency comparison table.",
+        "B+ tree section is concise and informative."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "Go implementation is incomplete — shows only search, not the more complex insert (split) and delete (merge/redistribute) operations.",
+      "Chapter is on the shorter side for a data structure chapter — could benefit from expanded Go implementation.",
+      "Quick Reference does not follow template format — missing Go Type, Akses, Insert, Delete, Use Case columns."
+    ],
+    "recommendations": [
+      "Add full Insert (with split) and Delete (with merge/redistribute) Go implementations.",
+      "Expand the chapter to cover concurrent B-tree considerations in more depth.",
+      "Fix Quick Reference to match template format."
+    ]
+  },
+  {
+    "filename": "Chapter-46.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate coverage of skip lists. Probabilistic analysis is correct. Good comparison with balanced trees. Structure and operations are clearly explained."
+    },
+    "go_idom": {
+      "score": 7,
+      "issues": [
+        "Uses deprecated `rand.Seed(time.Now().UnixNano())` — deprecated since Go 1.20. `math/rand` now auto-seeds.",
+        "No search or delete functions implemented — only Insert is shown.",
+        "The `main()` function only tests Insert, not Search or Delete.",
+        "Import statement uses tabs inconsistently with rest of Go code."
+      ]
+    },
+    "template_compliance": {
+      "score": 7,
+      "missing_sections": [
+        "Missing explicit 'Idiomatic Go Implementation' heading (Go code is under 'Insertion' subheading instead).",
+        "Quick Reference format deviates from template spec.",
+        "Operations table uses 'Average' and 'Worst' columns instead of 'Complexity' and 'Description'."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Well-structured and clearly written.",
+        "Good use of comparison tables.",
+        "Cache performance discussion is insightful."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "Uses deprecated `rand.Seed` — must be updated for Go 1.20+.",
+      "Go implementation incomplete — only Insert shown, missing Search and Delete.",
+      "Quick Reference does not follow template format."
+    ],
+    "recommendations": [
+      "Remove `rand.Seed` call — Go 1.20+ auto-seeds `math/rand`.",
+      "Add Search and Delete function implementations.",
+      "Add explicit 'Idiomatic Go Implementation' heading.",
+      "Standardize Operations table to 'Operation | Complexity | Description' format."
+    ]
+  },
+  {
+    "filename": "Chapter-47.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate coverage of Bloom filters. Correct formulas for optimal parameters. Good explanation of false positive vs false negative guarantees. Variants section is useful."
+    },
+    "go_idom": {
+      "score": 9,
+      "issues": [
+        "The hash function implementation using `fnv.New32a()` is adequate but not optimal — production Bloom filters use faster hash functions (e.g., MurmurHash).",
+        "The hash mixing approach (appending `byte(i)`) is simplistic and may not provide true independence across k hashes."
+      ]
+    },
+    "template_compliance": {
+      "score": 6,
+      "missing_sections": [
+        "No explicit 'Operations & Complexity' table with Operation | Complexity | Description format.",
+        "Quick Reference format deviates from template spec.",
+        "Operations are implied in the code but not summarized in the required table format."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Chapter is well-organized and clear.",
+        "Good use of space efficiency comparison table.",
+        "The hash quality and saturation edge cases are well-covered."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "Missing explicit Operations & Complexity table — operations (Add, Contains) are described in code but not summarized in the required tabular format.",
+      "Quick Reference does not follow template format.",
+      "Hash function used (FNV-1a with byte(index) mixing) is not ideal for production Bloom filters."
+    ],
+    "recommendations": [
+      "Add an explicit Operations & Complexity table (Add: O(k), Contains: O(k), Space: O(m) bits).",
+      "Consider mentioning `github.com/bits-and-blooms/bloom` as a production alternative.",
+      "Standardize Quick Reference to template format.",
+      "Note that the hash mixing approach is illustrative, not production-grade."
+    ]
+  },
+  {
+    "filename": "Chapter-48.md",
+    "content_accuracy": {
+      "score": 10,
+      "notes": "Excellent coverage of LRU cache. Correct implementation details. Good discussion of eviction strategies. Concurrency and scan resistance issues are properly noted."
+    },
+    "go_idom": {
+      "score": 10,
+      "issues": []
+    },
+    "template_compliance": {
+      "score": 8,
+      "missing_sections": [
+        "Quick Reference uses custom format (Parameter | Typical Value) instead of template spec (Struktur | Go Type | Akses | Insert | Delete | Use Case).",
+        "Operations table (48.3) uses 'Time' instead of 'Complexity' column header."
+      ]
+    },
+    "editorial": {
+      "score": 9,
+      "issues": [
+        "Best chapter in Part IX in terms of completeness and code quality.",
+        "Full, working LRU Cache implementation with Get, Put, eviction logic.",
+        "Good discussion of cache strategies beyond LRU.",
+        "Concurrency and scan resistance edge cases are well-covered."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "Quick Reference does not follow template format — missing Go Type, Akses, Insert, Delete, Use Case columns.",
+      "Operations table uses 'Time' instead of 'Complexity' column header (minor)."
+    ],
+    "recommendations": [
+      "Standardize Quick Reference to template format.",
+      "Consider adding a concurrent-safe version using `sync.RWMutex` as an extension.",
+      "This chapter is the best model for other Part IX chapters to follow."
+    ]
+  },
+  {
+    "filename": "Chapter-49.md",
+    "content_accuracy": {
+      "score": 8,
+      "notes": "Accurate coverage of suffix arrays. Good comparison with suffix trees. LCP array mention is appropriate. Application areas are relevant. However, the naive O(n^2 log n) construction code would be impractical for real-world use."
+    },
+    "go_idom": {
+      "score": 9,
+      "issues": [
+        "Naive construction using `sort.Slice` with string slicing is O(n^2 log n) — acceptable as pedagogical code but labeled clearly as 'naive'.",
+        "No LCP array construction code provided despite LCP being mentioned as important.",
+        "No binary search pattern matching code provided."
+      ]
+    },
+    "template_compliance": {
+      "score": 6,
+      "missing_sections": [
+        "No explicit 'Operations & Complexity' table with Operation | Complexity | Description format.",
+        "Quick Reference format deviates from template spec.",
+        "Operations are described in prose but not summarized in the required table format."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Chapter is on the shorter side (~800-900 words).",
+        "Good explanation of suffix array vs suffix tree trade-offs.",
+        "The 'banana' example is classic and well-illustrated."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "Missing explicit Operations & Complexity table.",
+      "No pattern search (binary search on suffix array) Go implementation — only construction is shown.",
+      "No LCP array construction code despite LCP being a key component.",
+      "Chapter is short — could be significantly expanded.",
+      "Quick Reference does not follow template format."
+    ],
+    "recommendations": [
+      "Add Operations & Complexity table (Construction: O(n log n)/O(n), Search: O(m log n), Space: O(n)).",
+      "Add binary search pattern matching Go code.",
+      "Add LCP array construction and usage code.",
+      "Expand chapter to cover SA-IS algorithm briefly.",
+      "Standardize Quick Reference to template format."
+    ]
+  },
+  {
+    "filename": "Chapter-50.md",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate coverage of persistent data structures. Good explanation of path copying. Correct distinction between partial and full persistence. Applications (Git, undo/redo, functional programming) are relevant."
+    },
+    "go_idom": {
+      "score": 8,
+      "issues": [
+        "Persistent linked list example is correct but very minimal — just a Prepend method.",
+        "No persistent binary tree implementation code despite being mentioned in text.",
+        "The Go code does not demonstrate structural sharing in a non-trivial way.",
+        "Go is not a language commonly associated with persistent data structures; no mention of alternatives like `go-functional` or immutable patterns."
+      ]
+    },
+    "template_compliance": {
+      "score": 7,
+      "missing_sections": [
+        "Operations table (50.3) uses 'Time' and 'Space' columns but no 'Description' column.",
+        "Quick Reference format deviates from template spec.",
+        "No explicit 'Idiomatic Go Implementation' heading (Go code is under 'Persistent Linked List' subheading)."
+      ]
+    },
+    "editorial": {
+      "score": 8,
+      "issues": [
+        "Chapter is the shortest in Part IX (~700-800 words).",
+        "Good conceptual explanation but lacks depth in Go implementation.",
+        "The Go philosophy of 'immutable by convention' is noted but could be expanded."
+      ]
+    },
+    "language_mixing": [
+      {
+        "type": "none",
+        "location": "N/A",
+        "detail": "No non-Go code found."
+      }
+    ],
+    "critical_findings": [
+      "Chapter is notably short — the shortest in Part IX at ~700-800 words.",
+      "No persistent binary tree Go implementation despite being described in the text.",
+      "Quick Reference does not follow template format.",
+      "Operations table incomplete — missing Description column.",
+      "No mention of Go-specific libraries for persistent structures."
+    ],
+    "recommendations": [
+      "Expand with a persistent binary tree (or persistent HashMap) implementation in Go.",
+      "Add a proper Operations & Complexity table with Operation | Complexity | Description format.",
+      "Standardize Quick Reference to template format.",
+      "Mention Go's slice sharing mechanism as a simple form of structural sharing.",
+      "Consider adding a Git-inspired persistent tree example (blob/tree model)."
+    ]
+  }
+]

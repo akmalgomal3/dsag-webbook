@@ -1,0 +1,502 @@
+[
+  {
+    "filename": "Part-I/Chapter-1.md",
+    "title": "Chapter 1: The Role of Algorithms in Modern Software",
+    "content_accuracy": {
+      "score": 7,
+      "notes": "Solid overview of Big-O and algorithm fundamentals. Section 1.4 (Ethical Considerations) is unusual for a DS&A book — feels out of place and may confuse the focus. 'Memory Mechanics' sections are verbose and add little practical value to a foundations chapter."
+    },
+    "go_idiom": {
+      "score": 8,
+      "notes": "Go code is clean and idiomatic. Uses container/heap correctly. The IntHeap example follows proper interface implementation patterns."
+    },
+    "template_compliance": {
+      "score": 4,
+      "notes": "Missing sections: Anti-patterns (entirely absent). Quick Reference exists at 1.5 but uses <abbr> tags splitting the word 'Reference' reducing discoverability. 'See Also' section is severely broken with duplicated entries (lines 386-394 repeat 4 times). Decision Matrix exists per section. No top-level chapter definition block."
+    },
+    "editorial": {
+      "score": 3,
+      "notes": "MAJOR: Lines 386-394 are completely corrupted — 'See Also' entries duplicated ~8 times with broken markdown (missing '- ' prefix on line 386 'docs/Part-I/Chapter-2/)'). Background & Philosophy sections are overly verbose (4-5 paragraphs each). Comment on line 14 has wrong colon format ': Donald Knuth' should be '—'. Use Cases and Memory Mechanics sections feel redundant across subsections."
+    },
+    "language_mixing": [
+      "No non-Go keywords found in code blocks. The 'delete' keyword in Go's built-in delete() function appears in Go code context correctly."
+    ],
+    "critical_findings": [
+      "See Also section is severely corrupted — duplicated entries with broken markdown (lines 386-394 need complete rewrite)",
+      "Section 1.4 (Ethical Considerations) feels out of scope for a DS&A foundations chapter",
+      "Missing anti-patterns section entirely"
+    ],
+    "recommendations": [
+      "Fix See Also section: replace lines 381-394 with clean deduplicated list",
+      "Add anti-patterns section per AGENTS.md requirements",
+      "Condense Background & Philosophy sections to 1 paragraph max per AGENTS.md rules",
+      "Consider moving section 1.4 to Part VIII (History & Philosophy) or removing it",
+      "Fix Quick Reference heading to not use <abbr> tags in the title"
+    ]
+  },
+  {
+    "filename": "Part-I/Chapter-2.md",
+    "title": "Chapter 2: Complexity Analysis",
+    "content_accuracy": {
+      "score": 7,
+      "notes": "Content is sound and covers Big-O, Big-Omega, Big-Theta, amortized analysis, and complexity classes. However, the chapter is extremely verbose (395 lines / ~3721 words) — far beyond the 7-10 minute reading target. Section 2.5 'Advanced Complexity Topics' tries to cover too much (P vs NP, parameterized complexity) at a superficial level."
+    },
+    "go_idiom": {
+      "score": 8,
+      "notes": "Go code examples are clean and idiomatic. The quicksort and randomized quicksort implementations follow Go conventions. Uses proper slice handling."
+    },
+    "template_compliance": {
+      "score": 4,
+      "notes": "Missing sections: Quick Reference is NOT at chapter level — it's nested as '### Quick Reference' inside section 2.5 (h3 instead of h2). No proper 'Quick Reference' table at chapter level. Missing anti-patterns section. Each section has Decision Matrix but the chapter-level template structure is not followed."
+    },
+    "editorial": {
+      "score": 6,
+      "notes": "Clean prose but overly verbose. 'Background & Philosophy' takes up 4-5 paragraphs per section which exceeds AGENTS.md verbosity rules. 'Memory Mechanics' sections are speculative hardware explanations that may not age well. Line 293 mentions 'O(n) memory cycles' which is not standard terminology."
+    },
+    "language_mixing": [
+      "No non-Go keywords found in code blocks."
+    ],
+    "critical_findings": [
+      "Chapter is ~3721 words — significantly exceeds the 7-10 minute reading target",
+      "Quick Reference is nested inside section 2.5 as h3, not at chapter level as required",
+      "Missing anti-patterns section entirely"
+    ],
+    "recommendations": [
+      "Trim verbose Background & Philosophy sections to 1 paragraph max",
+      "Move Quick Reference to chapter-level h2 section with proper title (not inside <abbr> tags)",
+      "Add anti-patterns section (e.g., confusing Big-O with average case, premature optimization)",
+      "Consider splitting section 2.5 into a separate chapter or appendix reference",
+      "Reduce total word count by ~30%"
+    ]
+  },
+  {
+    "filename": "Part-I/Chapter-3.md",
+    "title": "Chapter 3: Introduction to Data Structures and Algorithms in Go",
+    "content_accuracy": {
+      "score": 5,
+      "notes": "Content is generally sound but THREE sections have EMPTY code and pseudocode blocks (3.2, 3.3, 3.4). Section 3.2's 'Idiomatic Go Implementation' only has a sentence but no actual code. Section 3.3's code block is completely empty. Section 3.4's code block is also empty. This makes the chapter structurally incomplete."
+    },
+    "go_idiom": {
+      "score": 5,
+      "notes": "The Go code that exists is fine, but large sections that should have idiomatic Go implementations are completely missing. Section 3.2 was supposed to show linked lists/graphs in Go but has no code. Section 3.3 was supposed to show divide-and-conquer in Go but has no code. Section 3.4 was supposed to show benchmarking but has no code."
+    },
+    "template_compliance": {
+      "score": 2,
+      "notes": "CRITICAL: Sections 3.2, 3.3, and 3.4 have empty Pseudocode and Idiomatic Go Implementation blocks. The template headers exist but content is missing. Missing anti-patterns. Quick Reference exists at 3.5 and is clean."
+    },
+    "editorial": {
+      "score": 4,
+      "notes": "Three incomplete sections make this chapter feel like a draft. The chapter tries to cover too many diverse topics (why Go, data structures overview, algorithmic paradigms, environment setup) in one chapter. Section 3.3 on algorithmic paradigms overlaps significantly with Chapters 23-28 (Part VI)."
+    },
+    "language_mixing": [
+      "No non-Go keywords in code blocks (because code blocks are empty)."
+    ],
+    "critical_findings": [
+      "Section 3.2: Pseudocode block is empty, Idiomatic Go Implementation has only a heading sentence but NO code",
+      "Section 3.3: Pseudocode block is empty, Idiomatic Go Implementation is empty (no code at all)",
+      "Section 3.4: Pseudocode block is empty, Idiomatic Go Implementation is empty (no code at all)",
+      "Missing anti-patterns section",
+      "Chapter overlaps significantly with Part VI content on algorithmic paradigms"
+    ],
+    "recommendations": [
+      "Implement all empty code blocks with actual Go code",
+      "Add linked list and graph examples to section 3.2",
+      "Add divide-and-conquer Go implementation to section 3.3",
+      "Add benchmarking Go code to section 3.4",
+      "Add anti-patterns section",
+      "Consider moving algorithmic paradigms content to Part VI or trimming to avoid overlap"
+    ]
+  },
+  {
+    "filename": "Part-I/Chapter-4.md",
+    "title": "Chapter 4: Fundamentals of Go Programming for Algorithms",
+    "content_accuracy": {
+      "score": 7,
+      "notes": "Solid content about Go's memory model, type system, generics, slices, and concurrency. However, there is significant overlap with Chapter 3 (section 3.1 covers Go features, 3.2 covers data structures). The chapter title says 'for Algorithms' but much of the content is general Go programming."
+    },
+    "go_idiom": {
+      "score": 9,
+      "notes": "Excellent Go code examples. The generic find() function, filter() higher-order function, and parallel merge sort are all idiomatic Go. Proper use of sync.WaitGroup and goroutines."
+    },
+    "template_compliance": {
+      "score": 5,
+      "notes": "Missing anti-patterns section. Quick Reference exists at 4.5 but uses <abbr> tags splitting the word 'Reference'. Decision matrices present per section. Operations & Complexity tables are present."
+    },
+    "editorial": {
+      "score": 7,
+      "notes": "Clean prose. Content about escape analysis, interface memory layout, and goroutine stacks is technically accurate. However, Memory Mechanics sections are very long and speculative about hardware behavior. The chapter's scope overlaps significantly with Chapter 3."
+    },
+    "language_mixing": [
+      "No non-Go keywords found in code blocks."
+    ],
+    "critical_findings": [
+      "Missing anti-patterns section",
+      "Significant content overlap with Chapter 3 (both cover Go memory model, data structures, tooling)",
+      "Quick Reference title uses <abbr> tags reducing header visibility"
+    ],
+    "recommendations": [
+      "Add anti-patterns section (e.g., goroutine leaks, incorrect mutex usage, interface{} over generics in Go 1.18+)",
+      "Merge or differentiate scope with Chapter 3 to avoid overlap",
+      "Fix Quick Reference heading to use plain text not <abbr> tags",
+      "Consider moving concurrency content closer to Part VII where parallel algorithms are covered"
+    ]
+  },
+  {
+    "filename": "Part-II/Chapter-5.md",
+    "title": "Chapter 5: Fundamental Data Structures in Go",
+    "content_accuracy": {
+      "score": 7,
+      "notes": "Good coverage of arrays, slices, maps, linked lists, and structs. The emphasis on contiguous memory vs pointer-based structures is practical and accurate. The Stack implementation using slices is idiomatic. However, the struct section feels basic for a DS&A book."
+    },
+    "go_idiom": {
+      "score": 8,
+      "notes": "Clean Go code throughout. Proper use of container/list, make(map, capacity) for pre-allocation, and slice operations. Line 212 compares to 'impl' blocks (Rust keyword) but only as explanatory text, not code."
+    },
+    "template_compliance": {
+      "score": 6,
+      "notes": "Has Quick Reference at 5.5 (clean). Decision matrices present per section. Missing anti-patterns section. No section on concurrency safety for maps/shared structures."
+    },
+    "editorial": {
+      "score": 7,
+      "notes": "Well-written. Line 212 text mentions 'impl blocks or classes' — 'impl' is a Rust keyword used as a reference point (minor). Background & Philosophy sections are succinct compared to Part I chapters. The Slice Header leak edge case is well noted."
+    },
+    "language_mixing": [
+      "Line 212: text mentions 'equivalent of `impl` blocks or classes' — 'impl' is a Rust keyword, though used only in explanatory prose, not in code."
+    ],
+    "critical_findings": [
+      "Missing anti-patterns section",
+      "Minor: uses Rust term 'impl' in prose on line 212"
+    ],
+    "recommendations": [
+      "Add anti-patterns section (e.g., using linked list when slice is better, map without capacity hint, value receiver for large structs)",
+      "Replace 'impl blocks' with 'method definitions' or 'Go methods' on line 212",
+      "Add concurrency note about sync.Map vs map+sync.RWMutex"
+    ]
+  },
+  {
+    "filename": "Part-II/Chapter-6.md",
+    "title": "Chapter 6: Elementary Data Structures",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "EXCELLENT content. Generic Stack, Queue (circular buffer), and Deque implementations are production-quality. The cache locality war section with real benchmarks (1.12ms vs 24.50ms) is the standout practical content in the entire Part I-II scope. Proper memory leak prevention (zeroing pointers on pop) is covered."
+    },
+    "go_idiom": {
+      "score": 9,
+      "notes": "Outstanding idiomatic Go 1.18+ generic code. Uses [T any] generics properly. The circular buffer implementation with modulo wrapping is efficient. Proper zero-value clearing for memory safety. Benchmark code is production-quality."
+    },
+    "template_compliance": {
+      "score": 3,
+      "notes": "CRITICAL: No per-section Decision Matrices. Instead, a single global '## Decision Matrix' H2 exists at the end (line 283). Template requires per-section h3-level Decision Matrices. Sections 6.2 and 6.3 have no Operations & Complexity tables. Missing anti-patterns section. Quick Reference exists but uses <abbr> tags splitting 'Reference'."
+    },
+    "editorial": {
+      "score": 8,
+      "notes": "Excellent writing — clear, opinionated, and practical. The benchmark-driven approach is exactly what the book needs. The verdict 'relentlessly favor slices' is the right message. Section 6.3 is the best-written section in all of Part I-II."
+    },
+    "language_mixing": [
+      "No non-Go keywords found. Code is pure Go 1.18+ generic."
+    ],
+    "critical_findings": [
+      "Missing per-section Decision Matrices — only one global H2 Decision Matrix exists",
+      "Sections 6.2 (Queue) and 6.3 (Cache Locality War) have no Operations & Complexity tables",
+      "Missing anti-patterns section",
+      "Quick Reference title uses <abbr> tags"
+    ],
+    "recommendations": [
+      "Add proper per-section h3 '### Decision Matrix' to sections 6.1, 6.2, 6.3, 6.4",
+      "Add Operations & Complexity tables to sections 6.2 and 6.3",
+      "Add anti-patterns section (e.g., naive slice-shift queue, container/list for performance, unbounded queues)",
+      "Fix Quick Reference heading to use plain text"
+    ]
+  },
+  {
+    "filename": "Part-II/Chapter-7.md",
+    "title": "Chapter 7: Hashing and Hash Tables",
+    "content_accuracy": {
+      "score": 8,
+      "notes": "Solid coverage of Go maps, FNV hashing, SHA-256, and consistent hashing. The consistent hashing section with ring implementation is practical and well-explained. Good coverage of collision handling, load balancing, and virtual nodes."
+    },
+    "go_idiom": {
+      "score": 8,
+      "notes": "Clean Go code. Proper use of hash/fnv, crypto/sha256, sort.Search. The Ring type with Search method is idiomatic Go. Go code uses proper error handling patterns (comma ok idiom for map access)."
+    },
+    "template_compliance": {
+      "score": 5,
+      "notes": "Missing anti-patterns section. Quick Reference exists at line 278 but uses <abbr> tags splitting the word 'Reference'. Decision matrices present per section. Operations & Complexity tables present."
+    },
+    "editorial": {
+      "score": 7,
+      "notes": "Clean writing. The 'one-way mathematical meat-grinder' description on line 87 is colorful but editorial. Background & Philosophy sections are reasonably concise. Good coverage of practical concerns (timing attacks, bcrypt for passwords, pre-allocation)."
+    },
+    "language_mixing": [
+      "No non-Go keywords found in code blocks."
+    ],
+    "critical_findings": [
+      "Missing anti-patterns section",
+      "Quick Reference title uses <abbr> tags"
+    ],
+    "recommendations": [
+      "Add anti-patterns section (e.g., using map without capacity hint, concurrent map writes, using SHA-256 for passwords, ignoring hash collision DoS)",
+      "Fix Quick Reference heading to not use <abbr> tags",
+      "Consider adding a note about Go 1.21+ map iteration randomization"
+    ]
+  },
+  {
+    "filename": "Part-II/Chapter-8.md",
+    "title": "Chapter 8: Linked Lists",
+    "content_accuracy": {
+      "score": 8,
+      "notes": "Good coverage of singly, doubly, and circular linked lists. Properly emphasizes when linked lists are appropriate vs when slices are better (cache locality, GC pressure). The memory overhead analysis (66% structural overhead for doubly linked list) is valuable."
+    },
+    "go_idiom": {
+      "score": 8,
+      "notes": "Clean Go implementations. Proper struct definitions with pointer fields. InsertHead, DeleteHead, Search all follow Go conventions. The circular list tail-pointer pattern is correctly implemented."
+    },
+    "template_compliance": {
+      "score": 5,
+      "notes": "Missing anti-patterns section. Sections 8.2 and 8.3 have no separate Decision Matrix (only 8.1 has one). Section 8.3 (Circular Linked List) has no Operations & Complexity table. Quick Reference at 8.4 is clean."
+    },
+    "editorial": {
+      "score": 7,
+      "notes": "Well-written. The message that 'slices are usually better' is correctly emphasized. Good practical warnings about nil pointer dereferences and GC pressure. The circular list GC island explanation is accurate."
+    },
+    "language_mixing": [
+      "No non-Go keywords found in code blocks. The '->' symbols appear only in Printf format strings as printed output, not as C++ operators."
+    ],
+    "critical_findings": [
+      "Sections 8.2 (Doubly Linked List) and 8.3 (Circular Linked List) missing per-section Decision Matrices",
+      "Section 8.3 missing Operations & Complexity table",
+      "Missing anti-patterns section"
+    ],
+    "recommendations": [
+      "Add per-section Decision Matrices for 8.2 and 8.3",
+      "Add Operations & Complexity table for 8.3",
+      "Add anti-patterns section (e.g., using container/list for general-purpose lists, linked list when O(n) traversal is hot path, not zeroing node pointers)",
+      "Consider adding a benchmark comparison table similar to Chapter 6"
+    ]
+  },
+  {
+    "filename": "Preface.md",
+    "title": "Preface",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate description of the book's philosophy and structure. No factual errors."
+    },
+    "go_idiom": {
+      "score": 10,
+      "notes": "No code in preface. N/A."
+    },
+    "template_compliance": {
+      "score": 8,
+      "notes": "Well-structured preface with reader-path table. No chapter template applies."
+    },
+    "editorial": {
+      "score": 9,
+      "notes": "Clean, concise. Minor: the preface lists 'Quote' as step 1 in chapter structure but actual chapters don't consistently include quotes."
+    },
+    "language_mixing": [],
+    "critical_findings": [],
+    "recommendations": [
+      "Minor: ensure the chapter structure description in preface matches actual template (AGENTS.md shows different section ordering)"
+    ]
+  },
+  {
+    "filename": "Foreword.md",
+    "title": "Foreword",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Well-written foreword on algorithmic thinking and pragmatism. No factual errors."
+    },
+    "go_idiom": {
+      "score": 10,
+      "notes": "No code. N/A."
+    },
+    "template_compliance": {
+      "score": 8,
+      "notes": "Clean meta file."
+    },
+    "editorial": {
+      "score": 9,
+      "notes": "Excellent prose. Captures the practitioner's perspective effectively."
+    },
+    "language_mixing": [],
+    "critical_findings": [],
+    "recommendations": []
+  },
+  {
+    "filename": "Foreword-2.md",
+    "title": "Foreword: A Practitioner's Perspective",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Thoughtful discussion of theory-practice gap. Accurate observations about academia vs engineering."
+    },
+    "go_idiom": {
+      "score": 10,
+      "notes": "No code. N/A."
+    },
+    "template_compliance": {
+      "score": 8,
+      "notes": "Clean meta file."
+    },
+    "editorial": {
+      "score": 9,
+      "notes": "Well-written. Makes good points about judgment vs theoretical knowledge."
+    },
+    "language_mixing": [],
+    "critical_findings": [],
+    "recommendations": []
+  },
+  {
+    "filename": "Table-of-Contents.md",
+    "title": "Table of Contents",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Correct structure with dynamic-toc shortcode. No factual issues."
+    },
+    "go_idiom": {
+      "score": 10,
+      "notes": "No code. N/A."
+    },
+    "template_compliance": {
+      "score": 9,
+      "notes": "Clean and functional."
+    },
+    "editorial": {
+      "score": 9,
+      "notes": "Clean. Uses {{< dynamic-toc >}} for auto-generation."
+    },
+    "language_mixing": [],
+    "critical_findings": [],
+    "recommendations": []
+  },
+  {
+    "filename": "how-to-use-dsag.md",
+    "title": "How to Use DSAG",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Accurate reading strategies and learning paths. Good breakdown for different audiences."
+    },
+    "go_idiom": {
+      "score": 10,
+      "notes": "No significant code. Simple bash commands for go mod init are correct."
+    },
+    "template_compliance": {
+      "score": 8,
+      "notes": "Well-structured guide. No chapter template applies."
+    },
+    "editorial": {
+      "score": 9,
+      "notes": "Clean, practical. The 10-12 hour reading estimate is helpful. The three strategy paths are well thought out."
+    },
+    "language_mixing": [],
+    "critical_findings": [],
+    "recommendations": []
+  },
+  {
+    "filename": "closing-remark.md",
+    "title": "Closing Remark",
+    "content_accuracy": {
+      "score": 9,
+      "notes": "Good summary of the book's key messages. Appropriate final thoughts."
+    },
+    "go_idiom": {
+      "score": 10,
+      "notes": "No code. N/A."
+    },
+    "template_compliance": {
+      "score": 8,
+      "notes": "Clean closing chapter."
+    },
+    "editorial": {
+      "score": 9,
+      "notes": "Well-written closing. The action table for continued learning is practical."
+    },
+    "language_mixing": [],
+    "critical_findings": [],
+    "recommendations": []
+  },
+  {
+    "filename": "appendix.md",
+    "title": "Appendix",
+    "content_accuracy": {
+      "score": 5,
+      "notes": "Contains orphaned content from Chapters 16 and 18 which DO NOT EXIST in Parts I-VIII scope. The Big-O cheat sheet is good but the appendix also contains full chapter content (Sections 16.1-16.5 and 18.1-18.3) that reference non-existent chapters. This appears to be deprecated content that should be cleaned up."
+    },
+    "go_idiom": {
+      "score": 7,
+      "notes": "Go code in sections 16 and 18 is fine but references content from non-existent chapters."
+    },
+    "template_compliance": {
+      "score": 3,
+      "notes": "The appendix contains two FULL chapters (16 and 18) that are not listed in the Table of Contents or any Part structure. These look like orphaned/abandoned content. Very long file (1283 lines)."
+    },
+    "editorial": {
+      "score": 4,
+      "notes": "Major structural issue: appendix contains full chapter content (Sections 16.1-16.5, 18.1-18.3) that references non-existent chapters. This content appears to be leftover from an earlier draft and does not belong in the appendix. The Big-O cheat sheet is good and belongs here."
+    },
+    "language_mixing": [
+      "Section 16 contains C++-style pseudocode comments in the code blocks."
+    ],
+    "critical_findings": [
+      "Contains orphaned full-chapter content (Ch 16 'Algorithm Design and Running Times' and Ch 18 'Algorithm Design Techniques') that references non-existent chapters in the book structure",
+      "File is 1283 lines — excessively long for an appendix",
+      "Section 16 content overlaps significantly with Chapters 1, 2, and Part VI of the main book",
+      "Section 18 content overlaps with Chapters 23-28"
+    ],
+    "recommendations": [
+      "Remove orphaned sections 16 and 18 (they reference non-existent chapters and overlap with existing content)",
+      "Keep only the Big-O Cheat Sheet (data structures, sorting, graph, array/string tables)",
+      "Reduce file to ~150 lines max",
+      "Ensure all cross-references in the cheat sheet point to existing chapters"
+    ]
+  },
+  {
+    "filename": "Part-I/_index.md",
+    "title": "Part I - Foundations & Go Mechanics",
+    "content_accuracy": {
+      "score": 8,
+      "notes": "Accurate description of Part I content. Uses Einstein quote that feels loosely connected to algorithms/foundations theme."
+    },
+    "go_idiom": {
+      "score": 10,
+      "notes": "No code. N/A."
+    },
+    "template_compliance": {
+      "score": 9,
+      "notes": "Clean part index page with chapter-list shortcode."
+    },
+    "editorial": {
+      "score": 7,
+      "notes": "Einstein quote about Nobel Prize is thematically mismatched to 'Foundations & Go Mechanics'. Consider a more relevant quote about foundations/algorithms/simplicity."
+    },
+    "language_mixing": [],
+    "critical_findings": [],
+    "recommendations": [
+      "Consider a more relevant opening quote tied to computer science or algorithmic foundations"
+    ]
+  },
+  {
+    "filename": "Part-II/_index.md",
+    "title": "Part II - Basic Data Structures",
+    "content_accuracy": {
+      "score": 8,
+      "notes": "Accurate description of Part II content. Einstein quote again feels generic."
+    },
+    "go_idiom": {
+      "score": 10,
+      "notes": "No code. N/A."
+    },
+    "template_compliance": {
+      "score": 9,
+      "notes": "Clean part index page."
+    },
+    "editorial": {
+      "score": 7,
+      "notes": "Einstein quote 'The whole of science...' is generic. Same quote style issue as Part I/_index.md."
+    },
+    "language_mixing": [],
+    "critical_findings": [],
+    "recommendations": [
+      "Consider a more domain-relevant quote about data structures or software engineering"
+    ]
+  }
+]

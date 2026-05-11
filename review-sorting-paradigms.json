@@ -1,0 +1,273 @@
+{
+  "review_metadata": {
+    "reviewer": "Hermes Agent (Deep Content & Editorial Review)",
+    "scope": "Part V (Ch 19-22) Sorting & Searching, Part VI (Ch 23-28) Algorithmic Paradigms",
+    "date": "2026-05-11",
+    "total_chapters_reviewed": 10
+  },
+  "chapter_reviews": [
+    {
+      "filename": "Part-V/Chapter-19.md",
+      "title": "Chapter 19: Basic Sorting Algorithms",
+      "content_accuracy": 9,
+      "content_accuracy_notes": "Bubble Sort, Selection Sort, and Insertion Sort are all correctly described. Big-O values are accurate. Stability information is correct. One minor note: the claim that Go 1.19+ uses pdqsort is accurate (goes for slices.Sort in 1.21+). Early exit optimization in Bubble Sort is well handled.",
+      "go_idiom": 9,
+      "go_idiom_notes": "Uses idiomatic Go slice manipulation, multiple return values not needed here. Uses `arr[j], arr[j+1] = arr[j+1], arr[j]` parallel assignment for swapping. Code is clean and proper. Could mention `slices.Sort()` (Go 1.21+) alongside `sort.Ints()`.",
+      "template_compliance": 9,
+      "template_compliance_notes": "Has all required sections: Operations & Complexity, Idiomatic Go Implementation, Decision Matrix, Edge Cases & Pitfalls, Quick Reference. Uses correct `##` heading hierarchy. Section 19.4 Quick Reference is present. Alert boxes used correctly.",
+      "editorial": 8,
+      "editorial_notes": "Well-structured and clear. Memory Mechanics sections are insightful (spatial locality, CPU cache). Good use of `<abbr>` for technical terms. Could be slightly more concise — background/philosophy paragraphs are somewhat verbose. The 'Never in production' for Bubble Sort in Decision Matrix is humorously direct but correct.",
+      "language_mixing": "None detected. All code is idiomatic Go.",
+      "critical_findings": [],
+      "recommendations": [
+        "Mention `slices.Sort()` (Go 1.21+) alongside `sort.Ints()` as the production choice.",
+        "Consider shortening Background & Philosophy sections to 1-2 sentences per the 'Brevity over verbosity' guideline."
+      ]
+    },
+    {
+      "filename": "Part-V/Chapter-20.md",
+      "title": "Chapter 20: Advanced Sorting Algorithms",
+      "content_accuracy": 9,
+      "content_accuracy_notes": "Merge Sort, Quick Sort, and Heap Sort are correctly described. Big-O values are accurate. The note about Go's sort using pdqsort (hybrid of Quick/Heap/Insertion sort) is correct. The warning about pivot selection avoiding O(n^2) is accurate. Stability notes correct.",
+      "go_idiom": 9,
+      "go_idiom_notes": "Merge Sort uses allocating merge (not in-place) which is the standard simple Go approach. Quick Sort uses Lomuto partition which is fine for educational purposes. Heap Sort uses `heapify` function with slice indices. All idiomatic. Could show an in-place merge sort variant as a note.",
+      "template_compliance": 9,
+      "template_compliance_notes": "Full compliance: Operations & Complexity tables for each algorithm, Decision Matrix (20.4), Edge Cases & Pitfalls, Quick Reference (20.5). Section 20.4 is labeled 'Decision Matrix' but is a comparison table — slightly different from template's dual-column format but acceptable.",
+      "editorial": 8,
+      "editorial_notes": "Clear structure. Memory Mechanics sections are particularly strong (cache behavior of each algorithm). The quote from Stephen Hawking feels slightly mismatched to sorting algorithms. Good cross-references to other chapters.",
+      "language_mixing": "Minor: prose uses phrase 'a new slice' and 'new arrays' — these are English prose, not C++ keyword usage. No non-Go code found.",
+      "critical_findings": [
+        "Section 20.4 is labeled 'Decision Matrix' but is actually a comparison table of all three algorithms. This should be a proper decision matrix with 'Use When... / Avoid If...' columns per template, OR it should be renamed as a comparison/reference table."
+      ],
+      "recommendations": [
+        "Rename section 20.4 to 'Algorithm Comparison' or restructure as proper decision matrices per algorithm.",
+        "Consider adding a note about Go 1.21+ `slices.Sort()` which uses pdqsort.",
+        "The Quick Reference (20.5) and section 20.4 table are redundant — consider consolidating."
+      ]
+    },
+    {
+      "filename": "Part-V/Chapter-21.md",
+      "title": "Chapter 21: Searching Algorithms",
+      "content_accuracy": 9,
+      "content_accuracy_notes": "Linear, Binary, and Interpolation search correctly described. Big-O values accurate. Integer overflow prevention `mid := left + (right-left)/2` is correctly noted. The mention of sort.Search is accurate and useful. Interpolation search position formula is correct.",
+      "go_idiom": 10,
+      "go_idiom_notes": "Exemplary Go idiom. Shows both manual binary search (for understanding) AND `sort.Search` (for production). Uses `range` for linear search. Proper slice handling. The dual-implementation approach is exactly right for an educational book.",
+      "template_compliance": 9,
+      "template_compliance_notes": "Has Operations & Complexity tables, Decision Matrix (under Binary Search section), Edge Cases & Pitfalls, Quick Reference (21.4). Alert boxes used correctly. One minor: Interpolation Search section lacks a dedicated Decision Matrix and Edge Cases section.",
+      "editorial": 8,
+      "editorial_notes": "Well-structured. The 'See Also' section at the bottom links to Ch 22 (All-Pairs Shortest Paths) which seems odd for a searching chapter — Ch 7 (Hashing) is a better fit and already linked. Good use of practical examples.",
+      "language_mixing": "None detected.",
+      "critical_findings": [],
+      "recommendations": [
+        "Add a dedicated Decision Matrix and Edge Cases section for Interpolation Search (currently missing).",
+        "Reconsider See Also link to Ch 22 (All-Pairs Shortest Paths) — this is a graph algorithm chapter, not directly related to searching."
+      ]
+    },
+    {
+      "filename": "Part-V/Chapter-22.md",
+      "title": "Chapter 22: All-Pairs Shortest Paths",
+      "content_accuracy": 8,
+      "content_accuracy_notes": "Floyd-Warshall and Johnson's algorithm correctly described conceptually. Floyd-Warshall triple loop is correct. Johnson's algorithm correctly combines Bellman-Ford + Dijkstra. However, this chapter belongs to graph algorithms (Part IV or Part X), not Sorting & Searching (Part V). Structural placement concern.",
+      "go_idiom": 8,
+      "go_idiom_notes": "Go code is idiomatic — uses `[][]float64`, `math.Inf(1)`, `container/heap` for Johnson's. However, code blocks use `{{< prism lang=\"go\" line-numbers=\"true\">}}` Hugo shortcode instead of standard ` ```go ` markdown fences. This is non-standard for the project template and may not render correctly in all Hugo themes.",
+      "template_compliance": 7,
+      "template_compliance_notes": "Has required sections but uses non-standard code block formatting (prism shortcode vs. markdown code fences). Pseudocode sections present alongside Go code. Quick Reference (22.3) present. Decision Matrix sections present per algorithm. However, code formatting inconsistency is a compliance issue.",
+      "editorial": 7,
+      "editorial_notes": "Good technical content but oddly placed in Part V (Sorting & Searching). The chapter is about graph algorithms which belongs in Part IV (Graph Algorithms) or Part X. The opening quote by John Tukey is clever but the abbr tag on 'value' makes the quote hard to read.",
+      "language_mixing": "None detected in Go code. Pseudocode uses standard algorithmic notation.",
+      "critical_findings": [
+        "STRUCTURAL MISPLACEMENT: Chapter 22 (All-Pairs Shortest Paths) is a graph algorithm topic placed in Part V (Sorting & Searching). It should be in Part IV (Graph Algorithms, Ch 13-18) or Part X (Advanced Graph Algorithms, Ch 51-54).",
+        "Code blocks use `{{< prism lang=\"go\">}}` Hugo shortcode instead of standard markdown ` ```go ` fences used by all other chapters. This is inconsistent with project template."
+      ],
+      "recommendations": [
+        "Move Chapter 22 to Part IV (Graph Algorithms) or Part X (Advanced Graph Algorithms) where it fits thematically.",
+        "Standardize code blocks to ` ```go ` markdown fences for consistency with other chapters.",
+        "Update See Also links to reference graph algorithm chapters rather than sorting chapters."
+      ]
+    },
+    {
+      "filename": "Part-VI/Chapter-23.md",
+      "title": "Chapter 23: Divide and Conquer",
+      "content_accuracy": 8,
+      "content_accuracy_notes": "D&C paradigm correctly explained. Merge Sort, Quick Sort, Binary Search implementations are correct. Strassen's matrix multiplication mentioned but not implemented (appropriate for an overview). Parallel D&C section with goroutines is valuable and accurate.",
+      "go_idiom": 8,
+      "go_idiom_notes": "Go code is idiomatic — uses slices, recursion, goroutines with WaitGroup. The parallel merge sort is a good example. However, the Quick Sort implementation here is nearly identical to Ch 20's implementation, creating redundancy.",
+      "template_compliance": 9,
+      "template_compliance_notes": "Has Operations & Complexity tables throughout, Decision Matrices for each subsection, Edge Cases & Pitfalls, Quick Reference (23.5). Alert boxes used correctly. Proper heading hierarchy. However, there is SIGNIFICANT content overlap with Chapters 19-20.",
+      "editorial": 7,
+      "editorial_notes": "Technically accurate but suffers from severe content redundancy. The Merge/Quick sort implementations repeat almost verbatim from Chapters 19-20. The Binary Search content also overlaps with Chapter 21. Heavy use of `<abbr>` tags (every occurrence of 'divide and conquer', 'recursion', etc.) makes the text visually noisy and harder to read. The chapter would benefit from being more focused on novel D&C content (e.g., Karatsuba, Strassen, closest pair of points) rather than rehashing sorting.",
+      "language_mixing": "Prose uses 'new frame', 'new slices', 'new arrays' — these are English prose, not C++ keywords. No non-Go code in code blocks.",
+      "critical_findings": [
+        "SUBSTANTIAL CONTENT OVERLAP: Quick Sort and Merge Sort implementations are nearly identical to those in Chapters 19 and 20. Binary Search overlaps with Chapter 21. This redundancy wastes space and confuses readers.",
+        "Excessive `<abbr>` tagging: Terms like 'divide and conquer', 'recursion', 'stack', 'merge sort', 'quick sort', 'binary search', 'insertion sort' are tagged with `<abbr>` on nearly every occurrence, creating visual noise and accessibility issues."
+      ],
+      "recommendations": [
+        "Remove or significantly reduce the rehashing of Quick Sort, Merge Sort, and Binary Search from this chapter since they're covered in Chapters 19-21.",
+        "Replace with novel D&C examples: Karatsuba multiplication, closest pair of points, Strassen details with Go implementation, or fast Fourier transform.",
+        "Reduce `<abbr>` tags — only tag terms on first occurrence per section, not every occurrence.",
+        "Consider merging this chapter with a reduced version to focus only on the D&C pattern and its unique applications."
+      ]
+    },
+    {
+      "filename": "Part-VI/Chapter-24.md",
+      "title": "Chapter 24: Dynamic Programming",
+      "content_accuracy": 9,
+      "content_accuracy_notes": "DP fundamentals correctly explained (overlapping subproblems, optimal substructure). Fibonacci (with and without memoization), 0/1 Knapsack, and LCS are all correctly implemented with accurate recurrence relations. Space optimization note is valuable. The two approaches (top-down vs bottom-up) well explained.",
+      "go_idiom": 9,
+      "go_idiom_notes": "Clean idiomatic Go: uses `map[int]int` for memoization, `[][]int` for 2D DP tables, proper slice initialization with `make`. The max helper function is idiomatic. Could mention `slices.Max` (Go 1.21+) for future reference.",
+      "template_compliance": 7,
+      "template_compliance_notes": "Missing formal '### Operations & Complexity' section as required by template. Section 24.1 has 'Two Approaches' table which partially covers this but is not a proper Operations & Complexity table. Decision Matrix (24.5) is present but uses `##` instead of `###`. Quick Reference (24.6) present. Edge Cases present.",
+      "editorial": 8,
+      "editorial_notes": "Clear and concise. Good progression from fundamentals to classic problems. The Fibonacci example elegantly demonstrates both memoization and tabulation. The quote by George Santayana is fitting. Could benefit from a more complex DP example (e.g., edit distance or longest increasing subsequence) to fully demonstrate the paradigm.",
+      "language_mixing": "None detected.",
+      "critical_findings": [
+        "MISSING REQUIRED SECTION: No '### Operations & Complexity' section. The template mandates this as a standard section for all chapters. Consider adding a table summarizing DP time/space complexity patterns.",
+        "Decision Matrix (24.5) uses `##` (level 2) heading instead of `###` (level 3) as specified in template."
+      ],
+      "recommendations": [
+        "Add formal '### Operations & Complexity' section with a table covering the general DP pattern (state definition, recurrence, base cases, time/space complexity).",
+        "Fix Decision Matrix heading from `##` to `###` for template compliance.",
+        "Consider adding a more advanced DP example like Edit Distance (Levenshtein) or Longest Increasing Subsequence to round out the chapter."
+      ]
+    },
+    {
+      "filename": "Part-VI/Chapter-25.md",
+      "title": "Chapter 25: Greedy Algorithms",
+      "content_accuracy": 9,
+      "content_accuracy_notes": "Greedy strategy correctly explained with greedy choice property and optimal substructure. Fractional Knapsack correct. Activity Selection correct (earliest finish time). Huffman Coding correct with container/heap. The table of when greedy works (exchange argument, staying ahead, cut-and-paste) is excellent.",
+      "go_idiom": 9,
+      "go_idiom_notes": "Excellent use of `sort.Slice` with custom comparator. Proper use of `container/heap` for Huffman Coding — implements Heap interface correctly. Good use of `float64` for fractional calculations. Clean, idiomatic Go throughout.",
+      "template_compliance": 7,
+      "template_compliance_notes": "Missing formal '### Operations & Complexity' section. The 'When Greedy Works' table (25.1) partially covers algorithm characteristics but is not a proper complexity table. Decision Matrix (25.5) present but uses `##` instead of `###`. Quick Reference (25.6) present with good structure. Edge Cases present.",
+      "editorial": 8,
+      "editorial_notes": "Well-organized with clear progression from simple (Fractional Knapsack) to more complex (Huffman). The exchange argument table is a nice theoretical touch. The Gordon Gekko quote is fitting for the topic. Good emphasis on when greedy fails (0/1 Knapsack).",
+      "language_mixing": "None detected.",
+      "critical_findings": [
+        "MISSING REQUIRED SECTION: No '### Operations & Complexity' section. The template mandates this. Should include a table with O(n log n) for sorting-based greedy, O(n) for the linear scan phase, and O(n) or O(log n) space depending on in-place vs. heap usage.",
+        "Decision Matrix (25.5) uses `##` (level 2) heading instead of `###` (level 3)."
+      ],
+      "recommendations": [
+        "Add formal '### Operations & Complexity' section covering the general greedy pattern (sorting O(n log n), selection O(n), space O(1) or O(n)).",
+        "Fix Decision Matrix heading from `##` to `###`.",
+        "Consider adding a 'Greedy Fails Here' example (e.g., coin change with certain denominations) to strengthen the cautionary message."
+      ]
+    },
+    {
+      "filename": "Part-VI/Chapter-26.md",
+      "title": "Chapter 26: Backtracking",
+      "content_accuracy": 9,
+      "content_accuracy_notes": "Backtracking fundamentals correctly explained. N-Queens implementation is correct with proper column, diagonal, and anti-diagonal checks. Subset Sum implementation correct with include/exclude pattern. Permutations implementation correct with used[] tracking. Template structure for backtracking is well presented.",
+      "go_idiom": 9,
+      "go_idiom_notes": "Idiomatic Go: uses closures for recursion (backtrack functions defined as local variables), slices for state, proper append/slicing for backtrack undo. The N-Queens `isValid` function is clean and efficient. Good use of `copy` in permutations to capture snapshot of path.",
+      "template_compliance": 7,
+      "template_compliance_notes": "Missing formal '### Operations & Complexity' section. The Template Structure (26.1) shows the backtracking pattern but is pseudocode, not an O&C table. Decision Matrix (26.5) present but uses `##` instead of `###`. Quick Reference (26.6) present. Edge Cases present.",
+      "editorial": 8,
+      "editorial_notes": "Clear, well-structured. The backtracking template (26.1) at the start is very helpful for readers. Good progression from simplest (Subset Sum) to more complex (N-Queens, Permutations). The Einstein quote is somewhat generic for backtracking but acceptable.",
+      "language_mixing": "None detected.",
+      "critical_findings": [
+        "MISSING REQUIRED SECTION: No '### Operations & Complexity' section. The template mandates this. Should include a table with O(n!) for permutations, O(2^n) for subset sum, O(n!) for N-Queens, and space O(n) for recursion stack.",
+        "Decision Matrix (26.5) uses `##` (level 2) heading instead of `###` (level 3)."
+      ],
+      "recommendations": [
+        "Add formal '### Operations & Complexity' section covering backtracking complexity patterns.",
+        "Fix Decision Matrix heading from `##` to `###`.",
+        "Consider adding a more complex backtracking example like Sudoku solver to demonstrate constraint propagation."
+      ]
+    },
+    {
+      "filename": "Part-VI/Chapter-27.md",
+      "title": "Chapter 27: Advanced Recursive Algorithms",
+      "content_accuracy": 7,
+      "content_accuracy_notes": "Content is technically correct but almost entirely redundant with earlier chapters. Recursion fundamentals overlap with Ch 23. D&C (Merge/Quick Sort) overlaps with Ch 19-20, 23. DP (Fibonacci, Knapsack) overlaps with Ch 24. Backtracking (N-Queens) overlaps with Ch 26. Parallel section overlaps with Ch 23. Big-O values are accurate.",
+      "go_idiom": 8,
+      "go_idiom_notes": "Go code is generally idiomatic. Parallel merge sort uses WaitGroup correctly. The recursive tree structures use proper pointer semantics. However, the quickSort implementation in 27.2 uses an allocating style (new left/mid/right slices) which differs from the in-place version in Ch 20 — this inconsistency could confuse readers.",
+      "template_compliance": 6,
+      "template_compliance_notes": "Very long (695 lines, 3843 words, 6 pseudocode blocks) — far exceeds the '7-10 minute read' guideline. Has Operations & Complexity sections for each subsection (good). Has Decision Matrices. Quick Reference section exists but heading uses `## Quick Reference` without section numbering (non-standard). Contains 6 pseudocode blocks — the template says 'NO redundant pseudocode — pseudocode hanya untuk konsep non-trivial'.",
+      "editorial": 5,
+      "editorial_notes": "Major editorial issues: (1) Extreme content redundancy — ~80% of this chapter repeats material from Chapters 19-20, 23, 24, and 26. (2) At 3843 words (695 lines), it's far too long per the '7-10 minute read' guideline. (3) 6 pseudocode blocks violate the 'NO redundant pseudocode' rule. (4) The chapter tries to be a 'greatest hits of recursion' but ends up being a bloated recap. (5) The Kernighan quote is nice but doesn't justify the redundancy.",
+      "language_mixing": "Pseudocode blocks use C++/Java-style `new` keyword: `new node(value)` (lines 247, 252), `create new node with value` (line 243). In Go, object creation uses `&Node{Value: value}` or `NewNode()`. The pseudocode should use Go-idiomatic notation or language-agnostic pseudocode.",
+      "critical_findings": [
+        "SEVERE CONTENT REDUNDANCY: This chapter repeats material from at least 5 previous chapters (Ch 19, 20, 23, 24, 26). It adds minimal new value. The recursive parallelism section (27.6) is the only substantially new content.",
+        "LANGUAGE MIXING IN PSEUDOCODE: Pseudocode blocks in sections 27.1, 27.3, and 27.5 use `new node(value)` and `create new node with value` syntax, which is C++/Java style — not Go-idiomatic.",
+        "EXCESSIVE LENGTH: 695 lines, 3843 words, 6 pseudocode blocks, far exceeding the '7-10 minute read' guideline.",
+        "Quick Reference heading uses `## Quick Reference` without section numbering (should be `## 27.7. Quick Reference`)."
+      ],
+      "recommendations": [
+        "RESTRUCTURE COMPLETELY: Keep only the Recursive Parallelism section (27.6) as it's the only novel content. Remove or drastically reduce the redundant D&C, DP, and Backtracking sections since they're covered in dedicated chapters.",
+        "Consider converting this into a much shorter chapter focused on: (a) advanced recursion patterns (mutual recursion, recursive generators), (b) tail recursion and Go's lack of TCO, (c) parallelism. Target <150 lines.",
+        "Fix pseudocode to use Go-idiomatic notation (e.g., `&Node{Value: value}` instead of `new Node(value)`).",
+        "Add proper section numbering to Quick Reference heading.",
+        "Reduce pseudocode blocks — many of these algorithms already have Go code; the pseudocode is redundant per the style guide."
+      ]
+    },
+    {
+      "filename": "Part-VI/Chapter-28.md",
+      "title": "Chapter 28: Probabilistic and Randomized Algorithms",
+      "content_accuracy": 8,
+      "content_accuracy_notes": "Randomized QuickSort correctly described (Las Vegas algorithm). Skip List implementation is correct with proper randomized height. Miller-Rabin explanation is accurate — correctly notes that it's a Monte Carlo algorithm and identifies Carmichael numbers. Reservoir Sampling correctly described with O(k) memory. All Big-O values accurate.",
+      "go_idiom": 8,
+      "go_idiom_notes": "Skip List implementation is well-structured with proper Go types and methods. Uses `container/heap` for Huffman (in 25.4) is correct. However, QuickSort in 28.1 calls `rand.Seed(time.Now().UnixNano())` inside the sorting function — this re-seeds on every call which is wasteful and unnecessary in Go 1.20+ (rand.Seed is deprecated). Use `rand.New(rand.NewSource(...))` for a local generator or rely on automatic seeding in Go 1.20+.",
+      "template_compliance": 7,
+      "template_compliance_notes": "Has Operations & Complexity sections for all subsections (good). Decision Matrices present for each section (good). Quick Reference present but heading uses `## Quick <abbr title=...>Reference</abbr>` with embedded `<abbr>` tag inside heading, which is non-standard and may cause rendering issues. Section numbering missing from Quick Reference heading.",
+      "editorial": 6,
+      "editorial_notes": "Technical content is accurate but the writing style is overly verbose and uses unnecessarily complex vocabulary ('fierce primality testing', 'brutally consumes memory', 'agonizingly slow', 'torrential data streams'). The tone is more suited to a blog post than a technical reference. Some sentences are hard to parse due to excessive adverbs and dramatic language. The 'Memory Mechanics' and 'Background & Philosophy' sections are well-structured but the prose could be tightened significantly.",
+      "language_mixing": "Pseudocode in sections 28.1 and 28.2 uses `new` keyword style: `newNode = new node with key, value, and next array` (line 166). This is C++/Java-adjacent syntax. The Skip List Insert pseudocode also uses `newNode = new node...` (line 166). Go would use `&SkipNode{key: key, value: value, next: make([]*SkipNode, lvl)}`.",
+      "critical_findings": [
+        "LANGUAGE MIXING IN PSEUDOCODE: Pseudocode in 28.2 (Skip List) uses `new node with key, value, and next array of size newLevel` (line 166) which is C++/Java-style. Should use Go-idiomatic composite literal notation.",
+        "RAND.SEED MISUSE: `rand.Seed(time.Now().UnixNano())` is called inside `randomizedQuickSort` function (line 73), which re-seeds on every invocation. In Go 1.20+, `rand.Seed` is deprecated and the global source is automatically seeded. This should use a local `*rand.Rand` instance.",
+        "OVERLY VERBOSE STYLE: The prose uses dramatic, blog-like language ('fierce primality testing', 'brutally consumes memory', 'agonizingly slow', 'torrential data streams', 'masterfully simulates') which is inconsistent with the 'Brevity over verbosity' guideline. Some sentences are performatively complex.",
+        "Quick Reference heading has embedded `<abbr>` tag breaking the heading format: `## Quick <abbr title=...>Reference</abbr>`."
+      ],
+      "recommendations": [
+        "Fix `rand.Seed` usage: either remove it (Go 1.20+ auto-seeds) or use a local `rand.New(rand.NewSource(...))` for concurrent safety.",
+        "Fix pseudocode to avoid `new node` style — use Go-idiomatic composite literal notation.",
+        "Rewrite in a more direct, technical tone: remove dramatic adverbs and simplify verbose sentences. Target 30% reduction in word count.",
+        "Fix Quick Reference heading to `## 28.5. Quick Reference` without embedded `<abbr>` tag.",
+        "Consider restructuring: the chapter covers 4 distinct topics (Randomized QS, Skip List, Miller-Rabin, Reservoir Sampling) that are only loosely connected. Each could be its own mini-chapter or the chapter needs a stronger unifying theme."
+      ]
+    }
+  ],
+  "cross_cutting_findings": [
+    {
+      "finding": "Structural Placement Issue: Chapter 22 (All-Pairs Shortest Paths) in Part V (Sorting & Searching)",
+      "severity": "high",
+      "detail": "Chapter 22 covers Floyd-Warshall and Johnson's algorithm which are graph algorithm topics. They belong in Part IV (Graph Algorithms, Ch 13-18) or Part X (Advanced Graph Algorithms, Ch 51-54), not in Part V (Sorting & Searching)."
+    },
+    {
+      "finding": "Severe Content Redundancy: Chapter 27 overlaps with Chapters 19, 20, 23, 24, and 26",
+      "severity": "high",
+      "detail": "Chapter 27 (Advanced Recursive Algorithms) rehashes Merge Sort, Quick Sort, Binary Search, Fibonacci DP, Knapsack DP, and N-Queens Backtracking — all covered in earlier chapters. Only the Recursive Parallelism section (27.6) is substantially new."
+    },
+    {
+      "finding": "Content Redundancy: Chapter 23 overlaps with Chapters 19-21",
+      "severity": "medium",
+      "detail": "Chapter 23 (Divide and Conquer) rehashes Quick Sort, Merge Sort, and Binary Search from Chapters 19-21. Only the parallelization section is new."
+    },
+    {
+      "finding": "Missing Operations & Complexity Sections in Ch 24, 25, 26",
+      "severity": "medium",
+      "detail": "Chapters 24 (DP), 25 (Greedy), and 26 (Backtracking) are all missing the formal '### Operations & Complexity' section as required by the project template. They have Decision Matrices but at wrong heading level (`##` instead of `###`)."
+    },
+    {
+      "finding": "Language Mixing: C++/Java-style 'new' in pseudocode (Ch 27, 28)",
+      "severity": "low",
+      "detail": "Pseudocode blocks in Chapters 27 and 28 use `new node(value)` and `new node with key, value...` syntax which is C++/Java-adjacent. Go uses `&Type{...}` composite literals for object creation."
+    },
+    {
+      "finding": "Non-standard Code Block Formatting in Chapter 22",
+      "severity": "low",
+      "detail": "Chapter 22 uses `{{< prism lang=\"go\" line-numbers=\"true\">}}` Hugo shortcode instead of the standard ` ```go ` markdown code fences used by all other chapters."
+    },
+    {
+      "finding": "Inconsistent Quick Reference Heading Format (Ch 27, 28)",
+      "severity": "low",
+      "detail": "Chapters 27 and 28 use `## Quick Reference` without section numbering and (in Ch 28) with embedded `<abbr>` tag inside the heading. Other chapters use `## N.M. Quick Reference` format."
+    }
+  ],
+  "summary": {
+    "strongest_chapters": ["Chapter 19 (Basic Sorting)", "Chapter 21 (Searching Algorithms)", "Chapter 24 (Dynamic Programming)", "Chapter 25 (Greedy Algorithms)", "Chapter 26 (Backtracking)"],
+    "weakest_chapters": ["Chapter 27 (Advanced Recursive Algorithms) — severe redundancy, excessive length", "Chapter 22 (All-Pairs Shortest Paths) — structural misplacement"],
+    "needs_most_work": ["Chapter 27 (structural rewrite)", "Chapter 28 (style rewrite)", "Ch 24/25/26 (add Operations & Complexity sections)"],
+    "overall_assessment": "The Sorting & Searching section (Part V) and Algorithmic Paradigms section (Part VI) collectively cover the right algorithms accurately but suffer from structural issues: severe content redundancy between Chapters 23 and 27 with earlier chapters, a misplaced graph algorithm chapter (Ch 22) in the sorting section, and missing Operations & Complexity sections in three chapters. The code is generally idiomatic Go with good use of standard library packages. The biggest editorial concern is the 3843-word Chapter 27 which rehashes material from 5 prior chapters. Template compliance is good for Part V but inconsistent in Part VI."
+  }
+}
