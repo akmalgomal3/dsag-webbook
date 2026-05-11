@@ -17,56 +17,56 @@ Quick reference for time and space complexity of common data structures and algo
 
 | Structure | Access | Search | Insert | Delete | Space |
 |-----------|--------|--------|--------|--------|-------|
-| Array | O(1) | O(n) | O(n) | O(n) | O(n) |
-| Linked List | O(n) | O(n) | O(1) | O(1) | O(n) |
-| Dynamic Array (Slice) | O(1) | O(n) | O(1) amortized | O(n) | O(n) |
-| Stack | O(n) | O(n) | O(1) | O(1) | O(n) |
-| Queue | O(n) | O(n) | O(1) | O(1) | O(n) |
-| Hash Table | : | O(1) avg | O(1) avg | O(1) avg | O(n) |
-| BST (balanced) | O(log n) | O(log n) | O(log n) | O(log n) | O(n) |
-| Heap | O(n) | O(n) | O(log n) | O(log n) | O(n) |
-| Trie | O(m) | O(m) | O(m) | O(m) | O(n·m) |
-| Segment Tree | O(log n) | : | O(log n) | O(log n) | O(n) |
-| B-Tree | O(log n) | O(log n) | O(log n) | O(log n) | O(n) |
-| Skip List | O(log n) | O(log n) | O(log n) | O(log n) | O(n) |
-| Bloom Filter | : | O(k) | O(k) | : | O(n) |
+| Array | <code>O(1)</code> | <code>O(n)</code> | <code>O(n)</code> | <code>O(n)</code> | <code>O(n)</code> |
+| Linked List | <code>O(n)</code> | <code>O(n)</code> | <code>O(1)</code> | <code>O(1)</code> | <code>O(n)</code> |
+| Dynamic Array (Slice) | <code>O(1)</code> | <code>O(n)</code> | <code>O(1)</code> amortized | <code>O(n)</code> | <code>O(n)</code> |
+| Stack | <code>O(n)</code> | <code>O(n)</code> | <code>O(1)</code> | <code>O(1)</code> | <code>O(n)</code> |
+| Queue | <code>O(n)</code> | <code>O(n)</code> | <code>O(1)</code> | <code>O(1)</code> | <code>O(n)</code> |
+| Hash Table | : | <code>O(1)</code> avg | <code>O(1)</code> avg | <code>O(1)</code> avg | <code>O(n)</code> |
+| BST (balanced) | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
+| Heap | <code>O(n)</code> | <code>O(n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
+| Trie | <code>O(m)</code> | <code>O(m)</code> | <code>O(m)</code> | <code>O(m)</code> | <code>O(n·m)</code> |
+| Segment Tree | <code>O(log n)</code> | : | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
+| B-Tree | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
+| Skip List | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
+| Bloom Filter | : | <code>O(k)</code> | <code>O(k)</code> | : | <code>O(n)</code> |
 
 ### Sorting Algorithms
 
 | Algorithm | Best | Average | Worst | Space | Stable |
 |-----------|------|---------|-------|-------|--------|
-| Quicksort | O(n log n) | O(n log n) | O(n²) | O(log n) | No |
-| Mergesort | O(n log n) | O(n log n) | O(n log n) | O(n) | Yes |
-| Heapsort | O(n log n) | O(n log n) | O(n log n) | O(1) | No |
-| Insertion Sort | O(n) | O(n²) | O(n²) | O(1) | Yes |
-| Selection Sort | O(n²) | O(n²) | O(n²) | O(1) | No |
-| Counting Sort | O(n + k) | O(n + k) | O(n + k) | O(k) | Yes |
-| Radix Sort | O(d(n + k)) | O(d(n + k)) | O(d(n + k)) | O(n + k) | Yes |
-| Bucket Sort | O(n) | O(n) | O(n²) | O(n) | Yes |
+| Quicksort | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n²)</code> | <code>O(log n)</code> | No |
+| Mergesort | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n)</code> | Yes |
+| Heapsort | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(1)</code> | No |
+| Insertion Sort | <code>O(n)</code> | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(1)</code> | Yes |
+| Selection Sort | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(1)</code> | No |
+| Counting Sort | <code>O(n + k)</code> | <code>O(n + k)</code> | <code>O(n + k)</code> | <code>O(k)</code> | Yes |
+| Radix Sort | <code>O(d(n + k))</code> | <code>O(d(n + k))</code> | <code>O(d(n + k))</code> | <code>O(n + k)</code> | Yes |
+| Bucket Sort | <code>O(n)</code> | <code>O(n)</code> | <code>O(n²)</code> | <code>O(n)</code> | Yes |
 
 ### Graph Algorithms
 
 | Algorithm | Time | Space | Use Case |
 |-----------|------|-------|----------|
-| BFS | O(V + E) | O(V) | Shortest path (unweighted) |
-| DFS | O(V + E) | O(V) | Connectivity, cycles |
-| Dijkstra | O((V + E) log V) | O(V) | Shortest path (weighted, no negatives) |
-| Bellman-Ford | O(V·E) | O(V) | Shortest path (with negatives) |
-| Floyd-Warshall | O(V³) | O(V²) | All-pairs shortest path |
-| Kruskal | O(E log E) | O(V) | MST |
-| Prim | O((V + E) log V) | O(V) | MST |
-| Topological Sort | O(V + E) | O(V) | Dependency ordering |
-| A* | O(E log V) typical, O(b^d) worst | O(V) | Pathfinding with heuristic |
+| BFS | <code>O(V + E)</code> | <code>O(V)</code> | Shortest path (unweighted) |
+| DFS | <code>O(V + E)</code> | <code>O(V)</code> | Connectivity, cycles |
+| Dijkstra | <code>O((V + E) log V)</code> | <code>O(V)</code> | Shortest path (weighted, no negatives) |
+| Bellman-Ford | <code>O(V·E)</code> | <code>O(V)</code> | Shortest path (with negatives) |
+| Floyd-Warshall | <code>O(V³)</code> | <code>O(V²)</code> | All-pairs shortest path |
+| Kruskal | <code>O(E log E)</code> | <code>O(V)</code> | MST |
+| Prim | <code>O((V + E) log V)</code> | <code>O(V)</code> | MST |
+| Topological Sort | <code>O(V + E)</code> | <code>O(V)</code> | Dependency ordering |
+| A* | <code>O(E log V)</code> typical, <code>O(b^d)</code> worst | <code>O(V)</code> | Pathfinding with heuristic |
 
 ### Array/String Techniques
 
 | Technique | Time | Space | Use Case |
 |-----------|------|-------|----------|
-| Two Pointers | O(n) | O(1) | Sorted pair search |
-| Sliding Window | O(n) | O(1) | Subarray/substring problems |
-| Kadane's Algorithm | O(n) | O(1) | Maximum subarray |
-| Prefix Sum | O(n) preprocessing, O(1) query | O(n) | Range sum queries |
-| Mo's Algorithm | O((n + q)√n) | O(n) | Offline range queries |
+| Two Pointers | <code>O(n)</code> | <code>O(1)</code> | Sorted pair search |
+| Sliding Window | <code>O(n)</code> | <code>O(1)</code> | Subarray/substring problems |
+| Kadane's Algorithm | <code>O(n)</code> | <code>O(1)</code> | Maximum subarray |
+| Prefix Sum | <code>O(n)</code> preprocessing, <code>O(1)</code> query | <code>O(n)</code> | Range sum queries |
+| Mo's Algorithm | <code>O((n + q)√n)</code> | <code>O(n)</code> | Offline range queries |
 
 ---
 
