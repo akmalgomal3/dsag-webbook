@@ -1621,6 +1621,7 @@ input:focus-visible {
     flex: 1;
     min-width: 0;
     max-width: var(--max-width);
+    overflow-x: hidden;
 }
 
 /* TOC Sidebar */
