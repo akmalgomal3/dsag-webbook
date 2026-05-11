@@ -24,3 +24,6 @@ node_modules/
 # Temporary files
 *.tmp
 *.temp
+
+# Subagent artifacts — never commit review JSON or temp outputs
+review-*.json
