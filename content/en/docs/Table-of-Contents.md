@@ -15,8 +15,8 @@ Explore the chapters below to dive deep into the advanced programming data struc
 
 ### **Main Sections**
 
-|- [**Modern Data Structures and Algorithms in Go**](/)
-|- [**Preface**](/docs/preface/)
+- [**Modern Data Structures and Algorithms in Go**](/)
+- [**Preface**](/docs/preface/)
 - [**Foreword**](/docs/foreword/)
 - [**Foreword: A Practitioner's Perspective**](/docs/foreword-2/)
 
