@@ -1,3 +1,10 @@
-{{ range .Page.Pages.ByWeight }}
-- [**{{ .Title }} - {{ .Description }}**]({{ .RelPermalink }})
+<ul class="chapter-list">
+{{ range $index, $page := .Page.Pages.ByWeight }}
+<li>
+  <a class="chapter-card" href="{{ $page.RelPermalink }}">
+    <span class="chapter-number">{{ add $index 1 }}</span>
+    <span class="chapter-title">{{ $page.Title }}</span>
+  </a>
+</li>
 {{ end }}
+</ul>

@@ -21,37 +21,12 @@
     <div class="content-body">
         {{ .Content }}
     </div>
-
-    {{ if .Pages }}
-    <nav aria-label="Chapters">
-        <ul class="chapter-list">
-            {{ range .Pages.ByWeight }}
-            {{ $chNum := replaceRE "Chapter (\\d+).*" "$1" .Title }}
-            <li>
-                <a href="{{ .RelPermalink }}" class="chapter-card">
-                    <div class="chapter-card-inner">
-                        <span class="chapter-number-badge">{{ $chNum }}</span>
-                        <span class="chapter-title">{{ .Title }}</span>
-                        {{ with .Description }}
-                        <span class="chapter-description">{{ . }}</span>
-                        {{ end }}
-                    </div>
-                </a>
-            </li>
-            {{ end }}
-        </ul>
-    </nav>
-    {{ else }}
-    <div class="empty-state">
-        <p>No chapters available in this part yet.</p>
-    </div>
-    {{ end }}
 </article>
 {{ end }}
 
 {{ define "footer" }}
 <footer class="site-footer">
-    <div class="container">
+    <div class="header-inner">
         <p>&copy; {{ now.Year }} {{ .Site.Title }}. Built with Hugo.</p>
     </div>
 </footer>
