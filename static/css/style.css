@@ -828,7 +828,7 @@ tr:hover {
    ============================================ */
 
 .home-page {
-    max-width: 768px;
+    max-width: var(--max-width);
     margin: 0 auto;
     text-align: center;
 }
