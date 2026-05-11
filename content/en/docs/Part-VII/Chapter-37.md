@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 37 covers Trie (prefix tree) data structures: efficient storage and retrieval of strings with common prefixes. Essential for autocomplete, spell checking, and IP routing.
+Chapter 37 covers <abbr title="A tree data structure for storing and searching strings with common prefixes.">Trie</abbr> (<abbr title="A tree storing strings where common prefixes are shared, also called a Trie.">prefix tree</abbr>) data structures: efficient storage and retrieval of strings with common prefixes. Essential for autocomplete, spell checking, and IP routing.
 {{% /alert %}}
 
 ## 37.1. Trie Fundamentals
@@ -23,10 +23,10 @@ Chapter 37 covers Trie (prefix tree) data structures: efficient storage and retr
 **Definition:** A Trie is a tree where each node represents a character. Paths from root to leaf form complete words. All descendants of a node share the same prefix.
 
 **Background & Philosophy:**
-The philosophy is structural prefix sharing. Instead of storing ten words that start with "auto" as ten distinct strings, a Trie stores the prefix "a-u-t-o" exactly once, branching off only when the words diverge. It transforms string retrieval from an `O(N)` scan into an `O(m)` traversal based strictly on the word's length, independent of dictionary size.
+The philosophy is structural prefix sharing. Instead of storing ten words that start with "auto" as ten distinct strings, a Trie stores the prefix "a-u-t-o" exactly once, branching off only when the words diverge. It transforms string retrieval from an <code>O(N)</code> scan into an <code>O(m)</code> traversal based strictly on the word's length, independent of dictionary size.
 
 **Use Cases:**
-Search engine autocomplete engines, routing IP addresses in networking hardware (Radix Tries), and mobile phone predictive text keyboards.
+Search engine autocomplete engines, routing IP addresses in networking hardware (<abbr title="A space-optimized Trie with edge labels, also known as a Radix Trie.">Radix Tries</abbr>), and mobile phone predictive text keyboards.
 
 **Memory Mechanics:**
 A standard Trie is incredibly memory-hungry. Each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> in Go typically holds a `map[rune]*TrieNode`. Allocating millions of tiny maps across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> severely fragments <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes massive <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> tracing overhead. High-performance production Tries (like Double-Array Tries or Radix Trees) compress these <abbr title="A variable that stores a memory address.">pointers</abbr> into packed, flat arrays to drastically reduce memory footprints and restore <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.

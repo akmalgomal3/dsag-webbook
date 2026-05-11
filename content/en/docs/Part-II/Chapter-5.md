@@ -87,7 +87,7 @@ The philosophy behind Go maps is to provide a highly optimized, built-in associa
 Used for caching database query results, counting frequency of elements, and building fast lookup tables like routing registries in web frameworks.
 
 **Memory Mechanics:**
-Maps in Go are implemented as an array of buckets. Each bucket typically holds up to 8 key-value pairs. Because maps are <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> data structures, they scatter data across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. When the map grows beyond its load factor, Go allocates a new array of buckets twice the size and incrementally moves the data over. This incremental rehashing prevents massive latency spikes during map insertion, but it still incurs <abbr title="Input/Output operations involving reading from or writing to a physical disk.">memory allocation</abbr> overhead.
+Maps in Go are implemented as an array of buckets. Each bucket typically holds up to 8 key-value pairs. Because maps are <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> data structures, they scatter data across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. When the map grows beyond its <abbr title="Ratio of stored entries to bucket count">load factor</abbr>, Go allocates a new array of buckets twice the size and incrementally moves the data over. This incremental rehashing prevents massive latency spikes during map insertion, but it still incurs <abbr title="Input/Output operations involving reading from or writing to a physical disk.">memory allocation</abbr> overhead.
 
 ### Operations & Complexity
 
@@ -149,7 +149,7 @@ func main() {
 Before dynamic arrays were highly optimized, linked lists were the standard for variable-length data. The philosophy of a linked list is to optimize for insertions and deletions at arbitrary positions without shifting elements. However, in modern computing, the poor <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> of linked lists often makes slices faster even for insertions, relegating linked lists to highly specialized use cases.
 
 **Use Cases:**
-Used in implementing LRU (Least Recently Used) caches where elements are constantly moved to the front, or in lock-free concurrent queues where node pointers can be atomically swapped.
+Used in implementing <abbr title="Least Recently Used cache eviction policy">LRU</abbr> (Least Recently Used) caches where elements are constantly moved to the front, or in lock-free concurrent queues where node pointers can be atomically swapped.
 
 **Memory Mechanics:**
 Every element in a linked list is a separate struct allocated independently on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This means traversing a linked list forces the CPU to constantly chase pointers across completely random memory addresses, resulting in frequent <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. Additionally, a doubly linked list requires an extra 16 bytes per node just for the `next` and `prev` pointers, introducing significant memory bloat compared to slices.
@@ -209,7 +209,7 @@ func main() {
 
 ## 5.4. Structs and Methods
 
-**Definition:** A struct is a composite <abbr title="A classification identifying one of various types of data.">data type</abbr> that groups fields. A method is a function attached to a specific type, serving as the equivalent of `impl` blocks or classes.
+**Definition:** A <abbr title="Composite data type grouping fields">struct</abbr> is a composite <abbr title="A classification identifying one of various types of data.">data type</abbr> that groups fields. A method is a function attached to a specific type, serving as the equivalent of `impl` blocks or classes.
 
 **Background & Philosophy:**
 Go abandons traditional class-based inheritance in favor of composition. Structs group data, and methods attach behaviors to that data. The philosophy is to keep data structures as plain, transparent records, while interfaces define behaviors. This prevents the deep, tangled inheritance hierarchies common in Java or C++.

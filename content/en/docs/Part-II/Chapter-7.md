@@ -19,7 +19,7 @@ Chapter 7 focuses on <abbr title="The process of mapping data of arbitrary size 
 **Definition:** A <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> maps keys to values using a hash function. Go provides the built-in `map[K]V` which is backed by a <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr>.
 
 **Background & Philosophy:**
-The primary philosophy of a hash table is trading space for time. By allocating a larger memory footprint than strictly necessary, we can probabilistically guarantee `O(1)` access time. Hash tables convert a search problem (which would otherwise require iterating through elements) into a direct mathematical computation of an index. 
+The primary philosophy of a hash table is trading space for time. By allocating a larger memory footprint than strictly necessary, we can probabilistically guarantee <code>O(1)</code> access time. Hash tables convert a search problem (which would otherwise require iterating through elements) into a direct mathematical computation of an index. 
 
 **Use Cases:**
 Hash tables are ubiquitous: from implementing caches (like Redis) and counting word frequencies in a text, to mapping database connections to active session IDs in a web server.
@@ -209,7 +209,7 @@ In a traditional distributed hash table (`hash(key) % N_servers`), adding one se
 The backbone of modern distributed systems, including load balancing in API gateways, data sharding in distributed databases (like Cassandra or DynamoDB), and cache clustering (like Memcached).
 
 **Memory Mechanics:**
-A consistent hashing ring is usually implemented as a sorted slice of integers in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. When a request arrives, the system hashes the key to produce a 32-bit or 64-bit integer, then performs a <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> `O(log n)` on the slice to find the first server whose hash is greater than the key's hash. Because the ring is a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array, the binary search is extremely <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> efficient.
+A consistent hashing ring is usually implemented as a sorted slice of integers in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. When a request arrives, the system hashes the key to produce a 32-bit or 64-bit integer, then performs a <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> <code>O(log n)</code> on the slice to find the first server whose hash is greater than the key's hash. Because the ring is a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array, the binary search is extremely <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> efficient.
 
 ### Operations & Complexity
 

@@ -23,7 +23,7 @@ Chapter 10 covers heaps and priority queues: tree-based structures for efficient
 **Definition:** A binary heap is a complete binary tree where each parent is greater than (max-heap) or less than (min-heap) its children. It supports extract-max and insert in <code>O(log n)</code>.
 
 **Background & Philosophy:**
-While standard binary trees are optimized for searching any arbitrary element in `O(log n)` time, a heap sacrifices full searchability to absolutely optimize retrieving the single most important element (the min or max). The philosophy is "partial ordering". By only enforcing ordering between parent and child (and not between siblings), the heap drastically reduces the number of operations needed to insert or extract data compared to a fully sorted array or a balanced BST.
+While standard binary trees are optimized for searching any arbitrary element in <code>O(log n)</code> time, a heap sacrifices full searchability to absolutely optimize retrieving the single most important element (the min or max). The philosophy is "partial ordering". By only enforcing ordering between parent and child (and not between siblings), the heap drastically reduces the number of operations needed to insert or extract data compared to a fully sorted array or a balanced BST.
 
 **Use Cases:**
 Essential for implementing Priority Queues in operating system task schedulers, finding the shortest path in graph algorithms like Dijkstra's, and solving "Top K" streaming problems (e.g., maintaining the leaderboard of the top 100 players in real-time).
@@ -51,7 +51,7 @@ A standard queue treats all elements equally (FIFO). A priority queue reflects t
 Used in routing network packets where VoIP traffic takes priority over file downloads, event-driven simulations, and Huffman coding for data compression.
 
 **Memory Mechanics:**
-In Go, `container/heap` is not a data structure itself, but rather a set of interface methods applied to your own slice. When you call `heap.Push()`, Go appends the item to your underlying slice (potentially triggering an `O(n)` memory reallocation if capacity is exceeded) and then performs memory swaps (exchanging values at different array indices) to "bubble up" the value. These swaps are purely `O(1)` memory writes within the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array.
+In Go, `container/heap` is not a data structure itself, but rather a set of interface methods applied to your own slice. When you call `heap.Push()`, Go appends the item to your underlying slice (potentially triggering an <code>O(n)</code> memory reallocation if capacity is exceeded) and then performs memory swaps (exchanging values at different array indices) to "bubble up" the value. These swaps are purely <code>O(1)</code> memory writes within the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array.
 
 ### Idiomatic Go Implementation
 

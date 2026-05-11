@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 24 covers dynamic programming (DP): a method for solving complex problems by breaking them into overlapping subproblems and storing solutions to avoid redundant computation.
+Chapter 24 covers <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (DP): a method for solving complex problems by breaking them into overlapping subproblems and storing solutions to avoid redundant computation.
 {{% /alert %}}
 
 ## 24.1. DP Fundamentals
@@ -23,7 +23,7 @@ Chapter 24 covers dynamic programming (DP): a method for solving complex problem
 **Definition:** Dynamic programming solves problems by breaking them into smaller overlapping subproblems, solving each subproblem once, and storing the result for reuse. It applies when a problem exhibits **optimal substructure** and **overlapping subproblems**.
 
 **Background & Philosophy:**
-"Those who cannot remember the past are condemned to repeat it." DP is the philosophy of trading space for time. It recognizes that in many recursive problems, the exact same subproblems are evaluated millions of times. By explicitly memoizing (caching) these results, it transforms exponential `O(2^n)` chaos into polynomial `O(n)` order.
+"Those who cannot remember the past are condemned to repeat it." DP is the philosophy of trading space for time. It recognizes that in many recursive problems, the exact same subproblems are evaluated millions of times. By explicitly memoizing (caching) these results, it transforms exponential <code>O(2^n)</code> chaos into polynomial <code>O(n)</code> order.
 
 **Use Cases:**
 Sequence alignment in bioinformatics (DNA matching), pricing complex financial derivatives, and solving optimization problems like the Knapsack problem for resource allocation.
@@ -152,7 +152,7 @@ func main() {
 
 | Use DP When... | Avoid If... |
 |----------------|-------------|
-| Problem has overlapping subproblems | Greedy choice property holds (use greedy instead) |
+| Problem has overlapping subproblems | <abbr title="An algorithm making locally optimal choices at each step.">Greedy</abbr> choice property holds (use greedy instead) |
 | Optimal substructure exists | Subproblems are independent (use divide and conquer) |
 | Brute force is exponential | A simpler algorithm achieves same result |
 

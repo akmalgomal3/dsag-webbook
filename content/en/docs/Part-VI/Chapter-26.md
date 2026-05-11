@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 26 covers backtracking: a systematic way to explore all potential solutions by building candidates incrementally and abandoning partial candidates ("backtracking") as soon as they cannot possibly lead to a valid solution.
+Chapter 26 covers <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>: a systematic way to explore all potential solutions by building candidates incrementally and abandoning partial candidates ("backtracking") as soon as they cannot possibly lead to a valid solution.
 {{% /alert %}}
 
 ## 26.1. Backtracking Fundamentals

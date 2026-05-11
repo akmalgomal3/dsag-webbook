@@ -23,7 +23,7 @@ Chapter 3 focuses on why Go is an exceptional language for data structures and a
 **Definition:** Go offers memory safety, near-C performance, simple concurrency primitives, and strong tooling for algorithm implementation.
 
 **Background & Philosophy:**
-Go was designed at Google to solve problems of scale: large codebases, large teams, and large numbers of concurrent network connections. The philosophy behind Go is "simplicity and readability over cleverness". It avoids complex features like inheritance or pointer arithmetic in favor of orthogonal, composable tools like interfaces and goroutines.
+Go was designed at Google to solve problems of scale: large codebases, large teams, and large numbers of concurrent network connections. The philosophy behind Go is "simplicity and readability over cleverness". It avoids complex features like inheritance or pointer arithmetic in favor of orthogonal, composable tools like <abbr title="Go type defining method signatures">interfaces</abbr> and <abbr title="Lightweight thread managed by Go runtime">goroutines</abbr>.
 
 **Use Cases:**
 Go is widely used for building highly concurrent backend services (like microservices or API gateways), robust command-line tools (CLIs), and distributed systems infrastructure (such as Kubernetes or Docker).
@@ -36,8 +36,8 @@ Go utilizes a concurrent, mark-and-sweep <abbr title="Automatic memory managemen
 | Feature | Advantage | Trade-off |
 |-------|------------|-----------|
 | <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> | Automatic, no use-after-free | Pause time (typically <1ms) |
-| Slice | Dynamic array, amortized `O(1)` append | Reallocates when capacity is full |
-| Map | Hash table, `O(1)` avg | Unordered, not concurrent-safe |
+| Slice | Dynamic array, amortized <code>O(1)</code> append | Reallocates when capacity is full |
+| Map | Hash table, <code>O(1)</code> avg | Unordered, not concurrent-safe |
 | Goroutine | Lightweight concurrency | Scheduling overhead |
 
 ### Decision Matrix
@@ -70,25 +70,53 @@ A slice in Go is a 24-byte struct (on 64-bit systems) containing a pointer to th
 
 | Structure | Go Type | Access | Insert | Delete | Search |
 |----------|---------|--------|--------|--------|--------|
-| Array | `[N]T` | `O(1)` | . | . | `O(n)` |
-| Slice | `[]T` | `O(1)` | `O(n)`* | `O(n)`* | `O(n)` |
-| Linked List | `list.List` | `O(n)` | `O(1)` | `O(n)` | `O(n)` |
-| Map | `map[K]V` | `O(1)` avg | `O(1)` avg | `O(1)` avg | `O(1)` avg |
-| Binary Tree | custom struct | `O(log n)` | `O(log n)` | `O(log n)` | `O(log n)` |
-| Graph | `[][]int` adj | `O(1)` adj | `O(1)` edge | `O(1)` edge | `O(V+E)` |
+| Array | `[N]T` | <code>O(1)</code> | . | . | <code>O(n)</code> |
+| Slice | `[]T` | <code>O(1)</code> | <code>O(n)</code>* | <code>O(n)</code>* | <code>O(n)</code> |
+| Linked List | `list.List` | <code>O(n)</code> | <code>O(1)</code> | <code>O(n)</code> | <code>O(n)</code> |
+| Map | `map[K]V` | <code>O(1)</code> avg | <code>O(1)</code> avg | <code>O(1)</code> avg | <code>O(1)</code> avg |
+| Binary Tree | custom struct | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> |
+| Graph | `[][]int` adj | <code>O(1)</code> adj | <code>O(1)</code> edge | <code>O(1)</code> edge | <code>O(V+E)</code> |
 
 *amortized
 
 ### Pseudocode
 
+```text
+LinkedListTraverse(head):
+    current = head
+    while current != nil:
+        process(current.data)
+        current = current.next
+```
 
 ### Idiomatic Go Implementation
 
 Linked lists and graphs using the standard library and structs:
 
+```go
+package main
+
+import (
+    "container/list"
+    "fmt"
+)
+
+func traverseList(lst *list.List) {
+    for e := lst.Front(); e != nil; e = e.Next() {
+        fmt.Println(e.Value)
+    }
+}
+
+func main() {
+    lst := list.New()
+    lst.PushBack(1)
+    lst.PushBack(2)
+    lst.PushBack(3)
+    traverseList(lst)
+}
+```
 
 ### Decision Matrix
-
 | Use This When... | Avoid If... |
 |--------------------|------------------|
 | Need ordered insertion/removal | Fast random access is required |
@@ -102,7 +130,7 @@ Linked lists and graphs using the standard library and structs:
 
 ## 3.3. Algorithmic Paradigms and Their Go Implementations
 
-**Definition:** Algorithmic paradigms: divide and conquer, dynamic programming, greedy, and backtracking: provide strategies to solve computational problems efficiently.
+**Definition:** Algorithmic paradigms: <abbr title="Recursive problem splitting">divide and conquer</abbr>, <abbr title="Caching subproblem solutions">dynamic programming</abbr>, <abbr title="Locally optimal choice strategy">greedy</abbr>, and <abbr title="Incremental solution building with undo">backtracking</abbr>: provide strategies to solve computational problems efficiently.
 
 **Background & Philosophy:**
 Algorithmic paradigms are universal design patterns for solving problems. Instead of hacking together custom logic for every new challenge, developers map their problem onto an existing paradigm. The philosophy is "categorize before you code", reducing complex problems into known, solvable archetypes.
@@ -111,27 +139,72 @@ Algorithmic paradigms are universal design patterns for solving problems. Instea
 Dynamic Programming is heavily used in bioinformatics for DNA sequence alignment. Greedy algorithms power network routing protocols like OSPF. Divide and conquer is the backbone of efficient sorting (MergeSort) and distributed data processing frameworks like MapReduce.
 
 **Memory Mechanics:**
-Paradigms rely heavily on the call stack. Recursive paradigms (Divide and Conquer, Backtracking) push a new frame onto the stack for every nested call. Go's goroutine stacks start small (2KB) and grow dynamically. However, excessive recursion can still lead to memory exhaustion. Dynamic Programming often trades space for time by caching subproblem results in a heap-allocated matrix (memoization), requiring careful memory sizing.
+Paradigms rely heavily on the call stack. Recursive paradigms (Divide and Conquer, <abbr title="Incremental solution building with undo">Backtracking</abbr>) push a new frame onto the stack for every nested call. Go's goroutine stacks start small (2KB) and grow dynamically. However, excessive recursion can still lead to memory exhaustion. Dynamic Programming often trades space for time by caching subproblem results in a heap-allocated matrix (<abbr title="Technique of caching computed subproblem results">memoization</abbr>), requiring careful memory sizing.
 
 ### Operations & Complexity
 
 | Paradigm | Characteristic | Example | Complexity |
 |-----------|---------------|--------|--------------|
-| Divide and Conquer | Divide, solve, merge | Merge sort | `O(n log n)` |
-| Dynamic Programming | Overlapping subproblems | Knapsack | `O(nW)` |
-| Greedy | Locally optimal choices | Prim's MST | `O(E log V)` |
-| Backtracking | Explore & prune | N-Queens | `O(n!)` worst |
+| Divide and Conquer | Divide, solve, merge | Merge sort | <code>O(n log n)</code> |
+| Dynamic Programming | Overlapping subproblems | Knapsack | <code>O(nW)</code> |
+| Greedy | Locally optimal choices | Prim's MST | <code>O(E log V)</code> |
+| Backtracking | Explore & prune | N-Queens | <code>O(n!)</code> worst |
 
 ### Pseudocode
 
+```text
+MergeSort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) / 2
+    left = MergeSort(arr[0:mid])
+    right = MergeSort(arr[mid:])
+    return Merge(left, right)
+```
 
 ### Idiomatic Go Implementation
 
 Divide and conquer using slices:
 
+```go
+package main
+
+import "fmt"
+
+func mergeSort(arr []int) []int {
+    if len(arr) <= 1 {
+        return arr
+    }
+    mid := len(arr) / 2
+    left := mergeSort(arr[:mid])
+    right := mergeSort(arr[mid:])
+    return merge(left, right)
+}
+
+func merge(left, right []int) []int {
+    result := make([]int, 0, len(left)+len(right))
+    i, j := 0, 0
+    for i < len(left) && j < len(right) {
+        if left[i] <= right[j] {
+            result = append(result, left[i])
+            i++
+        } else {
+            result = append(result, right[j])
+            j++
+        }
+    }
+    result = append(result, left[i:]...)
+    result = append(result, right[j:]...)
+    return result
+}
+
+func main() {
+    arr := []int{38, 27, 43, 3, 9, 82, 10}
+    fmt.Println(mergeSort(arr))
+}
+```
 
 ### Decision Matrix
-
 | Use This When... | Avoid If... |
 |--------------------|------------------|
 | The problem can be broken down into independent subproblems | Subproblems overlap but lack optimal substructure |
@@ -169,14 +242,42 @@ When running `go test -bench`, the benchmarking tool allocates memory to run the
 
 ### Pseudocode
 
+```text
+BenchmarkAlgorithm(b):
+    setup test data
+    reset timer
+    for i from 0 to b.N:
+        run algorithm
+```
 
 ### Idiomatic Go Implementation
 
 Simple benchmarking with `testing.B` and `go test -bench=.`:
 
+```go
+package main
+
+import (
+    "testing"
+)
+
+func BenchmarkLinearSum(b *testing.B) {
+    data := make([]int, 10000)
+    for i := range data {
+        data[i] = i
+    }
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        sum := 0
+        for _, v := range data {
+            sum += v
+        }
+        _ = sum
+    }
+}
+```
 
 ### Decision Matrix
-
 | Use This When... | Avoid If... |
 |--------------------|------------------|
 | Need a reliable built-in testing framework | Need an advanced mocking framework |
@@ -192,13 +293,13 @@ Simple benchmarking with `testing.B` and `go test -bench=.`:
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Array | `[N]T` | `O(n)` search, `O(1)` access | . | Fixed buffer, stack allocation |
-| Slice | `[]T` | `O(n)` insert/delete | . | Dynamic array, stack/heap |
-| List | `list.List` | `O(n)` access | . | Frequent inserts/deletes |
-| Map | `map[K]V` | `O(1)` avg | . | Key-value lookup |
-| Heap | `container/heap` | `O(log n)` push/pop | . | Priority queue |
-| Set | `map[T]bool` | `O(1)` avg | . | Uniqueness check |
-| Graph | `[][]int` | Network/relationship | `O(V+E)` traversal |
+| Array | `[N]T` | <code>O(n)</code> search, <code>O(1)</code> access | . | Fixed buffer, stack allocation |
+| Slice | `[]T` | <code>O(n)</code> insert/delete | . | Dynamic array, stack/heap |
+| List | `list.List` | <code>O(n)</code> access | . | Frequent inserts/deletes |
+| Map | `map[K]V` | <code>O(1)</code> avg | . | Key-value lookup |
+| Heap | `container/heap` | <code>O(log n)</code> push/pop | . | Priority queue |
+| Set | `map[T]bool` | <code>O(1)</code> avg | . | Uniqueness check |
+| Graph | `[][]int` | Network/relationship | <code>O(V+E)</code> traversal |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 3:</strong> This chapter explores why Go is well-suited for data structures and algorithms, covering fundamental structures such as arrays, slices, maps, linked lists, and graphs. It discusses algorithmic paradigms including <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, and greedy strategies, along with Go's built-in testing and benchmarking tools for performance measurement.

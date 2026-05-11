@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 20 covers advanced sorting algorithms: Merge Sort, Quick Sort, and Heap Sort. These achieve <code>O(n log n)</code> complexity and form the backbone of real-world sorting systems.
+Chapter 20 covers advanced sorting algorithms: <abbr title="An <code>O(n log n)</code> divide-and-conquer sorting algorithm merging sorted halves.">Merge Sort</abbr>, <abbr title="An <code>O(n log n)</code> average sorting algorithm using a pivot element.">Quick Sort</abbr>, and <abbr title="An <code>O(n log n)</code> sorting algorithm using a binary heap.">Heap Sort</abbr>. These achieve <code>O(n log n)</code> complexity and form the backbone of real-world sorting systems.
 {{% /alert %}}
 
 ## 20.1. Merge Sort
@@ -23,13 +23,13 @@ Chapter 20 covers advanced sorting algorithms: Merge Sort, Quick Sort, and Heap 
 **Definition:** Merge Sort is a <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> algorithm that divides the array into halves, recursively sorts each half, and merges the sorted halves.
 
 **Background & Philosophy:**
-The philosophy is Divide and Conquer. John von Neumann invented it in 1945, recognizing that sorting two smaller arrays and merging them is mathematically far faster than comparing every element to every other element. It guarantees `O(n log n)` execution time regardless of the input data structure.
+The philosophy is Divide and Conquer. John von Neumann invented it in 1945, recognizing that sorting two smaller arrays and merging them is mathematically far faster than comparing every element to every other element. It guarantees <code>O(n log n)</code> execution time regardless of the input data structure.
 
 **Use Cases:**
 Essential for "external sorting" where the dataset is too large to fit into <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and must be sorted in chunks on a disk. It is also the algorithm of choice for sorting Linked Lists, as it doesn't require random access.
 
 **Memory Mechanics:**
-Merge Sort's major weakness is memory. It requires an auxiliary array of size `O(n)` to merge the halves. In Go, this means allocating a new slice `make([]int, 0, len(left)+len(right))` repeatedly on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This dynamic allocation triggers heavy <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> pressure. Furthermore, writing data back and forth between the original array and the auxiliary array constantly thrashes the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
+Merge Sort's major weakness is memory. It requires an auxiliary array of size <code>O(n)</code> to merge the halves. In Go, this means allocating a new slice `make([]int, 0, len(left)+len(right))` repeatedly on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This dynamic allocation triggers heavy <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> pressure. Furthermore, writing data back and forth between the original array and the auxiliary array constantly thrashes the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
 
 ### Operations & Complexity
 
@@ -96,7 +96,7 @@ Invented by Tony Hoare, Quick Sort's philosophy is "partitioning". Instead of me
 The default general-purpose sorting algorithm for arrays in most programming languages (C++, Java primitives) because of its unmatched in-memory speed.
 
 **Memory Mechanics:**
-Quick Sort is done in-place. It only swaps elements within the existing <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array. This means zero `O(n)` heap allocations, avoiding the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> completely. The <abbr title="A variable that stores a memory address.">pointers</abbr> `i` and `j` scan towards each other, reading sequential memory addresses. The CPU's hardware prefetcher anticipates this perfectly, locking the relevant array blocks into the ultra-fast L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>. This cache-friendliness is why Quick Sort usually beats Merge Sort in reality, despite both being mathematically `O(n log n)`.
+Quick Sort is done in-place. It only swaps elements within the existing <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array. This means zero <code>O(n)</code> heap allocations, avoiding the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> completely. The <abbr title="A variable that stores a memory address.">pointers</abbr> `i` and `j` scan towards each other, reading sequential memory addresses. The CPU's hardware prefetcher anticipates this perfectly, locking the relevant array blocks into the ultra-fast L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>. This cache-friendliness is why Quick Sort usually beats Merge Sort in reality, despite both being mathematically <code>O(n log n)</code>.
 
 ### Operations & Complexity
 
@@ -152,7 +152,7 @@ func main() {
 Heap Sort treats the array as a binary tree without actually building a tree. The philosophy is strict priority management: by organizing the array into a Max-Heap, it guarantees that the largest element is always at index 0, ready to be extracted.
 
 **Use Cases:**
-Used in strict real-time systems (like aerospace or medical software) or the Linux kernel because it guarantees `O(n log n)` worst-case time while using strictly `O(1)` auxiliary space, preventing out-of-memory errors that Merge Sort might cause.
+Used in strict real-time systems (like aerospace or medical software) or the Linux kernel because it guarantees <code>O(n log n)</code> worst-case time while using strictly <code>O(1)</code> auxiliary space, preventing out-of-memory errors that Merge Sort might cause.
 
 **Memory Mechanics:**
 Heap Sort is notorious for its poor memory access patterns. Because the mathematical parent-child relationship jumps across indices (`2*i + 1`), the algorithm accesses the array randomly. As the array grows, these jumps easily exceed the size of the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> line, causing severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. Consequently, while mathematically optimal, it runs 2-3x slower than Quick Sort in practice.

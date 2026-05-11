@@ -9,12 +9,17 @@ draft: false
 toc: true
 ---
 
-This part explores the intellectual history and philosophical foundations of algorithms and data structures — from ancient Babylonian computation to modern complexity theory.
+{{% alert icon="💡" context="info" %}}
+"Those who cannot remember the past are condemned to repeat it." — George Santayana
+{{% /alert %}}
+{{% alert icon="📘" context="success" %}}
+Part VIII explores the intellectual history and philosophical foundations of algorithms and data structures — from ancient Babylonian computation to modern complexity theory and the philosophy of computation.
+{{% /alert %}}
 
-## Chapters
+<center>
 
-- **Chapter 40** — Origins of Algorithms
-- **Chapter 41** — The Algorithmic Revolution
-- **Chapter 42** — Evolution of Data Structures
-- **Chapter 43** — Modern Algorithmic Thinking
-- **Chapter 44** — Philosophy of Computation
+## **🧠 Chapters**
+
+</center>
+
+{{< chapter-list >}}

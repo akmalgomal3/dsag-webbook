@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 38 covers segment trees and Fenwick trees (Binary Indexed Trees): data structures for efficient range queries and point updates on arrays.
+Chapter 38 covers <abbr title="A binary tree for range queries storing aggregated results over array segments.">segment trees</abbr> and <abbr title="A tree structure for efficient prefix sum queries using bitwise operations.">Fenwick trees</abbr> (Binary Indexed Trees): data structures for efficient range queries and point updates on arrays.
 {{% /alert %}}
 
 ## 38.1. Segment Tree

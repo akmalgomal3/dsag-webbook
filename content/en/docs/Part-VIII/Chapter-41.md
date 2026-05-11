@@ -23,7 +23,7 @@ Chapter 41 covers the 20th-century revolution that transformed algorithms from m
 **Definition:** The early 20th century saw a crisis in mathematics. <abbr title="A German mathematician who posed 23 problems that shaped 20th-century mathematics.">Hilbert</abbr> asked: Can all mathematical truths be derived mechanically? Three answers emerged:
 
 **Background & Philosophy:**
-The philosophical question was absolute certainty: can a machine flawlessly deduce the entire universe of mathematics? The shattering realization by Gödel and Turing was that computation has fundamental limits. The philosophy shifted from "we can calculate anything" to "what is fundamentally impossible to calculate?"
+The philosophical question was absolute certainty: can a machine flawlessly deduce the entire universe of mathematics? The shattering realization by Gödel and Turing was that <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> has fundamental limits. The philosophy shifted from "we can calculate anything" to "what is fundamentally impossible to calculate?"
 
 **Use Cases:**
 These theoretical bounds directly define what modern programmers cannot do: you cannot write a perfect debugger that finds infinite loops (due to the Halting Problem), and you cannot write a perfect mathematical verifier.
@@ -68,7 +68,7 @@ Turing machines established:
 **Definition:** Establishing formal categories (P, NP, NP-Complete) to define how resource consumption scales against problem size.
 
 **Background & Philosophy:**
-Cook (1971) and Karp (1972) shifted the philosophy from "can we solve it?" to "can we solve it before the universe dies?" Establishing that certain problems are intrinsically hard (<abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr>) liberates engineers from wasting years searching for perfect algorithms, redirecting effort toward heuristic approximations.
+Cook (1971) and Karp (1972) shifted the philosophy from "can we solve it?" to "can we solve it before the universe dies?" Establishing that certain problems are intrinsically hard (<abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr>) liberates engineers from wasting years searching for perfect algorithms, redirecting effort toward <abbr title="A practical method used to find solutions that are sufficient for immediate goals.">heuristic</abbr> approximations.
 
 **Use Cases:**
 Cryptography relies exclusively on NP-Hard problems (like integer factorization) remaining unsolved in P. Logistics companies use NP-Complete awareness to choose approximation routing rather than freezing their servers looking for perfect answers.
@@ -112,7 +112,7 @@ The most important open problem in computer science: If a solution can be verifi
 | Knuth | Algorithm analysis | Standardized Big-O notation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 41:</strong> The 20th-century algorithmic revolution transformed computation from abstract mathematics into engineering reality. Turing machines defined what is computable; complexity theory defined what is efficiently computable. The P vs NP question remains unsolved, but its implications guide every algorithmic decision we make — from choosing heuristics to accepting approximations.
+<strong>Summary Chapter 41:</strong> The 20th-century algorithmic revolution transformed <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> from abstract mathematics into engineering reality. Turing machines defined what is computable; complexity theory defined what is efficiently computable. The P vs NP question remains unsolved, but its implications guide every algorithmic decision we make — from choosing <abbr title="Practical methods used to find solutions that are sufficient for immediate goals.">heuristics</abbr> to accepting approximations.
 {{% /alert %}}
 
 ## See Also

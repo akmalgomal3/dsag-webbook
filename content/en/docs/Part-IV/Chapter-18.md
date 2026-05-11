@@ -29,7 +29,7 @@ Bipartite graphs model two distinct classes of objects that only interact across
 Used in ride-sharing apps (matching Riders to Drivers), dating apps (matching Users), and job scheduling algorithms in cloud infrastructure (matching Pods to available Worker Nodes).
 
 **Memory Mechanics:**
-Checking if a graph is bipartite uses a standard BFS. The `color` array (acting as both the `visited` map and the partition tracker) takes `O(V)` memory. Because BFS explores layer by layer, it accesses the `color` array randomly based on edge connections. However, since the array merely stores small integer states (`-1`, `0`, `1`), the memory footprint is minimal and fits comfortably in the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> even for millions of nodes.
+Checking if a graph is bipartite uses a standard BFS. The `color` array (acting as both the `visited` map and the partition tracker) takes <code>O(V)</code> memory. Because BFS explores layer by layer, it accesses the `color` array randomly based on edge connections. However, since the array merely stores small integer states (`-1`, `0`, `1`), the memory footprint is minimal and fits comfortably in the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> even for millions of nodes.
 
 ### Operations & Complexity
 
@@ -114,7 +114,7 @@ The Hungarian algorithm approaches the assignment problem using matrix manipulat
 Perfect for allocating tasks to workers where each worker has a different cost or time to complete a specific task, aiming to minimize the overall payroll or execution time.
 
 **Memory Mechanics:**
-The algorithm heavily manipulates a 2D `cost` matrix, making its memory access patterns dense. Go implementations typically use several parallel arrays (`u`, `v`, `p`, `way`, `minv`, `used`) to track dual variables and path construction. By allocating these arrays once upfront (`make([]int, n+1)`), the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead is practically zero during the loop execution. Because it constantly scans rows and columns, <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> happen when scanning columns vertically, leading to the strict `O(V^3)` empirical runtime on large sets.
+The algorithm heavily manipulates a 2D `cost` matrix, making its memory access patterns dense. Go implementations typically use several parallel arrays (`u`, `v`, `p`, `way`, `minv`, `used`) to track dual variables and path construction. By allocating these arrays once upfront (`make([]int, n+1)`), the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead is practically zero during the loop execution. Because it constantly scans rows and columns, <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> happen when scanning columns vertically, leading to the strict <code>O(V^3)</code> empirical runtime on large sets.
 
 ### Operations & Complexity
 
@@ -208,15 +208,15 @@ Hopcroft-Karp mirrors the logic of Dinic's Algorithm (from Network Flow) but app
 Massive unweighted assignment problems, such as matching thousands of university students to available courses based purely on their preference lists (without any priority weights).
 
 **Memory Mechanics:**
-Hopcroft-Karp requires an <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency list</abbr> `[][]int` and pairs of tracking arrays (`pairU`, `pairV`, `dist`). Because it operates entirely on 1D slices and avoids complex 2D capacity matrices, it scales exceptionally well. The BFS phase allocates a temporary queue in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Reusing a pre-allocated slice for this queue across the `O(√V)` phases drastically reduces the Go <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector's</abbr> burden, enabling millions of nodes to be matched in milliseconds.
+Hopcroft-Karp requires an <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency list</abbr> `[][]int` and pairs of tracking arrays (`pairU`, `pairV`, `dist`). Because it operates entirely on 1D slices and avoids complex 2D capacity matrices, it scales exceptionally well. The BFS phase allocates a temporary queue in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Reusing a pre-allocated slice for this queue across the <code>O(√V)</code> phases drastically reduces the Go <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector's</abbr> burden, enabling millions of nodes to be matched in milliseconds.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| BFS level | `O(E)` | Per phase |
-| DFS augment | `O(V)` | Per phase |
-| Total | `O(E √V)` | Up to `√V` phases |
+| BFS level | <code>O(E)</code> | Per phase |
+| DFS augment | <code>O(V)</code> | Per phase |
+| Total | <code>O(E √V)</code> | Up to `√V` phases |
 
 ### Idiomatic Go Implementation
 
@@ -289,9 +289,9 @@ func main() {
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Bipartite Check | `[]int` color | `O(V + E)` | `O(V)` | Structure validation |
-| Hungarian | `[][]int` matrix | `O(V³)` | `O(V²)` | Weighted assignment |
-| Hopcroft-Karp | `[][]int` adj | `O(E √V)` | `O(V)` | Max cardinality matching |
+| Bipartite Check | `[]int` color | <code>O(V + E)</code> | <code>O(V)</code> | Structure validation |
+| Hungarian | `[][]int` matrix | <code>O(V³)</code> | <code>O(V²)</code> | Weighted assignment |
+| Hopcroft-Karp | `[][]int` adj | <code>O(E √V)</code> | <code>O(V)</code> | Max cardinality matching |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 18:</strong> This chapter covers bipartite <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> validation, the Hungarian algorithm for weighted assignment, and Hopcroft-Karp for maximum cardinality matching. Use Hungarian for square cost matrices and Hopcroft-Karp for large unweighted bipartite matching problems.

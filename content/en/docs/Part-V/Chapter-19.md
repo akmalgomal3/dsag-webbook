@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 19 covers basic sorting algorithms: Bubble Sort, Selection Sort, and Insertion Sort. Understand their mechanics, complexity, and when they remain relevant in modern Go.
+Chapter 19 covers basic sorting algorithms: <abbr title="A simple O(n²) sorting algorithm using adjacent swaps.">Bubble Sort</abbr>, <abbr title="An O(n²) sorting algorithm selecting the minimum repeatedly.">Selection Sort</abbr>, and <abbr title="An O(n²) sorting algorithm inserting each element into correct position.">Insertion Sort</abbr>. Understand their mechanics, complexity, and when they remain relevant in modern Go.
 {{% /alert %}}
 
 ## 19.1. Bubble Sort
@@ -175,7 +175,7 @@ func main() {
 
 ### Edge Cases & Pitfalls
 
-- **Stability:** Bubble Sort and Insertion Sort are stable; Selection Sort is not.
+- **<abbr title="A property where equal elements maintain their relative order after sorting.">Stability</abbr>:** Bubble Sort and Insertion Sort are stable; Selection Sort is not.
 - **Adaptive:** Insertion Sort performs well on nearly sorted data (e.g., <code>O(n)</code> for sorted input).
 - **Go's built-in:** For production, always use `sort.Ints()` or `slices.Sort()` (Go 1.21+).
 

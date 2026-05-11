@@ -9,10 +9,17 @@ draft: false
 toc: true
 ---
 
-This part covers specialized sorting algorithms that break the O(n log n) barrier and essential array/string processing techniques.
+{{% alert icon="💡" context="info" %}}
+"Sorting is the fundamental problem of computer science. It's the first thing you learn and the last thing you master." — Tim Peters
+{{% /alert %}}
+{{% alert icon="📘" context="success" %}}
+Part XI covers specialized sorting algorithms that break the O(n log n) barrier — Counting Sort, Radix Sort, Bucket Sort — and essential array/string processing techniques: Sliding Window, Two Pointers, and Kadane's Algorithm.
+{{% /alert %}}
 
-## Chapters
+<center>
 
-- **Chapter 55** — Counting, Radix, and Bucket Sort
-- **Chapter 56** — Sliding Window and Two Pointers
-- **Chapter 57** — Kadane's Algorithm
+## **🧠 Chapters**
+
+</center>
+
+{{< chapter-list >}}

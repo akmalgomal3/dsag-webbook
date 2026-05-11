@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 53 covers A* (A-Star) search: the dominant pathfinding algorithm combining Dijkstra's completeness with heuristic guidance for optimal and efficient navigation.
+Chapter 53 covers A* (A-Star) search: the dominant pathfinding algorithm combining Dijkstra's completeness with <abbr title="A technique that employs practical methods to find solutions that are sufficient for the immediate goals.">heuristic</abbr> guidance for optimal and efficient navigation.
 {{% /alert %}}
 
 ## 53.1. From Dijkstra to A*
@@ -35,7 +35,7 @@ The philosophy is directed intuition. Dijkstra explores blindly in all direction
 AI pathfinding in video games, GPS navigation systems planning physical routes, and robotic motion planning.
 
 **Memory Mechanics:**
-A* aggressively relies upon a Priority Queue (a Min-Heap) and tracking maps (`cameFrom`, `gScore`). In Go, `map[[2]int]float64` is heavily utilized to map 2D grid coordinates to values. Maps in Go hash keys and scatter data <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>ly across the heap. For a sprawling map (like a 10,000x10,000 grid), millions of map accesses cause severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. High-performance A* implementations abandon maps, instead flattening the 2D grid into a massive 1D slice where `index = y*width + x`, enabling `O(1)` contiguous memory lookups and restoring blazing CPU speeds.
+A* aggressively relies upon a Priority Queue (a Min-Heap) and tracking maps (`cameFrom`, `gScore`). In Go, `map[[2]int]float64` is heavily utilized to map 2D grid coordinates to values. Maps in Go hash keys and scatter data <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>ly across the heap. For a sprawling map (like a 10,000x10,000 grid), millions of map accesses cause severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. High-performance A* implementations abandon maps, instead flattening the 2D grid into a massive 1D slice where `index = y*width + x`, enabling <code>O(1)</code> contiguous memory lookups and restoring blazing CPU speeds.
 
 | Algorithm | Priority | Guarantees |
 |-----------|----------|------------|
@@ -66,51 +66,109 @@ import (
 )
 
 type Node struct {
-    x, y int
-    g    float64 // cost from start
-    f    float64 // g + h
+	x, y int
+	g, f float64
 }
 
-// Minimal placeholder priority queue for illustration
 type PriorityQueue []*Node
-func (pq PriorityQueue) Len() int { return len(pq) }
-func (pq PriorityQueue) Less(i, j int) bool { return pq[i].f < pq[j].f }
-func (pq PriorityQueue) Swap(i, j int) { pq[i], pq[j] = pq[j], pq[i] }
+
+func (pq PriorityQueue) Len() int            { return len(pq) }
+func (pq PriorityQueue) Less(i, j int) bool  { return pq[i].f < pq[j].f }
+func (pq PriorityQueue) Swap(i, j int)       { pq[i], pq[j] = pq[j], pq[i] }
 func (pq *PriorityQueue) Push(x interface{}) { *pq = append(*pq, x.(*Node)) }
 func (pq *PriorityQueue) Pop() interface{} {
 	old := *pq
 	n := len(old)
 	item := old[n-1]
-	*pq = old[0 : n-1]
+	*pq = old[:n-1]
 	return item
 }
 
+// heuristic returns Manhattan distance between two points.
 func heuristic(a, b [2]int) float64 {
-	// Manhattan distance
 	return math.Abs(float64(a[0]-b[0])) + math.Abs(float64(a[1]-b[1]))
 }
 
-// Pseudo-implementation to demonstrate structure
-func aStar(start, goal [2]int) {
-    open := &PriorityQueue{}
-    heap.Push(open, &Node{x: start[0], y: start[1], g: 0, f: heuristic(start, goal)})
-    
-    // cameFrom := map[[2]int][2]int{}
-    // gScore := map[[2]int]float64{start: 0}
-    
-    for open.Len() > 0 {
-        current := heap.Pop(open).(*Node)
-        if current.x == goal[0] && current.y == goal[1] {
-            fmt.Println("Path found!")
-            return
-        }
-        
-        // Loop neighbors, compute tentativeG, push to heap
-    }
+// neighbors returns passable adjacent cells (4-directional) within bounds.
+func neighbors(pos [2]int, grid [][]int) [][2]int {
+	dirs := [][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+	var result [][2]int
+	for _, d := range dirs {
+		nx, ny := pos[0]+d[0], pos[1]+d[1]
+		if ny >= 0 && ny < len(grid) && nx >= 0 && nx < len(grid[0]) && grid[ny][nx] == 1 {
+			result = append(result, [2]int{nx, ny})
+		}
+	}
+	return result
+}
+
+// reconstructPath builds the path from start to goal using cameFrom.
+func reconstructPath(cameFrom map[[2]int][2]int, current [2]int) [][2]int {
+	var path [][2]int
+	for {
+		path = append([][2]int{current}, path...)
+		prev, ok := cameFrom[current]
+		if !ok {
+			break
+		}
+		current = prev
+	}
+	return path
+}
+
+// aStar finds the shortest path on a grid from start to goal.
+// grid[y][x] == 1 means passable, 0 means blocked.
+// Returns the path (nil if none) and the total cost.
+func aStar(grid [][]int, start, goal [2]int) ([][2]int, float64) {
+	open := &PriorityQueue{}
+	heap.Init(open)
+	heap.Push(open, &Node{x: start[0], y: start[1], g: 0, f: heuristic(start, goal)})
+
+	cameFrom := make(map[[2]int][2]int)
+	gScore := map[[2]int]float64{start: 0}
+	fScore := map[[2]int]float64{start: heuristic(start, goal)}
+
+	for open.Len() > 0 {
+		current := heap.Pop(open).(*Node)
+		pos := [2]int{current.x, current.y}
+
+		if pos == goal {
+			return reconstructPath(cameFrom, pos), gScore[pos]
+		}
+
+		for _, nb := range neighbors(pos, grid) {
+			tentativeG := gScore[pos] + 1.0 // uniform cost per step
+
+			if g, exists := gScore[nb]; !exists || tentativeG < g {
+				cameFrom[nb] = pos
+				gScore[nb] = tentativeG
+				f := tentativeG + heuristic(nb, goal)
+				fScore[nb] = f
+				heap.Push(open, &Node{x: nb[0], y: nb[1], g: tentativeG, f: f})
+			}
+		}
+	}
+	// No path found
+	return nil, math.Inf(1)
 }
 
 func main() {
-    aStar([2]int{0, 0}, [2]int{2, 2})
+	// 5x5 grid: 1 = passable, 0 = blocked (an obstacle in the middle column)
+	grid := [][]int{
+		{1, 1, 1, 1, 1},
+		{1, 1, 0, 1, 1},
+		{1, 1, 0, 1, 1},
+		{1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1},
+	}
+	start, goal := [2]int{0, 0}, [2]int{4, 4}
+	path, cost := aStar(grid, start, goal)
+	if path == nil {
+		fmt.Println("No path found.")
+		return
+	}
+	fmt.Printf("Shortest path cost: %.0f\n", cost)
+	fmt.Printf("Path: %v\n", path)
 }
 ```
 
@@ -133,7 +191,7 @@ func main() {
 
 ### Edge Cases & Pitfalls
 
-- **Inadmissible heuristic:** May easily find suboptimal paths.
+- **<abbr title=\"A heuristic that overestimates the true cost and may lead to suboptimal solutions.\">Inadmissible heuristic</abbr>:** May easily find suboptimal paths.
 - **Tie-breaking:** f-score ties degrade heavily to BFS without secondary ordering logic.
 - **Memory:** A* aggressively keeps all nodes in memory. For huge graphs, strictly deploy IDA* (Iterative Deepening A*).
 - **Dynamic obstacles:** Requires full replanning (deploy D* Lite for shifting environments).
@@ -151,7 +209,7 @@ func main() {
 | `container/heap` | Priority queue for managing the open set |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 53:</strong> A* is the gold standard for informed pathfinding, combining the optimality of Dijkstra with the efficiency of heuristic guidance. The quality of the heuristic entirely determines its performance: a perfect heuristic makes A* instant, while a zero heuristic collapses it to Dijkstra. In game development, robotics, and mapping, A* dominates because it powerfully respects both mathematical correctness and physical speed.
+<strong>Summary Chapter 53:</strong> A* is the gold standard for informed pathfinding, combining the optimality of Dijkstra with the efficiency of <abbr title="A technique that employs practical methods to find solutions that are sufficient for the immediate goals.">heuristic</abbr> guidance. The quality of the heuristic entirely determines its performance: a perfect heuristic makes A* instant, while a zero heuristic collapses it to Dijkstra. In game development, robotics, and mapping, A* dominates because it powerfully respects both mathematical correctness and physical speed.
 {{% /alert %}}
 
 ## See Also

@@ -29,7 +29,7 @@ The philosophy is breaking seemingly insurmountable problems into trivial base c
 Essential for recursive sorting (Merge Sort, Quick Sort), fast multiplication (Karatsuba), and processing independent queries in massive distributed databases via MapReduce architectures.
 
 **Memory Mechanics:**
-Divide and Conquer relies heavily on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Each recursive split pushes a new frame onto the stack. In Go, goroutine stacks start at 2KB and grow dynamically, preventing overflow for moderate depth `O(log n)`. When the divide step requires creating new slices `arr[:mid]`, Go merely copies a 24-byte slice header (pointer, length, capacity) without allocating new arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This makes Go's slice splitting an incredibly fast `O(1)` memory operation that does not trigger the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>.
+Divide and Conquer relies heavily on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Each recursive split pushes a new frame onto the stack. In Go, goroutine stacks start at 2KB and grow dynamically, preventing overflow for moderate depth <code>O(log n)</code>. When the divide step requires creating new slices `arr[:mid]`, Go merely copies a 24-byte slice header (pointer, length, capacity) without allocating new arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This makes Go's slice splitting an incredibly fast <code>O(1)</code> memory operation that does not trigger the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>.
 
 ### Operations & Complexity
 
@@ -185,16 +185,16 @@ func main() {
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Merge sort | `O(n log n)` | `O(n)` | Stable, predictable |
-| Quick sort | `O(n log n)` avg | `O(log n)` | In-place, fast avg |
-| Binary search | `O(log n)` | `O(1)` | Sorted data required |
-| Strassen | `O(n^2.81)` | `O(n²)` | Large matrices only |
+| Merge sort | <code>O(n log n)</code> | <code>O(n)</code> | Stable, predictable |
+| Quick sort | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place, fast avg |
+| Binary search | <code>O(log n)</code> | <code>O(1)</code> | Sorted data required |
+| Strassen | <code>O(n^2.81)</code> | <code>O(n²)</code> | Large matrices only |
 
 ### Decision Matrix
 
 | Use This When... | Avoid If... |
 |--------------------|------------------|
-| Need stable and predictable sort | `O(n)` auxiliary memory is unavailable |
+| Need stable and predictable sort | <code>O(n)</code> auxiliary memory is unavailable |
 | Data is sorted and frequently searched | Data is dynamic with many inserts |
 | Large matrices where Strassen is beneficial | Small matrices (overhead > gain) |
 

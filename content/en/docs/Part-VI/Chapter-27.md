@@ -676,13 +676,13 @@ Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub
 
 | Name | Go Type | Time | Space | Use Case |
 |-----------|---------|------|-------|----------|
-| Factorial | func recursion | `O(n)` | `O(n)` stack | Basic example |
-| Fibonacci memo | map[int]int | `O(n)` | `O(n)` | Classic DP |
-| Merge Sort | []int | `O(n log n)` | `O(n)` | Stable sorting |
-| Quick Sort | []int | `O(n log n)` avg | `O(log n)` | In-place sorting |
-| Knapsack 0/1 | [][]int | `O(nW)` | `O(nW)` | Combinatorial DP |
-| N-Queens | backtracking | `O(n!)` | `O(n)` | Constraint satisfaction |
-| Binary Search | []int | `O(log n)` | `O(1)` | Search on sorted |
+| Factorial | func recursion | <code>O(n)</code> | <code>O(n)</code> stack | Basic example |
+| Fibonacci memo | map[int]int | <code>O(n)</code> | <code>O(n)</code> | Classic DP |
+| Merge Sort | []int | <code>O(n log n)</code> | <code>O(n)</code> | Stable sorting |
+| Quick Sort | []int | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place sorting |
+| Knapsack 0/1 | [][]int | <code>O(nW)</code> | <code>O(nW)</code> | Combinatorial DP |
+| N-Queens | backtracking | <code>O(n!)</code> | <code>O(n)</code> | Constraint satisfaction |
+| Binary Search | []int | <code>O(log n)</code> | <code>O(1)</code> | Search on sorted |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 27:</strong> This chapter covers advanced recursive algorithms: <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> (<abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>, <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>), recursive data structures (BST), <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> and <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (Fibonacci, knapsack), <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr> (N-Queens), and recursive parallelism with goroutines. Use <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> for naturally dividing problems, <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> for overlapping sub-problems, and bottom-up <abbr title="A bottom-up dynamic programming technique filling a table iteratively.">tabulation</abbr> for large scales.

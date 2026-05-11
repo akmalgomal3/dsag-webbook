@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 21 covers searching algorithms: linear search, binary search, and interpolation search. Learn when each algorithm is appropriate and how to implement them idiomatically in Go using the standard library.
+Chapter 21 covers searching algorithms: <abbr title="A search algorithm checking each element sequentially.">linear search</abbr>, <abbr title="A search algorithm repeatedly dividing a sorted array in half.">binary search</abbr>, and <abbr title="A search algorithm using linear interpolation to estimate position.">interpolation search</abbr>. Learn when each algorithm is appropriate and how to implement them idiomatically in Go using the standard library.
 {{% /alert %}}
 
 ## 21.1. Linear Search
@@ -73,7 +73,7 @@ The philosophy is elimination. By demanding that the input is sorted, Binary Sea
 The absolute standard for querying ordered data, finding elements in B-Trees (databases), and resolving numerical ranges in graphics and geometry.
 
 **Memory Mechanics:**
-Binary Search jumps across the array. The first jump is `n/2`, the next is `n/4`, etc. These large jumps easily break out of the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> line, causing repeated <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. This means Binary Search's performance is bottlenecked by <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> latency rather than CPU speed. Despite this, its `O(log n)` algorithmic advantage overwhelmingly dominates for large datasets.
+Binary Search jumps across the array. The first jump is `n/2`, the next is `n/4`, etc. These large jumps easily break out of the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> line, causing repeated <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. This means Binary Search's performance is bottlenecked by <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> latency rather than CPU speed. Despite this, its <code>O(log n)</code> algorithmic advantage overwhelmingly dominates for large datasets.
 
 ### Operations & Complexity
 

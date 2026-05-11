@@ -114,7 +114,7 @@ func main() {
 **Definition:** A <abbr title="A linked list where each node points to both the next and previous nodes.">doubly linked list</abbr> extends the singly linked list by adding a `Prev` pointer, enabling bidirectional traversal and <code>O(1)</code> deletion from any position.
 
 **Background & Philosophy:**
-The philosophy here is expanding operational freedom at the cost of memory bloat. A singly linked list cannot easily delete a node if you only have a pointer to that node, because you cannot update the preceding node's `Next` pointer. A doubly linked list sacrifices space (an extra pointer per node) to provide complete `O(1)` operational freedom from any reference point.
+The philosophy here is expanding operational freedom at the cost of memory bloat. A singly linked list cannot easily delete a node if you only have a pointer to that node, because you cannot update the preceding node's `Next` pointer. A doubly linked list sacrifices space (an extra pointer per node) to provide complete <code>O(1)</code> operational freedom from any reference point.
 
 **Use Cases:**
 Essential for implementing LRU (Least Recently Used) caches, where you must instantly detach a heavily used item from the middle of the list and attach it to the front, and managing browser history (navigating backward and forward).

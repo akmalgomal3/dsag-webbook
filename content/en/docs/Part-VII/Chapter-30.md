@@ -20,7 +20,7 @@ Chapter 30 discusses parallel and distributed algorithms employing goroutines, c
 
 ## 30.1. Parallelism in Go
 
-**Definition:** Parallelism involves executing computations simultaneously across multiple CPU cores. Go provides goroutines (lightweight threads) and channels for inter-process communication.
+**Definition:** Parallelism involves executing computations simultaneously across multiple CPU cores. Go provides <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> (lightweight threads) and <abbr title="A Go construct for communication between goroutines.">channels</abbr> for inter-process communication.
 
 **Background & Philosophy:**
 The philosophy stems from Amdahl's Law: hardware clock speeds have plateaued, so to compute faster, we must compute wider. It trades the straightforwardness of sequential programming for the complexities of coordination, state sharing, and consensus.
@@ -129,7 +129,7 @@ Go's <abbr title="The period during which a computer program is executing.">runt
 ### Edge Cases & Pitfalls
 
 - **Goroutine leak:** Always verify that channels are closed or `defer close()` is guaranteed to be called.
-- **Data race:** Extensively use `go test -race` for detection. Rely on `sync.Mutex` or channels for safety.
+- **<abbr title="A bug when multiple threads access shared data without synchronization.">Data race</abbr>:** Extensively use `go test -race` for detection. Rely on <abbr title="A synchronization primitive ensuring mutual exclusion.">sync.Mutex</abbr> or channels for safety.
 - **Too many goroutines:** While millions of goroutines are permissible, they can consume massive amounts of stack memory (starting at 2KB each).
 
 ## 30.2. Synchronization and Concurrency
@@ -157,7 +157,7 @@ Hierarchical preference: channels > `sync/atomic` > `sync.Mutex`. Utilize `sync.
 
 ### Edge Cases & Pitfalls
 
-- **Deadlock:** Absolutely ensure locks are always unlocked; utilize `defer mu.Unlock()`.
+- **<abbr title="A state where concurrent processes wait on each other indefinitely.">Deadlock</abbr>:** Absolutely ensure locks are always unlocked; utilize `defer mu.Unlock()`.
 - **Priority inversion:** An `RWMutex` writer can suffer from starvation if readers perpetually acquire the lock.
 - **Copying sync primitives:** Never copy a `sync.Mutex` by <abbr title="The data associated with a key in a key-value pair.">value</abbr> (always pass it by <abbr title="A variable that stores a memory address.">pointer</abbr>).
 
@@ -286,7 +286,7 @@ Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, lar
 | Mutex | `sync.Mutex` | . | 1 word | Shared state protection |
 | RWMutex | `sync.RWMutex` | . | 1 word | Read-heavy caching |
 | WaitGroup | `sync.WaitGroup` | . | 1 word | Barrier synchronization |
-| Atomic | `sync/atomic` | `O(1)` | . | Lock-free counters and flags |
+| Atomic | `sync/atomic` | <code>O(1)</code> | . | Lock-free counters and flags |
 | Channel | `chan T` | Blocking | varies | Pure CSP communication |
 | sync.Map | `sync.Map` | . | . | Highly concurrent maps |
 | Context | `context.Context` | . | . | Cancellations and timeouts |

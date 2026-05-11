@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 57 presents Kadane's algorithm — the mathematically elegant <code>O(n)</code> solution resolving the maximum subarray problem, serving as an outstanding foundation to dynamic programming thinking.
+Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr> — the mathematically elegant <code>O(n)</code> solution resolving the maximum subarray problem, serving as an outstanding foundation to dynamic programming thinking.
 {{% /alert %}}
 
 ## 57.1. The Maximum Subarray Problem
@@ -29,7 +29,7 @@ The philosophy is aggressive amnesia. Kadane’s is the ultimate distillation of
 Identifying the most profitable sequence of trades in algorithmic finance, and genomic sequence analysis where negative scores represent mutations and positive scores represent matches.
 
 **Memory Mechanics:**
-Kadane's Algorithm achieves maximum theoretical performance. It requires precisely <code>O(1)</code> memory—merely two integer variables (`maxEndingHere` and `maxSoFar`). Because it only performs a single, forward-only scan over the `[]int` slice, it requires zero <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations and never triggers the Go <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>. These variables reside completely within the CPU registers, allowing the algorithm to execute at the sheer maximum bandwidth of the memory bus.
+<abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's Algorithm</abbr> achieves maximum theoretical performance. It requires precisely <code>O(1)</code> memory—merely two integer variables (`maxEndingHere` and `maxSoFar`). Because it only performs a single, forward-only scan over the `[]int` slice, it requires zero <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations and never triggers the Go <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>. These variables reside completely within the CPU registers, allowing the algorithm to execute at the sheer maximum bandwidth of the memory bus.
 
 ### The Insight
 

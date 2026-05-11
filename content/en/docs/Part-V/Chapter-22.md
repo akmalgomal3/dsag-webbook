@@ -23,13 +23,13 @@ Chapter 22 focuses on All-Pairs Shortest Paths, detailing Floyd-Warshall for den
 **Definition:** Floyd-Warshall uses <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> to compute the shortest paths between all pairs of vertices by iteratively testing intermediate nodes.
 
 **Background & Philosophy:**
-Instead of computing paths from a single starting point, Floyd-Warshall calculates the shortest path between every pair of nodes simultaneously. The philosophy is grounded in Dynamic Programming: solving subproblems incrementally. It asks, "Is the path from A to B shorter if we route it through intermediate node K?" by slowly expanding the set of allowed intermediate nodes.
+Instead of computing paths from a single starting point, Floyd-Warshall calculates the shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> between every pair of nodes simultaneously. The philosophy is grounded in Dynamic Programming: solving subproblems incrementally. It asks, "Is the path from A to B shorter if we route it through intermediate node K?" by slowly expanding the set of allowed intermediate nodes.
 
 **Use Cases:**
 Used in analyzing transportation networks (e.g., calculating transit distances between all major cities), computing routing tables in complex network topologies, and analyzing social network connections to determine the "degrees of separation" between all users.
 
 **Memory Mechanics:**
-Floyd-Warshall requires a 2D matrix (in Go, typically a `[][]float64` or `[][]int`). This creates a memory footprint of `O(V^2)`. While an array of slice headers in Go causes slight memory fragmentation, processing rows sequentially leverages <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The three tight nested loops (`k, i, j`) fit perfectly into modern branch predictors. However, for a graph with 10,000 nodes, the distance matrix requires allocating 100 million integers, consuming hundreds of megabytes of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
+Floyd-Warshall requires a 2D matrix (in Go, typically a `[][]float64` or `[][]int`). This creates a memory footprint of <code>O(V^2)</code>. While an array of slice headers in Go causes slight memory fragmentation, processing rows sequentially leverages <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The three tight nested loops (`k, i, j`) fit perfectly into modern branch predictors. However, for a graph with 10,000 nodes, the distance matrix requires allocating 100 million integers, consuming hundreds of megabytes of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
 
 ### Operations & Complexity
 
@@ -112,7 +112,7 @@ func main() {
 
 ## 22.2. Johnson’s Algorithm
 
-**Definition:** Johnson's algorithm combines Bellman-Ford (for reweighting edges to be non-negative) and Dijkstra to compute all-pairs shortest paths efficiently for sparse graphs with negative weights, achieving <code>O(V² log V + VE)</code> complexity.
+**Definition:** Johnson's algorithm combines <abbr title="An algorithm finding shortest paths even with negative edge weights.">Bellman-Ford</abbr> (for reweighting edges to be non-negative) and <abbr title="An algorithm finding shortest paths in non-negative weighted graphs.">Dijkstra</abbr> to compute all-pairs shortest paths efficiently for sparse graphs with negative weights, achieving <code>O(V² log V + VE)</code> complexity.
 
 **Background & Philosophy:**
 Johnson's algorithm is a hybrid mathematical trick. Dijkstra is incredibly fast but breaks if negative weights exist. Bellman-Ford handles negative weights but is slow. The philosophy of Johnson's algorithm is to use the slow algorithm (Bellman-Ford) just once to mathematically "reweight" all edges to be positive, allowing the system to safely execute the fast algorithm (Dijkstra) `V` times.
@@ -121,7 +121,7 @@ Johnson's algorithm is a hybrid mathematical trick. Dijkstra is incredibly fast 
 Essential when calculating all-pairs shortest paths on massive, sparse networks (like road networks or internet routing where nodes only connect to a few neighbors) that happen to include negative weights.
 
 **Memory Mechanics:**
-Johnson's algorithm avoids allocating massive `O(V^2)` matrices upfront. Instead, it relies on <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency lists</abbr> which take `O(V+E)` memory. Running Dijkstra repeatedly means dynamically allocating a <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority Queue</abbr> per node. Go's <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> efficiently manages and recycles this short-lived <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory during the execution.
+Johnson's algorithm avoids allocating massive <code>O(V^2)</code> matrices upfront. Instead, it relies on <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency lists</abbr> which take <code>O(V+E)</code> memory. Running Dijkstra repeatedly means dynamically allocating a <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority Queue</abbr> per node. Go's <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> efficiently manages and recycles this short-lived <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory during the execution.
 
 ### Operations & Complexity
 
@@ -212,9 +212,9 @@ func main() {
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Floyd-Warshall | `[][]int` matrix | `O(V³)` | `O(V²)` | Dense, small V |
-| Johnson | `[]Edge` + PQ | `O(V² log V + VE)` | `O(V²)` | Sparse, negative weights |
-| Naive V×Dijkstra | `[]Edge` + PQ | `O(VE log V)` | `O(V²)` | Non-negative, sparse |
+|| Floyd-Warshall | `[][]int` matrix | <code>O(V³)</code> | <code>O(V²)</code> | Dense, small V |
+|| Johnson | `[]Edge` + PQ | <code>O(V² log V + VE)</code> | <code>O(V²)</code> | Sparse, negative weights |
+|| Naive V×Dijkstra | `[]Edge` + PQ | <code>O(VE log V)</code> | <code>O(V²)</code> | Non-negative, sparse |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 22:</strong> This chapter presents Floyd-Warshall for dense graphs and Johnson's algorithm for sparse graphs with negative weights. Use Floyd-Warshall for small dense graphs requiring all-pairs shortest paths; prefer Johnson's for large sparse graphs to achieve better <abbr title="Relating to values or properties approached as a limit, used in algorithm analysis.">asymptotic</abbr> performance.

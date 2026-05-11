@@ -67,7 +67,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 type Node struct {
@@ -124,7 +123,6 @@ func (sl *SkipList) Insert(key int) {
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
 	sl := NewSkipList(16)
 	sl.Insert(10)
 	fmt.Println("Skip list functional.")

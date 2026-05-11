@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 35 covers powerful string matching algorithms: Naive, KMP, Boyer-Moore, Rabin-Karp, and Aho-Corasick implemented natively in Go.
+Chapter 35 covers powerful string matching algorithms: Naive, <abbr title="A linear-time string matching algorithm using prefix-suffix tables.">KMP</abbr>, <abbr title="A string matching algorithm scanning right to left using heuristics.">Boyer-Moore</abbr>, <abbr title="A string matching algorithm using rolling hash for efficient comparison.">Rabin-Karp</abbr>, and <abbr title="A multi-pattern string matching algorithm using a trie with failure links.">Aho-Corasick</abbr> implemented natively in Go.
 {{% /alert %}}
 
 ## 35.1. Naive String Matching
@@ -29,7 +29,7 @@ The philosophy is recognizing patterns efficiently. Instead of treating text as 
 The UNIX `grep` command, DNA sequence analysis in bioinformatics, and virus signature scanning in antivirus software.
 
 **Memory Mechanics:**
-String matching fundamentally operates on raw bytes. Preprocessing algorithms like KMP allocate a small `LPS` array (Longest Prefix Suffix) directly proportional to the pattern's size `O(m)`. This extremely tiny array sits comfortably in the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. During the search phase, the algorithm scans the massive text file linearly. The CPU's hardware prefetcher identifies this forward memory access pattern and streams the text from <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> at peak bus speed, completely eliminating <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
+String matching fundamentally operates on raw bytes. Preprocessing algorithms like KMP allocate a small `LPS` array (Longest Prefix Suffix) directly proportional to the pattern's size <code>O(m)</code>. This extremely tiny array sits comfortably in the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. During the search phase, the algorithm scans the massive text file linearly. The CPU's hardware prefetcher identifies this forward memory access pattern and streams the text from <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> at peak bus speed, completely eliminating <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
 
 ### Operations & Complexity
 
@@ -109,7 +109,7 @@ Go dictates string indexing at the raw byte <abbr title="The set of all nodes at
 
 ## 35.2. Knuth-Morris-Pratt (KMP)
 
-**Definition:** The <abbr title="The Knuth-Morris-Pratt string-searching algorithm that searches for occurrences of a word within a text.">KMP algorithm</abbr> aggressively leverages the intricate prefix-suffix data derived from the Longest Prefix Suffix (LPS) <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> to expertly circumvent completely redundant data comparisons.
+**Definition:** The <abbr title="The Knuth-Morris-Pratt string-searching algorithm that searches for occurrences of a word within a text.">KMP algorithm</abbr> aggressively leverages the intricate <abbr title="A substring at the beginning of a string.">prefix</abbr>-<abbr title="A substring at the end of a string.">suffix</abbr> data derived from the Longest Prefix Suffix (LPS) <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> to expertly circumvent completely redundant data comparisons.
 
 ### Operations & Complexity
 
@@ -374,7 +374,7 @@ func main() {
 
 ## 35.5. Aho-Corasick
 
-**Definition:** Aho-Corasick systematically erects a robust finite state machine (a <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> fortified with failure links) engineered specifically to unearth numerous scattered patterns efficiently in a single, blazing-fast pass.
+**Definition:** Aho-Corasick systematically erects a robust finite <abbr title="A self-operating state machine or computational model.">state machine</abbr> (a <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> fortified with failure links) engineered specifically to unearth numerous scattered patterns efficiently in a single, blazing-fast pass.
 
 ### Idiomatic Go Implementation
 

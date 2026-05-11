@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 39 covers bit manipulation techniques in Go: bitwise operators, common tricks, and algorithms that exploit binary representation for efficiency.
+Chapter 39 covers <abbr title="Operations performed directly on individual bits of integers.">bit manipulation</abbr> techniques in Go: <abbr title="Operations performed directly on individual bits of binary numbers.">bitwise</abbr> operators, common tricks, and algorithms that exploit binary representation for efficiency.
 {{% /alert %}}
 
 ## 39.1. Bitwise Operators
@@ -26,7 +26,7 @@ Chapter 39 covers bit manipulation techniques in Go: bitwise operators, common t
 The philosophy is mechanical sympathy. High-level languages abstract numbers into base-10 logic. Bit manipulation strips away the abstraction to directly instruct the CPU's ALU (Arithmetic Logic Unit) using native hardware gates (AND, OR, XOR). It trades code readability for maximum execution speed.
 
 **Use Cases:**
-Writing network protocol parsers, configuring hardware registers, cryptographic hashing, and compressing 64 boolean flags into a single 64-bit integer.
+Writing network protocol parsers, configuring hardware registers, cryptographic hashing, and compressing 64 boolean flags into a single 64-bit integer using <abbr title="A pattern of bits used to select or modify specific bits within a value.">bitmasks</abbr>.
 
 **Memory Mechanics:**
 Bitwise operations execute exclusively inside the CPU registers. They bypass the <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> entirely once the variable is loaded. A `uint64` takes 8 bytes of memory but can store 64 distinct boolean states. An array of 64 `bool` in Go would take 64 bytes (plus slice headers). Using bitmasks heavily compresses memory footprints, making it the supreme choice for memory-constrained embedded systems or massive graph traversal arrays.

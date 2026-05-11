@@ -29,7 +29,7 @@ The philosophy is absolute immutability. In standard data structures, an update 
 Git version control (trees and blobs), functional programming languages (Clojure, Haskell), and time-travel debugging tools.
 
 **Memory Mechanics:**
-Persistent structures rely heavily on "Path Copying". Instead of deep-copying an entire 1-million node tree (which would instantly exhaust memory), they only copy the <code>O(log n)</code> nodes along the path from the root to the modified leaf. This structural sharing heavily depends on the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> to reclaim versions that are no longer referenced. Because nodes are never modified in-place, persistent structures completely eliminate data races, making them inherently thread-safe without any memory locks.
+Persistent structures rely heavily on <abbr title="A technique where only the nodes along the path from root to the modified node are copied, sharing unchanged subtrees.">"Path Copying"</abbr>. Instead of deep-copying an entire 1-million node tree (which would instantly exhaust memory), they only copy the <code>O(log n)</code> nodes along the path from the root to the modified leaf. This structural sharing heavily depends on the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> to reclaim versions that are no longer referenced. Because nodes are never modified in-place, persistent structures completely eliminate data races, making them inherently thread-safe without any memory locks.
 
 | Type | Behavior | Example |
 |------|----------|---------|

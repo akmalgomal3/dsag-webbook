@@ -20,16 +20,16 @@ Chapter 36 explores approximation algorithms: greedy heuristics, local search, a
 
 ## 36.1. Greedy Approximation
 
-**Definition:** Greedy algorithms continuously select the locally optimal choice at every isolated step. For a variety of NP-hard problems, a greedy approach yields a mathematically provable, bounded approximation ratio.
+**Definition:** Greedy algorithms continuously select the locally optimal choice at every isolated step. For a variety of <abbr title="A class of problems at least as hard as NP-Complete problems.">NP-hard</abbr> problems, a greedy approach yields a mathematically provable, bounded <abbr title="A guarantee of how close an approximation is to the optimal solution.">approximation ratio</abbr>.
 
 **Background & Philosophy:**
-The philosophy embraces pragmatic imperfection. When a problem is NP-Hard (like calculating the flawless shortest route for 1,000 delivery trucks), finding the perfect mathematical answer might take a supercomputer millions of years. Approximate algorithms proudly trade absolute perfection for guaranteed speed, securing answers that are "good enough" (e.g., guaranteed to be no worse than 2x the optimal cost).
+The philosophy embraces pragmatic imperfection. When a problem is <abbr title="A class of problems at least as hard as NP-Complete problems.">NP-Hard</abbr> (like calculating the flawless shortest route for 1,000 delivery trucks), finding the perfect mathematical answer might take a supercomputer millions of years. Approximate algorithms proudly trade absolute perfection for guaranteed speed, securing answers that are "good enough" (e.g., guaranteed to be no worse than 2x the optimal cost).
 
 **Use Cases:**
 Heuristic routing in Google Maps, grouping millions of distinct products into the fewest possible shipping boxes (Set Cover), and optimizing layouts for microchip circuitry.
 
 **Memory Mechanics:**
-Because approximate algorithms often fall back on greedy sorting or minimum spanning trees (MST), their memory footprint heavily depends on the underlying graph structures. A common greedy approximation requires sorting edge weights `O(E log E)`, relying entirely on <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slices that process quickly in <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>. Randomization (like Max-Cut) simply iterates through memory flipping bits randomly, which operates efficiently but places heavy demands on the entropy generator's shared memory lock if not isolated per thread.
+Because approximate algorithms often fall back on greedy sorting or minimum spanning trees (MST), their memory footprint heavily depends on the underlying graph structures. A common greedy approximation requires sorting edge weights <code>O(E log E)</code>, relying entirely on <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slices that process quickly in <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>. Randomization (like Max-Cut) simply iterates through memory flipping bits randomly, which operates efficiently but places heavy demands on the entropy generator's shared memory lock if not isolated per thread.
 
 ### Operations & Complexity
 
@@ -86,7 +86,7 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Fractional knapsack is flawlessly optimal because it can act greedily based solely upon the <abbr title="The data associated with a key in a key-value pair.">value</abbr>/weight ratio. The strict 0/1 Knapsack is absolutely NOT optimal utilizing a greedy approach; you must deploy DP or a Fully <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">Polynomial Time</abbr> Approximation Scheme (FPTAS).
+Fractional knapsack is flawlessly optimal because it can act greedily based solely upon the <abbr title="The data associated with a key in a key-value pair.">value</abbr>/weight ratio. The strict 0/1 Knapsack is absolutely NOT optimal utilizing a greedy approach; you must deploy DP or a Fully <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">Polynomial Time</abbr> Approximation Scheme (<abbr title="Fully Polynomial Time Approximation Scheme - finds near-optimal solutions in polynomial time.">FPTAS</abbr>).
 {{% /alert %}}
 
 ## 36.2. <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover 2-Approximation
@@ -145,9 +145,9 @@ func main() {
 }
 ```
 
-## 36.3. Metric TSP Approximation
+## 36.3. Metric TSP Heuristic (Nearest Neighbor)
 
-**Definition:** A Metric TSP explicitly fulfills the triangle inequality. An MST-based 2-approximation operates by generating a double <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr>, formulating an Euler tour, and aggressively short-cutting visited nodes.
+**Definition:** A Metric TSP explicitly fulfills the triangle inequality. The Nearest Neighbor heuristic constructs a tour by repeatedly visiting the closest unvisited city. This is a practical heuristic (not a constant-factor approximation) — in the worst case, nearest neighbor can produce tours up to O(log n) times the optimal. For a provable 2-approximation, use the MST double-tree approach: compute an MST, double its edges, form an Euler tour, and shortcut repeated vertices.
 
 ### Idiomatic Go Implementation
 
@@ -219,11 +219,9 @@ package main
 import (
     "fmt"
     "math/rand"
-    "time"
 )
 
 func maxCutRandom(edges [][2]int, n int) (map[int]bool, int) {
-    rand.Seed(time.Now().UnixNano())
     setA := make(map[int]bool)
     for i := 0; i < n; i++ {
         if rand.Float64() < 0.5 {

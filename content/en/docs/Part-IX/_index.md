@@ -9,13 +9,17 @@ draft: false
 toc: true
 ---
 
-This part covers advanced data structures that go beyond the fundamentals — structures optimized for specific access patterns, memory hierarchies, and probabilistic guarantees.
+{{% alert icon="💡" context="info" %}}
+"The best data structure is the one that makes your algorithm both simple and fast." — Bjarne Stroustrup
+{{% /alert %}}
+{{% alert icon="📘" context="success" %}}
+Part IX covers advanced data structures beyond the fundamentals — B-Trees, Skip Lists, Bloom Filters, LRU Caches, Suffix Arrays, and Persistent Data Structures — each optimized for specific access patterns and memory hierarchies.
+{{% /alert %}}
 
-## Chapters
+<center>
 
-- **Chapter 45** — B-Trees
-- **Chapter 46** — Skip Lists
-- **Chapter 47** — Bloom Filters
-- **Chapter 48** — LRU Cache
-- **Chapter 49** — Suffix Arrays
-- **Chapter 50** — Persistent Data Structures
+## **🧠 Chapters**
+
+</center>
+
+{{< chapter-list >}}

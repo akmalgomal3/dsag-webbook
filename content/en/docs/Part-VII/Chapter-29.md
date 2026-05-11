@@ -23,7 +23,7 @@ Chapter 29 covers vector, matrix, and tensor operations with idiomatic Go implem
 **Definition:** A vector is a one-dimensional <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> representing a directed magnitude. Basic operations include addition, scalar multiplication, dot product, and cross product.
 
 **Background & Philosophy:**
-The philosophy is representing data mathematically. Instead of isolated variables, numbers are grouped into spatial structures (Vectors, Matrices), enabling batch transformations that hardware GPUs and SIMD CPU instructions are structurally designed to optimize flawlessly.
+The philosophy is representing data mathematically. Instead of isolated variables, numbers are grouped into spatial structures (Vectors, Matrices), enabling batch transformations that hardware GPUs and <abbr title="Single Instruction Multiple Data - parallel processing technique.">SIMD</abbr> CPU instructions are structurally designed to optimize flawlessly.
 
 **Use Cases:**
 Core foundation for 3D Graphics programming, deep learning backpropagation, and PageRank algorithms determining internet search results.
@@ -143,10 +143,10 @@ In Go, matrices are often modeled naively as `[][]float64`, which creates `V` sl
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Transpose | `O(n²)` | Rows ↔ Columns |
-| Matrix Multiply | `O(n³)` naive, `O(n^2.81)` Strassen | Standard multiplication |
-| Determinant | `O(n³)` | LU decomposition |
-| Inverse | `O(n³)` | Gauss-Jordan elimination |
+| Transpose | <code>O(n²)</code> | Rows ↔ Columns |
+| Matrix Multiply | <code>O(n³)</code> naive, <code>O(n^2.81)</code> Strassen | Standard multiplication |
+| Determinant | <code>O(n³)</code> | LU decomposition |
+| Inverse | <code>O(n³)</code> | Gauss-Jordan elimination |
 
 ### Idiomatic Go Implementation
 
@@ -173,9 +173,9 @@ In Go, matrices are often modeled naively as `[][]float64`, which creates `V` sl
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Tensor Add | `O(n)` | Element-wise addition |
-| Tensor Contraction | `O(n^k)` | Sum over specific indices |
-| Reshape | `O(1)` | Viewing memory without a copy |
+| Tensor Add | <code>O(n)</code> | Element-wise addition |
+| Tensor Contraction | <code>O(n^k)</code> | Sum over specific indices |
+| Reshape | <code>O(1)</code> | Viewing memory without a copy |
 
 Rank-3 tensors formulated via nested slices in Go carry heavy <abbr title="A variable that stores a memory address.">pointer</abbr> overhead. For significantly large tensors, utilize a flat 1D slice with manual indexing: `flat[i*H*W + j*W + k]`.
 
@@ -224,11 +224,11 @@ A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically
 
 | Name | Go Type | Complexity | Access | Use Case |
 |------|---------|------------|--------|----------|
-| Vector | `[]float64` | `O(1)` access | varies | 1D Data |
-| Matrix | `[][]float64` | `O(1)` access | varies | 2D Data |
-| Tensor | `[][][]float64` | `O(1)` access | varies | ML batching |
-| Dense Matrix | `[]float64` flat | `O(1)` access | varies | Heavy linear algebra |
-| Sparse | `map[int]map[int]float64` | `O(1)` access avg | varies | Graphs, NLP sparse arrays |
+| Vector | `[]float64` | <code>O(1)</code> access | varies | 1D Data |
+| Matrix | `[][]float64` | <code>O(1)</code> access | varies | 2D Data |
+| Tensor | `[][][]float64` | <code>O(1)</code> access | varies | ML batching |
+| Dense Matrix | `[]float64` flat | <code>O(1)</code> access | varies | Heavy linear algebra |
+| Sparse | `map[int]map[int]float64` | <code>O(1)</code> access avg | varies | Graphs, NLP sparse arrays |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 29:</strong> This chapter covers vector, matrix, and tensor operations with idiomatic Go implementations. Utilize standard slices for vectors, the `gonum` package for large-scale linear algebra, nested slices for small-scale tensors, and manually indexed flat slices for large tensors. Parallelizing code with goroutines becomes highly effective when matrix dimensions exceed 256×256.

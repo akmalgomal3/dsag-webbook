@@ -23,7 +23,7 @@ Chapter 34 explores polynomials and the Fast Fourier Transform (FFT). Go's stdli
 **Definition:** A polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n is gracefully represented as a slice of coefficients: `[a₀, a₁, ..., aₙ]`.
 
 **Background & Philosophy:**
-The philosophy is the dual representation of data. A polynomial can be represented either by its coefficients or by its evaluated points. Multiplying coefficients takes `O(n^2)` time, but multiplying evaluated points takes `O(n)` time. FFT translates coefficients into points in `O(n log n)`, allowing blisteringly fast math.
+The philosophy is the dual representation of data. A polynomial can be represented either by its coefficients or by its evaluated points. Multiplying coefficients takes <code>O(n^2)</code> time, but multiplying evaluated points takes <code>O(n)</code> time. FFT translates coefficients into points in <code>O(n log n)</code>, allowing blisteringly fast math.
 
 **Use Cases:**
 Digital signal processing (audio/image compression), quantum mechanics, and multiplying incredibly large numbers (e.g., 100,000 digits) efficiently.
@@ -137,16 +137,16 @@ Go inherently lacks operator overloading. Always employ explicit method receiver
 
 ## 34.2. FFT and Convolution
 
-**Definition:** The Fast Fourier Transform (FFT) calculates the Discrete Fourier Transform with a complexity of `O(n log n)`. It is heavily utilized for executing polynomial multiplication via convolution.
+**Definition:** The Fast Fourier Transform (FFT) calculates the Discrete Fourier Transform with a complexity of <code>O(n log n)</code>. It is heavily utilized for executing polynomial multiplication via convolution.
 
 ### Operations & Complexity
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Naive DFT | `O(n²)` | `O(n)` | Direct mathematical execution |
-| Cooley-Tukey FFT | `O(n log n)` | `O(n)` | Standard recursive method |
-| Iterative FFT | `O(n log n)` | `O(1)` in-place | Memory-efficient in-place execution |
-| Bluestein | `O(n log n)` | `O(n)` | Supports arbitrary input sizes |
+| Naive DFT | <code>O(n²)</code> | <code>O(n)</code> | Direct mathematical execution |
+| Cooley-Tukey FFT | <code>O(n log n)</code> | <code>O(n)</code> | Standard recursive method |
+| Iterative FFT | <code>O(n log n)</code> | <code>O(1)</code> in-place | Memory-efficient in-place execution |
+| Bluestein | <code>O(n log n)</code> | <code>O(n)</code> | Supports arbitrary input sizes |
 
 Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation demands roughly 100 lines of code. For production integrity, depend on libraries like `github.com/mjibson/go-dsp` or `github.com/cpmech/fftx`.
 
@@ -239,13 +239,13 @@ Lagrange interpolation holds remarkable stability solely for a sparse number of 
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Polynomial | `[]float64` | `O(n)` | `O(n)` | Standard coefficient storage |
-| Horner evaluation | func | `O(n)` | `O(1)` | Hyper-fast value evaluation |
-| Naive multiply | nested loop | `O(n²)` | `O(n)` | Handling tiny polynomial degrees |
-| FFT multiply | `O(n log n)` | `O(n log n)` | `O(n)` | Handling massive polynomial degrees |
-| Interpolation | func | `O(n²)` | `O(n)` | Precise data curve fitting |
-| DFT | `O(n²)` | `O(n²)` | `O(n)` | Thorough signal analysis |
-| FFT | custom/3rd party | `O(n log n)` | `O(n)` | Extreme high-speed transformation |
+| Polynomial | `[]float64` | <code>O(n)</code> | <code>O(n)</code> | Standard coefficient storage |
+| Horner evaluation | func | <code>O(n)</code> | <code>O(1)</code> | Hyper-fast value evaluation |
+| Naive multiply | nested loop | <code>O(n²)</code> | <code>O(n)</code> | Handling tiny polynomial degrees |
+| FFT multiply | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n)</code> | Handling massive polynomial degrees |
+| Interpolation | func | <code>O(n²)</code> | <code>O(n)</code> | Precise data curve fitting |
+| DFT | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(n)</code> | Thorough signal analysis |
+| FFT | custom/3rd party | <code>O(n log n)</code> | <code>O(n)</code> | Extreme high-speed transformation |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 34:</strong> This chapter dissects polynomial representation employing coefficient slices, hyper-fast Horner evaluation occurring in <code>O(n)</code>, and both naive <code>O(n^2)</code> and advanced FFT <code>O(n log n)</code> multiplications, alongside Lagrange interpolation. Rely on FFT strictly for massive <abbr title="The number of edges incident to a vertex.">degree</abbr> polynomial multiplications and Horner for rapid evaluations.

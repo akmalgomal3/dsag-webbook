@@ -88,7 +88,7 @@ Strictly rely on `crypto/sha256` or `crypto/sha512` from the stdlib. Avoid MD5 a
 
 ## 31.2. Symmetric Encryption
 
-**Definition:** Symmetric encryption utilizes the exact same <abbr title="A field or set of fields used to identify a record.">key</abbr> for both encryption and decryption. AES-GCM stands as the heavily recommended standard mode.
+**Definition:** Symmetric encryption utilizes the exact same <abbr title="A field or set of fields used to identify a record.">key</abbr> for both encryption and decryption. <abbr title="An authenticated encryption algorithm using AES in Galois/Counter Mode.">AES-GCM</abbr> stands as the heavily recommended standard mode.
 
 ### Operations & Complexity
 
@@ -186,7 +186,7 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-The nonce MUST be completely unique per encryption event when utilizing the same <abbr title="A field or set of fields used to identify a record.">key</abbr>. The standard GCM nonce size is 12 bytes. Never reuse nonces under any circumstance.
+The <abbr title="A random number used once in cryptographic operations.">nonce</abbr> MUST be completely unique per encryption event when utilizing the same <abbr title="A field or set of fields used to identify a record.">key</abbr>. The standard GCM nonce size is 12 bytes. Never reuse nonces under any circumstance.
 {{% /alert %}}
 
 ### Decision Matrix
@@ -204,7 +204,7 @@ The nonce MUST be completely unique per encryption event when utilizing the same
 
 ## 31.3. Asymmetric Encryption
 
-**Definition:** Asymmetric encryption utilizes a specific pair of public (encryption) and private (decryption) keys. RSA and ECDSA serve as the established standards.
+**Definition:** Asymmetric encryption utilizes a specific pair of <abbr title="A key shared publicly for encryption or signature verification.">public</abbr> (encryption) and <abbr title="A secret key used for decryption or signing.">private</abbr> (decryption) keys. RSA and <abbr title="An elliptic curve digital signature algorithm providing security and efficiency.">ECDSA</abbr> serve as the established standards.
 
 ### Operations & Complexity
 
@@ -244,6 +244,7 @@ import (
     "crypto/x509"
     "encoding/pem"
     "fmt"
+    "math/big"
 )
 
 func generateECDSAKey() (*ecdsa.PrivateKey, []byte, error) {
@@ -279,8 +280,11 @@ func main() {
     if err != nil {
         panic(err)
     }
-    valid := ecdsa.Verify(&priv.PublicKey, hash, nil, nil)
-    fmt.Println("Signature valid (placeholder):", len(sig) > 0 && valid)
+    // Reconstruct big.Int values from signature bytes for verification
+    r := new(big.Int).SetBytes(sig[:len(sig)/2])
+    s := new(big.Int).SetBytes(sig[len(sig)/2:])
+    valid := ecdsa.Verify(&priv.PublicKey, hash, r, s)
+    fmt.Println("Signature valid:", valid)
 }
 ```
 
@@ -302,7 +306,7 @@ func main() {
 
 ## 31.4. Digital Signatures and HMAC
 
-**Definition:** HMAC (Hash-based Message Authentication Code) leverages a secret <abbr title="A field or set of fields used to identify a record.">key</abbr> to authenticate data integrity. Digital signatures use asymmetric keys to ensure robust non-repudiation.
+**Definition:** <abbr title="A hash-based message authentication code for verifying data integrity.">HMAC</abbr> (Hash-based Message Authentication Code) leverages a secret <abbr title="A field or set of fields used to identify a record.">key</abbr> to authenticate data integrity. Digital signatures use asymmetric keys to ensure robust non-repudiation.
 
 ### Operations & Complexity
 
@@ -391,29 +395,47 @@ Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute 
 package main
 
 import (
-	"crypto/sha256"
 	"fmt"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
-	data := []byte("sensitive data")
-	hashed := sha256.Sum256(data)
-	fmt.Printf("SHA-256: %x\n", hashed)
+	password := []byte("my-secure-password")
+
+	// Hash dengan bcrypt, cost factor 12
+	hashed, err := bcrypt.GenerateFromPassword(password, 12)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("bcrypt hash: %s\n", hashed)
+
+	// Verifikasi
+	err = bcrypt.CompareHashAndPassword(hashed, password)
+	if err != nil {
+		fmt.Println("Password mismatch")
+	} else {
+		fmt.Println("Password verified")
+	}
 }
 ```
 
-For password hashing, use bcrypt with a cost factor of at least 12.
+{{% alert icon="📌" context="warning" %}}
+Never use SHA-256 for password hashing. SHA-256 is designed for speed and can be brute-forced at billions of hashes per second with GPUs. Always use a dedicated password hashing algorithm like **bcrypt**, **scrypt**, or **Argon2** (PHC winner). These algorithms are deliberately slow and memory-hard.
+{{% /alert %}}
+
+For production, prefer `golang.org/x/crypto/argon2` over bcrypt for its memory-hard properties.
 
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| SHA-256 | `crypto/sha256` | `O(n)` | 32 bytes | Data integrity |
-| AES-GCM | `crypto/aes` + `crypto/cipher` | `O(n)` | varies | Standard symmetric encryption |
-| HMAC | `crypto/hmac` | `O(n)` | . | Authenticate messages |
-| ECDSA | `crypto/ecdsa` | `O(n)` | . | Standard digital signatures |
-| Ed25519 | `crypto/ed25519` | `O(n)` | . | Fast, modern signatures |
-| bcrypt | `golang.org/x/crypto/bcrypt` | `O(cost)` | . | Hash passwords |
+| SHA-256 | `crypto/sha256` | <code>O(n)</code> | 32 bytes | Data integrity |
+| AES-GCM | `crypto/aes` + `crypto/cipher` | <code>O(n)</code> | varies | Standard symmetric encryption |
+| HMAC | `crypto/hmac` | <code>O(n)</code> | . | Authenticate messages |
+| ECDSA | `crypto/ecdsa` | <code>O(n)</code> | . | Standard digital signatures |
+| Ed25519 | `crypto/ed25519` | <code>O(n)</code> | . | Fast, modern signatures |
+| bcrypt | `golang.org/x/crypto/bcrypt` | <code>O(cost)</code> | . | Hash passwords |
 | Argon2 | `golang.org/x/crypto/argon2` | . | . | Advanced password hashing |
 | TLS | `crypto/tls` | . | . | Secure transport layers |
 

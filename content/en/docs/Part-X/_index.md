@@ -9,11 +9,17 @@ draft: false
 toc: true
 ---
 
-This part explores advanced graph algorithms for dependency analysis, pathfinding, and network structure discovery.
+{{% alert icon="💡" context="info" %}}
+"Graphs are the mathematical structures used to model pairwise relations between objects. Master them, and you master networks." — Leonhard Euler
+{{% /alert %}}
+{{% alert icon="📘" context="success" %}}
+Part X explores advanced graph algorithms for dependency analysis, pathfinding, and network structure discovery — including topological sort, strongly connected components, A* search, and bridge-finding.
+{{% /alert %}}
 
-## Chapters
+<center>
 
-- **Chapter 51** — Topological Sort
-- **Chapter 52** — Strongly Connected Components
-- **Chapter 53** — A* Search
-- **Chapter 54** — Tarjan's Bridge-Finding Algorithm
+## **🧠 Chapters**
+
+</center>
+
+{{< chapter-list >}}

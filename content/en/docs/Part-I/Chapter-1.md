@@ -29,7 +29,7 @@ Algorithms exist to solve problems efficiently. As data scales, naive approaches
 Used daily by software engineers to choose between alternative solutions (for example, using a hash map versus an array for fast lookups) and when designing distributed systems that must handle millions of concurrent requests.
 
 **Memory Mechanics:**
-In memory, algorithmic complexity directly affects CPU cache utilization and RAM allocation. An `O(n)` array traversal loads contiguous memory blocks efficiently into the CPU cache, leveraging spatial locality. In contrast, algorithms with poor memory access patterns or exponential complexity cause frequent cache misses, forcing the CPU to repeatedly fetch data from slower main memory.
+In memory, algorithmic complexity directly affects CPU cache utilization and RAM allocation. An <code>O(n)</code> array traversal loads contiguous memory blocks efficiently into the CPU cache, leveraging spatial locality. In contrast, algorithms with poor memory access patterns or exponential complexity cause frequent cache misses, forcing the CPU to repeatedly fetch data from slower main memory.
 
 ### Operations & Complexity
 
@@ -130,7 +130,7 @@ The underlying philosophy here is "abstraction and reuse". Modern software devel
 Common applications include sorting user data in an API response, rapidly searching for a specific record in a relational database, or routing packets efficiently in a network using graph algorithms like Dijkstra's.
 
 **Memory Mechanics:**
-When calling standard library functions like `sort.Ints`, Go utilizes an introsort hybrid under the hood, which manipulates contiguous memory blocks (slices) using <abbr title="Performing mathematical operations on memory addresses.">pointer arithmetic</abbr>. Binary search leaps across memory addresses exponentially, skipping large chunks of RAM. This is highly CPU efficient but requires the data to be in a sorted, contiguous layout to function correctly. Built-in maps use <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> to compute direct memory offsets, allowing `O(1)` access time, but they require complex background memory allocation for bucket arrays to handle hash collisions smoothly.
+When calling standard library functions like `sort.Ints`, Go utilizes an introsort hybrid under the hood, which manipulates contiguous memory blocks (slices) using <abbr title="Performing mathematical operations on memory addresses.">pointer arithmetic</abbr>. Binary search leaps across memory addresses exponentially, skipping large chunks of RAM. This is highly CPU efficient but requires the data to be in a sorted, contiguous layout to function correctly. Built-in maps use <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> to compute direct memory offsets, allowing <code>O(1)</code> access time, but they require complex background memory allocation for bucket arrays to handle hash collisions smoothly.
 
 ### Operations & Complexity
 
@@ -381,14 +381,5 @@ func main() {
 ## See Also
 
 - [Chapter 2: Complexity Analysis](/docs/Part-I/Chapter-2/)
-- [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
-- [Chapter 40: Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
-docs/Part-I/Chapter-2/)
-- [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
-- [Chapter 40: Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
- Analysis](/docs/Part-I/Chapter-2/)
-- [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
-- [Chapter 40: Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
-docs/Part-I/Chapter-2/)
 - [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
 - [Chapter 40: Origins of Algorithms](/docs/Part-VIII/Chapter-40/)

@@ -112,7 +112,7 @@ func main() {
 ### Edge Cases & Pitfalls
 
 - **Disconnected graph:** An MST only covers the largest component; check connectivity first with BFS/DFS before computing MST.
-- **Union-Find without path compression:** This can degenerate to `O(log V)` per operation, wrecking performance.
+- **Union-Find without path compression:** This can degenerate to <code>O(log V)</code> per operation, wrecking performance.
 
 ## 16.2. Prim’s Algorithm
 
@@ -125,14 +125,14 @@ While Kruskal is globally greedy, Prim is locally greedy. Its philosophy is cont
 Used in dense networks, such as laying out printed circuit boards (PCBs) where chips are densely packed and the distance between every pin to every other pin is known.
 
 **Memory Mechanics:**
-Prim’s algorithm relies on an <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">Adjacency List</abbr> and a Min-Heap. The Min-Heap (`Priority Queue`) acts as the frontier of exploration. As the MST grows, the algorithm constantly pushes neighboring edges into the heap. In highly dense graphs, this heap can grow rapidly, causing <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory allocations in Go if the underlying slice capacity is exceeded. However, because it only looks at adjacent edges, it avoids the massive upfront `O(E log E)` sorting cost required by Kruskal.
+Prim’s algorithm relies on an <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">Adjacency List</abbr> and a Min-Heap. The Min-Heap (`Priority Queue`) acts as the frontier of exploration. As the MST grows, the algorithm constantly pushes neighboring edges into the heap. In highly dense graphs, this heap can grow rapidly, causing <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory allocations in Go if the underlying slice capacity is exceeded. However, because it only looks at adjacent edges, it avoids the massive upfront <code>O(E log E)</code> sorting cost required by Kruskal.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Extract-Min | `O(log V)` | Binary heap |
-| Total | `O((V + E) log V)` | Ideal for dense graphs |
+| Extract-Min | <code>O(log V)</code> | Binary heap |
+| Total | <code>O((V + E) log V)</code> | Ideal for dense graphs |
 
 ### Pseudocode
 
@@ -319,9 +319,9 @@ func main() {
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Kruskal | `[]Edge` + Union-Find | `O(E log E)` | `O(V)` | Edge list, sparse graph |
-| Prim | `[]Edge` + PQ | `O((V + E) log V)` | `O(V)` | Dense graph, adjacency list |
-| Borůvka | Union-Find | `O(E log V)` | `O(V)` | Parallel, distributed |
+| Kruskal | `[]Edge` + Union-Find | <code>O(E log E)</code> | <code>O(V)</code> | Edge list, sparse graph |
+| Prim | `[]Edge` + PQ | <code>O((V + E) log V)</code> | <code>O(V)</code> | Dense graph, adjacency list |
+| Borůvka | Union-Find | <code>O(E log V)</code> | <code>O(V)</code> | Parallel, distributed |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 16:</strong> This chapter covers Kruskal's, Prim's, and Borůvka's algorithms for <abbr title="A spanning tree with the minimum possible total edge weight.">Minimum Spanning Tree</abbr>. Use Kruskal when you have an <abbr title="A connection between two vertices in a graph.">edge</abbr> list, Prim for dense graphs with adjacency lists, and Borůvka for parallel or distributed computation scenarios.

@@ -39,7 +39,7 @@ Non-comparison sorts are notoriously memory-hungry. Counting Sort allocates an a
 
 ## 55.2. Counting Sort
 
-Count occurrences, then compute prefix sums for exact array positions.
+Count occurrences, then compute <abbr title="An array where each element is the sum of all preceding elements, enabling O(1) range sum queries.">prefix sums</abbr> for exact array positions.
 
 ### Idiomatic Go Implementation
 

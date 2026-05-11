@@ -10,10 +10,10 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
- "Success in creating AI would be the biggest event in human history. Unfortunately, it might also be the last, unless we learn how to avoid the risks." – Stephen Hawking
+"Algorithms: a common theme in the study of data structures and sorting and searching as elegant solutions to problems that are pervasive in computing." – Donald Knuth
 {{% /alert %}}
 {{% alert icon="📘" context="success" %}}
-Part V groups the core algorithmic design paradigms: <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">Dynamic Programming</abbr>, Greedy Algorithms, and <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>. It contrasts these philosophies and explores their practical applications and optimization techniques in Go.
+Part V covers sorting and searching algorithms: Basic Sorting (Bubble, Selection, Insertion), Advanced Sorting (Merge, Quick, Heap), Search Algorithms (Linear, Binary, Interpolation), and All-Pairs Shortest Paths. It contrasts algorithm performance, stability, and in-place vs out-of-place characteristics in Go.
 {{% /alert %}}
 
 <center>

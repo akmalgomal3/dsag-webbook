@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 11 focuses on <abbr title="An algorithm to perform union and find operations on disjoint sets.">Disjoint Sets</abbr> (Union-Find), path compression, and union by rank. It explores implementing efficient set operations in Go for graph algorithms and Kruskal's MST.
+Chapter 11 focuses on <abbr title="A tree data structure in which each node has at most two children.">Binary Search Trees</abbr> (BST), AVL self-balancing trees, and tree augmentation techniques in Go using generics.
 {{% /alert %}}
 
 ## 11.1. <abbr title="A binary tree where the left child is smaller and the right child is larger than the parent.">Binary Search Tree</abbr> (BST)
@@ -23,7 +23,7 @@ Chapter 11 focuses on <abbr title="An algorithm to perform union and find operat
 **Definition:** A BST is a node-based <abbr title="A tree data structure in which each node has at most two children.">binary tree</abbr> where the left <abbr title="A tree consisting of a node and all of its descendants.">subtree</abbr> strictly contains keys less than the <abbr title="The topmost node in a tree data structure.">root</abbr>, and the right <abbr title="A tree consisting of a node and all of its descendants.">subtree</abbr> contains keys greater than the <abbr title="The topmost node in a tree data structure.">root</abbr>. It provides structured ordering and efficient <abbr title="The process of finding a specific element in a data structure.">searching</abbr>.
 
 **Background & Philosophy:**
-The philosophy of a BST is to embed binary search directly into a dynamic data structure. While searching a sorted array is `O(log n)`, inserting into an array requires `O(n)` memory shifting. A BST allows `O(log n)` insertion by using a hierarchy of <abbr title="A variable that stores a memory address.">pointers</abbr>. This delegates the responsibility of maintaining order from the memory layout (array) to the structural linking (tree nodes).
+The philosophy of a BST is to embed binary search directly into a dynamic data structure. While searching a sorted array is <code>O(log n)</code>, inserting into an array requires <code>O(n)</code> memory shifting. A BST allows <code>O(log n)</code> insertion by using a hierarchy of <abbr title="A variable that stores a memory address.">pointers</abbr>. This delegates the responsibility of maintaining order from the memory layout (array) to the structural linking (tree nodes).
 
 **Use Cases:**
 Used when maintaining a dynamically changing dataset that must be frequently queried in order, such as a real-time leaderboard, database indexing, or implementing an in-memory Set or Map where iterating keys in sorted order is required.
@@ -192,7 +192,7 @@ func rotateRight[K cmp.Ordered, V any](y *AVLNode[K, V]) *AVLNode[K, V] {
 Trees are inherently recursive. Augmentation is based on the philosophy of dynamic programming applied to trees: caching aggregated information about a subtree directly at the root of that subtree. This prevents having to recursively calculate counts or sums repeatedly.
 
 **Use Cases:**
-Used in building Order Statistic Trees where you need to query "what is the 50th smallest element" in `O(log n)` time, or in interval trees which detect overlapping schedules in calendaring systems.
+Used in building Order Statistic Trees where you need to query "what is the 50th smallest element" in <code>O(log n)</code> time, or in interval trees which detect overlapping schedules in calendaring systems.
 
 **Memory Mechanics:**
 Adding an `int` field like `SubtreeSize` directly increases the size of the node. Every time a node is inserted or deleted, the system must traverse back up the tree to the root, updating this integer. This increases CPU instruction count, but involves no new memory allocations. It is pure integer arithmetic directly in the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> if the ancestors are still resident.

@@ -66,13 +66,13 @@ The transition from Arrays to Linked Lists marked the shift from <abbr title="Me
 **Definition:** <abbr title="A data structure that implements an associative array abstract data type, a structure that can map keys to values.">Hash tables</abbr> (1953) offered <code>O(1)</code> average-case lookup by trading ordering for speed — a radical departure from comparison-based structures.
 
 **Background & Philosophy:**
-The philosophy is index computation. Instead of searching by comparing elements against each other (which is mathematically bounded by `O(log n)`), hash tables calculate the memory destination directly from the data itself.
+The philosophy is index computation. Instead of searching by comparing elements against each other (which is mathematically bounded by <code>O(log n)</code>), hash tables calculate the memory destination directly from the data itself.
 
 **Use Cases:**
 Database indexing, caching engines (Memcached/Redis), and routing maps in networking routers.
 
 **Memory Mechanics:**
-A Hash Table operates heavily on pseudo-random memory access. Hashing scatters values unpredictably across a pre-allocated array of buckets. When a lookup occurs, the CPU jumps to a completely random memory address. This unpredictability guarantees a <abbr title="A state where the data requested for processing is not found in the cache memory.">cache miss</abbr>. However, retrieving the data directly in `O(1)` vastly offsets the microscopic latency penalty of a single cache miss.
+A Hash Table operates heavily on pseudo-random memory access. Hashing scatters values unpredictably across a pre-allocated array of buckets. When a lookup occurs, the CPU jumps to a completely random memory address. This unpredictability guarantees a <abbr title="A state where the data requested for processing is not found in the cache memory.">cache miss</abbr>. However, retrieving the data directly in <code>O(1)</code> vastly offsets the microscopic latency penalty of a single cache miss.
 
 ### Trade-off Evolution
 

@@ -23,7 +23,7 @@ Chapter 43 explores modern algorithmic thinking: complexity classes, approximati
 **Definition:** Modern algorithm analysis considers significantly more than just mathematical <abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O</abbr> bounds. Real-world performance is bottlenecked by physical hardware laws.
 
 **Background & Philosophy:**
-The classical era ignored constant factors. The modern philosophy acknowledges that an `O(n log n)` algorithm can easily run 100x slower than an `O(n^2)` algorithm if the latter obeys hardware-friendly sequential memory patterns. Algorithms are no longer evaluated in a theoretical vacuum; they must demonstrate "Mechanical Sympathy."
+The classical era ignored constant factors. The modern philosophy acknowledges that an <code>O(n log n)</code> algorithm can easily run 100x slower than an <code>O(n^2)</code> algorithm if the latter obeys hardware-friendly sequential memory patterns. Algorithms are no longer evaluated in a theoretical vacuum; they must demonstrate "Mechanical Sympathy."
 
 **Use Cases:**
 Rewriting core databases (like switching from Trees to LSM-Trees) to align purely with how SSDs and RAM buffers prefer to receive data.

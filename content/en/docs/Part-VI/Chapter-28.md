@@ -23,13 +23,13 @@ Chapter 28 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized q
 **Definition:** QuickSort utilizing a randomly selected pivot successfully avoids the catastrophic <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n^2)</code> specifically found on already sorted inputs.
 
 **Background & Philosophy:**
-The philosophy is trading absolute certainty for overwhelming probability. Deterministic algorithms often hit pathological worst-cases crafted by malicious inputs or unlucky sequential data. Injecting randomness (Las Vegas method) breaks these deterministic worst-cases mathematically, ensuring that `O(n log n)` execution is highly expected regardless of input distribution.
+The philosophy is trading absolute certainty for overwhelming probability. Deterministic algorithms often hit pathological worst-cases crafted by malicious inputs or unlucky sequential data. Injecting randomness (Las Vegas method) breaks these deterministic worst-cases mathematically, ensuring that <code>O(n log n)</code> execution is highly expected regardless of input distribution.
 
 **Use Cases:**
 Randomized QuickSort is the underlying default sorting strategy in modern standard libraries, used constantly when data comes from untrusted networks where users might submit intentionally sorted arrays to DDOS the server via worst-case CPU burn.
 
 **Memory Mechanics:**
-Randomization heavily relies on Pseudo-Random Number Generators (PRNGs). Fetching from a PRNG requires querying a shared internal state. If multiple goroutines request random numbers from the global `rand.Seed`, it creates massive <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> at the memory level. High-performance randomized algorithms allocate a distinct `rand.New(rand.NewSource())` per goroutine to maintain isolated <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> states, avoiding cross-thread memory stalling.
+Randomization heavily relies on Pseudo-Random Number Generators (PRNGs). Fetching from a PRNG requires querying a shared internal state. If multiple <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> request random numbers from the global `rand.Seed`, it creates massive <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> at the memory level. High-performance randomized algorithms allocate a distinct `rand.New(rand.NewSource())` per goroutine to maintain isolated <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> states, avoiding cross-thread memory stalling.
 
 ### Operations & Complexity
 
@@ -66,11 +66,9 @@ package main
 import (
     "fmt"
     "math/rand"
-    "time"
 )
 
 func randomizedQuickSort(arr []int) {
-    rand.Seed(time.Now().UnixNano())
     var sort func([]int)
     sort = func(a []int) {
         if len(a) <= 1 {
@@ -127,7 +125,7 @@ Balancing an AVL or Red-Black tree involves extremely complex pointers and struc
 Highly effective in concurrent programming. Because inserting an element doesn't require massive structural rotations, it requires fewer memory locks. Skip lists famously power the backend sorted sets in Redis.
 
 **Memory Mechanics:**
-Skip lists require an array of `next` pointers per node depending on their randomized "height". In Go, `make([]*SkipNode, lvl)` dynamically allocates this array. This makes skip lists heavier in memory usage than standard binary trees and introduces unpredictable memory fragmentation across the <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>. However, the absence of complex `O(log n)` rebalancing operations offsets the cache misses encountered during forward traversal.
+Skip lists require an array of `next` pointers per node depending on their randomized "height". In Go, `make([]*SkipNode, lvl)` dynamically allocates this array. This makes skip lists heavier in memory usage than standard binary trees and introduces unpredictable memory fragmentation across the <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>. However, the absence of complex <code>O(log n)</code> rebalancing operations offsets the cache misses encountered during forward traversal.
 
 ### Operations & Complexity
 
@@ -177,7 +175,6 @@ package main
 import (
     "fmt"
     "math/rand"
-    "time"
 )
 
 const maxLevel = 16
@@ -237,6 +234,7 @@ func (sl *SkipList) Insert(key int, value string) {
         curr.value = value
         return
     }
+
     lvl := sl.randomLevel()
     if lvl > sl.level {
         for i := sl.level; i < lvl; i++ {
@@ -252,7 +250,6 @@ func (sl *SkipList) Insert(key int, value string) {
 }
 
 func main() {
-    rand.Seed(time.Now().UnixNano())
     sl := NewSkipList()
     for i := 0; i < 10; i++ {
         sl.Insert(i, fmt.Sprintf("val%d", i))
@@ -329,14 +326,14 @@ The philosophy is stream intelligence. When data is infinite or too large to fit
 Providing live, random analytics samples from continuous Kafka streams or massive network logs.
 
 **Memory Mechanics:**
-It requires strictly `O(k)` memory. A single <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice of size `k` is allocated in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. As new data streams in, it reads one item at a time, making it incredibly hardware friendly since it uses minimal <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes virtually zero <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> during sequential data ingestion.
+It requires strictly <code>O(k)</code> memory. A single <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice of size `k` is allocated in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. As new data streams in, it reads one item at a time, making it incredibly hardware friendly since it uses minimal <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes virtually zero <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> during sequential data ingestion.
 
 ### Operations & Complexity
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Reservoir k | `O(k)` per item | `O(k)` | Handles a stream of completely unknown size |
-| Weighted | `O(k log k)` per item | `O(k)` | Executes priority-based sampling |
+| Reservoir k | <code>O(k)</code> per item | <code>O(k)</code> | Handles a stream of completely unknown size |
+| Weighted | <code>O(k log k)</code> per item | <code>O(k)</code> | Executes priority-based sampling |
 
 Reservoir sampling guarantees that every single item possesses an exact mathematical probability of k/n of being selected. For heavily weighted streams, implement exponential random variates.
 

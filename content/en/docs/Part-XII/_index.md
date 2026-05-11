@@ -9,10 +9,17 @@ draft: false
 toc: true
 ---
 
-This part covers advanced algorithmic topics spanning game theory, query optimization, and computational geometry.
+{{% alert icon="💡" context="info" %}}
+"The limits of my language mean the limits of my world. In algorithms, the limits of your tools mean the limits of your solutions." — Ludwig Wittgenstein
+{{% /alert %}}
+{{% alert icon="📘" context="success" %}}
+Part XII covers advanced algorithmic topics spanning game theory (Minimax), query optimization (Mo's Algorithm), and computational geometry (Convex Hull) — the frontier of algorithmic problem-solving.
+{{% /alert %}}
 
-## Chapters
+<center>
 
-- **Chapter 58** — Minimax and Game Trees
-- **Chapter 59** — Mo's Algorithm
-- **Chapter 60** — Convex Hull
+## **🧠 Chapters**
+
+</center>
+
+{{< chapter-list >}}

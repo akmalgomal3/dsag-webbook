@@ -235,16 +235,16 @@ func main() {
 
 ## 4.4. Concurrency in Go for Parallel Algorithms
 
-**Definition:** Goroutines, channels, and sync primitives enable parallel algorithms in Go with memory safety through communication (channels) or synchronization (mutexes).
+**Definition:** <abbr title="Lightweight thread managed by Go runtime">Goroutines</abbr>, <abbr title="Go mechanism for goroutine communication">channels</abbr>, and sync primitives enable parallel algorithms in Go with memory safety through communication (<abbr title="Go mechanism for goroutine communication">channels</abbr>) or synchronization (mutexes).
 
 **Background & Philosophy:**
-Go's concurrency philosophy is deeply rooted in CSP (Communicating Sequential Processes). The famous proverb is: "Do not communicate by sharing memory; instead, share memory by communicating." This encourages developers to pass ownership of data via channels rather than wrapping every variable in complex mutex locks, drastically reducing the chances of deadlocks and race conditions.
+Go's concurrency philosophy is deeply rooted in CSP (Communicating Sequential Processes). The famous proverb is: "Do not communicate by sharing memory; instead, share memory by communicating." This encourages developers to pass ownership of data via <abbr title="Go mechanism for goroutine communication">channels</abbr> rather than wrapping every variable in complex mutex locks, drastically reducing the chances of <abbr title="Situation where concurrent processes wait on each other">deadlocks</abbr> and <abbr title="Unpredictable behavior from unsynchronized concurrent access">race conditions</abbr>.
 
 **Use Cases:**
 Essential for web scraping crawlers, concurrent API requests, real-time data ingestion pipelines, and parallelizing CPU-bound algorithms like merge sort or image processing across multiple cores.
 
 **Memory Mechanics:**
-A goroutine starts with a tiny, 2KB <abbr title="Memory used to execute functions and store local variables.">stack</abbr> that grows dynamically, making it possible to spawn millions of them in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. However, when multiple goroutines access the same memory address simultaneously without synchronization, it causes a "data race," corrupting memory bytes at the hardware level. Using a `sync.Mutex` forces the CPU to issue memory barriers, stalling other threads from reading or writing to that specific <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> address until the lock is released, inherently slowing down execution to ensure safety.
+A <abbr title="Lightweight thread managed by Go runtime">goroutine</abbr> starts with a tiny, 2KB <abbr title="Memory used to execute functions and store local variables.">stack</abbr> that grows dynamically, making it possible to spawn millions of them in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. However, when multiple goroutines access the same memory address simultaneously without synchronization, it causes a "<abbr title="Concurrent access to shared memory without synchronization">data race</abbr>," corrupting memory bytes at the hardware level. Using a <abbr title="Mutual exclusion lock for concurrent safety">`sync.Mutex`</abbr> forces the CPU to issue memory barriers, stalling other threads from reading or writing to that specific <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> address until the lock is released, inherently slowing down execution to ensure safety.
 
 ### Operations & Complexity
 
@@ -329,10 +329,10 @@ func main() {
 | Natural data parallelism | Tasks with many dependencies |
 
 ### Edge Cases & Pitfalls
-- **Case data race:** `go test -race` is mandatory for concurrent code; the race detector slows execution by 10-20x but is crucial for <abbr title="The process of finding and resolving defects within a computer program.">debugging</abbr>.
-- **Case goroutine leak:** A goroutine blocked on a channel without a receiver causes a leak.
-- **Case closing channel:** Only the sender should close a channel; a receiver closing it will cause a panic.
-- **Case WaitGroup reuse:** Reusing a `WaitGroup` without ensuring `Wait` has completed can cause a race condition.
+- **Case <abbr title="Concurrent access to shared memory without synchronization">data race</abbr>:** `go test -race` is mandatory for concurrent code; the race detector slows execution by 10-20x but is crucial for <abbr title="The process of finding and resolving defects within a computer program.">debugging</abbr>.
+- **Case <abbr title="Lightweight thread managed by Go runtime">goroutine</abbr> leak:** A goroutine blocked on a <abbr title="Go mechanism for goroutine communication">channel</abbr> without a receiver causes a leak.
+- **Case closing <abbr title="Go mechanism for goroutine communication">channel</abbr>:** Only the sender should close a channel; a receiver closing it will cause a panic.
+- **Case WaitGroup reuse:** Reusing a `WaitGroup` without ensuring `Wait` has completed can cause a <abbr title="Unpredictable behavior from unsynchronized concurrent access">race condition</abbr>.
 
 ## 4.5. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 

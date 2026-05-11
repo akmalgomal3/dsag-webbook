@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 44 reflects on what algorithms and data structures reveal about thinking, problem-solving, and the nature of computation itself.
+Chapter 44 reflects on what algorithms and data structures reveal about thinking, problem-solving, and the nature of <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> itself.
 {{% /alert %}}
 
 ## 44.1. Algorithms as Philosophy
@@ -32,7 +32,7 @@ The core philosophy of software engineering is managing complexity. Abstraction 
 Translating ambiguous, contradictory human business requirements into flawlessly executing software states.
 
 **Memory Mechanics:**
-The ultimate philosophical boundary of computation is memory state tracking. Every variable, every lock, every goroutine consumes <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Complex architectures attempt to abstract this away (via the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>). The pragmatic engineer respects that no abstraction can perfectly shield them from physical hardware limits; uncontrolled recursion still blows the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>, and fragmented objects still choke the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr>.
+The ultimate philosophical boundary of <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> is memory state tracking. Every variable, every lock, every goroutine consumes <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Complex architectures attempt to abstract this away (via the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>). The pragmatic engineer respects that no abstraction can perfectly shield them from physical hardware limits; uncontrolled recursion still blows the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>, and fragmented objects still choke the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr>.
 
 ### The Algorithmic Mindset
 

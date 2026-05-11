@@ -110,7 +110,7 @@ While Dijkstra is greedy, Bellman-Ford is cautious and exhaustive. Its philosoph
 Essential in financial trading systems to detect arbitrage opportunities (currency exchange loops that yield net profit) by identifying negative weight cycles, and in certain distance-vector routing protocols.
 
 **Memory Mechanics:**
-Bellman-Ford doesn't require complex data structures like a Priority Queue. It strictly iterates over a simple 1D slice of distances and an `[]Edge` list. Because it iterates over the linear `[]Edge` list repeatedly, the CPU's branch predictor and prefetcher can stream the edge data from <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> with incredible efficiency. Despite its higher mathematical time complexity `O(VE)`, its memory access pattern is so hardware-friendly that it often performs well on small-to-medium graphs.
+Bellman-Ford doesn't require complex data structures like a Priority Queue. It strictly iterates over a simple 1D slice of distances and an `[]Edge` list. Because it iterates over the linear `[]Edge` list repeatedly, the CPU's branch predictor and prefetcher can stream the edge data from <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> with incredible efficiency. Despite its higher mathematical time complexity <code>O(VE)</code>, its memory access pattern is so hardware-friendly that it often performs well on small-to-medium graphs.
 
 ### Operations & Complexity
 

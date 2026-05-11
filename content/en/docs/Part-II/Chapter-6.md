@@ -35,9 +35,9 @@ A slice-based stack allocates a <abbr title="Memory blocks allocated in a single
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Push | `O(1)` | Add to top |
-| Pop | `O(1)` | Remove from top |
-| Peek | `O(1)` | View top element |
+| Push | <code>O(1)</code> | Add to top |
+| Pop | <code>O(1)</code> | Remove from top |
+| Peek | <code>O(1)</code> | View top element |
 
 ### Idiomatic Go 1.18+ Generic Implementation
 
@@ -89,16 +89,16 @@ func main() {
 
 ## 6.2. Queues (FIFO)
 
-**Definition:** A <abbr title="First In, First Out">FIFO</abbr> data structure. A naive <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr> implementation utilizing a slice shift (`s = s[1:]`) degrades performance to <code>O(n)</code> and inherently causes memory leaks. The idiomatic Go approach leverages a **Circular Ring Buffer**.
+**Definition:** A <abbr title="First In, First Out">FIFO</abbr> data structure. A naive <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr> implementation utilizing a slice shift (`s = s[1:]`) degrades performance to <code>O(n)</code> and inherently causes memory leaks. The idiomatic Go approach leverages a **<abbr title="Fixed-size buffer that wraps around using modulo">Circular Ring Buffer</abbr>**.
 
 **Background & Philosophy:**
-Queues enforce fairness through a "first come, first served" policy. While stacks are restrictive at one end, queues restrict access by splitting entry and exit points. The philosophy in Go is to implement this without sacrificing the contiguous memory benefits of arrays, which led to the widespread adoption of the Ring Buffer pattern rather than a <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr>.
+Queues enforce fairness through a "first come, first served" policy. While stacks are restrictive at one end, queues restrict access by splitting entry and exit points. The philosophy in Go is to implement this without sacrificing the contiguous memory benefits of arrays, which led to the widespread adoption of the <abbr title="Fixed-size buffer that wraps around using modulo">Ring Buffer</abbr> pattern rather than a <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr>.
 
 **Use Cases:**
 Essential for rate limiting, job scheduling in worker pools (like handling HTTP requests), breadth-first search (BFS) in graph traversal, and buffering streams of data between asynchronous goroutines.
 
 **Memory Mechanics:**
-A Circular Ring Buffer pre-allocates a fixed array in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Instead of shifting elements (which would cost `O(n)` memory writes), it uses two integer pointers (`head` and `tail`) that wrap around the array's capacity using the modulo operator `%`. This provides strict `O(1)` memory access and reuses the exact same <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> block infinitely, preventing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> churn.
+A Circular Ring Buffer pre-allocates a fixed array in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Instead of shifting elements (which would cost <code>O(n)</code> memory writes), it uses two integer pointers (`head` and `tail`) that wrap around the array's capacity using the modulo operator `%`. This provides strict <code>O(1)</code> memory access and reuses the exact same <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> block infinitely, preventing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> churn.
 
 ### Idiomatic Go 1.18+ Generic Circular Buffer
 
@@ -228,7 +228,7 @@ The Deque serves as a hybrid structure. It is born from the philosophy that some
 Essential for work-stealing algorithms in thread scheduling (where a thread processes its own tasks LIFO but steals from others FIFO), palindrome checking algorithms, and managing undo/redo logs with a maximum capacity constraint.
 
 **Memory Mechanics:**
-Knowing that `container/list` is notoriously slow, we construct a high-performance <abbr title="A double-ended queue allowing insertion and deletion at both ends.">Deque</abbr> utilizing a generic circular buffer. The Deque controls two pointers inside a single <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> allocation. `PushFront` decrements the head pointer (wrapping around to the end of the array using modulo), while `PushBack` increments the tail pointer. This ensures strict `O(1)` performance at both ends without sacrificing <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.
+Knowing that `container/list` is notoriously slow, we construct a high-performance <abbr title="A double-ended queue allowing insertion and deletion at both ends.">Deque</abbr> utilizing a generic circular buffer. The Deque controls two pointers inside a single <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> allocation. `PushFront` decrements the head pointer (wrapping around to the end of the array using modulo), while `PushBack` increments the tail pointer. This ensures strict <code>O(1)</code> performance at both ends without sacrificing <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.
 
 ```go
 package main

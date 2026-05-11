@@ -309,8 +309,8 @@ The PoW example provided acts purely as a demonstration. A rigorous production P
 |-----------|------------|-----------------|------------|
 | PoW | Broadcast | 51% | E.g., Bitcoin |
 | PoS | Broadcast | 33% | E.g., Ethereum 2.0 |
-| PBFT | `O(n²)` | f < n/3 | Ideal for permissioned systems |
-| Raft | `O(n)` | Leader failure | Strong for localized Key-value stores |
+| PBFT | <code>O(n²)</code> | f < n/3 | Ideal for permissioned systems |
+| Raft | <code>O(n)</code> | Leader failure | Strong for localized Key-value stores |
 
 ### Decision Matrix
 
@@ -329,11 +329,11 @@ The PoW example provided acts purely as a demonstration. A rigorous production P
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Block | `struct` | `O(1)` create | `O(1)` | Core transaction container |
-| Merkle Tree | recursive hash | `O(n)` build | `O(n)` | Quick subset verification |
-| PoW Mining | brute-force loop | `O(2^k)` | . | Fundamental consensus |
-| Chain | `[]Block` | `O(1)` append | grows | Underlying ledger |
-| Hash | `crypto/sha256` | `O(n)` | 32 bytes | Rigid data integrity |
+| Block | `struct` | <code>O(1)</code> create | <code>O(1)</code> | Core transaction container |
+| Merkle Tree | recursive hash | <code>O(n)</code> build | <code>O(n)</code> | Quick subset verification |
+| PoW Mining | brute-force loop | <code>O(2^k)</code> | . | Fundamental consensus |
+| Chain | `[]Block` | <code>O(1)</code> append | grows | Underlying ledger |
+| Hash | `crypto/sha256` | <code>O(n)</code> | 32 bytes | Rigid data integrity |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 32:</strong> This chapter dissects foundational blockchain data structures: linked blocks utilizing SHA-256 hashes, Merkle trees engineered for transaction subset verification, Proof of Work (PoW), and foundational Proof of Stake (PoS) consensus strategies. Leverage Merkle trees for light clients, PoW for uncompromising decentralization, and PoS when maximizing energy efficiency.

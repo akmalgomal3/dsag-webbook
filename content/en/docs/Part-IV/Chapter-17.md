@@ -29,7 +29,7 @@ Network flow problems model the transport of goods, liquids, or data across a co
 Used in pipeline logistics (water or oil routing), allocating bandwidth in telecom networks, and calculating maximum bipartite matching (e.g., matching job applicants to open positions).
 
 **Memory Mechanics:**
-The algorithm heavily relies on a "Residual Graph", typically implemented as an <abbr title="A 2D array representing a graph, where rows and columns correspond to vertices.">Adjacency Matrix</abbr> (`[][]int`). In Go, mutating a 2D slice directly modifies the underlying <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. DFS traverses this matrix recursively, adding to the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Because Ford-Fulkerson uses DFS, it can pathologically ping-pong back and forth between two nodes if the capacities are chosen poorly, making it incredibly inefficient in terms of CPU cycles, though its <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">space complexity</abbr> remains a steady `O(V^2)`.
+The algorithm heavily relies on a "Residual Graph", typically implemented as an <abbr title="A 2D array representing a graph, where rows and columns correspond to vertices.">Adjacency Matrix</abbr> (`[][]int`). In Go, mutating a 2D slice directly modifies the underlying <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. DFS traverses this matrix recursively, adding to the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Because Ford-Fulkerson uses DFS, it can pathologically ping-pong back and forth between two nodes if the capacities are chosen poorly, making it incredibly inefficient in terms of CPU cycles, though its <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">space complexity</abbr> remains a steady <code>O(V^2)</code>.
 
 ### Operations & Complexity
 
@@ -125,7 +125,7 @@ func main() {
 
 ## 17.2. Edmonds-Karp Algorithm
 
-**Definition:** Edmonds-Karp is an implementation of the Ford-Fulkerson method that uses BFS to find the shortest augmenting path, guaranteeing a polynomial complexity of `O(V E²)`.
+**Definition:** Edmonds-Karp is an implementation of the Ford-Fulkerson method that uses BFS to find the shortest augmenting path, guaranteeing a polynomial complexity of <code>O(V E²)</code>.
 
 **Background & Philosophy:**
 Edmonds-Karp fixes the pathological flaw in Ford-Fulkerson by formalizing the path-finding rule: "Always take the shortest path by edge count." This philosophy of Breadth-First traversal eliminates the possibility of bouncing back and forth on large capacity edges, bounding the algorithm's runtime mathematically to the number of nodes and edges, regardless of how massive the integer capacities are.
@@ -140,9 +140,9 @@ By using BFS, Edmonds-Karp replaces the DFS <abbr title="Memory used to execute 
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| BFS augmenting | `O(V)` | Shortest path by edge count |
-| Iterations | `O(VE)` | Bound on the number of augmenting paths |
-| Total | `O(V E²)` | Strictly polynomial |
+| BFS augmenting | <code>O(V)</code> | Shortest path by edge count |
+| Iterations | <code>O(VE)</code> | Bound on the number of augmenting paths |
+| Total | <code>O(V E²)</code> | Strictly polynomial |
 
 ### Idiomatic Go Implementation
 
@@ -201,13 +201,13 @@ func main() {
 
 ## 17.3. Dinic’s Algorithm
 
-**Definition:** Dinic's algorithm utilizes a level graph (built via BFS) and blocking flows (found via DFS) to dramatically accelerate maximum flow computations, achieving `O(E √V)` complexity.
+**Definition:** Dinic's algorithm utilizes a level graph (built via BFS) and blocking flows (found via DFS) to dramatically accelerate maximum flow computations, achieving <code>O(E √V)</code> complexity.
 
 **Background & Philosophy:**
 Dinic's philosophy is "batch processing". Instead of finding one path at a time (like Edmonds-Karp), it builds a "Level Graph" mapping distance from the source. Then, it pushes multiple flows simultaneously through this graph until the entire level structure is blocked. It combines the rigorous pathing of BFS with the aggressive exploration of DFS.
 
 **Use Cases:**
-The absolute gold standard for competitive programming and heavy-duty network calculations, such as bipartite matching where its time complexity drops miraculously to `O(E √V)`.
+The absolute gold standard for competitive programming and heavy-duty network calculations, such as bipartite matching where its time complexity drops miraculously to <code>O(E √V)</code>.
 
 **Memory Mechanics:**
 Dinic’s introduces a `level` slice alongside the `flow` and `capacity` matrices. During the DFS phase, a `ptr` (or `dead-end`) array is often used to avoid re-exploring edges that can no longer take flow. This requires slightly more <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> than Edmonds-Karp, but the avoidance of redundant memory fetches makes Dinic's algorithm remarkably sympathetic to the CPU architecture. The combination of state arrays forces Go's Garbage Collector to trace slightly more data, but the execution speedup heavily outweighs this.
@@ -216,9 +216,9 @@ Dinic’s introduces a `level` slice alongside the `flow` and `capacity` matrice
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Build level graph | `O(E)` | Using BFS |
-| Blocking flow | `O(VE)` | Using DFS |
-| Total | `O(E √V)` | Extremely fast for dense graphs |
+| Build level graph | <code>O(E)</code> | Using BFS |
+| Blocking flow | <code>O(VE)</code> | Using DFS |
+| Total | <code>O(E √V)</code> | Extremely fast for dense graphs |
 
 ### Idiomatic Go Implementation
 
@@ -302,8 +302,8 @@ Min-Cost Flow requires tracking `capacity`, `flow`, and `cost` matrices. It runs
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Successive shortest path | `O(F · E log V)` | F = max flow |
-| Total | `O(F · E log V)` | Driven by Dijkstra |
+| Successive shortest path | <code>O(F · E log V)</code> | F = max flow |
+| Total | <code>O(F · E log V)</code> | Driven by Dijkstra |
 
 ### Idiomatic Go Implementation
 
@@ -392,10 +392,10 @@ func main() {
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Ford-Fulkerson | Recursive DFS | `O(E · maxFlow)` | `O(V²)` | Educational / Conceptual |
-| Edmonds-Karp | BFS + Queue | `O(V E²)` | `O(V²)` | General purpose max flow |
-| Dinic | BFS level + DFS | `O(E √V)` | `O(V²)` | Dense networks |
-| Min-Cost Flow | Dijkstra + PQ | `O(F · E log V)` | `O(V²)` | Logistics, optimal assignment |
+| Ford-Fulkerson | Recursive DFS | <code>O(E · maxFlow)</code> | <code>O(V²)</code> | Educational / Conceptual |
+| Edmonds-Karp | BFS + Queue | <code>O(V E²)</code> | <code>O(V²)</code> | General purpose max flow |
+| Dinic | BFS level + DFS | <code>O(E √V)</code> | <code>O(V²)</code> | Dense networks |
+| Min-Cost Flow | Dijkstra + PQ | <code>O(F · E log V)</code> | <code>O(V²)</code> | Logistics, optimal assignment |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 17:</strong> This chapter discusses network flow algorithms: Ford-Fulkerson, Edmonds-Karp, Dinic's, and min-cost flow. Use Edmonds-Karp for <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">polynomial time</abbr> guarantees, Dinic's for dense networks requiring high performance, and min-cost flow when minimizing transportation or assignment cost.

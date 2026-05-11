@@ -29,7 +29,7 @@ Before standard complexity analysis existed, comparing algorithms required runni
 It is used during the system design phase to choose the right database indexing strategy, to select appropriate data structures for high-throughput APIs, and to identify potential bottlenecks in legacy systems before they fail under load.
 
 **Memory Mechanics:**
-While primarily a mathematical abstraction, complexity analysis directly mirrors physical memory constraints. A system with `O(n)` <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">Space Complexity</abbr> means memory allocation grows linearly. In <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, this translates to requesting larger blocks from the operating system's memory manager. High space complexity can lead to <abbr title="The process of swapping data between RAM and disk storage when RAM is full.">page swapping</abbr>, causing severe performance degradation as the system resorts to much slower <abbr title="Input/Output operations involving reading from or writing to a physical disk.">disk I/O</abbr>.
+While primarily a mathematical abstraction, complexity analysis directly mirrors physical memory constraints. A system with <code>O(n)</code> <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">Space Complexity</abbr> means memory allocation grows linearly. In <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, this translates to requesting larger blocks from the operating system's memory manager. High space complexity can lead to <abbr title="The process of swapping data between RAM and disk storage when RAM is full.">page swapping</abbr>, causing severe performance degradation as the system resorts to much slower <abbr title="Input/Output operations involving reading from or writing to a physical disk.">disk I/O</abbr>.
 
 ### Operations & Complexity
 
@@ -287,7 +287,7 @@ Asymptotic bounds dictate how aggressive the memory pre-allocation should be. If
 Sometimes absolute worst-case analysis is too pessimistic and rejects practically efficient algorithms. The philosophy behind advanced analysis (like amortized or probabilistic) is to reflect real-world execution mathematically. It acknowledges that an occasional slow operation is acceptable if the vast majority of operations are extremely fast.
 
 **Use Cases:**
-Amortized analysis justifies the use of dynamic arrays (like slices in Go) across all modern programming. Probabilistic analysis is the foundation of randomized algorithms like Bloom filters or randomized QuickSort, which are heavily used in caching and network routing.
+Amortized analysis justifies the use of dynamic arrays (like slices in Go) across all modern programming. Probabilistic analysis is the foundation of randomized algorithms like <abbr title="Probabilistic set membership data structure">Bloom filters</abbr> or randomized QuickSort, which are heavily used in caching and network routing.
 
 **Memory Mechanics:**
 In amortized operations, such as appending to a Go slice, the underlying <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> reaches its capacity and a new, larger <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block must be allocated. The old elements are copied via block memory transfers, and the old block is marked for garbage collection. This single expensive operation costs <code>O(n)</code> memory cycles, but because it happens rarely (due to capacity doubling), the mathematical average memory cost remains <code>O(1)</code>.
@@ -323,14 +323,12 @@ package main
 import (
     "fmt"
     "math/rand"
-    "time"
 )
 
 func randomizedQuickSort(arr []int) {
     if len(arr) <= 1 {
         return
     }
-    rand.Seed(time.Now().UnixNano())
     pivotIdx := rand.Intn(len(arr))
     arr[pivotIdx], arr[len(arr)-1] = arr[len(arr)-1], arr[pivotIdx]
     p := partition(arr)

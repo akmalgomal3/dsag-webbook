@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 52 explores strongly connected components (SCCs): maximal subgraphs where every vertex is reachable from every other vertex, mapping Tarjan's and Kosaraju's algorithms for finding them.
+Chapter 52 explores strongly connected components (SCCs): maximal subgraphs where every vertex is reachable from every other vertex, mapping <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> and <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> algorithms for finding them.
 {{% /alert %}}
 
 ## 52.1. What Are SCCs?
@@ -29,7 +29,7 @@ The philosophy is condensation. Complex directed graphs (like the entire World W
 Analyzing Twitter follow-clusters, optimizing database query joins, and designing compiler logic to handle mutually recursive function calls.
 
 **Memory Mechanics:**
-Kosaraju’s algorithm is a memory-heavy two-pass system. It requires generating a completely reversed graph (`transposed [][]int`). In Go, allocating this duplicate graph essentially doubles the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> footprint, which triggers massive <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead for huge datasets. Tarjan’s algorithm, conversely, executes in a single pass using integer tracking arrays (`discovery` and `low-link`). Tarjan entirely avoids allocating a secondary graph, saving significant <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, but places immense pressure on the recursive <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>.
+<abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's algorithm</abbr> is a memory-heavy two-pass system. It requires generating a completely reversed graph (`transposed [][]int`). In Go, allocating this duplicate graph essentially doubles the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> footprint, which triggers massive <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead for huge datasets. <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's algorithm</abbr>, conversely, executes in a single pass using integer tracking arrays (`discovery` and `low-link`). Tarjan entirely avoids allocating a secondary graph, saving significant <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, but places immense pressure on the recursive <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>.
 
 ### Condensation Graph
 
@@ -159,7 +159,7 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 | No direct stdlib | Implement manually for deep graph analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 52:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. Kosaraju's elegant two-pass approach and Tarjan's single-pass efficiency both achieve <code>O(V + E)</code>, proving that deep structural insights often come from simple traversals.
+<strong>Summary Chapter 52:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> elegant two-pass approach and <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> single-pass efficiency both achieve <code>O(V + E)</code>, proving that deep structural insights often come from simple traversals.
 {{% /alert %}}
 
 ## See Also

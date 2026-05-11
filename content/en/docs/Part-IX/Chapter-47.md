@@ -22,7 +22,7 @@ Chapter 47 explores Bloom filters: a space-efficient probabilistic data structur
 
 **Definition:** A <abbr title="A space-efficient probabilistic data structure that is used to test whether an element is a member of a set, with possible false positives but no false negatives.">Bloom filter</abbr> answers: "Is element X in set S?" with:
 - **"No"** : Definitely not in set (100% accurate)
-- **"Maybe"** : Might be in set (possible false positive)
+- **"Maybe"** : Might be in set (possible <abbr title="An error where a test incorrectly indicates the presence of a condition when it is not present.">false positive</abbr>)
 
 **Background & Philosophy:**
 The philosophy is acceptable inaccuracy. A Bloom Filter trades absolute certainty for extreme compression. It happily accepts a small margin of "False Positives" to mathematically guarantee zero "False Negatives", crushing gigabytes of data down into megabytes.
@@ -153,7 +153,7 @@ p ≈ (1 - e^(-kn/m))^k
 | `github.com/bits-and-blooms` | Production-grade Bloom filters |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 47:</strong> Bloom filters sacrifice absolute certainty for massive space savings. They answer membership queries with no false negatives and tunable false positives — ideal when memory is scarce and a small error rate is acceptable. Every large-scale system from databases to CDNs uses Bloom filters to avoid expensive lookups.
+<strong>Summary Chapter 47:</strong> Bloom filters sacrifice absolute certainty for massive space savings. They answer membership queries with no false negatives and tunable <abbr title="An error where a test incorrectly indicates the presence of a condition when it is not present.">false positives</abbr> — ideal when memory is scarce and a small error rate is acceptable. Every large-scale system from databases to CDNs uses Bloom filters to avoid expensive lookups.
 {{% /alert %}}
 
 ## See Also

@@ -20,10 +20,10 @@ Chapter 33 covers linear programming: fundamental formulation, the Simplex algor
 
 ## 33.1. Linear Programming Formulation
 
-**Definition:** Linear Programming (LP) aims to maximize or minimize a linear objective function subject strictly to linear equality and inequality constraints.
+**Definition:** <abbr title="Optimizing a linear objective function under linear equality and inequality constraints.">Linear Programming</abbr> (LP) aims to maximize or minimize a linear <abbr title="The function to be maximized or minimized in an optimization problem.">objective function</abbr> subject strictly to linear equality and inequality <abbr title="Conditions or restrictions in an optimization problem that define the solution space.">constraints</abbr>.
 
 **Background & Philosophy:**
-The philosophy is geometric optimization. Linear constraints form a convex polygon (or polytope in N-dimensions) representing the "feasible region". The fundamental theorem of LP states that the optimal solution *always* lies on a vertex (corner) of this polytope. Because of this mathematical certainty, solvers do not need to check infinite interior points; they only need to "walk" along the edges from corner to corner until they find the peak.
+The philosophy is geometric optimization. Linear constraints form a convex polygon (or polytope in N-dimensions) representing the <abbr title="The set of all valid solutions satisfying all constraints in an optimization problem.">"feasible region"</abbr>. The fundamental theorem of LP states that the optimal solution *always* lies on a vertex (corner) of this polytope. Because of this mathematical certainty, solvers do not need to check infinite interior points; they only need to "walk" along the edges from corner to corner until they find the peak.
 
 **Use Cases:**
 Airline crew scheduling, financial portfolio optimization, manufacturing supply chains, and routing massive logistical fleets.
@@ -41,7 +41,7 @@ subject to: Ax ≤ b, x ≥ 0
 
 | Algorithm | Worst Case | Average | Description |
 |-----------|------------|---------|------------|
-| Simplex | <code>O(2^n)</code> | <code>O(n³)</code> | Pivot-based <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> traversal |
+| <abbr title="An algorithm for solving linear programming problems by traversing polytope vertices.">Simplex</abbr> | <code>O(2^n)</code> | <code>O(n³)</code> | Pivot-based <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> traversal |
 | Interior Point | <code>O(n³·⁵L)</code> | <code>O(n³)</code> | Strictly polynomial |
 | Dual Simplex | <code>O(2^n)</code> | <code>O(n³)</code> | Starts from a dual feasible state |
 
@@ -117,8 +117,8 @@ func main() {
     constraints := [][3]float64{
         {1, 1, 4},
         {1, 2, 5},
-        {1, 0, 0}, // x >= 0
-        {0, 1, 0}, // y >= 0
+        {-1, 0, 0}, // x >= 0  (encoded as -1*x + 0*y <= 0)
+        {0, -1, 0}, // y >= 0  (encoded as 0*x + -1*y <= 0)
     }
     x, y, val := solve2DLP(3, 2, constraints)
     fmt.Printf("x=%.2f y=%.2f val=%.2f\n", x, y, val)

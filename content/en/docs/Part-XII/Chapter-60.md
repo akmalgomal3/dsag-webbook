@@ -132,7 +132,7 @@ func main() {
 - **Collinear points:** Decide whether to include intermediate points on edges.
 - **Duplicate points:** Remove or handle gracefully.
 - **All points collinear:** Hull is a line segment.
-- **Integer overflow:** Use 64-bit integers for cross products.
+- **Integer overflow:** Use 64-bit integers for <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross products</abbr>.
 
 ## 60.6. Quick Reference
 
@@ -148,7 +148,7 @@ func main() {
 | `image` | Point representations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 60:</strong> The convex hull is computational geometry's gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time with elegant simplicity — sort, then sweep. The cross product, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
+<strong>Summary Chapter 60:</strong> The convex hull is computational geometry's gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time with elegant simplicity — sort, then sweep. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr>, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
 {{% /alert %}}
 
 ## See Also

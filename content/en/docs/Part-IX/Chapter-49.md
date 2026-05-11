@@ -29,7 +29,7 @@ The philosophy is reducing complex string geometries into mathematically sortabl
 Bioinformatics (DNA sequence alignment), full-text search engines, and data compression (Burrows-Wheeler Transform).
 
 **Memory Mechanics:**
-A Suffix Tree allocates a node for every character, severely fragmenting <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. A Suffix Array merely stores an array of integers (the starting indices of suffixes). For a string of length `N`, it strictly requires `O(N)` contiguous memory (just `4N` or `8N` bytes). This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> integer array allows the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch data flawlessly during binary searches, making it vastly superior to Suffix Trees in real-world memory performance.
+A Suffix Tree allocates a node for every character, severely fragmenting <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. A Suffix Array merely stores an array of integers (the starting indices of suffixes). For a string of length `N`, it strictly requires <code>O(N)</code> contiguous memory (just `4N` or `8N` bytes). This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> integer array allows the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch data flawlessly during binary searches, making it vastly superior to Suffix Trees in real-world memory performance.
 
 ### Suffix Array vs Suffix Tree
 

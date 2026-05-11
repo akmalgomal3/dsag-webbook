@@ -27,7 +27,7 @@ Jump to chapters based on what you need to solve.
 
 | Problem Type | Relevant Parts |
 |-------------|----------------|
-| Need fast lookups | Part II (Hashing), Part IX (Bloom Filters) |
+| Need fast lookups | Part II (Hashing), Part IX (<abbr title="Probabilistic set membership data structure">Bloom Filters</abbr>) |
 | Graph problems | Part III, Part IV, Part X |
 | Sorting data | Part V, Part XI |
 | Optimization | Part VI (DP, Greedy), Part XII (Advanced) |
@@ -87,7 +87,7 @@ Use the **search bar** at the top of every page to find:
 - Algorithm names
 - Data structure types
 - Go standard library references
-- Specific concepts (e.g., "cache locality", "amortized analysis")
+- Specific concepts (e.g., "cache locality", "<abbr title="Average cost over worst-case sequence">amortized analysis</abbr>")
 
 ## Additional Resources
 

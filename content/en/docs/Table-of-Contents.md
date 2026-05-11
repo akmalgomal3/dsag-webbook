@@ -1,7 +1,7 @@
 ---
 weight: 200
 title: "Table of Contents"
-description: ""
+description: "Complete table of contents for Modern Data Structures and Algorithms in Go"
 icon: "toc"
 date: "2024-08-24T23:24:06+07:00"
 lastmod: "2024-08-24T23:24:06+07:00"
@@ -15,8 +15,8 @@ Explore the chapters below to dive deep into the advanced programming data struc
 
 ### **Main Sections**
 
-- [**Modern Data Structures and Algorithms in Go**](/docs/dsag/)
-- [**Preface**](/docs/preface/)
+|- [**Modern Data Structures and Algorithms in Go**](/)
+|- [**Preface**](/docs/preface/)
 - [**Foreword**](/docs/foreword/)
 - [**Foreword: A Practitioner's Perspective**](/docs/foreword-2/)
 
