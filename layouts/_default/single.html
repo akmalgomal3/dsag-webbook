@@ -1,26 +1,47 @@
 {{ define "content" }}
 <article class="content-page">
     {{ if .Params.weight }}
-    <nav class="breadcrumb">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="{{ "docs/" | absURL }}">Docs</a>
-        <span>/</span>
+        <span class="breadcrumb-separator"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>
         {{ with .Parent }}
           {{ if ne .Title "Docs" }}
           <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-          <span>/</span>
+          <span class="breadcrumb-separator"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>
           {{ end }}
         {{ end }}
-        <span>{{ .Title }}</span>
+        <span aria-current="page">{{ .Title }}</span>
     </nav>
     {{ end }}
 
-    <header style="margin-bottom: 32px;">
+    <header class="content-header">
         <h1 style="margin-top: 0;">{{ .Title }}</h1>
         {{ with .Description }}<p class="section-description">{{ . }}</p>{{ end }}
+        <div class="content-meta">
+            {{ with .Lastmod }}
+            <span class="lastmod">
+                <time datetime="{{ .Format "2006-01-02" }}">Updated {{ .Format "Jan 2, 2006" }}</time>
+            </span>
+            {{ end }}
+            {{ if .File.Path }}
+            <a href="https://github.com/akmalgomal3/dsag-webbook/edit/main/content/en/docs/{{ .File.Path }}" class="edit-page-link" target="_blank" rel="noopener noreferrer">
+                Edit this page →
+            </a>
+            {{ end }}
+        </div>
     </header>
 
-    <div class="content-body">
-        {{ .Content }}
+    <div class="content-layout">
+        <div class="content-body">
+            {{ .Content }}
+        </div>
+
+        {{ if .TableOfContents }}
+        <aside class="toc-sidebar" aria-label="Table of contents">
+            <div class="toc-title">On this page</div>
+            {{ .TableOfContents }}
+        </aside>
+        {{ end }}
     </div>
 
     {{ $chapters := slice }}
@@ -61,6 +82,50 @@
         {{ end }}
     </nav>
 </article>
+
+<script>
+(function() {
+    var toc = document.querySelector('.toc-sidebar');
+    if (!toc) return;
+    var links = toc.querySelectorAll('a');
+    var headings = [];
+    document.querySelectorAll('.content-body h2[id], .content-body h3[id]').forEach(function(h) {
+        headings.push(h);
+    });
+    if (headings.length === 0 || links.length === 0) return;
+
+    function updateActive() {
+        var found = false;
+        for (var i = headings.length - 1; i >= 0; i--) {
+            var h = headings[i];
+            var rect = h.getBoundingClientRect();
+            if (rect.top <= 120) {
+                var id = h.getAttribute('id');
+                links.forEach(function(link) {
+                    if (link.getAttribute('href') === '#' + id) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            links.forEach(function(link) { link.classList.remove('active'); });
+        }
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+        updateActive();
+    }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+
+    headings.forEach(function(h) { observer.observe(h); });
+    window.addEventListener('scroll', updateActive, { passive: true });
+    updateActive();
+})();
+</script>
 {{ end }}
 
 {{ define "footer" }}

@@ -14,6 +14,7 @@
     <meta name="twitter:title" content="{{ if .Title }}{{ .Title }}{{ else }}{{ .Site.Title }}{{ end }}">
     <meta name="twitter:description" content="{{ with .Description }}{{ . }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}">
     <title>{{ if .Title }}{{ .Title }} - {{ end }}{{ .Site.Title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ "css/style.css" | absURL }}">
     <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | absURL }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
@@ -54,8 +55,10 @@
     </script>
 </head>
 <body>
+    <div class="reading-progress" id="reading-progress"></div>
+
     {{ block "header" . }}
-    <header class="site-header">
+    <header class="site-header" id="site-header">
         <div class="header-inner">
             <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle sidebar">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -97,6 +100,10 @@
         </div>
     </footer>
     {{ end }}
+
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
@@ -217,6 +224,7 @@
         var searchInput = document.getElementById('search-input');
         var searchResults = document.getElementById('search-results');
         var searchIndex = null;
+        var activeSearchIndex = -1;
 
         fetch('{{ "search.json" | absURL }}')
             .then(function(r) { return r.json(); })
@@ -226,6 +234,7 @@
             if (!searchIndex || !query) {
                 searchResults.innerHTML = '';
                 searchResults.style.display = 'none';
+                activeSearchIndex = -1;
                 return;
             }
             query = query.toLowerCase();
@@ -249,7 +258,7 @@
                 var html = '';
                 for (var j = 0; j < matches.length; j++) {
                     var m = matches[j].item;
-                    html += '<a href="' + m.permalink + '" class="search-result-item">' +
+                    html += '<a href="' + m.permalink + '" class="search-result-item" data-index="' + j + '">' +
                         '<div class="search-result-title">' + m.title + '</div>' +
                         '<div class="search-result-summary">' + (m.summary || '').substring(0, 120) + '</div>' +
                         '</a>';
@@ -257,6 +266,18 @@
                 searchResults.innerHTML = html;
             }
             searchResults.style.display = 'block';
+            activeSearchIndex = -1;
+        }
+
+        function updateSearchActive() {
+            var items = searchResults.querySelectorAll('.search-result-item');
+            items.forEach(function(item, idx) {
+                if (idx === activeSearchIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
         }
 
         var searchTimeout;
@@ -268,16 +289,153 @@
         });
 
         searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
+            var items = searchResults.querySelectorAll('.search-result-item');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (activeSearchIndex < items.length - 1) {
+                    activeSearchIndex++;
+                    updateSearchActive();
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (activeSearchIndex > 0) {
+                    activeSearchIndex--;
+                    updateSearchActive();
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (activeSearchIndex >= 0 && items[activeSearchIndex]) {
+                    window.location.href = items[activeSearchIndex].getAttribute('href');
+                } else if (items.length > 0) {
+                    window.location.href = items[0].getAttribute('href');
+                }
+            } else if (e.key === 'Escape') {
                 searchResults.style.display = 'none';
                 searchInput.blur();
+                activeSearchIndex = -1;
             }
         });
 
         document.addEventListener('click', function(e) {
             if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                 searchResults.style.display = 'none';
+                activeSearchIndex = -1;
             }
+        });
+
+        // Header scroll shadow + reading progress bar
+        var siteHeader = document.getElementById('site-header');
+        var readingProgress = document.getElementById('reading-progress');
+        var backToTop = document.getElementById('back-to-top');
+        var scrollThrottle = null;
+
+        function onScroll() {
+            var scrollY = window.scrollY || window.pageYOffset;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+
+            if (readingProgress) {
+                readingProgress.style.width = progress + '%';
+            }
+
+            if (siteHeader) {
+                if (scrollY > 10) {
+                    siteHeader.classList.add('scrolled');
+                } else {
+                    siteHeader.classList.remove('scrolled');
+                }
+            }
+
+            if (backToTop) {
+                if (scrollY > 400) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            }
+        }
+
+        window.addEventListener('scroll', function() {
+            if (scrollThrottle) return;
+            scrollThrottle = setTimeout(function() {
+                scrollThrottle = null;
+                onScroll();
+            }, 16);
+        });
+
+        onScroll();
+
+        // Back to top
+        if (backToTop) {
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Smooth anchor scroll offset (account for sticky header)
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            anchor.addEventListener('click', function(e) {
+                var targetId = anchor.getAttribute('href');
+                if (targetId === '#') return;
+                var target = document.querySelector(targetId);
+                if (target) {
+                    e.preventDefault();
+                    var headerOffset = 80;
+                    var elementPosition = target.getBoundingClientRect().top;
+                    var offsetPosition = elementPosition + window.scrollY - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    history.pushState(null, null, targetId);
+                }
+            });
+        });
+
+        // Sidebar section collapse/expand
+        document.querySelectorAll('.sidebar-section-toggle').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var section = btn.closest('.sidebar-section');
+                if (!section) return;
+                var isExpanded = section.getAttribute('data-expanded') === 'true';
+                var list = section.querySelector('.sidebar-list');
+                var chevron = btn.querySelector('.sidebar-chevron');
+
+                if (isExpanded) {
+                    section.setAttribute('data-expanded', 'false');
+                    if (list) list.style.display = 'none';
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                } else {
+                    section.setAttribute('data-expanded', 'true');
+                    if (list) list.style.display = '';
+                    if (chevron) chevron.style.transform = 'rotate(180deg)';
+                }
+
+                // Persist preference per section
+                var partTitle = section.getAttribute('data-part');
+                if (partTitle) {
+                    try {
+                        var prefs = JSON.parse(sessionStorage.getItem('sidebar-prefs') || '{}');
+                        prefs[partTitle] = !isExpanded;
+                        sessionStorage.setItem('sidebar-prefs', JSON.stringify(prefs));
+                    } catch (err) {}
+                }
+            });
+        });
+
+        // Restore sidebar preferences from sessionStorage
+        document.querySelectorAll('.sidebar-section').forEach(function(section) {
+            var partTitle = section.getAttribute('data-part');
+            if (!partTitle) return;
+            try {
+                var prefs = JSON.parse(sessionStorage.getItem('sidebar-prefs') || '{}');
+                if (prefs.hasOwnProperty(partTitle)) {
+                    var shouldExpand = prefs[partTitle];
+                    var list = section.querySelector('.sidebar-list');
+                    var chevron = section.querySelector('.sidebar-chevron');
+                    section.setAttribute('data-expanded', shouldExpand ? 'true' : 'false');
+                    if (list) list.style.display = shouldExpand ? '' : 'none';
+                    if (chevron) chevron.style.transform = shouldExpand ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+            } catch (err) {}
         });
     });
     </script>

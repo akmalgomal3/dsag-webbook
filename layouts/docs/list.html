@@ -1,8 +1,21 @@
 {{ define "content" }}
 <article class="content-page">
     <header class="section-header">
-        <h1 class="section-title">{{ .Title }}</h1>
-        {{ with .Description }}<p class="section-description">{{ . }}</p>{{ end }}
+        <div class="part-header">
+            {{ $partNum := replaceRE "Part (\\S+).*" "$1" .Title }}
+            {{ if $partNum }}
+            <span class="part-header-badge">{{ $partNum }}</span>
+            {{ end }}
+            <div class="part-header-info">
+                <h1 class="section-title">{{ .Title }}</h1>
+                {{ with .Description }}<p class="section-description">{{ . }}</p>{{ end }}
+            </div>
+        </div>
+        {{ if .Pages }}
+        <div class="part-progress">
+            <span class="progress-indicator">{{ len .Pages }} chapters in this part</span>
+        </div>
+        {{ end }}
     </header>
 
     <div class="content-body">
@@ -13,17 +26,25 @@
     <nav aria-label="Chapters">
         <ul class="chapter-list">
             {{ range .Pages.ByWeight }}
+            {{ $chNum := replaceRE "Chapter (\\d+).*" "$1" .Title }}
             <li>
                 <a href="{{ .RelPermalink }}" class="chapter-card">
                     <div class="chapter-card-inner">
+                        <span class="chapter-number-badge">{{ $chNum }}</span>
                         <span class="chapter-title">{{ .Title }}</span>
-                        <span class="chapter-number">{{ .Description }}</span>
+                        {{ with .Description }}
+                        <span class="chapter-description">{{ . }}</span>
+                        {{ end }}
                     </div>
                 </a>
             </li>
             {{ end }}
         </ul>
     </nav>
+    {{ else }}
+    <div class="empty-state">
+        <p>No chapters available in this part yet.</p>
+    </div>
     {{ end }}
 </article>
 {{ end }}

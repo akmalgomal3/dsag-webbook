@@ -13,12 +13,28 @@
     {{ $docs := .Site.GetPage "section" "docs" }}
     {{ range $docs.Sections.ByWeight }}
       {{ if in .Title "Part" }}
-      <ul class="sidebar-list">
-          <li class="sidebar-section-title">{{ .Title }}</li>
-          {{ range .Pages.ByWeight }}
-          <li><a href="{{ .RelPermalink }}" class="sidebar-link{{ if eq $currentRel .RelPermalink }} active{{ end }}" style="font-size: 0.875rem; padding-left: 16px;">{{ .Title }}</a></li>
-          {{ end }}
-      </ul>
+      {{ $partExpanded := false }}
+      {{ range .Pages.ByWeight }}
+        {{ if eq $currentRel .RelPermalink }}{{ $partExpanded = true }}{{ end }}
+      {{ end }}
+      {{ if eq $currentRel .RelPermalink }}{{ $partExpanded = true }}{{ end }}
+      <div class="sidebar-section" data-part="{{ .Title }}" data-expanded="{{ if $partExpanded }}true{{ else }}false{{ end }}">
+          <button class="sidebar-section-toggle" aria-expanded="{{ if $partExpanded }}true{{ else }}false{{ end }}" aria-label="Toggle {{ .Title }}">
+              <span class="sidebar-section-title">{{ .Title }}</span>
+              <svg class="sidebar-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="{{ if $partExpanded }}transform: rotate(180deg);{{ else }}transform: rotate(0deg);{{ end }} transition: transform 0.3s ease;">
+                  <polyline points="6 9 12 15 18 9"/>
+              </svg>
+          </button>
+          <ul class="sidebar-list" style="{{ if not $partExpanded }}display: none;{{ end }}">
+              {{ range .Pages.ByWeight }}
+              <li>
+                  <a href="{{ .RelPermalink }}" class="sidebar-link{{ if eq $currentRel .RelPermalink }} active{{ end }}" style="font-size: 0.875rem; padding-left: 16px;">
+                      {{ .Title }}
+                  </a>
+              </li>
+              {{ end }}
+          </ul>
+      </div>
       {{ end }}
     {{ end }}
 

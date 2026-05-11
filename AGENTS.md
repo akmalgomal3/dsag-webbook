@@ -56,8 +56,14 @@ katex: true
 
 ## <N>.<M>. <Topic Name>
 
-**Definition:** 1–2 kalimat yang jelas dan actionable. Contoh:
-> "Stack adalah struktur data LIFO (Last-In-First-Out) — elemen terakhir masuk adalah pertama keluar."
+**Definition:** 1-2 kalimat yang jelas dan actionable. Contoh:
+> "Stack adalah struktur data LIFO (Last-In-First-Out) -- elemen terakhir masuk adalah pertama keluar."
+
+**Background & Philosophy:** 2-4 sentences covering the rationale, design philosophy, or historical motivation. Why does this structure/algorithm exist? What problem does it solve at a conceptual level? Part VIII chapters will expand on history; keep it intuition-focused elsewhere.
+
+**Use Cases:** 2-3 sentences describing practical scenarios where this structure/algorithm shines (and when it doesn't). Connect to real engineering decisions.
+
+**Memory Mechanics:** 2-4 sentences explaining how this structure/algorithm behaves in memory (CPU cache, heap allocations, pointer chasing, spatial/temporal locality, Go GC implications). Every chapter MUST include this -- it is the unique value proposition of the DSAG book.
 
 ### Operations & Complexity
 
@@ -73,25 +79,31 @@ katex: true
 - Gunakan `sync.Mutex` untuk concurrency
 - Gunakan `strings.Builder` untuk string building
 - Gunakan `math/bits` untuk bitwise operations
-- Hindari pseudocode yang redundan — langsung ke Go
+- Hindari pseudocode yang redundan -- langsung ke Go
 - Hindari kode dari bahasa lain (JANGAN pakai `Vec<T>`, `impl`, `let mut`, dll)
 
-### Decision Matrix
+### Decision Matrix (RECOMMENDED)
 
-| Pakai <Ini> Kalau... | Hindari Kalau... |
+| Use This When... | Avoid If... |
 |---------------------|------------------|
 | ...                 | ...              |
 
-### Edge Cases & Pitfalls
+*Not all chapters need a formal Decision Matrix section. If the trade-offs are obvious from context, skip it or fold into Use Cases.*
+
+### Edge Cases & Pitfalls (RECOMMENDED)
 
 - **Case 1:** Deskripsi singkat
 - **Case 2:** Deskripsi singkat
 
-### Quick Reference (per chapter)
+*Focus on Go-specific pitfalls (nil dereferences, GC pressure, integer overflow, slice aliasing). Anti-patterns are folded into this section or into Idiomatic Go Implementation alerts.*
 
-| Struktur | Go Type | Akses | Insert | Delete | Use Case |
-|----------|---------|-------|--------|--------|----------|
-| ...      | ...     | ...   | ...    | ...    | ...      |
+### Quick Reference (format flexible)
+
+Table format varies per chapter. Common columns: Name | Go Type | Time | Space | Use Case. May appear as `##` (H2) or `###` (H3) depending on chapter flow.
+
+| Name | Go Type | Complexity | Use Case |
+|------|---------|-----------|----------|
+| ...  | ...     | ...       | ...      |
 ```
 
 ### Rules
@@ -99,11 +111,11 @@ katex: true
 1. **NO redundant pseudocode** — pseudocode hanya untuk konsep non-trivial
 2. **NO language mixing** — kode harus Go idiomatik, bukan Rust/C++/Python yang di-relabel
 3. **NO verbose narratives** — maksimal 1 paragraf per konsep
-4. **NO historical background** — pembaca sudah tahu DS penting
+4. **Background & Philosophy is REQUIRED** — 2-4 sentences per section, focus on intuition and rationale. Part VIII chapters may expand to full historical treatment.
 5. **NO mathematical proofs** — intuisi > proof
-6. **MUST include decision matrix** — "pakai ini kalau..."
+6. **Decision Matrix is RECOMMENDED** — include when trade-offs are non-obvious; skip when context makes them clear
 7. **MUST include Go stdlib references** — `container/heap`, `sync.Map`, dsb.
-8. **MUST include anti-patterns** — kesalahan umum di Go
+8. **Anti-patterns section is OPTIONAL** — flag common Go mistakes inline in Edge Cases & Pitfalls or as alerts in Idiomatic Go Implementation. Do NOT create a standalone section unless a chapter specifically needs it.
 9. **MUST include Big-O table** — minimal untuk operasi utama
 10. **Code max 40 lines** per block — jika lebih, split menjadi fungsi terpisah
 
@@ -297,10 +309,10 @@ title: "Part VI - <Title>"
 - [ ] Hugo builds without errors (`hugo --quiet`)
 - [ ] No corrupted shortcode tags
 - [ ] Code is idiomatic Go (not Rust/Python/C++)
-- [ ] Chapter follows the template structure
-- [ ] Decision matrix included
+- [ ] Chapter follows the template structure (Definition, Background & Philosophy, Use Cases, Memory Mechanics, Operations & Complexity, Idiomatic Go Implementation)
+- [ ] Decision matrix included (if trade-offs are non-obvious)
 - [ ] Big-O table included
-- [ ] Edge cases listed
+- [ ] Edge cases listed (Go-specific pitfalls covered)
 - [ ] Go stdlib references included
 - [ ] No empty content without placeholder
 - [ ] Chapter title format: `Chapter N - [Description]`

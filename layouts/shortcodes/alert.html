@@ -1,9 +1,31 @@
 {{ $context := .Get "context" | default "info" }}
-{{ $icon := .Get "icon" | default "" }}
+{{ $iconParam := .Get "icon" }}
+{{ $title := .Get "title" }}
+
 {{ $class := "alert-info" }}
-{{ if eq $context "success" }}{{ $class = "alert-success" }}{{ end }}
-{{ if eq $context "warning" }}{{ $class = "alert-warning" }}{{ end }}
-{{ if eq $context "danger" }}{{ $class = "alert-danger" }}{{ end }}
+{{ $icon := "💡" }}
+
+{{ if eq $context "success" }}
+  {{ $class = "alert-success" }}
+  {{ $icon = "🎯" }}
+{{ else if eq $context "warning" }}
+  {{ $class = "alert-warning" }}
+  {{ $icon = "📌" }}
+{{ else if eq $context "error" }}
+  {{ $class = "alert-error" }}
+  {{ $icon = "⚠️" }}
+{{ end }}
+
+{{ if $iconParam }}{{ $icon = $iconParam }}{{ end }}
+
 <div class="alert {{ $class }}">
-{{ .Inner }}
+  <div class="alert-header">
+    <span class="alert-icon" aria-hidden="true">{{ $icon }}</span>
+    {{ if $title }}
+    <span class="alert-title">{{ $title }}</span>
+    {{ end }}
+  </div>
+  <div class="alert-body">
+    {{ .Inner }}
+  </div>
 </div>
