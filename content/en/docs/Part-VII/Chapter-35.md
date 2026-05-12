@@ -1,249 +1,105 @@
 ---
-weight: 70700
-title: "Chapter 35: String Matching Algorithms"
-description: "String Matching Algorithms"
+weight: 70800
+title: "Chapter 35: Approximate Algorithms"
+description: "Approximate Algorithms"
 icon: "article"
-date: "2024-08-24T23:42:50+07:00"
-lastmod: "2024-08-24T23:42:50+07:00"
+date: "2024-08-24T23:42:51+07:00"
+lastmod: "2024-08-24T23:42:51+07:00"
 draft: false
 toc: true
 katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithmic thinking is a fundamental part of our toolbox, helping us solve problems with precision and elegance.</em>" : Donald Knuth</strong>
+<strong>"<em>Algorithms are the soul of computing, and approximate algorithms are the art of making the impossible possible.</em>" : David Williamson</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 35 covers powerful <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: Naive, <abbr title="A linear-time string matching algorithm using prefix-suffix tables.">KMP</abbr>, <abbr title="A string matching algorithm scanning right to left using heuristics.">Boyer-Moore</abbr>, <abbr title="A string matching algorithm using rolling hash for efficient comparison.">Rabin-Karp</abbr>, and <abbr title="A multi-pattern string matching algorithm using a trie with failure links.">Aho-Corasick</abbr> implemented natively in Go.
+Chapter 36 explores approximation algorithms: greedy heuristics, local search, and randomized rounding tailored specifically for solving NP-hard problems.
 {{% /alert %}}
 
-## 35.1. Naive <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr>
+## 36.1. Greedy Approximation
 
-**Definition:** The naive algorithm meticulously compares the targeted pattern directly against every possible overlapping position sequentially along the text.
+**Definition:** Greedy algorithms continuously select the locally optimal choice at every isolated step. For a variety of <abbr title="A class of problems at least as hard as NP-Complete problems.">NP-hard</abbr> problems, a greedy approach yields a mathematically provable, bounded <abbr title="A guarantee of how close an approximation is to the optimal solution.">approximation ratio</abbr>.
 
 **Background & Philosophy:**
-The philosophy is recognizing patterns efficiently. Instead of treating text as a random stream, advanced <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms preprocess the pattern (or the text) to map out structural repetitions. They mathematically guarantee that if a mismatch occurs, the algorithm skips chunks of text it already knows cannot match.
+The philosophy embraces pragmatic imperfection. When a problem is <abbr title="A class of problems at least as hard as NP-Complete problems.">NP-Hard</abbr> (like calculating the flawless shortest route for 1,000 delivery trucks), finding the perfect mathematical answer might take a supercomputer millions of years. Approximate algorithms proudly trade absolute perfection for guaranteed speed, securing answers that are "good enough" (e.g., guaranteed to be no worse than 2x the optimal cost).
 
 **Use Cases:**
-The UNIX `grep` command, DNA sequence analysis in bioinformatics, and virus signature scanning in antivirus software.
+Heuristic routing in Google Maps, grouping millions of distinct products into the fewest possible shipping boxes (Set Cover), and optimizing layouts for microchip circuitry.
 
 **Memory Mechanics:**
-<abbr title="Finding occurrences of a pattern within a text">String matching</abbr> fundamentally operates on raw bytes. Preprocessing algorithms like KMP allocate a small `LPS` array (Longest Prefix Suffix) directly proportional to the pattern's size <code>O(m)</code>. This extremely tiny array sits comfortably in the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. During the search phase, the algorithm scans the massive text file linearly. The CPU's hardware prefetcher identifies this forward memory access pattern and streams the text from <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> at peak bus speed, completely eliminating <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
+Because approximate algorithms often fall back on greedy sorting or minimum spanning trees (MST), their memory footprint heavily depends on the underlying graph structures. A common greedy approximation requires sorting edge weights <code>O(E log E)</code>, relying entirely on <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slices that process quickly in <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>. Randomization (like Max-Cut) simply iterates through memory flipping bits randomly, which operates efficiently but places heavy demands on the entropy generator's shared memory lock if not isolated per thread.
 
 ### Operations & Complexity
 
-| Case | Time | Space |
-|-------|------|-------|
-| Best | <code>O(n)</code> | Pattern matched instantly at the start |
-| Average | <code>O(n × m)</code> | Standard exhaustive search |
-| Worst | <code>O(n × m)</code> | Highly repetitive, overlapping patterns |
+| Problem | Approx Ratio | Time | Description |
+|---------|-------------|------|------------|
+| Set Cover | H(n) ≈ ln n | <code>O(n log n)</code> | Greedy iteratively picks the maximum coverage |
+| <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover | 2 | <code>O(V + E)</code> | Pick both endpoints of an uncovered <abbr title="A connection between two vertices in a graph.">edge</abbr> |
+| Knapsack (fractional) | 1 (Exact) | <code>O(n log n)</code> | Strictly optimal for fractional variables |
+| TSP (metric) | 2 (MST-based) | <code>O(V²)</code> | Employs the double-tree technique |
 
-### Pseudocode
-
-```text
-NaiveSearch(text, pattern):
-    positions = empty list
-    n = length(text), m = length(pattern)
-    for i from 0 to n-m:
-        match = true
-        for j from 0 to m-1:
-            if text[i+j] != pattern[j]:
-                match = false
-                break
-        if match:
-            append i to positions
-    return positions
-```
-
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "sort"
+)
 
-func naiveSearch(text, pattern string) []int {
-    var positions []int
-    n, m := len(text), len(pattern)
-    if m == 0 || m > n {
-        return positions
-    }
-    for i := 0; i <= n-m; i++ {
-        match := true
-        for j := 0; j < m; j++ {
-            if text[i+j] != pattern[j] {
-                match = false
-                break
-            }
-        }
-        if match {
-            positions = append(positions, i)
-        }
-    }
-    return positions
+// Fractional Knapsack - mathematically optimal greedy approach
+type Item struct {
+    Weight int
+    Value  int
 }
 
-func main() {
-    text := "ABABDABACDABABCABAB"
-    pattern := "ABABCABAB"
-    fmt.Println("Positions:", naiveSearch(text, pattern))
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-Go dictates string indexing at the raw byte <abbr title="The set of all nodes at a given depth.">level</abbr>. To correctly parse multi-byte Unicode strings, aggressively convert them into a `[]rune` <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> first. Nevertheless, traditional string matching algorithms fundamentally operate upon standard byte arrays.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use Naive When... | Avoid If... |
-|----------------------|------------------|
-| Rapidly prototyping, or managing tiny text streams | The text is massive, and the pattern displays fierce repetition |
-| The pattern length m < 5 | The pattern length m is huge (> 100) |
-
-### Edge Cases & Pitfalls
-
-- **Empty pattern:** Decide to either return all possible positions natively or exit immediately yielding an empty slice.
-- **Unicode formatting:** The `len(string)` function exclusively counts raw bytes, blatantly ignoring actual visual runes.
-
-## 35.2. Knuth-Morris-Pratt (KMP)
-
-**Definition:** The <abbr title="The Knuth-Morris-Pratt string-searching algorithm that searches for occurrences of a word within a text.">KMP algorithm</abbr> aggressively leverages the intricate <abbr title="A substring at the beginning of a string.">prefix</abbr>-<abbr title="A substring at the end of a string.">suffix</abbr> data derived from the Longest Prefix Suffix (LPS) <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> to expertly circumvent completely redundant data comparisons.
-
-### Operations & Complexity
-
-| Operation | Time | Space |
-|---------|------|-------|
-| Preprocessing LPS | <code>O(m)</code> | <code>O(m)</code> |
-| Search | <code>O(n)</code> | <code>O(m)</code> |
-| Total | <code>O(n + m)</code> | <code>O(m)</code> |
-
-### Pseudocode
-
-```text
-ComputeLPS(pattern):
-    m = length(pattern)
-    lps = new array of size m initialized to 0
-    length = 0
-    i = 1
-    while i < m:
-        if pattern[i] == pattern[length]:
-            length += 1
-            lps[i] = length
-            i += 1
-        else:
-            if length != 0:
-                length = lps[length-1]
-            else:
-                lps[i] = 0
-                i += 1
-    return lps
-
-KMPSearch(text, pattern):
-    n = length(text), m = length(pattern)
-    lps = ComputeLPS(pattern)
-    i, j = 0, 0
-    while i < n:
-        if text[i] == pattern[j]:
-            i += 1; j += 1
-        if j == m:
-            report match at i-j
-            j = lps[j-1]
-        else if i < n and text[i] != pattern[j]:
-            if j != 0: j = lps[j-1]
-            else: i += 1
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-func computeLPS(pattern string) []int {
-    m := len(pattern)
-    lps := make([]int, m)
-    length := 0
-    for i := 1; i < m; {
-        if pattern[i] == pattern[length] {
-            length++
-            lps[i] = length
-            i++
+func fractionalKnapsack(items []Item, capacity int) float64 {
+    sort.Slice(items, func(i, j int) bool {
+        vi, vj := float64(items[i].Value)/float64(items[i].Weight),
+            float64(items[j].Value)/float64(items[j].Weight)
+        return vi > vj
+    })
+    totalValue := 0.0
+    remaining := capacity
+    for _, item := range items {
+        if remaining <= 0 {
+            break
+        }
+        if item.Weight <= remaining {
+            totalValue += float64(item.Value)
+            remaining -= item.Weight
         } else {
-            if length != 0 {
-                length = lps[length-1]
-            } else {
-                lps[i] = 0
-                i++
-            }
+            totalValue += float64(item.Value) * float64(remaining) / float64(item.Weight)
+            remaining = 0
         }
     }
-    return lps
-}
-
-func kmpSearch(text, pattern string) []int {
-    var positions []int
-    n, m := len(text), len(pattern)
-    if m == 0 {
-        return positions
-    }
-    lps := computeLPS(pattern)
-    i, j := 0, 0
-    for i < n {
-        if text[i] == pattern[j] {
-            i++
-            j++
-        }
-        if j == m {
-            positions = append(positions, i-j)
-            j = lps[j-1]
-        } else if i < n && text[i] != pattern[j] {
-            if j != 0 {
-                j = lps[j-1]
-            } else {
-                i++
-            }
-        }
-    }
-    return positions
+    return totalValue
 }
 
 func main() {
-    text := "ABABDABACDABABCABAB"
-    pattern := "ABABCABAB"
-    fmt.Println("KMP:", kmpSearch(text, pattern))
+    items := []Item{{10, 60}, {20, 100}, {30, 120}}
+    fmt.Println("Max value:", fractionalKnapsack(items, 50))
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-KMP achieves peak optimality when dealing with texts packed with repetitive prefix-suffix overlaps. However, for exceptionally large alphabets, Boyer-Moore routinely outpaces it.
+Fractional knapsack is flawlessly optimal because it can act greedily based solely upon the <abbr title="The data associated with a key in a key-value pair.">value</abbr>/weight ratio. The strict 0/1 Knapsack is absolutely NOT optimal utilizing a greedy approach; you must deploy DP or a Fully <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">Polynomial Time</abbr> Approximation Scheme (<abbr title="Fully Polynomial Time Approximation Scheme - finds near-optimal solutions in polynomial time.">FPTAS</abbr>).
 {{% /alert %}}
 
-### Decision Matrix
+## 36.2. <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover 2-Approximation
 
-| Use KMP When... | Avoid If... |
-|--------------------|------------------|
-| Analyzing massive text chunks featuring a medium-sized pattern | Operating over a large alphabet where pattern matches are rare |
-| A guaranteed, airtight <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n)</code> performance is mandated | Extensive heuristic leaping and skipping is highly preferred |
-
-### Edge Cases & Pitfalls
-
-- **LPS bounds violation:** Assiduously confirm `length = lps[length-1]` is executed solely if `length > 0`.
-- **Pattern length 1:** The generated LPS is merely `[0]`; manually handle this if optimizing heavily.
-
-## 35.3. Boyer-Moore
-
-**Definition:** Boyer-Moore evaluates patterns in complete reverse (from right to left) and relies upon a "bad character" heuristic to perform massive leaps and skips over mismatching data blocks.
+**Definition:** A <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover is a curated set of vertices that seamlessly touches every single <abbr title="A connection between two vertices in a graph.">edge</abbr> within a <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>. A greedy 2-approximation vigorously selects both endpoints of any <abbr title="A connection between two vertices in a graph.">edge</abbr> that currently remains uncovered.
 
 ### Operations & Complexity
 
-| Case | Time | Space |
-|-------|------|-------|
-| Best | <code>O(n/m)</code> | Featuring massive skips |
-| Average | <code>O(n/m)</code> | . |
-| Worst | <code>O(n × m)</code> | When all input characters are painfully identical |
+| Algorithm | Approx Ratio | Time | Space |
+|-----------|-------------|------|-------|
+| Greedy (both endpoints) | 2 | <code>O(V + E)</code> | <code>O(V)</code> |
+| LP Rounding | 2 | <code>O(poly)</code> | <code>O(V + E)</code> |
+| Best known mathematical | 2 - o(1) | . | A formal PTAS does not exist yet |
 
 ### Idiomatic Go Implementation
 
@@ -252,237 +108,167 @@ package main
 
 import "fmt"
 
-func preprocessBadChar(pattern string) [256]int {
-    var badChar [256]int
-    for i := range badChar {
-        badChar[i] = -1
-    }
-    for i := 0; i < len(pattern); i++ {
-        badChar[pattern[i]] = i
-    }
-    return badChar
+type Graph struct {
+    V     int
+    Edges [][2]int
 }
 
-func boyerMooreSearch(text, pattern string) []int {
-    var positions []int
-    n, m := len(text), len(pattern)
-    if m == 0 || m > n {
-        return positions
-    }
-    badChar := preprocessBadChar(pattern)
-    shift := 0
-    for shift <= n-m {
-        j := m - 1
-        for j >= 0 && pattern[j] == text[shift+j] {
-            j--
-        }
-        if j < 0 {
-            positions = append(positions, shift)
-            if shift+m < n {
-                shift += m - badChar[text[shift+m]]
-            } else {
-                shift++
-            }
-        } else {
-            bc := badChar[text[shift+j]]
-            if bc == -1 {
-                shift += j + 1
-            } else {
-                skip := j - bc
-                if skip < 1 {
-                    skip = 1
-                }
-                shift += skip
-            }
-        }
-    }
-    return positions
-}
-
-func main() {
-    text := "ABAAABCD"
-    pattern := "ABC"
-    fmt.Println("BM:", boyerMooreSearch(text, pattern))
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-A basic Boyer-Moore employing only the bad character heuristic stands exceptionally practical. Adding the good suffix rule actively repairs the <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> scenario but severely tangles complexity. For strict production integrity, aggressively lean on Go's deeply optimized `strings.Index`.
-{{% /alert %}}
-
-## 35.4. Rabin-Karp
-
-**Definition:** The <abbr title="A string-searching algorithm using hashing to find patterns in a text.">Rabin-Karp algorithm</abbr> meticulously calculates a rolling mathematical hash to seamlessly compare a pattern <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> directly alongside text substrings.
-
-### Operations & Complexity
-
-| Case | Time | Space |
-|-------|------|-------|
-| Average | <code>O(n + m)</code> | <code>O(1)</code> |
-| Worst | <code>O(n × m)</code> | <code>O(1)</code> (Hash <abbr title="An event when two keys hash to the same index.">collision</abbr>) |
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-const primeRK = 16777619
-
-func rabinKarpSearch(text, pattern string) []int {
-    var positions []int
-    n, m := len(text), len(pattern)
-    if m == 0 || m > n {
-        return positions
-    }
-    var hashP, hashT uint32
-    var pow uint32 = 1
-    for i := 0; i < m-1; i++ {
-        pow = pow * primeRK
-    }
-    for i := 0; i < m; i++ {
-        hashP = hashP*primeRK + uint32(pattern[i])
-        hashT = hashT*primeRK + uint32(text[i])
-    }
-    for i := 0; i <= n-m; i++ {
-        if hashP == hashT {
-            match := true
-            for j := 0; j < m; j++ {
-                if text[i+j] != pattern[j] {
-                    match = false
-                    break
-                }
-            }
-            if match {
-                positions = append(positions, i)
-            }
-        }
-        if i < n-m {
-            hashT = (hashT-uint32(text[i])*pow)*primeRK + uint32(text[i+m])
-        }
-    }
-    return positions
-}
-
-func main() {
-    text := "AABAACAADAABAAABAA"
-    pattern := "AABA"
-    fmt.Println("RK:", rabinKarpSearch(text, pattern))
-}
-```
-
-## 35.5. Aho-Corasick
-
-**Definition:** Aho-Corasick systematically erects a robust finite <abbr title="A self-operating state machine or computational model.">state machine</abbr> (a <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> fortified with failure links) engineered specifically to unearth numerous scattered patterns efficiently in a single, blazing-fast pass.
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-type ACNode struct {
-    children [256]*ACNode
-    fail     *ACNode
-    output   []string
-    isEnd    bool
-}
-
-func buildTrie(patterns []string) *ACNode {
-    root := &ACNode{}
-    for _, p := range patterns {
-        node := root
-        for i := 0; i < len(p); i++ {
-            c := p[i]
-            if node.children[c] == nil {
-                node.children[c] = &ACNode{}
-            }
-            node = node.children[c]
-        }
-        node.isEnd = true
-        node.output = append(node.output, p)
-    }
-    return root
-}
-
-func buildFailureLinks(root *ACNode) {
-    queue := []*ACNode{}
-    for c := 0; c < 256; c++ {
-        if child := root.children[c]; child != nil {
-            child.fail = root
-            queue = append(queue, child)
-        }
-    }
-    for len(queue) > 0 {
-        node := queue[0]
-        queue = queue[1:]
-        for c := 0; c < 256; c++ {
-            child := node.children[c]
-            if child == nil {
+func vertexCoverApprox(g Graph) map[int]bool {
+    covered := make(map[int]bool)
+    used := make([]bool, len(g.Edges))
+    for {
+        found := false
+        for i, e := range g.Edges {
+            if used[i] {
                 continue
             }
-            fail := node.fail
-            for fail != nil && fail.children[c] == nil {
-                fail = fail.fail
+            u, v := e[0], e[1]
+            if !covered[u] && !covered[v] {
+                covered[u] = true
+                covered[v] = true
+                used[i] = true
+                found = true
+                break
             }
-            if fail == nil {
-                child.fail = root
-            } else {
-                child.fail = fail.children[c]
-                child.output = append(child.output, child.fail.output...)
-            }
-            queue = append(queue, child)
+        }
+        if !found {
+            break
         }
     }
-}
-
-func ahoCorasickSearch(text string, root *ACNode) map[string][]int {
-    matches := make(map[string][]int)
-    node := root
-    for i := 0; i < len(text); i++ {
-        c := text[i]
-        for node != root && node.children[c] == nil {
-            node = node.fail
-        }
-        if child := node.children[c]; child != nil {
-            node = child
-        }
-        for _, pattern := range node.output {
-            matches[pattern] = append(matches[pattern], i-len(pattern)+1)
-        }
-    }
-    return matches
+    return covered
 }
 
 func main() {
-    patterns := []string{"he", "she", "his", "hers"}
-    root := buildTrie(patterns)
-    buildFailureLinks(root)
-    text := "ahishers"
-    matches := ahoCorasickSearch(text, root)
-    fmt.Println("Matches:", matches)
+    g := Graph{V: 4, Edges: [][2]int{{0, 1}, {1, 2}, {2, 3}, {3, 0}}}
+    cover := vertexCoverApprox(g)
+    fmt.Println("Vertex Cover:", cover)
 }
 ```
+
+## 36.3. Metric TSP Heuristic (Nearest Neighbor)
+
+**Definition:** A Metric TSP explicitly fulfills the triangle inequality. The Nearest Neighbor heuristic constructs a tour by repeatedly visiting the closest unvisited city. This is a practical heuristic (not a constant-factor approximation) — in the worst case, nearest neighbor can produce tours up to O(log n) times the optimal. For a provable 2-approximation, use the MST double-tree approach: compute an MST, double its edges, form an Euler tour, and shortcut repeated vertices.
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func nearestNeighborTSP(dist [][]float64) []int {
+    n := len(dist)
+    visited := make([]bool, n)
+    tour := make([]int, 0, n)
+    current := 0
+    visited[current] = true
+    tour = append(tour, current)
+    for len(tour) < n {
+        next := -1
+        minDist := math.MaxFloat64
+        for i := 0; i < n; i++ {
+            if !visited[i] && dist[current][i] < minDist {
+                minDist = dist[current][i]
+                next = i
+            }
+        }
+        if next == -1 {
+            break
+        }
+        visited[next] = true
+        tour = append(tour, next)
+        current = next
+    }
+    return tour
+}
+
+func tourLength(tour []int, dist [][]float64) float64 {
+    total := 0.0
+    for i := 0; i < len(tour); i++ {
+        j := (i + 1) % len(tour)
+        total += dist[tour[i]][tour[j]]
+    }
+    return total
+}
+
+func main() {
+    dist := [][]float64{
+        {0, 10, 15, 20},
+        {10, 0, 35, 25},
+        {15, 35, 0, 30},
+        {20, 25, 30, 0},
+    }
+    tour := nearestNeighborTSP(dist)
+    fmt.Println("Tour:", tour)
+    fmt.Println("Length:", tourLength(tour, dist))
+}
+```
+
+## 36.4. Randomized Approximation
+
+**Definition:** Randomized algorithms inject calculated random choices to forge an expected, highly reliable approximation ratio.
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import (
+    "fmt"
+    "math/rand"
+)
+
+func maxCutRandom(edges [][2]int, n int) (map[int]bool, int) {
+    setA := make(map[int]bool)
+    for i := 0; i < n; i++ {
+        if rand.Float64() < 0.5 {
+            setA[i] = true
+        }
+    }
+    cutSize := 0
+    for _, e := range edges {
+        _, inA := setA[e[0]]
+        _, inB := setA[e[1]]
+        if inA != inB {
+            cutSize++
+        }
+    }
+    return setA, cutSize
+}
+
+func main() {
+    edges := [][2]int{{0, 1}, {1, 2}, {2, 3}, {3, 0}, {0, 2}}
+    set, size := maxCutRandom(edges, 4)
+    fmt.Println("Set A:", set)
+    fmt.Println("Cut size:", size)
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amplification tactic: execute the algorithm <code>k</code> times, aggressively picking the absolute best result to crush the probability of failure exponentially.
+{{% /alert %}}
 
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Naive | . | <code>O(nm)</code> | <code>O(1)</code> | Early prototyping |
-| KMP | preprocessed | <code>O(n)</code> | <code>O(m)</code> | Deep <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantees |
-| Boyer-Moore | preprocessed | <code>O(n/m)</code> avg | <code>O(\sigma)</code> | Utilizing large character alphabets |
-| Rabin-Karp | hashed | <code>O(n)</code> avg | <code>O(1)</code> | Running multiple simultaneous pattern scans |
-| Aho-Corasick | <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> | <code>O(n + occ)</code> | <code>O(\sum m)</code> | Full dictionary text matching |
-| `strings.Index` | builtin | hyper-optimized | <code>O(1)</code> | Primary production single <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> |
+| <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover | `map[int]bool` | <code>O(V+E)</code> | <code>O(V)</code> | Greedy 2-approx |
+| Set Cover | <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority queue</abbr> | <code>O(n log n)</code> | varies | Greedy ln n-approx |
+| TSP Metric | `[]int` tour | <code>O(n^2)</code> | <code>O(n)</code> | 2-approx MST double-tree |
+| TSP Metric | `[]int` tour | <code>O(n^3)</code> | <code>O(n)</code> | 1.5-approx Christofides |
+| Max-Cut | `map[int]bool` | <code>O(E)</code> | <code>O(V)</code> | Random partition |
+| Knapsack Frac | `[]Item` | <code>O(n log n)</code> | <code>O(n)</code> | Greedy optimal |
+| Knapsack 0/1 | DP | 1 | <code>O(nW)</code> | `[][]int` matrix |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 35:</strong> This chapter dissects <abbr title="A field or set of fields used to identify a record.">key</abbr> <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: the Naive approach achieving <code>O(nm)</code>, KMP reliably offering <code>O(n+m)</code>, Boyer-Moore's rapid <code>O(n/m)</code> average, Rabin-Karp utilizing efficient rolling hashes, and the powerful Aho-Corasick for dense multiple-pattern environments. Leverage KMP to lock down a strict <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantee, Boyer-Moore to aggressively handle wide alphabets, and Aho-Corasick for sweeping dictionary matches.
+<strong>Summary Chapter 34:</strong> This chapter discusses approximation algorithms designed for NP-hard problems: greedy fractional knapsack (provably optimal), a 2-approximation for <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover, nearest neighbor and Christofides methods for metric TSP, alongside a randomized Max-Cut approach. Leverage greedy techniques for lightning-fast solutions, randomized algorithms for robust expected ratios, and Christofides for a rigorous 1.5 guarantee on metric TSPs.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 34: Polynomial and FFT](/docs/Part-VII/Chapter-34/)
-- [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)
-- [Chapter 49: Suffix Arrays](/docs/Part-IX/Chapter-49/)
+- [Chapter 24: Greedy Algorithms](/docs/Part-VI/Chapter-24/)
+- [Chapter 27: Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-27/)
+- [Chapter 42: Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-42/)

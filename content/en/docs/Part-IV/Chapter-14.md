@@ -187,4 +187,4 @@ func main() {
 
 - [Chapter 12: Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
 - [Chapter 13: Graph Traversal Algorithms](/docs/Part-IV/Chapter-13/)
-- [Chapter 53: A* Search](/docs/Part-X/Chapter-53/)
+- [Chapter 52: A* Search](/docs/Part-X/Chapter-52/)

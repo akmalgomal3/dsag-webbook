@@ -1,143 +1,61 @@
 ---
-weight: 60500
-title: "Chapter 27: Advanced Recursive Algorithms"
-description: "Advanced Recursive Algorithms"
+weight: 60600
+title: "Chapter 27: Probabilistic and Randomized Algorithms"
+description: "Probabilistic and Randomized Algorithms"
 icon: "article"
-date: "2024-08-24T23:42:45+07:00"
-lastmod: "2024-08-24T23:42:45+07:00"
+date: "2024-08-24T23:42:52+07:00"
+lastmod: "2024-08-24T23:42:52+07:00"
 draft: false
 toc: true
 katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A recursive function calls itself, like a mirror facing a mirror, reflecting a problem into simpler and simpler versions of itself until it vanishes.</em>" : Brian Kernighan</strong>
+<strong>"<em>A good algorithm is a beautiful thing, but its beauty is often in its simplicity. The most complex algorithms are those that use randomization effectively.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 27 covers advanced <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>: <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, recursive data structures, <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, and <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr> — all implemented idiomatically in Go.
+Chapter 28 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized quicksort, skip lists, and powerful primality testing.
 {{% /alert %}}
 
-## 27.1. Fundamentals of <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr>
+## 28.1. Randomized QuickSort
 
-**Definition:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> is a programming technique where a function calls itself to solve smaller sub-problems until it reaches a base case.
+**Definition:** QuickSort utilizing a randomly selected pivot successfully avoids the catastrophic <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n^2)</code> specifically found on already sorted inputs.
 
 **Background & Philosophy:**
-The philosophy elevates recursion from a simple loop replacement to a structural paradigm. It treats functions as mathematical formulas that map complex states to simpler sub-states, proving algorithmic correctness through induction.
+The philosophy is trading absolute certainty for overwhelming probability. Deterministic algorithms often hit pathological worst-cases crafted by malicious inputs or unlucky sequential data. Injecting randomness (Las Vegas method) breaks these deterministic worst-cases mathematically, ensuring that <code>O(n log n)</code> execution is highly expected regardless of input distribution.
 
 **Use Cases:**
-Tree Traversals, parsing hierarchical data structures like ASTs in compilers, and orchestrating complex distributed tasks.
+Randomized QuickSort is the underlying default sorting strategy in modern standard libraries, used constantly when data comes from untrusted networks where users might submit intentionally sorted arrays to DDOS the server via worst-case CPU burn.
 
 **Memory Mechanics:**
-Advanced recursion heavily loads the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. In Go, parallel recursion (spawning goroutines for sub-branches) shifts this load from a single deep stack to thousands of shallow, 2KB <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> stacks spread across the <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. This enables massive horizontal scaling without single-thread <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>, provided the developer sets a threshold to avoid <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> overhead for trivially small sub-problems.
+Randomization heavily relies on Pseudo-Random Number Generators (PRNGs). Fetching from a PRNG requires querying a shared internal state. If multiple <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> request random numbers from the global `rand.Seed`, it creates massive <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> at the memory level. High-performance randomized algorithms allocate a distinct `rand.New(rand.NewSource())` per <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> to maintain isolated <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> states, avoiding cross-thread memory stalling.
 
 ### Operations & Complexity
 
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Factorial | <code>O(n)</code> | n recursive calls |
-| Naive Fibonacci | <code>O(2^n)</code> | Exponential without <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> |
-| Memoized Fibonacci | <code>O(n)</code> | <abbr title="An algorithm whose running time grows linearly with input size.">Linear time</abbr> with caching |
-| <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge Sort</abbr> | <code>O(n log n)</code> | Classic <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> |
+| Case | Deterministic QS | Randomized QS |
+|-------|-----------------|---------------|
+| Best | <code>O(n log n)</code> | <code>O(n log n)</code> |
+| Average | <code>O(n log n)</code> | <code>O(n log n)</code> expected |
+| Worst | <code>O(n^2)</code> | <code>O(n^2)</code> with prob 1/n! |
+| Space | <code>O(log n)</code> | <code>O(log n)</code> expected |
 
 ### Pseudocode
 
 ```text
-Factorial(n):
-    if n <= 1:
-        return 1
-    return n * Factorial(n - 1)
-
-Fibonacci(n, cache):
-    if n in cache:
-        return cache[n]
-    if n <= 1:
-        return n
-    cache[n] = Fibonacci(n-1, cache) + Fibonacci(n-2, cache)
-    return cache[n]
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-func factorial(n int) int {
-    if n <= 1 {
-        return 1
-    }
-    return n * factorial(n-1)
-}
-
-func fibonacci(n int, cache map[int]int) int {
-    if val, ok := cache[n]; ok {
-        return val
-    }
-    if n <= 1 {
-        return n
-    }
-    cache[n] = fibonacci(n-1, cache) + fibonacci(n-2, cache)
-    return cache[n]
-}
-
-func main() {
-    fmt.Println("5! =", factorial(5))
-    cache := make(map[int]int)
-    fmt.Println("Fib(10) =", fibonacci(10, cache))
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-Go does not guarantee tail call optimization. Avoid extremely deep <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>; use <abbr title="The repetition of a process, typically using loops.">iteration</abbr> or increase the <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> size if necessary.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> When... | Avoid If... |
-|------------------------|------------------|
-| The problem divides naturally (trees, graphs) | <abbr title="The length of the path from the root to a node.">Depth</abbr> > 10^4 (risk of <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>) |
-| <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> is required (N-Queens, Sudoku) | Sub-problems overlap heavily without <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> |
-| <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and conquer</abbr> (Merge/<abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr>) | Performance is hyper-critical and call overhead matters |
-
-### Edge Cases & Pitfalls
-
-- **<abbr title="An error caused by using more stack memory than allocated.">Stack overflow</abbr>:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> without a base case or excessive <abbr title="The length of the path from the root to a node.">depth</abbr>. Go stacks start at 2KB and grow, but are still bounded.
-- **Missing base case:** Always define the termination condition.
-- **Redundant computation:** Without <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr>, naive Fibonacci computes the same sub-problems repeatedly.
-
-## 27.2. <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr>
-
-**Definition:** A strategy that breaks a problem into independent sub-problems, solves each recursively, and then combines their results.
-
-### Operations & Complexity
-
-| Algorithm | Time | Space | Description |
-|-----------|------|-------|------------|
-| <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge Sort</abbr> | <code>O(n log n)</code> | <code>O(n)</code> | Stable, divides arrays |
-| <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place, randomized pivot |
-| <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary Search</abbr> | <code>O(log n)</code> | <code>O(1)</code> iterative, <code>O(log n)</code> recursive | Sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> required |
-
-### Pseudocode
-
-```text
-MergeSort(A):
-    if length(A) <= 1:
-        return A
-    mid = length(A) / 2
-    left = MergeSort(A[0:mid])
-    right = MergeSort(A[mid:])
-    return Merge(left, right)
-
-QuickSort(A):
-    if length(A) <= 1:
-        return A
-    pivot = random element in A
-    left = elements < pivot
-    mid = elements == pivot
-    right = elements > pivot
-    return QuickSort(left) + mid + QuickSort(right)
+RandomizedQuickSort(A):
+    if length(A) <= 1: return
+    pivotIdx = random index in A
+    SWAP A[pivotIdx] with A[last]
+    pivot = A[last]
+    i = 0
+    for j from 0 to length(A)-2:
+        if A[j] < pivot:
+            SWAP A[i] with A[j]
+            i += 1
+    SWAP A[i] with A[last]
+    RandomizedQuickSort(A[0:i])
+    RandomizedQuickSort(A[i+1:])
 ```
 
 ### Idiomatic Go Implementation
@@ -150,443 +68,103 @@ import (
     "math/rand"
 )
 
-func mergeSort(arr []int) []int {
-    if len(arr) <= 1 {
-        return arr
-    }
-    mid := len(arr) / 2
-    left := mergeSort(arr[:mid])
-    right := mergeSort(arr[mid:])
-    return merge(left, right)
-}
-
-func merge(left, right []int) []int {
-    result := make([]int, 0, len(left)+len(right))
-    i, j := 0, 0
-    for i < len(left) && j < len(right) {
-        if left[i] < right[j] {
-            result = append(result, left[i])
-            i++
-        } else {
-            result = append(result, right[j])
-            j++
-        }
-    }
-    result = append(result, left[i:]...)
-    result = append(result, right[j:]...)
-    return result
-}
-
-func quickSort(arr []int) []int {
-    if len(arr) <= 1 {
-        return arr
-    }
-    pivot := arr[rand.Intn(len(arr))]
-    var left, mid, right []int
-    for _, v := range arr {
-        switch {
-        case v < pivot:
-            left = append(left, v)
-        case v == pivot:
-            mid = append(mid, v)
-        default:
-            right = append(right, v)
-        }
-    }
-    left = quickSort(left)
-    right = quickSort(right)
-    return append(append(left, mid...), right...)
-}
-
-func main() {
-    arr := []int{3, 1, 4, 1, 5, 9, 2, 6}
-    fmt.Println("Merge:", mergeSort(arr))
-    fmt.Println("Quick:", quickSort(arr))
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-<abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> with a deterministic pivot on a sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> degrades to <code>O(n^2)</code>. A random pivot or median-of-three avoids this <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> scenario.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use D&C When... | Avoid If... |
-|--------------------|------------------|
-| The problem can be partitioned independently | Sub-problems overlap (use DP instead) |
-| Combining results is easier than a direct solution | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> overhead outweighs the performance gain |
-
-### Edge Cases & Pitfalls
-
-- **Empty or single-element <abbr title="A collection of items stored at contiguous memory locations.">array</abbr>:** Handle these immediately before recursive calls.
-- **Integer overflow on mid:** Use `mid := low + (high-low)/2` instead of `(low+high)/2`.
-- **<abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr>:** <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> on a <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr> can cause a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>.
-
-## 27.3. Recursive Data Structures
-
-**Definition:** Data structures defined in terms of themselves, such as linked lists and binary trees.
-
-### Operations & Complexity
-
-| Operation | <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">Linked List</abbr> | <abbr title="A tree data structure in which each node has at most two children.">Binary Tree</abbr> (BST) |
-|---------|-------------|-------------------|
-| Insert | <code>O(n)</code> | <code>O(h)</code> = <code>O(log n)</code> balanced |
-| Search | <code>O(n)</code> | <code>O(h)</code> = <code>O(log n)</code> balanced |
-| Delete | <code>O(n)</code> | <code>O(h)</code> = <code>O(log n)</code> balanced |
-| Traversal | <code>O(n)</code> | <code>O(n)</code> |
-
-### Pseudocode
-
-```text
-TreeInsert(node, value):
-    if node is nil:
-        create new node with value
-        return
-    if value < node.value:
-        if node.left is nil:
-            node.left = new node(value)
-        else:
-            TreeInsert(node.left, value)
-    else:
-        if node.right is nil:
-            node.right = new node(value)
-        else:
-            TreeInsert(node.right, value)
-
-TreeInorder(node):
-    if node is nil:
-        return empty list
-    return TreeInorder(node.left) + [node.value] + TreeInorder(node.right)
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-type Node struct {
-    Value int
-    Next  *Node
-}
-
-type Tree struct {
-    Value int
-    Left  *Tree
-    Right *Tree
-}
-
-func (t *Tree) Insert(value int) {
-    if t == nil {
-        return
-    }
-    if value < t.Value {
-        if t.Left == nil {
-            t.Left = &Tree{Value: value}
-        } else {
-            t.Left.Insert(value)
-        }
-    } else {
-        if t.Right == nil {
-            t.Right = &Tree{Value: value}
-        } else {
-            t.Right.Insert(value)
-        }
-    }
-}
-
-func (t *Tree) Inorder() []int {
-    if t == nil {
-        return nil
-    }
-    result := t.Left.Inorder()
-    result = append(result, t.Value)
-    result = append(result, t.Right.Inorder()...)
-    return result
-}
-
-func main() {
-    root := &Tree{Value: 5}
-    for _, v := range []int{3, 7, 1, 4, 6, 8} {
-        root.Insert(v)
-    }
-    fmt.Println("Inorder:", root.Inorder())
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-Go does not have destructuring pattern matching. Use pointers (`*Tree`) and explicit nil checks to manipulate recursive structures.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use When... | Avoid If... |
-|----------------|------------------|
-| Establishing hierarchical relationships (trees) | Frequent random access is needed (use slices) |
-| Dynamic sizing with frequent inserts/deletes | <abbr title="A variable that stores a memory address.">Pointer</abbr> memory overhead is a concern |
-
-### Edge Cases & Pitfalls
-
-- **Dangling <abbr title="A variable that stores a memory address.">pointer</abbr>:** Always check for `nil` before dereferencing.
-- **Circular references:** Go's GC handles cycles, but avoid unnecessary cyclical designs.
-- **<abbr title="An error caused by using more stack memory than allocated.">Stack overflow</abbr> traversal:** For exceedingly deep trees, use <abbr title="The repetition of a process, typically using loops.">iteration</abbr> with an explicit <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>.
-
-## 27.4. <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">Memoization</abbr> and <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">Dynamic Programming</abbr>
-
-**Definition:** <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">Memoization</abbr> caches function results for identical inputs; <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">Dynamic Programming</abbr> breaks down overlapping sub-problems and stores solutions in a table.
-
-### Operations & Complexity
-
-| Approach | Time | Space |
-|------------|------|-------|
-| Top-down (<abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr>) | <code>O(n)</code> | <code>O(n)</code> call <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> + <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> |
-| Bottom-up (<abbr title="A bottom-up dynamic programming technique filling a table iteratively.">tabulation</abbr>) | <code>O(n)</code> | <code>O(n)</code> table |
-| Space-optimized | <code>O(n)</code> | <code>O(1)</code> or <code>O(k)</code> |
-
-### Pseudocode
-
-```text
-FibMemo(n):
-    cache = empty map
-    return FibHelper(n, cache)
-
-FibHelper(n, cache):
-    if n <= 1: return n
-    if n in cache: return cache[n]
-    cache[n] = FibHelper(n-1, cache) + FibHelper(n-2, cache)
-    return cache[n]
-
-Knapsack(weights, values, capacity):
-    dp = 2D table of size (n+1) x (capacity+1) initialized to 0
-    for i from 1 to n:
-        for w from 0 to capacity:
-            if weights[i-1] <= w:
-                dp[i][w] = max(dp[i-1][w], dp[i-1][w-weights[i-1]] + values[i-1])
-            else:
-                dp[i][w] = dp[i-1][w]
-    return dp[n][capacity]
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-func fibMemo(n int) int {
-    cache := make(map[int]int)
-    var fib func(int) int
-    fib = func(n int) int {
-        if n <= 1 {
-            return n
-        }
-        if v, ok := cache[n]; ok {
-            return v
-        }
-        cache[n] = fib(n-1) + fib(n-2)
-        return cache[n]
-    }
-    return fib(n)
-}
-
-func fibBottomUp(n int) int {
-    if n <= 1 {
-        return n
-    }
-    dp := make([]int, n+1)
-    dp[1] = 1
-    for i := 2; i <= n; i++ {
-        dp[i] = dp[i-1] + dp[i-2]
-    }
-    return dp[n]
-}
-
-func knapsack(weights, values []int, capacity int) int {
-    n := len(weights)
-    dp := make([][]int, n+1)
-    for i := range dp {
-        dp[i] = make([]int, capacity+1)
-    }
-    for i := 1; i <= n; i++ {
-        for w := 0; w <= capacity; w++ {
-            if weights[i-1] <= w {
-                dp[i][w] = max(dp[i-1][w], dp[i-1][w-weights[i-1]]+values[i-1])
-            } else {
-                dp[i][w] = dp[i-1][w]
-            }
-        }
-    }
-    return dp[n][capacity]
-}
-
-func max(a, b int) int {
-    if a > b {
-        return a
-    }
-    return b
-}
-
-func main() {
-    fmt.Println("Fib memo:", fibMemo(40))
-    fmt.Println("Fib DP:", fibBottomUp(40))
-    weights := []int{2, 3, 4, 5}
-    values := []int{3, 4, 5, 6}
-    fmt.Println("Knapsack:", knapsack(weights, values, 5))
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-Top-down approaches with deep <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> in Go carry the risk of <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr> for n > 10^5. Bottom-up approaches are safer for massive scales.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use Top-down When... | Use Bottom-up When... |
-|-------------------------|--------------------------|
-| Not all sub-problems need evaluating | Every sub-problem must be evaluated |
-| A recursive formulation is more natural | Space optimization is required |
-| n is small to medium | n is exceptionally large, avoiding the call <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
-
-### Edge Cases & Pitfalls
-
-- **Integer overflow:** DP on Fibonacci exceeds `int64` at n=93. Utilize `math/big` if necessary.
-- **Wrong base case:** Continuously validate the initial boundary conditions.
-- **Space waste:** Use a rolling <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> if you only require the immediate previous row.
-
-## 27.5. Advanced <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>
-
-**Definition:** <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> systematically trials possibilities and "reverts" when a solution is invalid, primarily used for constraint satisfaction problems.
-
-### Operations & Complexity
-
-| Problem | Time | Space |
-|---------|------|-------|
-| N-Queens | <code>O(n!)</code> | <code>O(n)</code> <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
-| Permutations | <code>O(n!)</code> | <code>O(n)</code> |
-| Sudoku | <code>O(9^m)</code> | <code>O(81)</code> |
-
-### Pseudocode
-
-```text
-SolveNQueens(n):
-    board = n x n grid filled with "."
-    result = empty list
-    PlaceQueen(row):
-        if row == n:
-            add board copy to result
-            return
-        for col from 0 to n-1:
-            if IsValid(board, row, col):
-                board[row][col] = "Q"
-                PlaceQueen(row + 1)
-                board[row][col] = "."
-    PlaceQueen(0)
-    return result
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-func solveNQueens(n int) [][]string {
-    var result [][]string
-    board := make([][]byte, n)
-    for i := range board {
-        board[i] = make([]byte, n)
-        for j := range board[i] {
-            board[i][j] = '.'
-        }
-    }
-    var solve func(row int)
-    solve = func(row int) {
-        if row == n {
-            temp := make([]string, n)
-            for i := range board {
-                temp[i] = string(board[i])
-            }
-            result = append(result, temp)
+func randomizedQuickSort(arr []int) {
+    var sort func([]int)
+    sort = func(a []int) {
+        if len(a) <= 1 {
             return
         }
-        for col := 0; col < n; col++ {
-            if isValid(board, row, col, n) {
-                board[row][col] = 'Q'
-                solve(row + 1)
-                board[row][col] = '.'
+        pivotIdx := rand.Intn(len(a))
+        a[pivotIdx], a[len(a)-1] = a[len(a)-1], a[pivotIdx]
+        pivot := a[len(a)-1]
+        i := 0
+        for j := 0; j < len(a)-1; j++ {
+            if a[j] < pivot {
+                a[i], a[j] = a[j], a[i]
+                i++
             }
         }
+        a[i], a[len(a)-1] = a[len(a)-1], a[i]
+        sort(a[:i])
+        sort(a[i+1:])
     }
-    solve(0)
-    return result
-}
-
-func isValid(board [][]byte, row, col, n int) bool {
-    for i := 0; i < row; i++ {
-        if board[i][col] == 'Q' {
-            return false
-        }
-        if diagCol := col - row + i; diagCol >= 0 && diagCol < n && board[i][diagCol] == 'Q' {
-            return false
-        }
-        if antiCol := col + row - i; antiCol >= 0 && antiCol < n && board[i][antiCol] == 'Q' {
-            return false
-        }
-    }
-    return true
+    sort(arr)
 }
 
 func main() {
-    solutions := solveNQueens(4)
-    fmt.Printf("%d solutions for 4-Queens\n", len(solutions))
+    arr := []int{3, 6, 8, 10, 1, 2, 1}
+    randomizedQuickSort(arr)
+    fmt.Println("Sorted:", arr)
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-<abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> can be explosive in execution time. Implement pruning (cutting branches that are demonstrably invalid) to speed up execution.
+Randomized QuickSort boasts an expected time of <code>O(n log n)</code> across absolutely all input varieties. For heavy production systems, Go's stdlib `sort.Ints` natively utilizes introsort (a robust hybrid of quicksort + heapsort + <abbr title="A sorting algorithm that builds the final sorted array one item at a time.">insertion sort</abbr>) which is already hyper-optimized.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> When... | Avoid If... |
-|-----------------------------|------------------|
-| You must enumerate all valid solutions | The solution space is impossibly large |
-| Constraints are easy to verify | The problem can be solved with DP/greedy algorithms |
+| Use Randomized QS When... | Avoid If... |
+|------------------------------|------------------|
+| Implementing a robust sort from absolute scratch | Operating in a production environment (always use the `sort` stdlib) |
+| A solid expected guarantee is required | A strict, unflinching deterministic guarantee is legally mandatory |
 
 ### Edge Cases & Pitfalls
 
-- **No solution:** Always handle scenarios where no valid solution exists.
-- **State mutation:** Ensure you perfectly undo any changes after <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> (restore the state).
-- **Duplicate solutions:** Employ an ordering logic or a set to prevent yielding duplicates.
+- **All equal elements:** The basic Lomuto partition degrades heavily. Utilize a 3-way partition (the Dutch national flag algorithm) instead.
+- **<abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr>:** For n > 10⁶, purely recursive quicksort runs the immense risk of a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>. Switch to introsort or the stdlib.
 
-## 27.6. Recursive Parallelism
+## 28.2. <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr>
 
-**Definition:** Running recursive sub-problems concurrently using goroutines to dramatically speed up <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> algorithms.
+**Definition:** A <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr> acts as a probabilistic data structure that masterfully simulates a balanced <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> utilizing multiple layered linked lists featuring randomized heights.
+
+**Background & Philosophy:**
+Balancing an AVL or Red-Black tree involves extremely complex pointers and structural rotations. Skip lists offer a brilliantly simple philosophy: instead of mathematically guaranteeing balance via rigid rules, they achieve statistical balance via probability. By randomly "promoting" elements to higher layers, they establish express lanes for searching.
+
+**Use Cases:**
+Highly effective in concurrent programming. Because inserting an element doesn't require massive structural rotations, it requires fewer memory locks. Skip lists famously power the backend sorted sets in Redis.
+
+**Memory Mechanics:**
+Skip lists require an array of `next` pointers per node depending on their randomized "height". In Go, `make([]*SkipNode, lvl)` dynamically allocates this array. This makes skip lists heavier in memory usage than standard binary trees and introduces unpredictable memory fragmentation across the <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>. However, the absence of complex <code>O(log n)</code> rebalancing operations offsets the cache misses encountered during forward traversal.
 
 ### Operations & Complexity
 
-| Model | Time | Overhead |
-|-------|------|----------|
-| Sequential | <code>O(T)</code> | 0 |
-| Goroutine per sub-problem | <code>O(T/p)</code> | Context switch |
-| Worker pool | <code>O(T/p)</code> | More efficient for numerous tasks |
+| Operation | Expected | Worst | Description |
+|---------|----------|-------|------------|
+| Search | <code>O(log n)</code> | <code>O(n)</code> | Solved with remarkably high probability |
+| Insert | <code>O(log n)</code> | <code>O(n)</code> | Relies upon randomized <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> <abbr title="The length of the longest path from a node to a leaf.">height</abbr> |
+| Delete | <code>O(log n)</code> | <code>O(n)</code> | Carefully updates linking pointers |
+| Space | <code>O(n)</code> | <code>O(n log n)</code> | Expected memory layout |
 
 ### Pseudocode
 
 ```text
-ParallelMergeSort(A):
-    if length(A) <= 1:
-        return A
-    if length(A) < threshold:
-        return SequentialMergeSort(A)
-    mid = length(A) / 2
-    left = spawn ParallelMergeSort(A[0:mid])
-    right = ParallelMergeSort(A[mid:])
-    wait for left
-    return Merge(left, right)
+SkipListSearch(head, key):
+    node = head
+    for level from maxLevel down to 0:
+        while node.next[level] exists and node.next[level].key < key:
+            node = node.next[level]
+    node = node.next[0]
+    if node exists and node.key == key:
+        return node.value
+    return not found
+
+SkipListInsert(head, key, value):
+    update = array of nodes at each level
+    node = head
+    for level from maxLevel down to 0:
+        while node.next[level] exists and node.next[level].key < key:
+            node = node.next[level]
+        update[level] = node
+    node = node.next[0]
+    if node exists and node.key == key:
+        node.value = value
+        return
+    newLevel = random level with probability p
+    newNode = new node with key, value, and next array of size newLevel
+    for level from 0 to newLevel-1:
+        newNode.next[level] = update[level].next[level]
+        update[level].next[level] = newNode
 ```
 
 ### Idiomatic Go Implementation
@@ -596,100 +174,200 @@ package main
 
 import (
     "fmt"
-    "sync"
+    "math/rand"
 )
 
-func parallelMergeSort(arr []int, wg *sync.WaitGroup) []int {
-    defer wg.Done()
-    if len(arr) <= 1 {
-        return arr
-    }
-    if len(arr) < 1000 {
-        return sequentialMergeSort(arr)
-    }
-    mid := len(arr) / 2
-    var left, right []int
-    var wgl, wgr sync.WaitGroup
-    wgl.Add(1)
-    go func() {
-        left = parallelMergeSort(arr[:mid], &wgl)
-    }()
-    wgr.Add(1)
-    right = parallelMergeSort(arr[mid:], &wgr)
-    wgr.Wait()
-    wgl.Wait()
-    return merge(left, right)
+const maxLevel = 16
+const p = 0.5
+
+type SkipNode struct {
+    key   int
+    value string
+    next  []*SkipNode
 }
 
-func sequentialMergeSort(arr []int) []int {
-    if len(arr) <= 1 {
-        return arr
-    }
-    mid := len(arr) / 2
-    return merge(sequentialMergeSort(arr[:mid]), sequentialMergeSort(arr[mid:]))
+type SkipList struct {
+    head  *SkipNode
+    level int
 }
 
-func merge(left, right []int) []int {
-    result := make([]int, 0, len(left)+len(right))
-    i, j := 0, 0
-    for i < len(left) && j < len(right) {
-        if left[i] < right[j] {
-            result = append(result, left[i])
-            i++
-        } else {
-            result = append(result, right[j])
-            j++
+func NewSkipList() *SkipList {
+    return &SkipList{
+        head:  &SkipNode{next: make([]*SkipNode, maxLevel)},
+        level: 1,
+    }
+}
+
+func (sl *SkipList) randomLevel() int {
+    lvl := 1
+    for rand.Float64() < p && lvl < maxLevel {
+        lvl++
+    }
+    return lvl
+}
+
+func (sl *SkipList) Search(key int) (string, bool) {
+    curr := sl.head
+    for i := sl.level - 1; i >= 0; i-- {
+        for curr.next[i] != nil && curr.next[i].key < key {
+            curr = curr.next[i]
         }
     }
-    result = append(result, left[i:]...)
-    result = append(result, right[j:]...)
-    return result
+    curr = curr.next[0]
+    if curr != nil && curr.key == key {
+        return curr.value, true
+    }
+    return "", false
+}
+
+func (sl *SkipList) Insert(key int, value string) {
+    update := make([]*SkipNode, maxLevel)
+    curr := sl.head
+    for i := sl.level - 1; i >= 0; i-- {
+        for curr.next[i] != nil && curr.next[i].key < key {
+            curr = curr.next[i]
+        }
+        update[i] = curr
+    }
+    curr = curr.next[0]
+    if curr != nil && curr.key == key {
+        curr.value = value
+        return
+    }
+
+    lvl := sl.randomLevel()
+    if lvl > sl.level {
+        for i := sl.level; i < lvl; i++ {
+            update[i] = sl.head
+        }
+        sl.level = lvl
+    }
+    node := &SkipNode{key: key, value: value, next: make([]*SkipNode, lvl)}
+    for i := 0; i < lvl; i++ {
+        node.next[i] = update[i].next[i]
+        update[i].next[i] = node
+    }
 }
 
 func main() {
-    arr := []int{5, 2, 8, 1, 9, 3, 7, 4, 6}
-    var wg sync.WaitGroup
-    wg.Add(1)
-    sorted := parallelMergeSort(arr, &wg)
-    fmt.Println("Parallel sorted:", sorted)
+    sl := NewSkipList()
+    for i := 0; i < 10; i++ {
+        sl.Insert(i, fmt.Sprintf("val%d", i))
+    }
+    if v, ok := sl.Search(5); ok {
+        fmt.Println("Found:", v)
+    }
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub-problems severely degrades performance due to overhead. Establish a minimum cutoff (e.g., 1000 elements).
+A <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip list</abbr> demands an expected space of <code>O(n)</code> primarily because E[<abbr title="The set of all nodes at a given depth.">level</abbr>] = 1/(1-p) = 2 for p=0.5. Never use a p <abbr title="The data associated with a key in a key-value pair.">value</abbr> that is overwhelmingly large (it brutally consumes memory) or exceedingly small (forces low heights, making searches agonizingly slow).
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use Parallel When... | Avoid If... |
-|------------------------|------------------|
-| Sub-problems are large and entirely independent | Sub-problems are tiny (< 1000 elements) |
-| The problem is CPU-bound | The problem is I/O-bound (use pipelines instead) |
+| Use <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr> When... | Avoid If... |
+|--------------------------|------------------|
+| Need heavy concurrent access (via a lock-free variant) | Raw memory overhead represents a critical bottleneck |
+| Seeking an implementation fundamentally simpler than AVL/RB trees | Executing a massive volume of range queries |
 
 ### Edge Cases & Pitfalls
 
-- **Goroutine leak:** Always verify that channels are closed or `defer wg.Done()` is invoked, ideally using `sync.WaitGroup`.
-- **Data race:** Goroutines must not write to the identical slice without explicit synchronization.
-- **Too many goroutines:** Restrict the count via thresholding or a bounded worker pool.
+- **Deterministic random:** Skip lists fundamentally require extremely good randomness. Never use a constant seed in a production environment.
+- **Max <abbr title="The set of all nodes at a given depth.">level</abbr>:** p=0.5 coupled with maxLevel=16 is perfectly sufficient for n=2^16=65536. Vigorously adjust this limit for dramatically larger n values.
 
-## Quick Reference
+## 28.3. Miller-Rabin Primality Test
+
+**Definition:** Miller-Rabin stands as a Monte Carlo algorithm utilized for fierce primality testing boasting an error probability firmly ≤ 4^(-k) across k continuous rounds.
+
+**Background & Philosophy:**
+The philosophy is "guilt by association." Since testing true primality for massive 2048-bit numbers takes astronomically long deterministically, Miller-Rabin uses Monte Carlo rules: it randomly selects "witnesses" to testify if a number is composite. If it finds a witness, it is 100% sure the number is not prime. If it fails to find one after `k` random trials, it declares the number "probably prime" with a mathematical certainty near absolute.
+
+**Use Cases:**
+Generating massive RSA or Diffie-Hellman encryption keys safely.
+
+**Memory Mechanics:**
+Miller-Rabin uses modular exponentiation. Since 2048-bit numbers greatly exceed the 64-bit size of standard CPU registers, Go uses the `math/big` package. `big.Int` allocates arrays of underlying `Word` slices in <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap memory</abbr>. These allocations create <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> churn. However, because the operations are mathematically heavy, CPU compute vastly dominates memory IO costs.
+
+### Operations & Complexity
+
+| Parameter | Time | Error Probability |
+|-----------|------|-------------------|
+| k rounds | <code>O(k log³ n)</code> | ≤ 4^(-k) |
+| k=5 | <code>O(log³ n)</code> | < 0.1% |
+| k=20 | <code>O(log³ n)</code> | < 10^(-12) |
+| k=40 | <code>O(log³ n)</code> | < 10^(-24) |
+
+### Idiomatic Go Implementation
+
+Miller-Rabin (probabilistic primality test) is available natively in `crypto/rand`. Use `big.NewInt()` and `big.Int.ProbablePrime()` for production.
+
+### Decision Matrix
+
+| Use Miller-Rabin When... | Avoid If... |
+|-----------------------------|------------------|
+| Conducting large number primality checks | A strict deterministic guarantee is fully mandatory (employ AKS, though it runs agonizingly slow) |
+| Performing cryptographic key generation | n < 2^64 (run a heavily optimized deterministic test instead) |
+
+### Edge Cases & Pitfalls
+
+- **Carmichael numbers:** Miller-Rabin successfully identifies these, unlike a naive Fermat test.
+- **Modular multiplication overflow:** Utilize `math/big.Int.ModMul` vigorously for any n > 2^32.
+- **Deterministic variant:** For any n < 2^64, testing strictly against the base set {2, 3, 5, 7, 11, 13, 17} is provably deterministic.
+
+## 28.4. Reservoir Sampling
+
+**Definition:** Reservoir sampling elegantly isolates k items entirely uniformly randomly from an infinite stream without necessitating any prior knowledge of the total item volume.
+
+**Background & Philosophy:**
+The philosophy is stream intelligence. When data is infinite or too large to fit in memory (like all logs generated by a server today), you cannot store it to randomly select `k` items later. Reservoir sampling processes items exactly once, maintaining a "reservoir" of size `k`, probabilistically replacing items as new ones stream in, ensuring fair representation continuously.
+
+**Use Cases:**
+Providing live, random analytics samples from continuous Kafka streams or massive network logs.
+
+**Memory Mechanics:**
+It requires strictly <code>O(k)</code> memory. A single <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice of size `k` is allocated in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. As new data streams in, it reads one item at a time, making it incredibly hardware friendly since it uses minimal <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes virtually zero <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> during sequential data ingestion.
+
+### Operations & Complexity
+
+| Algorithm | Time | Space | Description |
+|-----------|------|-------|------------|
+| Reservoir k | <code>O(k)</code> per item | <code>O(k)</code> | Handles a stream of completely unknown size |
+| Weighted | <code>O(k log k)</code> per item | <code>O(k)</code> | Executes priority-based sampling |
+
+Reservoir sampling guarantees that every single item possesses an exact mathematical probability of k/n of being selected. For heavily weighted streams, implement exponential random variates.
+
+### Decision Matrix
+
+| Use Reservoir When... | Avoid If... |
+|--------------------------|------------------|
+| The stream is too massive to fit entirely in memory | Total N is strictly known upfront (use a standard random shuffle) |
+| Conducting real-time analytical sampling | Complex stratified sampling is heavily required |
+
+### Edge Cases & Pitfalls
+
+- **k > n:** Always reliably handle the scenario where the raw stream is ultimately shorter than k.
+- **Biased RNG:** Strictly utilize `crypto/rand` if cryptographic-level randomness is vitally critical.
+
+## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |
-|-----------|---------|------|-------|----------|
-| Factorial | func recursion | <code>O(n)</code> | <code>O(n)</code> stack | Basic example |
-| Fibonacci memo | map[int]int | <code>O(n)</code> | <code>O(n)</code> | Classic DP |
-| Merge Sort | []int | <code>O(n log n)</code> | <code>O(n)</code> | Stable sorting |
-| Quick Sort | []int | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place sorting |
-| Knapsack 0/1 | [][]int | <code>O(nW)</code> | <code>O(nW)</code> | Combinatorial DP |
-| N-Queens | <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> | <code>O(n!)</code> | <code>O(n)</code> | Constraint satisfaction |
-| Binary Search | []int | <code>O(log n)</code> | <code>O(1)</code> | Search on sorted |
+|------|---------|------|-------|----------|
+| Randomized QuickSort | Las Vegas | <code>O(n log n)</code> | <code>O(log n)</code> | General <abbr title="The process of arranging elements in a specific order.">Sorting</abbr> |
+| <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr> | Las Vegas | <code>O(log n)</code> | <code>O(n)</code> | Ordered data set |
+| Miller-Rabin | Monte Carlo | <code>O(k log^3 n)</code> | <code>O(1)</code> | Advanced Primality testing |
+| Reservoir Sampling | . | <code>O(n)</code> | <code>O(k)</code> | Infinite Stream sampling |
+| Randomized Select | Las Vegas | <code>O(n)</code> | <code>O(1)</code> | Isolating the k-th order statistic |
+| <abbr title="A data structure that implements an associative array using a hash function.">Hash Table</abbr> | Las Vegas | <code>O(1)</code> avg | <code>O(n)</code> | High-speed Dictionary |
+| Bloom Filter | Monte Carlo | <code>O(k)</code> | <code>O(m)</code> | Rapid Membership test |
+| Treap | Las Vegas | <code>O(log n)</code> | <code>O(n)</code> | Fused BST + <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr> |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 27:</strong> This chapter covers advanced recursive algorithms: <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> (<abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>, <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>), recursive data structures (BST), <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> and <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (Fibonacci, knapsack), <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr> (N-Queens), and recursive parallelism with goroutines. Use <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> for naturally dividing problems, <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> for overlapping sub-problems, and bottom-up <abbr title="A bottom-up dynamic programming technique filling a table iteratively.">tabulation</abbr> for large scales.
+<strong>Summary Chapter 26:</strong> This chapter dissects probabilistic algorithms: randomized quicksort yielding <code>O(n log n)</code> expected, skip lists hitting <code>O(log n)</code> expected, the Miller-Rabin primality test (a Monte Carlo approach), and powerful reservoir sampling specifically for boundless, infinite streams. Leverage skip lists for creating a straightforward ordered set, Miller-Rabin for rapidly evaluating massive primes, and reservoir sampling to manage torrential data streams.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 23: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/Part-VI/Chapter-23/)
-- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
-- [Chapter 28: Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-28/)
+- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-25/)
+- [Chapter 26: Advanced Recursive Algorithms](/docs/Part-VI/Chapter-26/)
+- [Chapter 45: Skip Lists](/docs/Part-IX/Chapter-45/)

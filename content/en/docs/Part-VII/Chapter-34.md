@@ -1,69 +1,59 @@
 ---
-weight: 70600
-title: "Chapter 34: Polynomial and FFT"
-description: "Polynomial and FFT"
+weight: 70700
+title: "Chapter 34: String Matching Algorithms"
+description: "String Matching Algorithms"
 icon: "article"
-date: "2024-08-24T23:42:49+07:00"
-lastmod: "2024-08-24T23:42:49+07:00"
+date: "2024-08-24T23:42:50+07:00"
+lastmod: "2024-08-24T23:42:50+07:00"
 draft: false
 toc: true
 katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithms are the backbone of modern computing. Without them, even the most powerful hardware would be rendered useless.</em>" : Donald Knuth</strong>
+<strong>"<em>Algorithmic thinking is a fundamental part of our toolbox, helping us solve problems with precision and elegance.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 34 explores polynomials and the Fast Fourier Transform (FFT). Go's stdlib lacks a native FFT; utilize `math/cmplx` for complex operations or rely on external libraries.
+Chapter 35 covers powerful <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: Naive, <abbr title="A linear-time string matching algorithm using prefix-suffix tables.">KMP</abbr>, <abbr title="A string matching algorithm scanning right to left using heuristics.">Boyer-Moore</abbr>, <abbr title="A string matching algorithm using rolling hash for efficient comparison.">Rabin-Karp</abbr>, and <abbr title="A multi-pattern string matching algorithm using a trie with failure links.">Aho-Corasick</abbr> implemented natively in Go.
 {{% /alert %}}
 
-## 34.1. Polynomial Representation
+## 35.1. Naive <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr>
 
-**Definition:** A polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n is gracefully represented as a slice of coefficients: `[a₀, a₁, ..., aₙ]`.
+**Definition:** The naive algorithm meticulously compares the targeted pattern directly against every possible overlapping position sequentially along the text.
 
 **Background & Philosophy:**
-The philosophy is the dual representation of data. A polynomial can be represented either by its coefficients or by its evaluated points. Multiplying coefficients takes <code>O(n^2)</code> time, but multiplying evaluated points takes <code>O(n)</code> time. FFT translates coefficients into points in <code>O(n log n)</code>, allowing blisteringly fast math.
+The philosophy is recognizing patterns efficiently. Instead of treating text as a random stream, advanced <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms preprocess the pattern (or the text) to map out structural repetitions. They mathematically guarantee that if a mismatch occurs, the algorithm skips chunks of text it already knows cannot match.
 
 **Use Cases:**
-Digital signal processing (audio/image compression), quantum mechanics, and multiplying incredibly large numbers (e.g., 100,000 digits) efficiently.
+The UNIX `grep` command, DNA sequence analysis in bioinformatics, and virus signature scanning in antivirus software.
 
 **Memory Mechanics:**
-FFT's memory access pattern is governed by the "butterfly" operation, which intertwines elements mathematically using a bit-reversal permutation. This creates a highly <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory read pattern that brutally thrashes the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> if implemented naively. High-performance FFT libraries pre-calculate and cache the sine/cosine "twiddle factors" into an array and heavily optimize memory strides to keep data trapped in the L1/L2 caches.
+<abbr title="Finding occurrences of a pattern within a text">String matching</abbr> fundamentally operates on raw bytes. Preprocessing algorithms like KMP allocate a small `LPS` array (Longest Prefix Suffix) directly proportional to the pattern's size <code>O(m)</code>. This extremely tiny array sits comfortably in the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. During the search phase, the algorithm scans the massive text file linearly. The CPU's hardware prefetcher identifies this forward memory access pattern and streams the text from <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> at peak bus speed, completely eliminating <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
 
 ### Operations & Complexity
 
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Evaluation (Horner's) | <code>O(n)</code> | Highly optimal |
-| Naive Evaluation | <code>O(n^2)</code> | Features repetitive exponentiation |
-| Addition | <code>O(n)</code> | Strict element-wise addition |
-| Naive Multiplication | <code>O(n^2)</code> | Standard mathematical convolution |
-| FFT Multiplication | <code>O(n log n)</code> | Rapid DFT-based execution |
+| Case | Time | Space |
+|-------|------|-------|
+| Best | <code>O(n)</code> | Pattern matched instantly at the start |
+| Average | <code>O(n × m)</code> | Standard exhaustive search |
+| Worst | <code>O(n × m)</code> | Highly repetitive, overlapping patterns |
 
 ### Pseudocode
 
 ```text
-EvaluatePolynomial(p, x):
-    result = 0
-    for i from length(p)-1 down to 0:
-        result = result * x + p[i]
-    return result
-
-AddPolynomials(a, b):
-    maxLen = max(length(a), length(b))
-    result = new array of size maxLen initialized to 0
-    for i from 0 to maxLen-1:
-        if i < length(a): result[i] += a[i]
-        if i < length(b): result[i] += b[i]
-    return result
-
-MultiplyNaive(a, b):
-    result = new array of size length(a)+length(b)-1 initialized to 0
-    for i from 0 to length(a)-1:
-        for j from 0 to length(b)-1:
-            result[i+j] += a[i] * b[j]
-    return result
+NaiveSearch(text, pattern):
+    positions = empty list
+    n = length(text), m = length(pattern)
+    for i from 0 to n-m:
+        match = true
+        for j from 0 to m-1:
+            if text[i+j] != pattern[j]:
+                match = false
+                break
+        if match:
+            append i to positions
+    return positions
 ```
 
 ### Idiomatic Go Implementation
@@ -73,186 +63,426 @@ package main
 
 import "fmt"
 
-// Polynomials are strictly represented as coefficients [a0, a1, a2, ...]
-type Polynomial []float64
-
-func (p Polynomial) Evaluate(x float64) float64 {
-    result := 0.0
-    for i := len(p) - 1; i >= 0; i-- {
-        result = result*x + p[i]
+func naiveSearch(text, pattern string) []int {
+    var positions []int
+    n, m := len(text), len(pattern)
+    if m == 0 || m > n {
+        return positions
     }
-    return result
-}
-
-func (p Polynomial) Add(other Polynomial) Polynomial {
-    maxLen := len(p)
-    if len(other) > maxLen {
-        maxLen = len(other)
-    }
-    result := make(Polynomial, maxLen)
-    for i := 0; i < maxLen; i++ {
-        if i < len(p) {
-            result[i] += p[i]
-        }
-        if i < len(other) {
-            result[i] += other[i]
-        }
-    }
-    return result
-}
-
-func multiplyNaive(a, b Polynomial) Polynomial {
-    result := make(Polynomial, len(a)+len(b)-1)
-    for i := range a {
-        for j := range b {
-            result[i+j] += a[i] * b[j]
-        }
-    }
-    return result
-}
-
-func main() {
-    p := Polynomial{1, -3, 2} // Represents 2x² - 3x + 1
-    fmt.Println("P(2) =", p.Evaluate(2))
-    q := Polynomial{1, 1} // Represents x + 1
-    fmt.Println("P * Q =", multiplyNaive(p, q))
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-Go inherently lacks operator overloading. Always employ explicit method receivers for polynomial operations. A flat slice representation operates much more efficiently than a struct relying on pointers.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use Slice Representation When... | Avoid If... |
-|----------------------|------------------|
-| Degrees are small to medium (< 10⁴) | You are managing sparse polynomials (use a map instead) |
-| All coefficients are fundamentally non-zero | The degree is massive yet remains highly sparse |
-
-### Edge Cases & Pitfalls
-
-- **Leading zeros:** Rigorously trim trailing zeros in the array to prevent generating a false, artificially high degree.
-- **Zero polynomial:** It is represented by `[]float64{0}`, not a completely empty slice `nil`.
-
-## 34.2. FFT and Convolution
-
-**Definition:** The Fast Fourier Transform (FFT) calculates the Discrete Fourier Transform with a complexity of <code>O(n log n)</code>. It is heavily utilized for executing polynomial multiplication via convolution.
-
-### Operations & Complexity
-
-| Algorithm | Time | Space | Description |
-|-----------|------|-------|------------|
-| Naive DFT | <code>O(n²)</code> | <code>O(n)</code> | Direct mathematical execution |
-| Cooley-Tukey FFT | <code>O(n log n)</code> | <code>O(n)</code> | Standard recursive method |
-| Iterative FFT | <code>O(n log n)</code> | <code>O(1)</code> in-place | Memory-efficient in-place execution |
-| Bluestein | <code>O(n log n)</code> | <code>O(n)</code> | Supports arbitrary input sizes |
-
-Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation demands roughly 100 lines of code. For production integrity, depend on libraries like `github.com/mjibson/go-dsp` or `github.com/cpmech/fftx`.
-
-### Decision Matrix
-
-| Use FFT When... | Avoid If... |
-|--------------------|------------------|
-| Multiplying massive polynomials (degree > 100) | Dealing with very small degrees (naive is far quicker) |
-| Running signal convolutions | An exact, flawless integer result is heavily required (due to rounding errors) |
-
-### Edge Cases & Pitfalls
-
-- **Non-power-of-2 constraints:** Pad the input with trailing zeros. For completely arbitrary sizes, integrate Bluestein's or Rader's algorithms.
-- **Floating point error:** The mathematical outcome of an FFT may harbor an error margin of ~1e-9. Actively round the outcome to achieve pristine integer results.
-- **Inverse scaling oversight:** Never forget to vigorously divide the outcome by n immediately following the inverse FFT phase.
-
-## 34.3. Polynomial Interpolation
-
-**Definition:** Interpolation derives a precise polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n that flawlessly intersects n+1 designated points.
-
-### Operations & Complexity
-
-| Method | Time | Space | Description |
-|--------|------|-------|------------|
-| Lagrange | <code>O(n^2)</code> | <code>O(n)</code> | Operates via a direct mathematical formula |
-| Newton Divided Diff | <code>O(n^2)</code> | <code>O(n)</code> | Facilitates an incremental buildup |
-| FFT Interpolation | <code>O(n log n)</code> | <code>O(n)</code> | Evaluated at the roots of unity |
-
-### Pseudocode
-
-```text
-LagrangeInterpolation(x, y, xi):
-    n = length(x)
-    result = 0
-    for i from 0 to n-1:
-        term = y[i]
-        for j from 0 to n-1:
-            if i != j:
-                term *= (xi - x[j]) / (x[i] - x[j])
-        result += term
-    return result
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-func lagrangeInterpolation(x []float64, y []float64, xi float64) float64 {
-    n := len(x)
-    result := 0.0
-    for i := 0; i < n; i++ {
-        term := y[i]
-        for j := 0; j < n; j++ {
-            if i != j {
-                term *= (xi - x[j]) / (x[i] - x[j])
+    for i := 0; i <= n-m; i++ {
+        match := true
+        for j := 0; j < m; j++ {
+            if text[i+j] != pattern[j] {
+                match = false
+                break
             }
         }
-        result += term
+        if match {
+            positions = append(positions, i)
+        }
     }
-    return result
+    return positions
 }
 
 func main() {
-    x := []float64{0, 1, 2}
-    y := []float64{1, 3, 2}
-    fmt.Println("P(1.5) =", lagrangeInterpolation(x, y, 1.5))
+    text := "ABABDABACDABABCABAB"
+    pattern := "ABABCABAB"
+    fmt.Println("Positions:", naiveSearch(text, pattern))
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Lagrange interpolation holds remarkable stability solely for a sparse number of equidistant points. For a large volume of points or Chebyshev nodes, transition immediately to divided differences or barycentric interpolation.
+Go dictates string indexing at the raw byte <abbr title="The set of all nodes at a given depth.">level</abbr>. To correctly parse multi-byte Unicode strings, aggressively convert them into a `[]rune` <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> first. Nevertheless, traditional string matching algorithms fundamentally operate upon standard byte arrays.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use Lagrange When... | Avoid If... |
-|-------------------------|------------------|
-| The volume of points is tiny (< 50) | The volume of points is large (triggers the Runge phenomenon) |
-| Evaluating a single specific coordinate | Evaluating a massive number of points (evaluate via basis polynomials instead) |
+| Use Naive When... | Avoid If... |
+|----------------------|------------------|
+| Rapidly prototyping, or managing tiny text streams | The text is massive, and the pattern displays fierce repetition |
+| The pattern length m < 5 | The pattern length m is huge (> 100) |
 
 ### Edge Cases & Pitfalls
 
-- **Runge phenomenon:** Interpolating aggressively over numerous equidistant nodes guarantees fierce oscillation. Switch to Chebyshev nodes.
-- **Identical x coordinates:** Evaluating two distinct points sharing an identical x coordinate forces an undefined mathematical outcome (division by zero).
+- **Empty pattern:** Decide to either return all possible positions natively or exit immediately yielding an empty slice.
+- **Unicode formatting:** The `len(string)` function exclusively counts raw bytes, blatantly ignoring actual visual runes.
 
-## Quick Reference
+## 35.2. Knuth-Morris-Pratt (KMP)
+
+**Definition:** The <abbr title="The Knuth-Morris-Pratt string-searching algorithm that searches for occurrences of a word within a text.">KMP algorithm</abbr> aggressively leverages the intricate <abbr title="A substring at the beginning of a string.">prefix</abbr>-<abbr title="A substring at the end of a string.">suffix</abbr> data derived from the Longest Prefix Suffix (LPS) <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> to expertly circumvent completely redundant data comparisons.
+
+### Operations & Complexity
+
+| Operation | Time | Space |
+|---------|------|-------|
+| Preprocessing LPS | <code>O(m)</code> | <code>O(m)</code> |
+| Search | <code>O(n)</code> | <code>O(m)</code> |
+| Total | <code>O(n + m)</code> | <code>O(m)</code> |
+
+### Pseudocode
+
+```text
+ComputeLPS(pattern):
+    m = length(pattern)
+    lps = new array of size m initialized to 0
+    length = 0
+    i = 1
+    while i < m:
+        if pattern[i] == pattern[length]:
+            length += 1
+            lps[i] = length
+            i += 1
+        else:
+            if length != 0:
+                length = lps[length-1]
+            else:
+                lps[i] = 0
+                i += 1
+    return lps
+
+KMPSearch(text, pattern):
+    n = length(text), m = length(pattern)
+    lps = ComputeLPS(pattern)
+    i, j = 0, 0
+    while i < n:
+        if text[i] == pattern[j]:
+            i += 1; j += 1
+        if j == m:
+            report match at i-j
+            j = lps[j-1]
+        else if i < n and text[i] != pattern[j]:
+            if j != 0: j = lps[j-1]
+            else: i += 1
+```
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import "fmt"
+
+func computeLPS(pattern string) []int {
+    m := len(pattern)
+    lps := make([]int, m)
+    length := 0
+    for i := 1; i < m; {
+        if pattern[i] == pattern[length] {
+            length++
+            lps[i] = length
+            i++
+        } else {
+            if length != 0 {
+                length = lps[length-1]
+            } else {
+                lps[i] = 0
+                i++
+            }
+        }
+    }
+    return lps
+}
+
+func kmpSearch(text, pattern string) []int {
+    var positions []int
+    n, m := len(text), len(pattern)
+    if m == 0 {
+        return positions
+    }
+    lps := computeLPS(pattern)
+    i, j := 0, 0
+    for i < n {
+        if text[i] == pattern[j] {
+            i++
+            j++
+        }
+        if j == m {
+            positions = append(positions, i-j)
+            j = lps[j-1]
+        } else if i < n && text[i] != pattern[j] {
+            if j != 0 {
+                j = lps[j-1]
+            } else {
+                i++
+            }
+        }
+    }
+    return positions
+}
+
+func main() {
+    text := "ABABDABACDABABCABAB"
+    pattern := "ABABCABAB"
+    fmt.Println("KMP:", kmpSearch(text, pattern))
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+KMP achieves peak optimality when dealing with texts packed with repetitive prefix-suffix overlaps. However, for exceptionally large alphabets, Boyer-Moore routinely outpaces it.
+{{% /alert %}}
+
+### Decision Matrix
+
+| Use KMP When... | Avoid If... |
+|--------------------|------------------|
+| Analyzing massive text chunks featuring a medium-sized pattern | Operating over a large alphabet where pattern matches are rare |
+| A guaranteed, airtight <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n)</code> performance is mandated | Extensive heuristic leaping and skipping is highly preferred |
+
+### Edge Cases & Pitfalls
+
+- **LPS bounds violation:** Assiduously confirm `length = lps[length-1]` is executed solely if `length > 0`.
+- **Pattern length 1:** The generated LPS is merely `[0]`; manually handle this if optimizing heavily.
+
+## 35.3. Boyer-Moore
+
+**Definition:** Boyer-Moore evaluates patterns in complete reverse (from right to left) and relies upon a "bad character" heuristic to perform massive leaps and skips over mismatching data blocks.
+
+### Operations & Complexity
+
+| Case | Time | Space |
+|-------|------|-------|
+| Best | <code>O(n/m)</code> | Featuring massive skips |
+| Average | <code>O(n/m)</code> | . |
+| Worst | <code>O(n × m)</code> | When all input characters are painfully identical |
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import "fmt"
+
+func preprocessBadChar(pattern string) [256]int {
+    var badChar [256]int
+    for i := range badChar {
+        badChar[i] = -1
+    }
+    for i := 0; i < len(pattern); i++ {
+        badChar[pattern[i]] = i
+    }
+    return badChar
+}
+
+func boyerMooreSearch(text, pattern string) []int {
+    var positions []int
+    n, m := len(text), len(pattern)
+    if m == 0 || m > n {
+        return positions
+    }
+    badChar := preprocessBadChar(pattern)
+    shift := 0
+    for shift <= n-m {
+        j := m - 1
+        for j >= 0 && pattern[j] == text[shift+j] {
+            j--
+        }
+        if j < 0 {
+            positions = append(positions, shift)
+            if shift+m < n {
+                shift += m - badChar[text[shift+m]]
+            } else {
+                shift++
+            }
+        } else {
+            bc := badChar[text[shift+j]]
+            if bc == -1 {
+                shift += j + 1
+            } else {
+                skip := j - bc
+                if skip < 1 {
+                    skip = 1
+                }
+                shift += skip
+            }
+        }
+    }
+    return positions
+}
+
+func main() {
+    text := "ABAAABCD"
+    pattern := "ABC"
+    fmt.Println("BM:", boyerMooreSearch(text, pattern))
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+A basic Boyer-Moore employing only the bad character heuristic stands exceptionally practical. Adding the good suffix rule actively repairs the <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> scenario but severely tangles complexity. For strict production integrity, aggressively lean on Go's deeply optimized `strings.Index`.
+{{% /alert %}}
+
+## 35.4. Rabin-Karp
+
+**Definition:** The <abbr title="A string-searching algorithm using hashing to find patterns in a text.">Rabin-Karp algorithm</abbr> meticulously calculates a rolling mathematical hash to seamlessly compare a pattern <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> directly alongside text substrings.
+
+### Operations & Complexity
+
+| Case | Time | Space |
+|-------|------|-------|
+| Average | <code>O(n + m)</code> | <code>O(1)</code> |
+| Worst | <code>O(n × m)</code> | <code>O(1)</code> (Hash <abbr title="An event when two keys hash to the same index.">collision</abbr>) |
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import "fmt"
+
+const primeRK = 16777619
+
+func rabinKarpSearch(text, pattern string) []int {
+    var positions []int
+    n, m := len(text), len(pattern)
+    if m == 0 || m > n {
+        return positions
+    }
+    var hashP, hashT uint32
+    var pow uint32 = 1
+    for i := 0; i < m-1; i++ {
+        pow = pow * primeRK
+    }
+    for i := 0; i < m; i++ {
+        hashP = hashP*primeRK + uint32(pattern[i])
+        hashT = hashT*primeRK + uint32(text[i])
+    }
+    for i := 0; i <= n-m; i++ {
+        if hashP == hashT {
+            match := true
+            for j := 0; j < m; j++ {
+                if text[i+j] != pattern[j] {
+                    match = false
+                    break
+                }
+            }
+            if match {
+                positions = append(positions, i)
+            }
+        }
+        if i < n-m {
+            hashT = (hashT-uint32(text[i])*pow)*primeRK + uint32(text[i+m])
+        }
+    }
+    return positions
+}
+
+func main() {
+    text := "AABAACAADAABAAABAA"
+    pattern := "AABA"
+    fmt.Println("RK:", rabinKarpSearch(text, pattern))
+}
+```
+
+## 35.5. Aho-Corasick
+
+**Definition:** Aho-Corasick systematically erects a robust finite <abbr title="A self-operating state machine or computational model.">state machine</abbr> (a <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> fortified with failure links) engineered specifically to unearth numerous scattered patterns efficiently in a single, blazing-fast pass.
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import "fmt"
+
+type ACNode struct {
+    children [256]*ACNode
+    fail     *ACNode
+    output   []string
+    isEnd    bool
+}
+
+func buildTrie(patterns []string) *ACNode {
+    root := &ACNode{}
+    for _, p := range patterns {
+        node := root
+        for i := 0; i < len(p); i++ {
+            c := p[i]
+            if node.children[c] == nil {
+                node.children[c] = &ACNode{}
+            }
+            node = node.children[c]
+        }
+        node.isEnd = true
+        node.output = append(node.output, p)
+    }
+    return root
+}
+
+func buildFailureLinks(root *ACNode) {
+    queue := []*ACNode{}
+    for c := 0; c < 256; c++ {
+        if child := root.children[c]; child != nil {
+            child.fail = root
+            queue = append(queue, child)
+        }
+    }
+    for len(queue) > 0 {
+        node := queue[0]
+        queue = queue[1:]
+        for c := 0; c < 256; c++ {
+            child := node.children[c]
+            if child == nil {
+                continue
+            }
+            fail := node.fail
+            for fail != nil && fail.children[c] == nil {
+                fail = fail.fail
+            }
+            if fail == nil {
+                child.fail = root
+            } else {
+                child.fail = fail.children[c]
+                child.output = append(child.output, child.fail.output...)
+            }
+            queue = append(queue, child)
+        }
+    }
+}
+
+func ahoCorasickSearch(text string, root *ACNode) map[string][]int {
+    matches := make(map[string][]int)
+    node := root
+    for i := 0; i < len(text); i++ {
+        c := text[i]
+        for node != root && node.children[c] == nil {
+            node = node.fail
+        }
+        if child := node.children[c]; child != nil {
+            node = child
+        }
+        for _, pattern := range node.output {
+            matches[pattern] = append(matches[pattern], i-len(pattern)+1)
+        }
+    }
+    return matches
+}
+
+func main() {
+    patterns := []string{"he", "she", "his", "hers"}
+    root := buildTrie(patterns)
+    buildFailureLinks(root)
+    text := "ahishers"
+    matches := ahoCorasickSearch(text, root)
+    fmt.Println("Matches:", matches)
+}
+```
+
+## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Polynomial | `[]float64` | <code>O(n)</code> | <code>O(n)</code> | Standard coefficient storage |
-| Horner evaluation | func | <code>O(n)</code> | <code>O(1)</code> | Hyper-fast value evaluation |
-| Naive multiply | nested loop | <code>O(n²)</code> | <code>O(n)</code> | Handling tiny polynomial degrees |
-| FFT multiply | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n)</code> | Handling massive polynomial degrees |
-| Interpolation | func | <code>O(n²)</code> | <code>O(n)</code> | Precise data curve fitting |
-| DFT | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(n)</code> | Thorough signal analysis |
-| FFT | custom/3rd party | <code>O(n log n)</code> | <code>O(n)</code> | Extreme high-speed transformation |
+| Naive | . | <code>O(nm)</code> | <code>O(1)</code> | Early prototyping |
+| KMP | preprocessed | <code>O(n)</code> | <code>O(m)</code> | Deep <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantees |
+| Boyer-Moore | preprocessed | <code>O(n/m)</code> avg | <code>O(\sigma)</code> | Utilizing large character alphabets |
+| Rabin-Karp | hashed | <code>O(n)</code> avg | <code>O(1)</code> | Running multiple simultaneous pattern scans |
+| Aho-Corasick | <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> | <code>O(n + occ)</code> | <code>O(\sum m)</code> | Full dictionary text matching |
+| `strings.Index` | builtin | hyper-optimized | <code>O(1)</code> | Primary production single <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 34:</strong> This chapter dissects polynomial representation employing coefficient slices, hyper-fast Horner evaluation occurring in <code>O(n)</code>, and both naive <code>O(n^2)</code> and advanced FFT <code>O(n log n)</code> multiplications, alongside Lagrange interpolation. Rely on FFT strictly for massive <abbr title="The number of edges incident to a vertex.">degree</abbr> polynomial multiplications and Horner for rapid evaluations.
+<strong>Summary Chapter 33:</strong> This chapter dissects <abbr title="A field or set of fields used to identify a record.">key</abbr> <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: the Naive approach achieving <code>O(nm)</code>, KMP reliably offering <code>O(n+m)</code>, Boyer-Moore's rapid <code>O(n/m)</code> average, Rabin-Karp utilizing efficient rolling hashes, and the powerful Aho-Corasick for dense multiple-pattern environments. Leverage KMP to lock down a strict <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantee, Boyer-Moore to aggressively handle wide alphabets, and Aho-Corasick for sweeping dictionary matches.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 29: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
-- [Chapter 35: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-35/)
-- [Chapter 39: Bit Manipulation](/docs/Part-VII/Chapter-39/)
+- [Chapter 33: Polynomial and FFT](/docs/Part-VII/Chapter-33/)
+- [Chapter 36: Trie Data Structures](/docs/Part-VII/Chapter-36/)
+- [Chapter 48: Suffix Arrays](/docs/Part-IX/Chapter-48/)

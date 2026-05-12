@@ -1,63 +1,51 @@
 ---
-weight: 70200
-title: "Chapter 30: Parallel and Distributed Algorithms"
-description: "Parallel and Distributed Algorithms"
+weight: 70300
+title: "Chapter 30: Cryptographic Foundations Algorithms"
+description: "Cryptographic Foundations Algorithms"
 icon: "article"
-date: "2024-08-24T23:42:46+07:00"
-lastmod: "2024-08-24T23:42:46+07:00"
+date: "2024-08-24T23:42:47+07:00"
+lastmod: "2024-08-24T23:42:47+07:00"
 draft: false
 toc: true
 katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Parallel programming is not about making programs faster, but about creating solutions that can solve larger problems.</em>" : Jeff Dean</strong>
+<strong>"<em>To keep a system secure, we need to be always on our toes. If we wait for the attackers to find vulnerabilities, it's already too late.</em>" : Whitfield Diffie</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 30 discusses parallel and distributed algorithms employing goroutines, channels, synchronization primitives, and worker pools in Go.
+Chapter 31 explores cryptographic primitives: hash functions, symmetric encryption, asymmetric encryption, and digital signatures utilizing Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr>.
 {{% /alert %}}
 
-## 30.1. Parallelism in Go
+## 31.1. Hash Functions
 
-**Definition:** Parallelism involves executing computations simultaneously across multiple CPU cores. Go provides <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> (lightweight threads) and <abbr title="A Go construct for communication between goroutines.">channels</abbr> for inter-process communication.
+**Definition:** A <abbr title="A function mapping data of arbitrary size to fixed-size values">hash function</abbr> maps arbitrary inputs to deterministic fixed-size outputs. Cryptographic hashes must be robustly preimage-resistant and collision-resistant.
 
 **Background & Philosophy:**
-The philosophy stems from Amdahl's Law: hardware clock speeds have plateaued, so to compute faster, we must compute wider. It trades the straightforwardness of sequential programming for the complexities of coordination, state sharing, and consensus.
+The philosophy is mathematical asymmetry and mathematical impossibility. Cryptography relies on one-way functions (like factoring large primes or elliptic curve discrete logarithms) that are trivial to compute in one direction but take billions of years to reverse without a key.
 
 **Use Cases:**
-Processing terabytes of logs asynchronously, distributing HTTP requests across clusters, and parallel matrix multiplication.
+HTTPS encryption, securing user passwords via bcrypt, and verifying blockchain transactions through ECDSA signatures.
 
 **Memory Mechanics:**
-Parallelism directly exposes the harsh reality of hardware <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> coherence. When two goroutines on different CPU cores write to adjacent array elements simultaneously, they cause "False Sharing". The CPU hardware must lock and invalidate the L1 cache lines across the entire motherboard, destroying performance. Properly padding memory structures or isolating data chunks to avoid false sharing is mandatory for true parallel speedup.
+Cryptographic hashing requires constant-time memory execution to prevent "timing attacks". If comparing an unauthorized hash `A` against a stored password hash `B`, a naive string comparison exits early on the first mismatched byte. An attacker can precisely measure this execution time to deduce the correct bytes one by one. The `subtle.ConstantTimeCompare` function forces the CPU to iterate through the entire memory slice regardless of matches, neutralizing the timing side-channel.
 
 ### Operations & Complexity
 
-| Model | Time | Overhead | Description |
-|-------|------|----------|------------|
-| Sequential | <code>O(T)</code> | 0 | Baseline |
-| <abbr title="A lightweight concurrent execution thread managed by the Go runtime">Goroutine</abbr> | <code>O(T/p)</code> | ~2μs spawn | Lightweight thread |
-| Worker Pool | <code>O(T/p)</code> | Fixed pool | Reuses goroutines |
-| SIMD (Go asm) | <code>O(T/vec)</code> | Manual | AVX/SSE |
+| Algorithm | Output Size | Security <abbr title="The set of all nodes at a given depth.">Level</abbr> | Description |
+|-----------|-------------|----------|------------|
+| SHA-256 | 256 bits | Secure | Industry standard |
+| SHA-512 | 512 bits | Secure | Slower, but larger bounds |
+| MD5 | 128 bits | Broken | Do not use |
+| SHA-1 | 160 bits | Broken | Deprecated |
 
 ### Pseudocode
 
 ```text
-ParallelSum(arr):
-    numWorkers = number of CPU cores
-    chunk = ceil(length(arr) / numWorkers)
-    partials = new array of size numWorkers
-    for each worker i:
-        start = i * chunk
-        end = min(start + chunk, length(arr))
-        spawn worker:
-            sum = 0
-            for each v in arr[start:end]:
-                sum += v
-            partials[i] = sum
-    wait for all workers
-    total = sum of all partials
-    return total
+HashSHA256(data):
+    h = SHA256(data)
+    return encode hex(h)
 ```
 
 ### Idiomatic Go Implementation
@@ -66,130 +54,68 @@ ParallelSum(arr):
 package main
 
 import (
+    "crypto/sha256"
+    "encoding/hex"
     "fmt"
-    "runtime"
-    "sync"
 )
 
-func parallelSum(arr []int) int {
-    numCPU := runtime.NumCPU()
-    n := len(arr)
-    chunk := (n + numCPU - 1) / numCPU
-    var wg sync.WaitGroup
-    partials := make([]int, numCPU)
-
-    for i := 0; i < numCPU; i++ {
-        start := i * chunk
-        end := start + chunk
-        if start >= n {
-            break
-        }
-        if end > n {
-            end = n
-        }
-        wg.Add(1)
-        go func(idx, s, e int) {
-            defer wg.Done()
-            sum := 0
-            for _, v := range arr[s:e] {
-                sum += v
-            }
-            partials[idx] = sum
-        }(i, start, end)
-    }
-    wg.Wait()
-    total := 0
-    for _, v := range partials {
-        total += v
-    }
-    return total
+func hashSHA256(data []byte) string {
+    h := sha256.Sum256(data)
+    return hex.EncodeToString(h[:])
 }
 
 func main() {
-    arr := make([]int, 1000000)
-    for i := range arr {
-        arr[i] = i + 1
-    }
-    fmt.Println("Parallel sum:", parallelSum(arr))
+    data := []byte("hello world")
+    fmt.Println("SHA-256:", hashSHA256(data))
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Go's <abbr title="The period during which a computer program is executing.">runtime</abbr> scheduler utilizes an M:N scheduling model. Do not spawn goroutines for microscopic tasks; enforce a minimum threshold for tasks to yield a tangible benefit.
+Strictly rely on `crypto/sha256` or `crypto/sha512` from the stdlib. Avoid MD5 and SHA-1 for security contexts entirely. For password hashing, utilize `golang.org/x/crypto/bcrypt` or `argon2`.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use Goroutines When... | Avoid If... |
-|--------------------------|------------------|
-| The task is CPU-bound and execution time > 1ms | The task is excessively small (< 100μs) |
-| Dealing with independent sub-problems | Dealing with highly shared state lacking synchronization |
-| Constructing pipeline stages | There is a strict, strong sequential dependency |
+| Use SHA-256 When... | Avoid If... |
+|------------------------|------------------|
+| Performing data integrity checks | Storing passwords (use bcrypt/argon2 instead) |
+| Generating cryptographic checksums | You need raw speed without security (use xxhash) |
 
 ### Edge Cases & Pitfalls
 
-- **Goroutine leak:** Always verify that channels are closed or `defer close()` is guaranteed to be called.
-- **<abbr title="A bug when multiple threads access shared data without synchronization.">Data race</abbr>:** Extensively use `go test -race` for detection. Rely on <abbr title="A synchronization primitive ensuring mutual exclusion.">sync.Mutex</abbr> or channels for safety.
-- **Too many goroutines:** While millions of goroutines are permissible, they can consume massive amounts of stack memory (starting at 2KB each).
+- **Length extension attacks:** SHA-256 is vulnerable to length extension attacks. Employ HMACs when necessary.
+- **Timing attacks:** Never compare hashes utilizing the standard `==` operator. Always use `hmac.Equal` or `subtle.ConstantTimeCompare`.
 
-## 30.2. Synchronization and Concurrency
+## 31.2. Symmetric Encryption
 
-**Definition:** Synchronization coordinates access to shared states. Go supplies standard tools such as Mutex, RWMutex, WaitGroup, and channels for orchestration.
-
-### Operations & Complexity
-
-| Primitive | Lock | Unlock | Description |
-|-----------|------|--------|------------|
-| sync.Mutex | `Lock()` | `Unlock()` | Absolute mutual exclusion |
-| sync.RWMutex | `RLock()` R, `Lock()` W | `RUnlock()` / `Unlock()` | Multiple concurrent readers, single writer |
-| sync.Map | `Load()` avg | . | Specialized concurrent-safe map |
-| Channel | `<-ch` send/recv | . | Pure CSP-style communication |
-
-Hierarchical preference: channels > `sync/atomic` > `sync.Mutex`. Utilize `sync.Map` exclusively for intensely read-heavy concurrent access; otherwise, standard maps protected by a mutex are generally faster.
-
-### Decision Matrix
-
-| Use When... | Avoid If... |
-|----------------|------------------|
-| Channels: coordination, building pipelines | Only needing a basic counter (use atomic instead) |
-| Mutex: complex state updates | Simple counter updates (atomic is much faster) |
-| sync.Map: many readers, infrequent writes | Write-heavy workloads |
-
-### Edge Cases & Pitfalls
-
-- **<abbr title="A state where concurrent processes wait on each other indefinitely.">Deadlock</abbr>:** Absolutely ensure locks are always unlocked; utilize `defer mu.Unlock()`.
-- **Priority inversion:** An `RWMutex` writer can suffer from starvation if readers perpetually acquire the lock.
-- **Copying sync primitives:** Never copy a `sync.Mutex` by <abbr title="The data associated with a key in a key-value pair.">value</abbr> (always pass it by <abbr title="A variable that stores a memory address.">pointer</abbr>).
-
-## 30.3. Parallel Algorithms
-
-**Definition:** Algorithms designed specifically to run efficiently across multiple processors through diligent task or data decomposition.
+**Definition:** Symmetric encryption utilizes the exact same <abbr title="A field or set of fields used to identify a record.">key</abbr> for both encryption and decryption. <abbr title="An authenticated encryption algorithm using AES in Galois/Counter Mode.">AES-GCM</abbr> stands as the heavily recommended standard mode.
 
 ### Operations & Complexity
 
-| Algorithm | Sequential | Parallel (p processors) |
-|-----------|------------|-----------------------|
-| Parallel Prefix Sum | <code>O(n)</code> | <code>O(n/p + log p)</code> |
-| Parallel <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge Sort</abbr> | <code>O(n log n)</code> | <code>O(n/p log(n/p))</code> |
-| Parallel BFS | <code>O(V+E)</code> | <code>O((V+E)/p + d·log p)</code> |
-| Map-Reduce | <code>O(n)</code> | <code>O(n/p)</code> |
+| Algorithm | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Size | Mode | Security <abbr title="The set of all nodes at a given depth.">Level</abbr> |
+|-----------|----------|------|----------|
+| AES-128 | 128 bits | GCM | Secure |
+| AES-256 | 256 bits | GCM | Secure |
+| ChaCha20-Poly1305 | 256 bits | AEAD | Secure, strong alternative |
 
 ### Pseudocode
 
 ```text
-ParallelMap(arr, f):
-    n = length(arr)
-    result = new array of size n
-    numWorkers = number of CPU cores
-    chunk = ceil(n / numWorkers)
-    for each worker i:
-        start = i * chunk
-        end = min(start + chunk, n)
-        spawn worker:
-            for j from start to end-1:
-                result[j] = f(arr[j])
-    wait for all workers
-    return result
+EncryptAESGCM(plaintext, key):
+    block = AES(key)
+    gcm = GCM(block)
+    nonce = random bytes of size gcm.NonceSize
+    ciphertext = gcm.Seal(nonce, nonce, plaintext, nil)
+    return encode hex(ciphertext), encode hex(nonce)
+
+DecryptAESGCM(ciphertextHex, key):
+    ciphertext = decode hex(ciphertextHex)
+    block = AES(key)
+    gcm = GCM(block)
+    nonceSize = gcm.NonceSize
+    nonce = ciphertext[0:nonceSize]
+    ciphertext = ciphertext[nonceSize:]
+    return gcm.Open(nil, nonce, ciphertext, nil)
 ```
 
 ### Idiomatic Go Implementation
@@ -198,105 +124,327 @@ ParallelMap(arr, f):
 package main
 
 import (
+    "crypto/aes"
+    "crypto/cipher"
+    "crypto/rand"
+    "encoding/hex"
     "fmt"
-    "runtime"
-    "sync"
+    "io"
 )
 
-func parallelMap(arr []int, f func(int) int) []int {
-    n := len(arr)
-    result := make([]int, n)
-    numCPU := runtime.NumCPU()
-    chunk := (n + numCPU - 1) / numCPU
-    var wg sync.WaitGroup
-    for i := 0; i < numCPU; i++ {
-        start := i * chunk
-        end := start + chunk
-        if start >= n {
-            break
-        }
-        if end > n {
-            end = n
-        }
-        wg.Add(1)
-        go func(s, e int) {
-            defer wg.Done()
-            for j := s; j < e; j++ {
-                result[j] = f(arr[j])
-            }
-        }(start, end)
+func encryptAESGCM(plaintext, key []byte) (string, string, error) {
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        return "", "", err
     }
-    wg.Wait()
-    return result
+    gcm, err := cipher.NewGCM(block)
+    if err != nil {
+        return "", "", err
+    }
+    nonce := make([]byte, gcm.NonceSize())
+    if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+        return "", "", err
+    }
+    ciphertext := gcm.Seal(nonce, nonce, plaintext, nil)
+    return hex.EncodeToString(ciphertext), hex.EncodeToString(nonce), nil
+}
+
+func decryptAESGCM(ciphertextHex string, key []byte) ([]byte, error) {
+    ciphertext, err := hex.DecodeString(ciphertextHex)
+    if err != nil {
+        return nil, err
+    }
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        return nil, err
+    }
+    gcm, err := cipher.NewGCM(block)
+    if err != nil {
+        return nil, err
+    }
+    nonceSize := gcm.NonceSize()
+    nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
+    return gcm.Open(nil, nonce, ciphertext, nil)
 }
 
 func main() {
-    arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
-    squared := parallelMap(arr, func(x int) int { return x * x })
-    fmt.Println("Squared:", squared)
+    key := make([]byte, 32)
+    if _, err := io.ReadFull(rand.Reader, key); err != nil {
+        panic(err)
+    }
+    plain := []byte("secret message")
+    ct, _, err := encryptAESGCM(plain, key)
+    if err != nil {
+        panic(err)
+    }
+    pt, err := decryptAESGCM(ct, key)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("Decrypted:", string(pt))
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-**Amdahl's Law:** If 90% of your codebase is parallelizable, the absolute maximum theoretical speedup is 10×. Parallelizing tiny fragments is rarely worth the overhead.
+The <abbr title="A random number used once in cryptographic operations.">nonce</abbr> MUST be completely unique per encryption event when utilizing the same <abbr title="A field or set of fields used to identify a record.">key</abbr>. The standard GCM nonce size is 12 bytes. Never reuse nonces under any circumstance.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use Parallel Map When... | Avoid If... |
-|-----------------------------|------------------|
-| The function is pure with zero side effects | The function performs I/O operations |
-| The <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> is massive, > 10K elements | The <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> is small (< 1K elements) |
+| Use AES-GCM When... | Avoid If... |
+|------------------------|------------------|
+| Encrypting data at rest or in transit | Lacking authentication (use CBC+HMAC, or strictly GCM) |
+| Hardware AES-NI is physically available | Operating on embedded systems lacking AES support (use ChaCha20 instead) |
 
 ### Edge Cases & Pitfalls
 
-- **False sharing:** Goroutines writing to adjacent array elements force cache coherence updates, severely degrading performance.
-- **Uneven workload:** Dynamic work stealing proves vastly superior when dealing with severe load imbalances.
+- **<abbr title="A field or set of fields used to identify a record.">Key</abbr> reuse with identical nonce:** A fatal security flaw for GCM. Consistently generate cryptographically random nonces.
+- **Unauthenticated encryption:** ECB and CBC modes (without HMAC) are vulnerable to tampering and modifications.
+- **IV reuse in CTR mode:** This error completely shatters the encryption's security.
 
-## 30.4. Worker Pools and Pipelines
+## 31.3. Asymmetric Encryption
 
-**Definition:** A worker pool strictly limits the maximum number of running goroutines; a pipeline seamlessly connects processing stages through channels.
+**Definition:** Asymmetric encryption utilizes a specific pair of <abbr title="A key shared publicly for encryption or signature verification.">public</abbr> (encryption) and <abbr title="A secret key used for decryption or signing.">private</abbr> (decryption) keys. RSA and <abbr title="An elliptic curve digital signature algorithm providing security and efficiency.">ECDSA</abbr> serve as the established standards.
 
 ### Operations & Complexity
 
-| Pattern | Throughput | Latency | Description |
-|---------|------------|---------|------------|
-| Worker Pool | High | Low | Bounds concurrency |
-| Pipeline | Medium | Low | Stream processing architecture |
-| Fan-out/Fan-in | Very High | Medium | Highly parallel stages |
+| Algorithm | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Size | Sign | Verify | Description |
+|-----------|----------|------|--------|------------|
+| RSA-2048 | 2048 bits | <code>O(n³)</code> | <code>O(n^2)</code> | Aging standard |
+| RSA-4096 | 4096 bits | <code>O(n³)</code> | <code>O(n^2)</code> | More secure, much slower |
+| ECDSA P-256 | 256 bits | <code>O(n^2)</code> | <code>O(n^2)</code> | Considerably faster, shorter |
+| Ed25519 | 256 bits | <code>O(n^2)</code> | <code>O(n^2)</code> | Modern, heavily recommended |
 
-Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, large buffers mitigate blocking. For purely CPU-bound tasks, very small buffers often suffice.
+### Pseudocode
+
+```text
+GenerateECDSAKey():
+    privateKey = generate key on curve P256
+    privBytes = marshal private key
+    privPEM = PEM encode privBytes
+    return privateKey, privPEM
+
+SignECDSA(privateKey, message):
+    hash = SHA256(message)
+    r, s = ECDSA sign(privateKey, hash)
+    signature = concat(r bytes, s bytes)
+    return signature, hash
+```
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import (
+    "crypto/ecdsa"
+    "crypto/elliptic"
+    "crypto/rand"
+    "crypto/sha256"
+    "crypto/x509"
+    "encoding/pem"
+    "fmt"
+    "math/big"
+)
+
+func generateECDSAKey() (*ecdsa.PrivateKey, []byte, error) {
+    priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+    if err != nil {
+        return nil, nil, err
+    }
+    privBytes, err := x509.MarshalECPrivateKey(priv)
+    if err != nil {
+        return nil, nil, err
+    }
+    privPEM := pem.EncodeToMemory(&pem.Block{Type: "EC PRIVATE KEY", Bytes: privBytes})
+    return priv, privPEM, nil
+}
+
+func signECDSA(priv *ecdsa.PrivateKey, msg []byte) ([]byte, []byte, error) {
+    hash := sha256.Sum256(msg)
+    r, s, err := ecdsa.Sign(rand.Reader, priv, hash[:])
+    if err != nil {
+        return nil, nil, err
+    }
+    sig := append(r.Bytes(), s.Bytes()...)
+    return sig, hash[:], nil
+}
+
+func main() {
+    priv, _, err := generateECDSAKey()
+    if err != nil {
+        panic(err)
+    }
+    msg := []byte("authenticate this")
+    sig, hash, err := signECDSA(priv, msg)
+    if err != nil {
+        panic(err)
+    }
+    // Reconstruct big.Int values from signature bytes for verification
+    r := new(big.Int).SetBytes(sig[:len(sig)/2])
+    s := new(big.Int).SetBytes(sig[len(sig)/2:])
+    valid := ecdsa.Verify(&priv.PublicKey, hash, r, s)
+    fmt.Println("Signature valid:", valid)
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+`crypto/ecdsa` yields a raw signature (r, s) that frequently requires encoding (ASN.1 DER) for broad interoperability. For modern applications, strongly prefer `crypto/ed25519` as it's considerably simpler.
+{{% /alert %}}
 
 ### Decision Matrix
 
-| Use Worker Pool When... | Use Pipeline When... |
-|----------------------------|-------------------------|
-| Resources are strictly limited (DB connections, file descriptors) | Engaging in stream processing |
-| Tasks are completely homogeneous | Executing multi-stage transformations |
+| Use Ed25519 When... | Avoid If... |
+|------------------------|------------------|
+| Needing new digital signatures | Working within legacy systems demanding RSA |
+| Performance is highly critical | Actually needing raw encryption (Ed25519 only signs data) |
 
 ### Edge Cases & Pitfalls
 
-- **Channel deadlock:** Guarantee that there is always an active goroutine reading from every channel.
-- **Panic propagation:** Proactively use `defer/recover()` within worker goroutines or utilize dedicated error channels.
+- **Randomness quality:** Keys and signatures depend intensely upon `crypto/rand`. Never utilize the insecure `math/rand`.
+- **Timing attacks:** ECDSA verification must run in strict constant-time. Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> reliably handles this.
+
+## 31.4. Digital Signatures and HMAC
+
+**Definition:** <abbr title="A hash-based message authentication code for verifying data integrity.">HMAC</abbr> (Hash-based Message Authentication Code) leverages a secret <abbr title="A field or set of fields used to identify a record.">key</abbr> to authenticate data integrity. Digital signatures use asymmetric keys to ensure robust non-repudiation.
+
+### Operations & Complexity
+
+| Primitive | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Type | Size | Description |
+|----------|----------|------|------------|
+| HMAC-SHA256 | Symmetric | 256 bits | Message authentication |
+| ECDSA | Asymmetric | 512 bits signature | Ensures non-repudiation |
+| Ed25519 | Asymmetric | 64 bytes signature | Modern, exceptionally fast |
+
+### Pseudocode
+
+```text
+HMACSHA256(message, key):
+    h = HMAC(SHA256, key)
+    h.update(message)
+    return encode hex(h.digest())
+
+VerifyHMAC(message, key, mac):
+    expected = HMACSHA256(message, key)
+    return constant time compare(expected, mac)
+```
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import (
+    "crypto/hmac"
+    "crypto/sha256"
+    "encoding/hex"
+    "fmt"
+)
+
+func hmacSHA256(message, key []byte) string {
+    h := hmac.New(sha256.New, key)
+    h.Write(message)
+    return hex.EncodeToString(h.Sum(nil))
+}
+
+func verifyHMAC(message, key []byte, mac string) bool {
+    expected := hmacSHA256(message, key)
+    return hmac.Equal([]byte(expected), []byte(mac))
+}
+
+func main() {
+    key := []byte("super-secret-key")
+    msg := []byte("authenticated message")
+    mac := hmacSHA256(msg, key)
+    fmt.Println("HMAC:", mac)
+    fmt.Println("Verify:", verifyHMAC(msg, key, mac))
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute a standard `==` to evaluate a MAC.
+{{% /alert %}}
+
+### Decision Matrix
+
+| Use HMAC When... | Use Digital Signature When... |
+|---------------------|----------------------------------|
+| Both involved parties possess the shared secret <abbr title="A field or set of fields used to identify a record.">key</abbr> | Genuine non-repudiation is mandatory |
+| Performance is highly critical | The verification step occurs via a third party |
+
+### Edge Cases & Pitfalls
+
+- **<abbr title="A field or set of fields used to identify a record.">Key</abbr> length < hash size:** HMAC automatically hashes the key first. Keys shorter than the block size are acceptable.
+- **Truncated MAC:** Do not truncate an HMAC signature without undergoing a rigorous security analysis.
+
+## 31.5. Password Hashing
+
+**Definition:** Password hashing (distinct from encryption) represents a deliberately slow one-way function engineered specifically to thwart brute-force attacks.
+
+### Operations & Complexity
+
+| Algorithm | Work Factor | Memory | Description |
+|-----------|-------------|--------|------------|
+| bcrypt | Cost 10-14 | Low | Legacy standard, sufficiently secure |
+| scrypt | N, r, p | Configurable | Memory-hard defense |
+| Argon2 | Time, Memory | High | PHC winner, highly recommended |
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"golang.org/x/crypto/bcrypt"
+)
+
+func main() {
+	password := []byte("my-secure-password")
+
+	// Hash dengan bcrypt, cost factor 12
+	hashed, err := bcrypt.GenerateFromPassword(password, 12)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("bcrypt hash: %s\n", hashed)
+
+	// Verifikasi
+	err = bcrypt.CompareHashAndPassword(hashed, password)
+	if err != nil {
+		fmt.Println("Password mismatch")
+	} else {
+		fmt.Println("Password verified")
+	}
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+Never use SHA-256 for password hashing. SHA-256 is designed for speed and can be brute-forced at billions of hashes per second with GPUs. Always use a dedicated password hashing algorithm like **bcrypt**, **scrypt**, or **Argon2** (PHC winner). These algorithms are deliberately slow and memory-hard.
+{{% /alert %}}
+
+For production, prefer `golang.org/x/crypto/argon2` over bcrypt for its memory-hard properties.
 
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Mutex | `sync.Mutex` | . | 1 word | Shared state protection |
-| RWMutex | `sync.RWMutex` | . | 1 word | Read-heavy caching |
-| WaitGroup | `sync.WaitGroup` | . | 1 word | Barrier synchronization |
-| Atomic | `sync/atomic` | <code>O(1)</code> | . | Lock-free counters and flags |
-| Channel | `chan T` | Blocking | varies | Pure CSP communication |
-| sync.Map | `sync.Map` | . | . | Highly concurrent maps |
-| Context | `context.Context` | . | . | Cancellations and timeouts |
+| SHA-256 | `crypto/sha256` | <code>O(n)</code> | 32 bytes | Data integrity |
+| AES-GCM | `crypto/aes` + `crypto/cipher` | <code>O(n)</code> | varies | Standard symmetric encryption |
+| HMAC | `crypto/hmac` | <code>O(n)</code> | . | Authenticate messages |
+| ECDSA | `crypto/ecdsa` | <code>O(n)</code> | . | Standard digital signatures |
+| Ed25519 | `crypto/ed25519` | <code>O(n)</code> | . | Fast, modern signatures |
+| bcrypt | `golang.org/x/crypto/bcrypt` | <code>O(cost)</code> | . | Hash passwords |
+| Argon2 | `golang.org/x/crypto/argon2` | . | . | Advanced password hashing |
+| TLS | `crypto/tls` | . | . | Secure transport layers |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 30:</strong> This chapter discusses parallelism in Go using goroutines, synchronization primitives (Mutex, RWMutex, atomic, WaitGroup), channels, as well as worker pool and pipeline patterns. Utilize goroutines for independent CPU-bound tasks, channels for coordination, and worker pools to strictly bound concurrency when resources are limited.
+<strong>Summary Chapter 29:</strong> This chapter dissects cryptographic primitives in Go: hashing (SHA-256), symmetric encryption (AES-GCM), asymmetric encryption (ECDSA/Ed25519), HMACs, digital signatures, and password hashing (bcrypt/Argon2). Rely exclusively on the standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> `crypto/` package for cryptographic operations and rigorously avoid MD5/SHA-1 for anything security-related.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 29: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
-- [Chapter 31: Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-31/)
-- [Chapter 32: Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-32/)
+- [Chapter 29: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-29/)
+- [Chapter 31: Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-31/)
+- [Chapter 46: Bloom Filters](/docs/Part-IX/Chapter-46/)

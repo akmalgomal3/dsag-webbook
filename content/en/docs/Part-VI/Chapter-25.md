@@ -1,7 +1,7 @@
 ---
-weight: 60300
-title: "Chapter 25: Greedy Algorithms"
-description: "Greedy Algorithms"
+weight: 60400
+title: "Chapter 25: Backtracking"
+description: "Backtracking"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,211 +11,205 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Greed, for lack of a better word, is good.</em>" : Gordon Gekko</strong>
+<strong>"<em>In the middle of difficulty lies opportunity.</em>" : Albert Einstein</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 25 covers <abbr title="An algorithm making locally optimal choices at each step.">greedy algorithms</abbr>: making locally optimal choices at each step to find a <abbr title="The best possible solution over the entire search space">global optimum</abbr>. Learn when greediness works and when it fails.
+Chapter 26 covers <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>: a systematic way to explore all potential solutions by building candidates incrementally and abandoning partial candidates ("<abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr>") as soon as they cannot possibly lead to a valid solution.
 {{% /alert %}}
 
-## 25.1. Greedy Strategy
+## 26.1. <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> Fundamentals
 
-**Definition:** A <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> builds a solution piece by piece, always choosing the next piece that offers the most immediate benefit. It works only when the problem has the **greedy choice property** and **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>**.
+**Definition:** <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> is a refined <abbr title="A straightforward approach trying all possible solutions">brute-force</abbr> approach that builds a solution incrementally. If a partial solution violates constraints, the algorithm backtracks and tries the next alternative. It is equivalent to a depth-first search of the solution space.
 
 **Background & Philosophy:**
-The philosophy of Greed is local optimization. Instead of examining all possible futures (like <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>) or storing all past states (like <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">DP</abbr>), a <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> makes the mathematically best choice right now and never reconsiders it. It trades guarantees of absolute correctness for blinding speed.
+The philosophy is exhaustive exploration with intelligent pruning. Unlike pure <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> which blindly evaluates complete solutions (trying every combination regardless of obvious impossibilities), <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> actively evaluates partial solutions. The moment a partial solution breaks a rule, it abandons that entire branch of the search tree.
 
 **Use Cases:**
-Network packet routing (<abbr title="An algorithm finding shortest paths in non-negative weighted graphs.">Dijkstra</abbr>), data compression (<abbr title="A greedy algorithm for lossless data compression using variable-length codes.">Huffman coding</abbr>), and resource scheduling where constraints allow sorting to define priority.
+Solving constraint satisfaction problems like Sudoku or crossword puzzles, generating regular expression parsers, discovering passwords, and traversing complex logical state machines (N-Queens).
 
 **Memory Mechanics:**
-Greedy algorithms almost always require the data to be sorted first. This means their memory profile is dictated by the sorting algorithm (usually <code>O(log n)</code> auxiliary space for Quick Sort). Once sorted, the greedy phase is a simple linear scan (<code>O(n)</code>). This sequential access pattern provides flawless <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> performance.
+<abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> uses the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> to represent the <abbr title="The set of all candidate solutions in a problem">search space</abbr> tree. In Go, passing a slice <abbr title="A variable that stores a memory address.">pointer</abbr> or mutating a shared slice across recursive calls avoids allocating millions of small arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. However, the developer must meticulously "undo" the mutation (`path = path[:len(path)-1]`) before returning to the parent frame, otherwise the shared memory state becomes permanently corrupted for adjacent branches.
 
-### When Greedy Works
+### Template Structure
 
-| Problem | Greedy Choice | Proof |
-|---------|--------------|-------|
-| Fractional Knapsack | Highest value/weight ratio | Exchange argument |
-| Activity Selection | Earliest finish time | Staying ahead |
-| Huffman Coding | Lowest frequency pair | Cut-and-paste |
-| Minimum Spanning Tree | Lightest safe edge | Cut property |
-
-## 25.2. Fractional Knapsack
-
-**Definition:** Given items with weights and values, fill a knapsack to maximize value. Unlike 0/1 knapsack, you can take fractions of items.
-
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
-
-Sort by value-to-weight ratio in descending order.
-
-```go
-package main
-
-import (
-	"fmt"
-	"sort"
-)
-
-type Item struct {
-	Weight int
-	Value  int
-}
-
-func fractionalKnapsack(items []Item, capacity int) float64 {
-	sort.Slice(items, func(i, j int) bool {
-		vi := float64(items[i].Value) / float64(items[i].Weight)
-		vj := float64(items[j].Value) / float64(items[j].Weight)
-		return vi > vj
-	})
-	
-	var total float64
-	for _, item := range items {
-		if capacity >= item.Weight {
-			total += float64(item.Value)
-			capacity -= item.Weight
-		} else {
-			total += float64(item.Value) * float64(capacity) / float64(item.Weight)
-			break
-		}
-	}
-	return total
-}
-
-func main() {
-	items := []Item{{10, 60}, {20, 100}, {30, 120}}
-	fmt.Println(fractionalKnapsack(items, 50)) // 240
+```text
+func backtrack(candidate, path) {
+    if isValidSolution(path) {
+        recordSolution(path)
+        return
+    }
+    for each option in candidates {
+        if isValid(option, path) {
+            path.add(option)
+            backtrack(remainingCandidates, path)
+            path.remove(option) // backtrack
+        }
+    }
 }
 ```
 
-## 25.3. Activity Selection
+## 26.2. N-Queens Problem
 
-**Definition:** Given activities with start and finish times, select the maximum number of non-overlapping activities.
+**Definition:** Place N queens on an N×N chessboard such that no two queens threaten each other. Queens attack horizontally, vertically, and diagonally.
 
 ### Idiomatic Go Implementation
 
-Always pick the activity with the earliest finish time.
+Use a slice to track column positions; index represents row.
 
 ```go
 package main
 
-import (
-	"fmt"
-	"sort"
-)
+import "fmt"
 
-type Activity struct {
-	Start  int
-	Finish int
-}
-
-func activitySelection(activities []Activity) []Activity {
-	sort.Slice(activities, func(i, j int) bool {
-		return activities[i].Finish < activities[j].Finish
-	})
+func solveNQueens(n int) [][]string {
+	var result [][]string
+	var board []int // board[row] = col
 	
-	var selected []Activity
-	var lastFinish int
-	for _, act := range activities {
-		if act.Start >= lastFinish {
-			selected = append(selected, act)
-			lastFinish = act.Finish
+	var backtrack func(row int)
+	backtrack = func(row int) {
+		if row == n {
+			result = append(result, buildBoard(board, n))
+			return
+		}
+		for col := 0; col < n; col++ {
+			if isValid(board, row, col) {
+				board = append(board, col)
+				backtrack(row + 1)
+				board = board[:len(board)-1]
+			}
 		}
 	}
-	return selected
+	
+	backtrack(0)
+	return result
+}
+
+func isValid(board []int, row, col int) bool {
+	for r := 0; r < row; r++ {
+		c := board[r]
+		if c == col || row-r == col-c || row-r == c-col {
+			return false
+		}
+	}
+	return true
+}
+
+func buildBoard(board []int, n int) []string {
+	var result []string
+	for _, col := range board {
+		row := make([]byte, n)
+		for i := range row { row[i] = '.' }
+		row[col] = 'Q'
+		result = append(result, string(row))
+	}
+	return result
 }
 
 func main() {
-	acts := []Activity{{1, 4}, {3, 5}, {0, 6}, {5, 7}, {3, 8}, {5, 9}}
-	fmt.Println(len(activitySelection(acts))) // 4
+	solutions := solveNQueens(4)
+	fmt.Println(len(solutions)) // 2
 }
 ```
 
-## 25.4. Huffman Coding
+## 26.3. Subset Sum
 
-**Definition:** Huffman coding constructs an optimal prefix-free binary code by greedily merging the two least frequent symbols.
+**Definition:** Given a set of integers and a target sum, determine if there is a subset that sums to the target.
 
 ### Idiomatic Go Implementation
 
-Use `container/heap` for the priority queue.
+```go
+package main
+
+import "fmt"
+
+func subsetSum(nums []int, target int) bool {
+	var backtrack func(start, sum int) bool
+	backtrack = func(start, sum int) bool {
+		if sum == target { return true }
+		if sum > target || start >= len(nums) { return false }
+		// Include nums[start]
+		if backtrack(start+1, sum+nums[start]) { return true }
+		// Exclude nums[start]
+		if backtrack(start+1, sum) { return true }
+		return false
+	}
+	return backtrack(0, 0)
+}
+
+func main() {
+	nums := []int{3, 34, 4, 12, 5, 2}
+	fmt.Println(subsetSum(nums, 9))  // true (4+5)
+	fmt.Println(subsetSum(nums, 30)) // false
+}
+```
+
+## 26.4. Permutations
+
+**Definition:** Generate all permutations of a given set of distinct elements.
+
+### Idiomatic Go Implementation
 
 ```go
 package main
 
-import (
-	"container/heap"
-	"fmt"
-)
+import "fmt"
 
-type Node struct {
-	Char  rune
-	Freq  int
-	Left  *Node
-	Right *Node
-}
-
-type NodeHeap []*Node
-
-func (h NodeHeap) Len() int           { return len(h) }
-func (h NodeHeap) Less(i, j int) bool { return h[i].Freq < h[j].Freq }
-func (h NodeHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
-func (h *NodeHeap) Push(x interface{}) { *h = append(*h, x.(*Node)) }
-func (h *NodeHeap) Pop() interface{} {
-	old := *h
-	n := len(old)
-	*h = old[:n-1]
-	return old[n-1]
-}
-
-func buildHuffman(freq map[rune]int) *Node {
-	h := &NodeHeap{}
-	heap.Init(h)
-	for ch, f := range freq {
-		heap.Push(h, &Node{Char: ch, Freq: f})
+func permutations(nums []int) [][]int {
+	var result [][]int
+	var backtrack func(path []int, used []bool)
+	backtrack = func(path []int, used []bool) {
+		if len(path) == len(nums) {
+			perm := make([]int, len(path))
+			copy(perm, path)
+			result = append(result, perm)
+			return
+		}
+		for i := 0; i < len(nums); i++ {
+			if used[i] { continue }
+			used[i] = true
+			backtrack(append(path, nums[i]), used)
+			used[i] = false
+		}
 	}
-	for h.Len() > 1 {
-		a := heap.Pop(h).(*Node)
-		b := heap.Pop(h).(*Node)
-		heap.Push(h, &Node{Freq: a.Freq + b.Freq, Left: a, Right: b})
-	}
-	return heap.Pop(h).(*Node)
+	backtrack([]int{}, make([]bool, len(nums)))
+	return result
 }
 
 func main() {
-	freq := map[rune]int{'a': 5, 'b': 9, 'c': 12, 'd': 13, 'e': 16, 'f': 45}
-	root := buildHuffman(freq)
-	fmt.Println(root.Freq) // 100
+	fmt.Println(len(permutations([]int{1, 2, 3}))) // 6
 }
 ```
 
-## 25.5. Decision Matrix
+## 26.5. Decision Matrix
 
-| Use Greedy When... | Avoid If... |
-|--------------------|-------------|
-| Greedy choice property provably holds | Local optimum ≠ global optimum |
-| Need fast, simple approximation | Exact optimal solution required |
-| Problem structure supports exchange argument | Counterexamples exist (e.g., 0/1 knapsack) |
+| Use Backtracking When... | Avoid If... |
+|--------------------------|-------------|
+| Need all valid solutions | Only need existence (use DP or greedy) |
+| Constraints prune search space heavily | Problem size > 20 (exponential blowup) |
+| Exact solution required | Approximation suffices |
 
 ### Edge Cases & Pitfalls
 
-- **Proving correctness:** Always verify the greedy choice property before implementing.
-- **Fractional vs 0/1:** Greedy works for fractional knapsack but fails for 0/1 knapsack.
-- **Tie-breaking:** When multiple choices have equal value, the tie-breaking strategy matters.
+- **State management:** Ensure state is fully restored after recursive calls.
+- **Pruning:** Aggressive pruning is essential; without it, backtracking degrades to brute force.
+- **Duplicate handling:** For inputs with duplicates, sort and skip repeated elements.
 
-## 25.6. Quick Reference
+## 26.6. Quick Reference
 
-| Problem | Greedy Choice | Time | Space | Optimal? |
-|---------|--------------|------|-------|----------|
-| Fractional Knapsack | Max value/weight | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
-| Activity Selection | Earliest finish | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
-| Huffman Coding | Min frequency pair | <code>O(n log n)</code> | <code>O(n)</code> | Yes |
-| 0/1 Knapsack | . | . | . | No (use DP) |
+| Problem | Go Type | Time | Space | Key Insight |
+|---------|---------|------|-------|-------------|
+| N-Queens | `[]int` | <code>O(n!)</code> | <code>O(n)</code> | Column + diagonal checks |
+| Subset Sum | Recursion | <code>O(2^n)</code> | <code>O(n)</code> | Include/exclude each element |
+| Permutations | Recursion | <code>O(n!)</code> | <code>O(n)</code> | Track used elements |
+| Sudoku | `[][]int` | <code>O(9^m)</code> | <code>O(81)</code> | Constraint propagation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 25:</strong> Greedy algorithms provide fast, elegant solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
+<strong>Summary Chapter 24:</strong> <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> systematically explores the solution space using depth-first search with pruning. Master the template: build candidates incrementally, validate constraints, recurse, and undo changes. In Go, use slices for state tracking and ensure proper cleanup after each recursive call.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
-- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)
-- [Chapter 36: Approximate Algorithms](/docs/Part-VII/Chapter-36/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-23/)
+- [Chapter 24: Greedy Algorithms](/docs/Part-VI/Chapter-24/)
+- [Chapter 57: Minimax and Game Trees](/docs/Part-XII/Chapter-57/)

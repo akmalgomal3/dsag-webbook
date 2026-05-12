@@ -198,4 +198,3 @@ func main() {
 
 - [Chapter 7: Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
 - [Chapter 19: Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
-- [Chapter 22: All-Pairs Shortest Paths](/docs/Part-V/Chapter-22/)

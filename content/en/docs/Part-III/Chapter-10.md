@@ -126,4 +126,3 @@ func main() {
 
 - [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
 - [Chapter 16: Minimum Spanning Trees](/docs/Part-IV/Chapter-16/)
-- [Chapter 22: Median and Order Statistics](/docs/Part-V/Chapter-22/)

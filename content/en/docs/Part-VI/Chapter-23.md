@@ -1,250 +1,182 @@
 ---
-weight: 60100
-title: "Chapter 23: Divide and Conquer"
-description: "Divide and Conquer"
+weight: 60200
+title: "Chapter 23: Dynamic Programming"
+description: "Dynamic Programming"
 icon: "article"
-date: "2024-08-24T23:41:51+07:00"
-lastmod: "2024-08-24T23:41:51+07:00"
+date: "2024-08-24T23:42:09+07:00"
+lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
-katex: true
 toc: true
+katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A recursive method is often the most natural way to solve a problem that can be broken down into smaller problems of the same type.</em>" : Donald Knuth</strong>
+<strong>"<em>Those who cannot remember the past are condemned to repeat it.</em>" : George Santayana</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 23 focuses on the <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr> paradigm, breaking down problems recursively. It implements classical algorithms and demonstrates how to parallelize independent sub-problems efficiently using Go's goroutines.
+Chapter 24 covers <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (DP): a method for solving complex problems by breaking them into <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr> and storing solutions to avoid redundant computation.
 {{% /alert %}}
 
-## 23.1. Introduction to <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr>
+## 24.1. DP Fundamentals
 
-**Definition:** <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and conquer</abbr> breaks down a problem into smaller independent subproblems, solves them recursively, and combines their results.
+**Definition:** <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> solves problems by breaking them into smaller <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>, solving each subproblem once, and storing the result for reuse. It applies when a problem exhibits **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>** and **<abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>**.
 
 **Background & Philosophy:**
-The philosophy is breaking seemingly insurmountable problems into trivial base cases. Instead of attacking a fortress directly, you divide it into manageable stones. Because it maps problems to independent execution branches, it natively supports mathematical induction for correctness proofs and parallel processing.
+"Those who cannot remember the past are condemned to repeat it." DP is the philosophy of trading space for time. It recognizes that in many recursive problems, the exact same subproblems are evaluated millions of times. By explicitly memoizing (caching) these results, it transforms exponential <code>O(2^n)</code> chaos into polynomial <code>O(n)</code> order.
 
 **Use Cases:**
-Essential for recursive sorting (Merge Sort, Quick Sort), fast multiplication (Karatsuba), and processing independent queries in massive distributed databases via MapReduce architectures.
+Sequence alignment in bioinformatics (DNA matching), pricing complex financial derivatives, and solving optimization problems like the Knapsack problem for resource allocation.
 
 **Memory Mechanics:**
-<abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr> relies heavily on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Each recursive split pushes a new frame onto the stack. In Go, <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> stacks start at 2KB and grow dynamically, preventing overflow for moderate depth <code>O(log n)</code>. When the divide step requires creating new slices `arr[:mid]`, Go merely copies a 24-byte <abbr title="A small struct describing a slice: pointer, length, capacity">slice header</abbr> (pointer, length, capacity) without allocating new arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This makes Go's slice splitting an incredibly fast <code>O(1)</code> memory operation that does not trigger the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>.
+DP introduces severe memory demands. A 2D DP table for LCS allocates `m * n` memory cells. In Go, `[][]int` allocates a slice of slice headers, each pointing to a separate underlying array. This scatters memory and causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. A powerful memory optimization trick in DP is "state <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr>": since calculating row `i` often only requires row `i-1`, developers can discard the rest of the matrix and only keep two 1D slices in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, drastically improving <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and reducing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
 
-### Operations & Complexity
+### Two Approaches
 
-| Phase | Operation | Complexity | Description |
-|------|---------|--------------|------------|
-| Divide | Divide problem | <code>O(1)</code> or <code>O(n)</code> | Usually split in the middle |
-| Conquer | Solve subproblem | T(n/b) | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> |
-| Combine | Merge results | <code>O(n)</code> or <code>O(n log n)</code> | Merge, partition |
+| Approach | Method | Space | Use Case |
+|----------|--------|-------|----------|
+| Top-down (Memoization) | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> | <code>O(n)</code> | Natural recursive formulation |
+| Bottom-up (Tabulation) | Iterative table filling | <code>O(n)</code> or <code>O(n^2)</code> | Better constant factors, no <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
 
-### Pseudocode
+## 24.2. Fibonacci and Memoization
 
-```text
-sumDivideConquer(arr):
-    if arr is empty:
-        return 0
-    if len(arr) == 1:
-        return arr[0]
-    mid = len(arr) / 2
-    left = sumDivideConquer(arr[0:mid])
-    right = sumDivideConquer(arr[mid:])
-    return left + right
-```
+**Definition:** The classic Fibonacci sequence demonstrates DP. Without memoization, it has <code>O(2^n)</code> complexity; with memoization, it drops to <code>O(n)</code>.
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
-Basic <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>:
+Use a `map[int]int` for memoization or a slice for tabulation.
 
 ```go
 package main
 
 import "fmt"
 
-func sumDC(arr []int) int {
-	if len(arr) == 0 {
-		return 0
+// Top-down with memoization
+func fibMemo(n int, memo map[int]int) int {
+	if n <= 1 { return n }
+	if v, ok := memo[n]; ok { return v }
+	memo[n] = fibMemo(n-1, memo) + fibMemo(n-2, memo)
+	return memo[n]
+}
+
+// Bottom-up tabulation
+func fibTab(n int) int {
+	if n <= 1 { return n }
+	dp := make([]int, n+1)
+	dp[0], dp[1] = 0, 1
+	for i := 2; i <= n; i++ {
+		dp[i] = dp[i-1] + dp[i-2]
 	}
-	if len(arr) == 1 {
-		return arr[0]
-	}
-	mid := len(arr) / 2
-	return sumDC(arr[:mid]) + sumDC(arr[mid:])
+	return dp[n]
 }
 
 func main() {
-	fmt.Println(sumDC([]int{1, 2, 3, 4, 5}))
+	fmt.Println(fibMemo(30, map[int]int{})) // 832040
+	fmt.Println(fibTab(30))                 // 832040
 }
 ```
 
-### Decision Matrix
+## 24.3. 0/1 Knapsack Problem
 
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| Independent and non-overlapping subproblems | Overlapping subproblems (DP is better) |
-| Combine step is cheaper than <abbr title="A straightforward approach trying all possible solutions.">brute force</abbr> | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> overhead > gain (small n) |
-| Natural recursive structure | <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr> is strictly limited |
-
-### Edge Cases & Pitfalls
-- **Case <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> on n > 10⁴ can cause a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>; convert to an iterative approach.
-- **Case base case:** Forgetting to handle `len <= 1` causes infinite <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>.
-- **Case off-by-one:** `arr[:mid]` and `arr[mid:]` for `mid = len/2` works perfectly for balanced splits.
-
-## 23.2. Implementing <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr> in Go
-
-**Definition:** Go supports <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> through slices, <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>, and generics, with automatic memory management preventing leaks during intermediate allocations.
-
-### Operations & Complexity
-
-| Technique | Go Feature | Complexity | Description |
-|--------|-----------|--------------|------------|
-| Slice split | `arr[:mid]` | <code>O(1)</code> | Shared backing <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> |
-| In-place partition | Swap | <code>O(n)</code> | <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> |
-| Merge auxiliary | `make([]T, n)` | <code>O(n)</code> | <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> space |
-| Tail <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> | Not optimized | . | Go does not optimize tail calls |
-
-### Pseudocode
-
-```text
-quickSort(arr):
-    if len(arr) <= 1:
-        return
-    pivotIndex = PARTISI(arr)
-    quickSort(arr[0:pivotIndex])
-    quickSort(arr[pivotIndex+1:])
-
-PARTISI(arr):
-    pivot = last element
-    i = 0
-    for j = 0 to len(arr)-2:
-        if arr[j] < pivot:
-            swap arr[i] and arr[j]
-            i = i + 1
-    swap arr[i] and pivot
-    return i
-```
+**Definition:** Given items with weights and values, select items to maximize total value without exceeding a weight capacity. Each item can be taken at most once.
 
 ### Idiomatic Go Implementation
 
-In-place <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>:
+Use a 2D DP table or optimize to 1D.
 
 ```go
 package main
 
 import "fmt"
 
-func quickSort(arr []int) {
-	if len(arr) <= 1 {
-		return
-	}
-	pivot := partition(arr)
-	quickSort(arr[:pivot])
-	quickSort(arr[pivot+1:])
-}
-
-func partition(arr []int) int {
-	last := len(arr) - 1
-	pivot := arr[last]
-	i := 0
-	for j := 0; j < last; j++ {
-		if arr[j] < pivot {
-			arr[i], arr[j] = arr[j], arr[i]
-			i++
+func knapsack(weights, values []int, capacity int) int {
+	n := len(weights)
+	dp := make([][]int, n+1)
+	for i := range dp { dp[i] = make([]int, capacity+1) }
+	
+	for i := 1; i <= n; i++ {
+		for w := 0; w <= capacity; w++ {
+			if weights[i-1] <= w {
+				dp[i][w] = max(dp[i-1][w], dp[i-1][w-weights[i-1]]+values[i-1])
+			} else {
+				dp[i][w] = dp[i-1][w]
+			}
 		}
 	}
-	arr[i], arr[last] = arr[last], arr[i]
-	return i
+	return dp[n][capacity]
 }
 
+func max(a, b int) int { if a > b { return a }; return b }
+
 func main() {
-	data := []int{3, 6, 8, 10, 1, 2, 1}
-	quickSort(data)
-	fmt.Println(data)
+	weights := []int{2, 3, 4, 5}
+	values := []int{3, 4, 5, 6}
+	fmt.Println(knapsack(weights, values, 5)) // 7
 }
 ```
 
-### Decision Matrix
+## 24.4. Longest Common Subsequence (LCS)
 
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| In-place <abbr title="The process of arranging elements in a specific order.">sorting</abbr> is required | Data is nearly sorted (<abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n^2)</code>) |
-| Memory is strictly limited | A stable sort is required |
-| <abbr title="The expected runtime or resource usage of an algorithm over random inputs.">Average-case</abbr> <code>O(n log n)</code> is sufficient | <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">Worst-case</abbr> guarantee is required (use <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>) |
+**Definition:** Given two sequences, find the length of the longest subsequence present in both. A subsequence maintains relative order but need not be contiguous.
 
-### Edge Cases & Pitfalls
-- **Case sorted input:** <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> with the last element as pivot degrades to <code>O(n^2)</code>; use a randomized pivot or median-of-three.
-- **Case duplicate elements:** Partitioning with just `<` can lead to imbalanced splits; consider three-way partitioning.
-- **Case small subarrays:** Switch to <abbr title="A sorting algorithm that builds the final sorted array one item at a time.">insertion sort</abbr> for n < 10-20 (hybrid sort).
+### Idiomatic Go Implementation
 
-## 23.3. Case Studies: Divide and Conquer Algorithms
+```go
+package main
 
-**Definition:** Case studies of merge sort, quick sort, binary search, and Strassen's matrix multiplication demonstrate the practical application of divide and conquer with time and space trade-offs.
+import "fmt"
 
-### Operations & Complexity
+func lcs(s1, s2 string) int {
+	m, n := len(s1), len(s2)
+	dp := make([][]int, m+1)
+	for i := range dp { dp[i] = make([]int, n+1) }
+	
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if s1[i-1] == s2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[m][n]
+}
 
-| Algorithm | Time | Space | Description |
-|-----------|------|-------|------------|
-| Merge sort | <code>O(n log n)</code> | <code>O(n)</code> | Stable, predictable |
-| Quick sort | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place, fast avg |
-| Binary search | <code>O(log n)</code> | <code>O(1)</code> | Sorted data required |
-| Strassen | <code>O(n^2.81)</code> | <code>O(n²)</code> | Large matrices only |
+func main() {
+	fmt.Println(lcs("ABCDE", "ACE")) // 3
+}
+```
 
-### Decision Matrix
+## 24.5. Decision Matrix
 
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| Need stable and predictable sort | <code>O(n)</code> auxiliary memory is unavailable |
-| Data is sorted and frequently searched | Data is dynamic with many inserts |
-| Large matrices where Strassen is beneficial | Small matrices (overhead > gain) |
-
-### Edge Cases & Pitfalls
-- **Case integer overflow on mid:** Use `mid := lo + (hi-lo)/2` to prevent overflow in other languages (Go handles slice indices safely, but it's a good habit).
-- **Case empty slice:** `mergeSort(nil)` and `binarySearch(nil, x)` must be safe.
-- **Case duplicate keys:** `binarySearch` may return the first occurrence or an arbitrary one; define the requirement clearly.
-
-## 23.4. Parallelizing <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr> Algorithms in Go
-
-**Definition:** Independent subproblems in <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> algorithms enable trivial parallelization using goroutines, but synchronization overhead must be carefully managed.
-
-### Operations & Complexity
-
-| Aspect | Sequential | Parallel | Overhead |
-|-------|------------|----------|----------|
-| <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> | <code>O(n log n)</code> | <code>O(n log n / p)</code> | <code>O(n)</code> merge, goroutine spawn |
-| <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> | <code>O(n log n)</code> avg | <code>O(n log n / p)</code> | Partition is sequential |
-| Granularity | . | Threshold n > 1000 | Spawn cost < sort cost |
-
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| Large datasets and multi-core are available | Small datasets (< 1000 elements) |
-| Balanced subproblems | Highly uneven subproblem sizes |
-| CPU-bound and pure computation | I/O-bound (use channels/callbacks instead) |
+| Use DP When... | Avoid If... |
+|----------------|-------------|
+| Problem has overlapping subproblems | <abbr title="An algorithm making locally optimal choices at each step.">Greedy</abbr> choice property holds (use greedy instead) |
+| Optimal substructure exists | Subproblems are independent (use divide and conquer) |
+| Brute force is exponential | A simpler algorithm achieves same result |
 
 ### Edge Cases & Pitfalls
-- **Case goroutine explosion:** Without a threshold, > 10⁶ goroutines can exhaust memory.
-- **Case load imbalance:** Parallel <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr> with a bad pivot makes one goroutine busy while others idle.
-- **Case false sharing:** Goroutines accessing adjacent data in a <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> line causes invalidation.
-- **Case WaitGroup misuse:** `wg.Add` must be called before the `go` statement; `wg.Done` must be called (defer is recommended).
 
-## 23.5. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+- **Space optimization:** Many DP problems can reduce from <code>O(n^2)</code> to <code>O(n)</code> by only keeping the previous row.
+- **Integer overflow:** Knapsack and similar problems may overflow; use `int64` for large values.
+- **Base cases:** Incorrect initialization of DP table leads to wrong answers.
 
-| Name | Go Type | Time | Space | Use Case |
-|------|---------|------|-------|----------|
-| <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + merge | <code>O(n log n)</code> | <code>O(n)</code> | Stable <abbr title="The process of arranging elements in a specific order.">sorting</abbr>, parallel |
-| <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> | In-place partition | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place <abbr title="The process of arranging elements in a specific order.">sorting</abbr> |
-| <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary search</abbr> | Iterative loop | <code>O(log n)</code> | <code>O(1)</code> | Sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> lookup |
-| Strassen | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + matrix ops | <code>O(n^{2.807})</code> | <code>O(n^{2.807})</code> | Fast matrix multiply |
-| Sum/Max | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> | <code>O(n)</code> | <code>O(log n)</code> | Trivial parallelization |
+## 24.6. Quick Reference
+
+| Problem | Go Type | Time | Space | Approach |
+|---------|---------|------|-------|----------|
+| Fibonacci | `[]int` or `map` | <code>O(n)</code> | <code>O(n)</code> | Tabulation |
+| Knapsack 0/1 | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | 2D DP |
+| LCS | `[][]int` | <code>O(mn)</code> | <code>O(mn)</code> | 2D DP |
+| Coin Change | `[]int` | <code>O(nk)</code> | <code>O(n)</code> | 1D DP |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 23:</strong> This chapter introduces the <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> paradigm with implementations of <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>, <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>, and <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> in Go. It covers recursive decomposition, in-place partitioning techniques, and parallelization using goroutines for CPU-bound problems on multi-core systems.
+<strong>Summary Chapter 22:</strong> <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> transforms exponential-time recursive problems into polynomial-time solutions by storing subproblem results. Master the pattern: define states, write the recurrence, initialize base cases, and fill the table. In Go, use slices for tabulation and maps for sparse memoization.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
-- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)
-- [Chapter 27: Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)
+- [Chapter 22: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/Part-VI/Chapter-22/)
+- [Chapter 24: Greedy Algorithms](/docs/Part-VI/Chapter-24/)
+- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-25/)

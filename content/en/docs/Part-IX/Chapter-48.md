@@ -1,7 +1,7 @@
 ---
-weight: 90400
-title: "Chapter 48: LRU Cache"
-description: "LRU Cache"
+weight: 90500
+title: "Chapter 48: Suffix Arrays"
+description: "Suffix Arrays"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,173 +11,131 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>There are only two hard things in Computer Science: cache invalidation and naming things.</em>" : Phil Karlton</strong>
+<strong>"<em>String algorithms are the hidden engines of the modern world.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 48 covers the LRU (Least Recently Used) cache — the most common caching strategy, combining hash tables with linked lists for <code>O(1)</code> operations.
+Chapter 49 introduces suffix arrays — a space-efficient alternative to suffix trees for string searching, <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr>, and bioinformatics.
 {{% /alert %}}
 
-## 48.1. The Caching Problem
+## 49.1. The String Search Problem
 
-**Definition:** A <abbr title="A cache eviction policy that discards the least recently used items first when the cache is full.">Least Recently Used (LRU)</abbr> cache maintains a fixed-size collection where the least recently accessed item is evicted when space is needed.
+**Definition:** A <abbr title="A sorted array of all suffixes of a string, enabling efficient string matching and analysis.">suffix array</abbr> is the lexicographically sorted array of all suffixes of a string. It enables powerful string operations with <code>O(n log n)</code> construction and <code>O(m log n)</code> pattern search.
 
 **Background & Philosophy:**
-The philosophy is <abbr title="The tendency to reuse recently accessed memory addresses">temporal locality</abbr>. If a piece of data was requested recently, it is statistically highly probable it will be requested again very soon. By explicitly keeping the "freshest" data readily available and discarding the stale data, an LRU cache creates a buffer that shields the slow backing store (database or disk) from repeated identical requests.
+The philosophy is reducing complex string geometries into mathematically sortable integers. Suffix Trees are incredibly powerful but hideously complex to build and store. A Suffix Array abandons the tree structure entirely, opting simply to sort pointers to the suffixes. It relies on the insight that binary search over a sorted list of suffixes solves <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> elegantly.
 
 **Use Cases:**
-Database query caching, CDN edge nodes, and CPU hardware caching (L1/L2 caches physically implement LRU logic).
+Bioinformatics (DNA sequence alignment), full-text search engines, and data compression (Burrows-Wheeler Transform).
 
 **Memory Mechanics:**
-An LRU cache couples a `map` (for <code>O(1)</code> lookups) with a doubly-linked list (for <code>O(1)</code> reordering). In Go, the map stores <abbr title="A variable that stores a memory address.">pointers</abbr> to the list nodes. This structure guarantees that cache memory size is strictly capped. However, every time an item is accessed (even a read), the doubly-linked list must update <abbr title="A variable that stores a memory address.">pointers</abbr> to move the node to the front. These pointer swaps trigger memory writes, meaning that in highly concurrent environments, read-heavy operations on an LRU cache can bottleneck severely due to mutex <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> compared to lock-free caches.
+A <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr> allocates a node for every character, severely fragmenting <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. A Suffix Array merely stores an array of integers (the starting indices of suffixes). For a string of length `N`, it strictly requires <code>O(N)</code> contiguous memory (just `4N` or `8N` bytes). This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> integer array allows the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch data flawlessly during binary searches, making it vastly superior to Suffix Trees in real-world memory performance.
 
-### Why Caching Matters
+### Suffix Array vs <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr>
 
-| System | Without Cache | With Cache |
-|--------|--------------|------------|
-| CPU | ~100 ns (RAM) | ~1 ns (L1) |
-| Web server | ~100 ms (database) | ~1 ms (Redis) |
-| CDN | ~500 ms (origin) | ~20 ms (edge) |
+| Aspect | Suffix Array | <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr> |
+|--------|--------------|-------------|
+| Space | <code>O(n)</code> integers | <code>O(n)</code> pointers (heavy) |
+| Construction | <code>O(n log n)</code> or <code>O(n)</code> | <code>O(n)</code> |
+| Pattern search | <code>O(m log n)</code> | <code>O(m)</code> |
+| Implementation | Moderate | Complex |
 
-## 48.2. The Data Structure
+## 49.2. Construction
 
-LRU cache requires:
-- **O(1) lookup:** <abbr title="A data structure that implements an associative array using a hash function.">Hash table</abbr> maps key to node
-- **O(1) eviction:** <abbr title="A linked list where each node points to both the next and previous nodes.">Doubly linked list</abbr> maintains usage order
+For string "banana":
 
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: LRU Cache
+| Index | Suffix |
+|-------|--------|
+| 5 | a |
+| 3 | ana |
+| 1 | anana |
+| 0 | banana |
+| 4 | na |
+| 2 | nana |
+
+Suffix array: [5, 3, 1, 0, 4, 2]
+
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: Naive Construction
 
 ```go
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
-type LRUCache struct {
-    capacity int
-    cache    map[int]*Node
-    head     *Node // Most recent
-    tail     *Node // Least recent
-}
-
-type Node struct {
-    key, val   int
-    prev, next *Node
-}
-
-func NewLRUCache(capacity int) *LRUCache {
-    c := &LRUCache{
-        capacity: capacity,
-        cache:    make(map[int]*Node),
-        head:     &Node{},
-        tail:     &Node{},
+func buildSuffixArray(s string) []int {
+    n := len(s)
+    sa := make([]int, n)
+    for i := range sa {
+        sa[i] = i
     }
-    c.head.next = c.tail
-    c.tail.prev = c.head
-    return c
-}
-
-func (c *LRUCache) removeNode(node *Node) {
-    node.prev.next = node.next
-    node.next.prev = node.prev
-}
-
-func (c *LRUCache) addToFront(node *Node) {
-    node.prev = c.head
-    node.next = c.head.next
-    c.head.next.prev = node
-    c.head.next = node
-}
-
-func (c *LRUCache) moveToFront(node *Node) {
-    c.removeNode(node)
-    c.addToFront(node)
-}
-
-func (c *LRUCache) Get(key int) int {
-    if node, ok := c.cache[key]; ok {
-        c.moveToFront(node)
-        return node.val
-    }
-    return -1
-}
-
-func (c *LRUCache) Put(key, val int) {
-    if node, ok := c.cache[key]; ok {
-        node.val = val
-        c.moveToFront(node)
-        return
-    }
-    if len(c.cache) >= c.capacity {
-        lru := c.tail.prev
-        c.removeNode(lru)
-        delete(c.cache, lru.key)
-    }
-    node := &Node{key: key, val: val}
-    c.cache[key] = node
-    c.addToFront(node)
+    sort.Slice(sa, func(i, j int) bool {
+        return s[sa[i]:] < s[sa[j]:]
+    })
+    return sa
 }
 
 func main() {
-    lru := NewLRUCache(2)
-    lru.Put(1, 10)
-    lru.Put(2, 20)
-    fmt.Println(lru.Get(1)) // 10
-    lru.Put(3, 30) // evicts key 2
-    fmt.Println(lru.Get(2)) // -1
+    sa := buildSuffixArray("banana")
+    fmt.Println(sa) // [5 3 1 0 4 2]
 }
 ```
 
-## 48.3. Operations
+## 49.3. Pattern Search
 
-| Operation | Time | Description |
-|-----------|------|-------------|
-| Get | <code>O(1)</code> | Hash lookup + list reorder |
-| Put | <code>O(1)</code> | Insert or update + possible eviction |
-| Evict | <code>O(1)</code> | Remove tail, delete from hash |
+With a suffix array, <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> finds all occurrences of pattern P in <code>O(\|P\| log n)</code> time.
 
-## 48.4. Cache Eviction Strategies
+### Longest Common Prefix (LCP)
 
-| Strategy | Eviction Target | Use Case |
-|----------|----------------|----------|
-| **LRU** | Least recently used | General-purpose, temporal locality |
-| **LFU** | Least frequently used | Popular items stay |
-| **FIFO** | First in, first out | Simple streaming |
-| **Random** | Random item | Avoiding adversarial patterns |
-| **TTL** | Expired by time | Session data |
+The <abbr title="An array storing the length of the longest common prefix between each adjacent pair of suffixes in the suffix array.">LCP array</abbr> enables:
+- Finding repeated substrings
+- Computing number of distinct substrings
+- Solving bioinformatics problems
 
-## 48.5. Decision Matrix
+## 49.4. Applications
 
-| Use LRU When... | Use LFU When... |
-|-----------------|-----------------|
-| Recent access predicts future access | Popularity matters more than recency |
-| Workload has temporal locality | Some items are consistently hot |
+| Application | How Suffix Array Helps |
+|-------------|----------------------|
+| **Full-text search** | Find all occurrences of a word |
+| **Bioinformatics** | DNA sequence alignment |
+| **Data compression** | Burrows-Wheeler transform |
+| **Plagiarism detection** | Find longest common substring |
+
+## 49.5. Decision Matrix
+
+| Use Suffix Arrays When... | Use Tries When... |
+|---------------------------|-------------------|
+| Searching in one static text | Dynamic dictionary of words |
+| Space matters | Prefix queries dominate |
+| Multiple pattern searches | Single pattern, many texts |
 
 ### Edge Cases & Pitfalls
 
-- **Capacity 0:** Handle as no-op or error.
-- **Concurrency:** Standard LRU is not thread-safe. You MUST use `sync.RWMutex` or sharded locks for concurrent access.
-- **Memory overhead:** Each entry has ~48 bytes of <abbr title="A variable that stores a memory address.">pointer</abbr> overhead plus the map overhead.
-- **Scan resistance:** LRU fails catastrophically under sequential scans (all items become "recent" and flush the cache).
+- **Sentinel character:** Append `$` to ensure no suffix is a prefix of another.
+- **Memory:** For large texts (genomes), use compressed suffix arrays.
+- **Construction time:** <code>O(n² log n)</code> naive sort is too slow for n > 10⁵ — use doubling or SA-IS algorithm.
 
-## 48.6. Quick Reference
+## 49.6. Quick Reference
 
-| Parameter | Typical Value |
-|-----------|---------------|
-| Capacity | Application-dependent |
-| Hit rate target | > 80% |
-| Memory overhead | ~2x entry size |
+| Algorithm | Time | Space |
+|-----------|------|-------|
+| Naive sort | <code>O(n² log n)</code> | <code>O(n)</code> |
+| Doubling | <code>O(n log n)</code> | <code>O(n)</code> |
+| SA-IS | <code>O(n)</code> | <code>O(n)</code> |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `container/list` | Can build LRU (but custom list is faster) |
-| `github.com/hashicorp/golang-lru` | Production LRU implementation |
+| `strings` | `Index`, `Contains` for simple cases |
+| `index/suffixarray` | Go's production-ready suffix array implementation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 48:</strong> The LRU cache is a masterclass in combining data structures: hash tables for <code>O(1)</code> lookup and doubly linked lists for <code>O(1)</code> reordering. It powers databases, operating systems, and web servers. Understanding LRU means understanding that the best eviction strategy depends on your access patterns, not abstract perfection.
+<strong>Summary Chapter 47:</strong> Suffix arrays prove that sorting can solve complex string problems elegantly. By lexicographically sorting all suffixes, they transform <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> into binary search — a beautiful <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr> from string complexity to array simplicity. For static text search, they offer the best balance of speed, space, and implementation clarity.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
-- [Chapter 7: Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
-- [Chapter 47: Bloom Filters](/docs/Part-IX/Chapter-47/)
+- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-34/)
+- [Chapter 36: Trie Data Structures](/docs/Part-VII/Chapter-36/)
+- [Chapter 49: Persistent Data Structures](/docs/Part-IX/Chapter-49/)

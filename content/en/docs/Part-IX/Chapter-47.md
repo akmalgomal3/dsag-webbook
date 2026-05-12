@@ -1,7 +1,7 @@
 ---
-weight: 90300
-title: "Chapter 47: Bloom Filters"
-description: "Bloom Filters"
+weight: 90400
+title: "Chapter 47: LRU Cache"
+description: "LRU Cache"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,153 +11,173 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A Bloom filter is a data structure that tells you an element is definitely not in a set, or maybe in a set.</em>" : Unknown</strong>
+<strong>"<em>There are only two hard things in Computer Science: cache invalidation and naming things.</em>" : Phil Karlton</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 47 explores Bloom filters: a space-efficient probabilistic data structure for set membership testing with zero false negatives.
+Chapter 48 covers the LRU (Least Recently Used) cache — the most common caching strategy, combining hash tables with linked lists for <code>O(1)</code> operations.
 {{% /alert %}}
 
-## 47.1. The Membership Problem
+## 48.1. The Caching Problem
 
-**Definition:** A <abbr title="A space-efficient probabilistic data structure that is used to test whether an element is a member of a set, with possible false positives but no false negatives.">Bloom filter</abbr> answers: "Is element X in set S?" with:
-- **"No"** : Definitely not in set (100% accurate)
-- **"Maybe"** : Might be in set (possible <abbr title="An error where a test incorrectly indicates the presence of a condition when it is not present.">false positive</abbr>)
+**Definition:** A <abbr title="A cache eviction policy that discards the least recently used items first when the cache is full.">Least Recently Used (LRU)</abbr> cache maintains a fixed-size collection where the least recently accessed item is evicted when space is needed.
 
 **Background & Philosophy:**
-The philosophy is acceptable inaccuracy. A Bloom Filter trades absolute certainty for extreme compression. It happily accepts a small margin of "False Positives" to mathematically guarantee zero "False Negatives", crushing gigabytes of data down into megabytes.
+The philosophy is <abbr title="The tendency to reuse recently accessed memory addresses">temporal locality</abbr>. If a piece of data was requested recently, it is statistically highly probable it will be requested again very soon. By explicitly keeping the "freshest" data readily available and discarding the stale data, an LRU cache creates a buffer that shields the slow backing store (database or disk) from repeated identical requests.
 
 **Use Cases:**
-Web browsers checking malicious URLs, CDNs preventing cache pollution, and databases (Cassandra, RocksDB) skipping expensive disk reads for non-existent keys.
+Database query caching, CDN edge nodes, and CPU hardware caching (L1/L2 caches physically implement LRU logic).
 
 **Memory Mechanics:**
-A Bloom Filter relies on a single, massive bit array (often represented in Go as `[]uint64`). It hashes an item multiple times to flip specific bits. This requires jumping to completely random indices in the bit array. Because the array is usually several megabytes, these jumps constantly trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. However, executing 7 rapid cache misses in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> is still infinitely faster than executing a single mechanical seek on a physical hard drive.
+An LRU cache couples a `map` (for <code>O(1)</code> lookups) with a doubly-linked list (for <code>O(1)</code> reordering). In Go, the map stores <abbr title="A variable that stores a memory address.">pointers</abbr> to the list nodes. This structure guarantees that cache memory size is strictly capped. However, every time an item is accessed (even a read), the doubly-linked list must update <abbr title="A variable that stores a memory address.">pointers</abbr> to move the node to the front. These pointer swaps trigger memory writes, meaning that in highly concurrent environments, read-heavy operations on an LRU cache can bottleneck severely due to mutex <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> compared to lock-free caches.
 
-### Space Efficiency
+### Why Caching Matters
 
-| Structure | Bits per Element | <abbr title="An error indicating a condition is present when it is not">False Positive</abbr> Rate |
-|-----------|-----------------|---------------------|
-| Hash table | 64+ | 0% |
-| Bloom filter | 10 | 1% |
+| System | Without Cache | With Cache |
+|--------|--------------|------------|
+| CPU | ~100 ns (RAM) | ~1 ns (L1) |
+| Web server | ~100 ms (database) | ~1 ms (Redis) |
+| CDN | ~500 ms (origin) | ~20 ms (edge) |
 
-Storing 1 billion URLs: hash table ≈ 8 GB, Bloom filter ≈ 1 GB.
+## 48.2. The Data Structure
 
-## 47.2. How It Works
+LRU cache requires:
+- **O(1) lookup:** <abbr title="A data structure that implements an associative array using a hash function.">Hash table</abbr> maps key to node
+- **O(1) eviction:** <abbr title="A linked list where each node points to both the next and previous nodes.">Doubly linked list</abbr> maintains usage order
 
-A Bloom filter is a bit array of m bits, initially all 0, with k independent hash functions.
-
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: LRU Cache
 
 ```go
 package main
 
-import (
-	"fmt"
-	"hash/fnv"
-)
+import "fmt"
 
-type BloomFilter struct {
-	bits []uint64
-	m    uint32
-	k    int
+type LRUCache struct {
+    capacity int
+    cache    map[int]*Node
+    head     *Node // Most recent
+    tail     *Node // Least recent
 }
 
-func NewBloomFilter(m uint32, k int) *BloomFilter {
-	// Allocate bits/64 elements
-	return &BloomFilter{
-		bits: make([]uint64, (m+63)/64),
-		m:    m,
-		k:    k,
-	}
+type Node struct {
+    key, val   int
+    prev, next *Node
 }
 
-func (bf *BloomFilter) hash(item []byte, i int) uint32 {
-	h := fnv.New32a()
-	h.Write(item)
-	// Mix in the hash index i
-	h.Write([]byte{byte(i)})
-	return h.Sum32()
+func NewLRUCache(capacity int) *LRUCache {
+    c := &LRUCache{
+        capacity: capacity,
+        cache:    make(map[int]*Node),
+        head:     &Node{},
+        tail:     &Node{},
+    }
+    c.head.next = c.tail
+    c.tail.prev = c.head
+    return c
 }
 
-func (bf *BloomFilter) Add(item []byte) {
-	for i := 0; i < bf.k; i++ {
-		idx := bf.hash(item, i) % bf.m
-		bf.bits[idx/64] |= (1 << (idx % 64))
-	}
+func (c *LRUCache) removeNode(node *Node) {
+    node.prev.next = node.next
+    node.next.prev = node.prev
 }
 
-func (bf *BloomFilter) Contains(item []byte) bool {
-	for i := 0; i < bf.k; i++ {
-		idx := bf.hash(item, i) % bf.m
-		if (bf.bits[idx/64] & (1 << (idx % 64))) == 0 {
-			return false // Definitely not present
-		}
-	}
-	return true // Maybe present
+func (c *LRUCache) addToFront(node *Node) {
+    node.prev = c.head
+    node.next = c.head.next
+    c.head.next.prev = node
+    c.head.next = node
+}
+
+func (c *LRUCache) moveToFront(node *Node) {
+    c.removeNode(node)
+    c.addToFront(node)
+}
+
+func (c *LRUCache) Get(key int) int {
+    if node, ok := c.cache[key]; ok {
+        c.moveToFront(node)
+        return node.val
+    }
+    return -1
+}
+
+func (c *LRUCache) Put(key, val int) {
+    if node, ok := c.cache[key]; ok {
+        node.val = val
+        c.moveToFront(node)
+        return
+    }
+    if len(c.cache) >= c.capacity {
+        lru := c.tail.prev
+        c.removeNode(lru)
+        delete(c.cache, lru.key)
+    }
+    node := &Node{key: key, val: val}
+    c.cache[key] = node
+    c.addToFront(node)
 }
 
 func main() {
-	bf := NewBloomFilter(1000, 3)
-	bf.Add([]byte("golang"))
-	fmt.Println(bf.Contains([]byte("golang"))) // true
-	fmt.Println(bf.Contains([]byte("rust")))   // false (probably)
+    lru := NewLRUCache(2)
+    lru.Put(1, 10)
+    lru.Put(2, 20)
+    fmt.Println(lru.Get(1)) // 10
+    lru.Put(3, 30) // evicts key 2
+    fmt.Println(lru.Get(2)) // -1
 }
 ```
 
-## 47.3. Optimal Parameters
+## 48.3. Operations
 
-For desired false positive rate ε and n expected elements:
+| Operation | Time | Description |
+|-----------|------|-------------|
+| Get | <code>O(1)</code> | Hash lookup + list reorder |
+| Put | <code>O(1)</code> | Insert or update + possible eviction |
+| Evict | <code>O(1)</code> | Remove tail, delete from hash |
 
-| Parameter | Formula | Typical Value |
-|-----------|---------|---------------|
-| m (bits) | -n ln(ε) / (ln 2)² | ~10n for ε=1% |
-| k (hashes) | m/n · ln 2 | ~7 for ε=1% |
+## 48.4. Cache Eviction Strategies
 
-### False Positive Rate
+| Strategy | Eviction Target | Use Case |
+|----------|----------------|----------|
+| **LRU** | Least recently used | General-purpose, temporal locality |
+| **LFU** | Least frequently used | Popular items stay |
+| **FIFO** | First in, first out | Simple streaming |
+| **Random** | Random item | Avoiding adversarial patterns |
+| **TTL** | Expired by time | Session data |
 
-p ≈ (1 - e^(-kn/m))^k
+## 48.5. Decision Matrix
 
-## 47.4. Variants
-
-| Variant | Feature | Use Case |
-|---------|---------|----------|
-| **Counting Bloom filter** | Supports deletion | Network caching |
-| **Cuckoo filter** | Better cache behavior | High-performance systems |
-| **Scalable Bloom filter** | Grows dynamically | Unknown set sizes |
-
-## 47.5. Decision Matrix
-
-| Use Bloom Filters When... | Use Hash Sets When... |
-|---------------------------|-----------------------|
-| Memory is severely constrained | Memory is abundant |
-| False positives are acceptable | False positives are strictly unacceptable |
-| No deletions are needed | Deletions are continually required |
+| Use LRU When... | Use LFU When... |
+|-----------------|-----------------|
+| Recent access predicts future access | Popularity matters more than recency |
+| Workload has temporal locality | Some items are consistently hot |
 
 ### Edge Cases & Pitfalls
 
-- **Hash quality:** Poor hash functions dramatically increase collision rates.
-- **Saturation:** When perfectly full, every single query returns "maybe."
-- **No deletion:** Standard Bloom filters cannot effectively remove items.
-- **Counting overflow:** Counting Bloom filters can violently overflow with too many insertions.
+- **Capacity 0:** Handle as no-op or error.
+- **Concurrency:** Standard LRU is not thread-safe. You MUST use `sync.RWMutex` or sharded locks for concurrent access.
+- **Memory overhead:** Each entry has ~48 bytes of <abbr title="A variable that stores a memory address.">pointer</abbr> overhead plus the map overhead.
+- **Scan resistance:** LRU fails catastrophically under sequential scans (all items become "recent" and flush the cache).
 
-## 47.6. Quick Reference
+## 48.6. Quick Reference
 
-| Setting | Bits/Element | Hashes | False Positive |
-|---------|--------------|--------|----------------|
-| Conservative | 16 | 11 | 0.01% |
-| Balanced | 10 | 7 | 1% |
-| Aggressive | 6 | 4 | 5% |
+| Parameter | Typical Value |
+|-----------|---------------|
+| Capacity | Application-dependent |
+| Hit rate target | > 80% |
+| Memory overhead | ~2x entry size |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `github.com/bits-and-blooms` | Production-grade Bloom filters |
+| `container/list` | Can build LRU (but custom list is faster) |
+| `github.com/hashicorp/golang-lru` | Production LRU implementation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 47:</strong> Bloom filters sacrifice absolute certainty for massive space savings. They answer membership queries with no false negatives and tunable <abbr title="An error where a test incorrectly indicates the presence of a condition when it is not present.">false positives</abbr> — ideal when memory is scarce and a small error rate is acceptable. Every large-scale system from databases to CDNs uses Bloom filters to avoid expensive lookups.
+<strong>Summary Chapter 46:</strong> The LRU cache is a masterclass in combining data structures: hash tables for <code>O(1)</code> lookup and doubly linked lists for <code>O(1)</code> reordering. It powers databases, operating systems, and web servers. Understanding LRU means understanding that the best eviction strategy depends on your access patterns, not abstract perfection.
 {{% /alert %}}
 
 ## See Also
 
+- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
 - [Chapter 7: Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
-- [Chapter 45: B-Trees](/docs/Part-IX/Chapter-45/)
-- [Chapter 48: LRU Cache](/docs/Part-IX/Chapter-48/)
+- [Chapter 46: Bloom Filters](/docs/Part-IX/Chapter-46/)

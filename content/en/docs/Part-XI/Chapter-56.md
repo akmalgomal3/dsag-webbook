@@ -1,7 +1,7 @@
 ---
-weight: 110200
-title: "Chapter 56: Sliding Window and Two Pointers"
-description: "Sliding Window and Two Pointers"
+weight: 110300
+title: "Chapter 56: Kadane's Algorithm"
+description: "Kadane's Algorithm"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,164 +11,124 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>If <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> is <code>O(n^2)</code>, two pointers or sliding window often reduce it to <code>O(n)</code>.</em>" : Unknown</strong>
+<strong>"<em>The maximum subarray problem is solved by asking: do I extend the previous subarray or start fresh?</em>" : Jay Kadane</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 56 covers sliding window and two pointers — two fundamental techniques for solving subarray and substring problems in optimal <abbr title="An algorithm whose running time grows linearly with input size">linear time</abbr>.
+Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr> — the mathematically elegant <code>O(n)</code> solution resolving the maximum subarray problem, serving as an outstanding foundation to <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> thinking.
 {{% /alert %}}
 
-## 56.1. The Two Pointers Technique
+## 57.1. The Maximum Subarray Problem
 
-**Definition:** The <abbr title="A technique using two indices to traverse a data structure, typically one starting from each end or both from the start.">two pointers</abbr> technique explicitly maintains two indices moving through a sequence to isolate pairs, triplets, or partitions perfectly satisfying a set mathematical condition.
+**Definition:** Given an array of integers (often containing negative numbers), seamlessly find the strictly contiguous subarray offering the absolute largest internal sum. First solved flawlessly in <code>O(n)</code> by Jay Kadane in 1984.
 
 **Background & Philosophy:**
-The philosophy is dynamic bounds management. Instead of running a nested loop <code>O(n^2)</code> to re-evaluate every possible sub-array combination, these algorithms maintain a "memory" of the previous state. By incrementally adding to the front and removing from the back, they reduce a quadratic <abbr title="The set of all candidate solutions in a problem">search space</abbr> into a linear <code>O(n)</code> stroll.
+The philosophy is aggressive amnesia. Kadane’s is the ultimate distillation of <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>. It constantly asks a localized question: "Is the accumulated baggage of the past dragging me down so much that I'm better off starting entirely fresh right now?" If the running sum drops below the current element, it fiercely cuts ties with the past.
 
 **Use Cases:**
-Network congestion control (TCP sliding windows), video streaming buffer management, and parsing continuous streams of market data for moving averages.
+Identifying the most profitable sequence of trades in algorithmic finance, and genomic sequence analysis where negative scores represent mutations and positive scores represent matches.
 
 **Memory Mechanics:**
-Sliding Window and Two Pointers are exceptionally hardware-friendly. They operate entirely in-place (<code>O(1)</code> memory) utilizing just two integer indices (`left` and `right`). As these indices scan sequentially across a slice, they capitalize perfectly on the CPU's <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The hardware prefetcher predicts the memory access pattern flawlessly, ensuring the data is already waiting in the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> before the Go runtime even executes the loop.
+<abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's Algorithm</abbr> achieves maximum theoretical performance. It requires precisely <code>O(1)</code> memory—merely two integer variables (`maxEndingHere` and `maxSoFar`). Because it only performs a single, forward-only scan over the `[]int` slice, it requires zero <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations and never triggers the Go <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>. These variables reside completely within the CPU registers, allowing the algorithm to execute at the sheer maximum bandwidth of the memory bus.
 
-### Classic: Pair Sum
+### The Insight
 
-Given a sorted array, find a precise pair summing exactly to a target:
+At each precise position, confidently ask: "Is it mathematically better to extend the previous subarray or start a completely new one precisely here?"
 
-```go
-package main
-
-import "fmt"
-
-func twoSumSorted(arr []int, target int) []int {
-    left, right := 0, len(arr)-1
-    for left < right {
-        sum := arr[left] + arr[right]
-        if sum == target {
-            return []int{left, right}
-        } else if sum < target {
-            left++
-        } else {
-            right--
-        }
-    }
-    return nil
-}
-
-func main() {
-    arr := []int{2, 7, 11, 15}
-    fmt.Println(twoSumSorted(arr, 9)) // [0 1]
-}
+```text
+maxEndingHere = max(arr[i], maxEndingHere + arr[i])
+maxSoFar = max(maxSoFar, maxEndingHere)
 ```
 
-| Variation | Pointer Movement |
-|-----------|-----------------|
-| Opposite ends | Converge inward simultaneously |
-| Same direction | Fast and slow tracking (cycle detection) |
-| Partitioning | Segregation based strictly upon a mathematical condition |
+## 57.2. Algorithm
 
-## 56.2. Sliding Window
-
-**Definition:** The <abbr title="A technique for finding a subarray or substring that satisfies a condition by maintaining a window of elements and adjusting its bounds.">sliding window</abbr> paradigm elegantly maintains a subarray/substring that rigorously satisfies a specific condition, organically expanding and contracting the window bounds as needed.
-
-### Fixed-Size Window
-
-Calculate the maximum sum of exactly `k` consecutive elements:
+### Idiomatic Go Implementation
 
 ```go
 package main
 
 import "fmt"
 
-func maxSumWindow(arr []int, k int) int {
-    if len(arr) < k {
+func maxSubArray(arr []int) int {
+    if len(arr) == 0 {
         return 0
     }
-    maxSum, windowSum := 0, 0
-    for i := 0; i < len(arr); i++ {
-        windowSum += arr[i]
-        if i >= k {
-            windowSum -= arr[i-k]
-        }
-        if i >= k-1 && windowSum > maxSum {
-            maxSum = windowSum
-        }
-    }
-    return maxSum
-}
-
-func main() {
-    arr := []int{1, 4, 2, 10, 2, 3, 1, 0, 20}
-    fmt.Println(maxSumWindow(arr, 4)) // 24
-}
-```
-
-### Variable-Size Window
-
-Determine the longest substring fundamentally lacking any repeating characters:
-
-```go
-package main
-
-import "fmt"
-
-func lengthOfLongestSubstring(s string) int {
-    charIndex := map[byte]int{}
-    maxLen := 0
-    start := 0
     
-    for i := 0; i < len(s); i++ {
-        if idx, ok := charIndex[s[i]]; ok && idx >= start {
-            start = idx + 1
+    maxEndingHere := arr[0]
+    maxSoFar := arr[0]
+    
+    for i := 1; i < len(arr); i++ {
+        if maxEndingHere+arr[i] > arr[i] {
+            maxEndingHere = maxEndingHere + arr[i]
+        } else {
+            maxEndingHere = arr[i]
         }
-        charIndex[s[i]] = i
-        if i-start+1 > maxLen {
-            maxLen = i - start + 1
+        
+        if maxEndingHere > maxSoFar {
+            maxSoFar = maxEndingHere
         }
     }
-    return maxLen
+    
+    return maxSoFar
 }
 
 func main() {
-    fmt.Println(lengthOfLongestSubstring("abcabcbb")) // 3
+    arr := []int{-2, 1, -3, 4, -1, 2, 1, -5, 4}
+    fmt.Println("Max subarray sum:", maxSubArray(arr)) // 6 (subarray: [4, -1, 2, 1])
 }
 ```
 
-## 56.3. Decision Matrix
+## 57.3. Why It Works
 
-| Use Two Pointers When... | Use Sliding Window When... |
-|--------------------------|---------------------------|
-| Dealing with sorted data requiring pair conditions | Processing a strictly contiguous subarray or substring |
-| Partitioning diverse arrays | Summing or averaging distinct constraints |
-| Cycle detection (fast/slow algorithms) | Identifying frequency or diversity constraints |
+| State | Meaning |
+|-------|---------|
+| maxEndingHere | Best sum of the subarray strictly ending at the current index |
+| maxSoFar | Absolute best sum witnessed anywhere so far |
+
+The recurrence captures the unyielding essence of <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>: the optimal solution exactly at position i depends completely and only on the optimal solution firmly established at position i-1.
+
+## 57.4. Variations
+
+| Variation | Modification |
+|-----------|-------------|
+| **Track indices** | Accurately record start/end positions whenever maxSoFar updates |
+| **All negative** | Mathematically returns the least negative element (or must be handled distinctly) |
+| **2D version** | Maximum submatrix typically requiring <code>O(n^3)</code> or <code>O(n^4)</code> |
+| **Circular array** | Yields the max of Kadane's against total sum - min subarray |
+
+## 57.5. Decision Matrix
+
+| Use Kadane's When... | Use Prefix Sum When... |
+|----------------------|------------------------|
+| A strictly contiguous subarray is mandatory | Addressing any arbitrary subarray, strictly query-based |
+| A solitary single pass is structurally acceptable | Conducting multiple varied queries on the exact same array |
+| Raw, unchecked simplicity is paramount | Handling requirements for mathematically arbitrary range sums |
 
 ### Edge Cases & Pitfalls
 
-- **Empty input:** Handle empty slices or strings gracefully to prevent panics.
-- **Window bounds:** Off-by-one boundary tracking errors remain profoundly common.
-- **Monotonicity:** The sliding window concept relies completely on the fact that expanding/shrinking scales monotonically.
-- **Duplicate elements:** Use a map to track heavy frequency counts for "at most K distinct" variants.
+- **All negatives:** The standard implementation of Kadane's algorithm confidently returns the absolute maximum (least negative) element.
+- **Empty subarray allowed:** If a totally empty subarray (summing to 0) is permitted by business logic, initialize the trackers rigidly to 0.
+- **Integer overflow:** Utilize wider 64-bit integer tracking types (`int64`) for handling exceptionally huge sums safely.
 
-## 56.4. Quick Reference
+## 57.6. Quick Reference
 
-| Problem Type | Technique | Time |
-|--------------|-----------|------|
-| Pair sum in sorted array | Two pointers | <code>O(n)</code> |
-| 3Sum | Two pointers nested | <code>O(n^2)</code> |
-| Container with most water | Two pointers | <code>O(n)</code> |
-| Longest substring K distinct | Sliding window | <code>O(n)</code> |
-| Minimum window substring | Sliding window | <code>O(n)</code> |
+| Aspect | Value |
+|--------|-------|
+| Time | <code>O(n)</code> |
+| Space | <code>O(1)</code> |
+| Technique | <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> paradigm |
+| Key idea | Transform <abbr title="A solution better than neighbors but not globally best">local optimum</abbr> cleanly into <abbr title="The best possible solution over the entire search space">global optimum</abbr> |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `strings` | Use `Contains` and `Index` for simplistic, pre-packaged substring operations |
+| No direct equivalent | Requires manual implementation specifically tailored for financial or stock tracking |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 56:</strong> Two pointers and sliding window are the absolute bread and butter of linear-time array and string processing. They confidently replace disastrous nested loops with elegant single passes, mathematically exploiting ordering or contiguous structure. Mastering these patterns means instantly recognizing when a problem explicitly asks for "pairs," "subarrays," or "substrings" — and intuitively choosing the right traversal strategy.
+<strong>Summary Chapter 55:</strong> Kadane's algorithm acts as an absolute masterpiece of <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> simplicity. In a blistering single pass executing with merely <code>O(1)</code> auxiliary space, it cleanly solves a complex problem that intuitively seems to mandate rigorously examining all <code>O(n^2)</code> possible subarrays. The core mathematical lesson flawlessly transcends the specific problem: whenever tackling "best subarray" questions, instantly ask if the optimal state ending at position i can be efficiently derived directly from position i-1. If it genuinely can, Kadane's profound insight applies.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 55: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-55/)
-- [Chapter 57: Kadane's Algorithm](/docs/Part-XI/Chapter-57/)
-- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-23/)
+- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-54/)
+- [Chapter 55: Sliding Window and Two Pointers](/docs/Part-XI/Chapter-55/)

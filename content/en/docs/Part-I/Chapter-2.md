@@ -390,4 +390,4 @@ func main() {
 
 - [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
 - [Chapter 4: Fundamentals of Go Programming for Algorithms](/docs/Part-I/Chapter-4/)
-- [Chapter 33: Linear Programming](/docs/Part-VII/Chapter-33/)
+- [Chapter 32: Linear Programming](/docs/Part-VII/Chapter-32/)

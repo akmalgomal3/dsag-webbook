@@ -1,7 +1,7 @@
 ---
-weight: 70900
-title: "Chapter 37: Trie Data Structures"
-description: "Trie Data Structures"
+weight: 71000
+title: "Chapter 37: Segment Tree and Fenwick Tree"
+description: "Segment Tree and Fenwick Tree"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,102 +11,110 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Words are, of course, the most powerful drug used by mankind.</em>" : Rudyard Kipling</strong>
+<strong>"<em>Efficiency is doing things right; effectiveness is doing the right things.</em>" : Peter Drucker</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 37 covers <abbr title="A tree data structure for storing and searching strings with common prefixes.">Trie</abbr> (<abbr title="A tree storing strings where common prefixes are shared, also called a Trie.">prefix tree</abbr>) data structures: efficient storage and retrieval of strings with common prefixes. Essential for autocomplete, spell checking, and IP routing.
+Chapter 38 covers <abbr title="A binary tree for range queries storing aggregated results over array segments.">segment trees</abbr> and <abbr title="A tree structure for efficient prefix sum queries using bitwise operations.">Fenwick trees</abbr> (Binary Indexed Trees): data structures for efficient range queries and point updates on arrays.
 {{% /alert %}}
 
-## 37.1. Trie Fundamentals
+## 38.1. Segment Tree
 
-**Definition:** A Trie is a tree where each node represents a character. Paths from root to leaf form complete words. All descendants of a node share the same prefix.
+**Definition:** A segment tree is a <abbr title="A tree where each node has at most two children">binary tree</abbr> where each node stores the result of a query (sum, min, max) over a segment of the array. It supports range queries and point updates in <code>O(log n)</code>.
 
 **Background & Philosophy:**
-The philosophy is structural prefix sharing. Instead of storing ten words that start with "auto" as ten distinct strings, a Trie stores the prefix "a-u-t-o" exactly once, branching off only when the words diverge. It transforms string retrieval from an <code>O(N)</code> scan into an <code>O(m)</code> traversal based strictly on the word's length, independent of dictionary size.
+The philosophy is precomputed aggregation. When an array is repeatedly updated and queried for range sums (e.g., sum from index 100 to 5000), a linear scan <code>O(n)</code> is too slow. Segment and Fenwick trees pre-calculate chunks of the array hierarchically, reducing the scan to a mathematical traversal of <code>O(log n)</code> boundaries.
 
 **Use Cases:**
-Search engine autocomplete engines, routing IP addresses in networking hardware (<abbr title="A space-optimized Trie with edge labels, also known as a Radix Trie.">Radix Tries</abbr>), and mobile phone predictive text keyboards.
+Competitive programming, dynamic financial ledgers querying balances over specific date ranges, and mapping visible objects in 2D game rendering.
 
 **Memory Mechanics:**
-A standard Trie is incredibly memory-hungry. Each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> in Go typically holds a `map[rune]*TrieNode`. Allocating millions of tiny maps across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> severely fragments <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes massive <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> tracing overhead. High-performance production Tries (like Double-Array Tries or Radix Trees) compress these <abbr title="A variable that stores a memory address.">pointers</abbr> into packed, flat arrays to drastically reduce memory footprints and restore <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.
+Both trees elegantly abandon <abbr title="A variable that stores a memory address.">pointer</abbr>-based nodes. A Segment Tree allocates an array of `4*n` size. A Fenwick Tree (Binary Indexed Tree) is incredibly optimal, allocating exactly `n+1` size array. Fenwick tree uses bitwise operations (`i & -i`) to instantly jump to the next aggregation block. This purely <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> layout guarantees flawless <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> hits and zero <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> overhead during updates.
 
 ### Operations & Complexity
 
 | Operation | Time | Space | Description |
 |-----------|------|-------|-------------|
-| Insert | <code>O(m)</code> | <code>O(m)</code> | m = word length |
-| Search | <code>O(m)</code> | <code>O(1)</code> | Exact match |
-| StartsWith | <code>O(m)</code> | <code>O(1)</code> | Prefix check |
-| Delete | <code>O(m)</code> | <code>O(1)</code> | Remove word |
+| Build | <code>O(n)</code> | <code>O(4n)</code> | Construct tree from array |
+| Range Query | <code>O(log n)</code> | <code>O(1)</code> | Query over [l, r] |
+| Point Update | <code>O(log n)</code> | <code>O(1)</code> | Update single element |
 
-## 37.2. Basic Trie
+## 38.2. Range Sum Query
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
-Use a map for children to support any character set dynamically.
+Use a slice-based tree with 1-based or 0-based indexing.
 
 ```go
 package main
 
 import "fmt"
 
-type TrieNode struct {
-	Children map[rune]*TrieNode
-	IsEnd    bool
+type SegmentTree struct {
+	Tree []int
+	N    int
 }
 
-type Trie struct {
-	Root *TrieNode
+func NewSegmentTree(arr []int) *SegmentTree {
+	n := len(arr)
+	st := &SegmentTree{Tree: make([]int, 4*n), N: n}
+	st.build(0, 0, n-1, arr)
+	return st
 }
 
-func NewTrie() *Trie {
-	return &Trie{Root: &TrieNode{Children: make(map[rune]*TrieNode)}}
-}
-
-func (t *Trie) Insert(word string) {
-	node := t.Root
-	for _, ch := range word {
-		if node.Children[ch] == nil {
-			node.Children[ch] = &TrieNode{Children: make(map[rune]*TrieNode)}
-		}
-		node = node.Children[ch]
+func (st *SegmentTree) build(node, l, r int, arr []int) {
+	if l == r {
+		st.Tree[node] = arr[l]
+		return
 	}
-	node.IsEnd = true
+	mid := (l + r) / 2
+	st.build(2*node+1, l, mid, arr)
+	st.build(2*node+2, mid+1, r, arr)
+	st.Tree[node] = st.Tree[2*node+1] + st.Tree[2*node+2]
 }
 
-func (t *Trie) Search(word string) bool {
-	node := t.Root
-	for _, ch := range word {
-		if node.Children[ch] == nil { return false }
-		node = node.Children[ch]
-	}
-	return node.IsEnd
+func (st *SegmentTree) Query(node, l, r, ql, qr int) int {
+	if ql > r || qr < l { return 0 }
+	if ql <= l && r <= qr { return st.Tree[node] }
+	mid := (l + r) / 2
+	return st.Query(2*node+1, l, mid, ql, qr) + st.Query(2*node+2, mid+1, r, ql, qr)
 }
 
-func (t *Trie) StartsWith(prefix string) bool {
-	node := t.Root
-	for _, ch := range prefix {
-		if node.Children[ch] == nil { return false }
-		node = node.Children[ch]
+func (st *SegmentTree) Update(node, l, r, idx, val int) {
+	if l == r {
+		st.Tree[node] = val
+		return
 	}
-	return true
+	mid := (l + r) / 2
+	if idx <= mid {
+		st.Update(2*node+1, l, mid, idx, val)
+	} else {
+		st.Update(2*node+2, mid+1, r, idx, val)
+	}
+	st.Tree[node] = st.Tree[2*node+1] + st.Tree[2*node+2]
 }
 
 func main() {
-	trie := NewTrie()
-	words := []string{"cat", "car", "card", "care", "dog"}
-	for _, w := range words { trie.Insert(w) }
-	
-	fmt.Println(trie.Search("car"))   // true
-	fmt.Println(trie.Search("cart"))  // false
-	fmt.Println(trie.StartsWith("ca")) // true
+	arr := []int{1, 3, 5, 7, 9, 11}
+	st := NewSegmentTree(arr)
+	fmt.Println(st.Query(0, 0, len(arr)-1, 1, 3)) // 15 (3+5+7)
+	st.Update(0, 0, len(arr)-1, 2, 10)
+	fmt.Println(st.Query(0, 0, len(arr)-1, 1, 3)) // 20 (3+10+7)
 }
 ```
 
-## 37.3. Autocomplete
+## 38.3. Fenwick Tree (Binary Indexed Tree)
 
-**Definition:** Given a prefix, return all words in the Trie that start with that prefix.
+**Definition:** A Fenwick tree achieves the same <code>O(log n)</code> query/update as a segment tree but uses <code>O(n)</code> space and has better constant factors.
+
+### Operations & Complexity
+
+| Operation | Time | Space | Description |
+|-----------|------|-------|-------------|
+| Build | <code>O(n)</code> | <code>O(n)</code> | Construct from array |
+| Prefix Sum | <code>O(log n)</code> | <code>O(1)</code> | Sum of [0, i] |
+| Range Query | <code>O(log n)</code> | <code>O(1)</code> | Sum of [l, r] |
+| Point Update | <code>O(log n)</code> | <code>O(1)</code> | Add delta to index |
 
 ### Idiomatic Go Implementation
 
@@ -115,86 +123,72 @@ package main
 
 import "fmt"
 
-type TrieNode struct {
-	Children map[rune]*TrieNode
-	IsEnd    bool
+type Fenwick struct {
+	Tree []int
+	N    int
 }
 
-type Trie struct {
-	Root *TrieNode
+func NewFenwick(n int) *Fenwick {
+	return &Fenwick{Tree: make([]int, n+1), N: n}
 }
 
-func NewTrie() *Trie {
-	return &Trie{Root: &TrieNode{Children: make(map[rune]*TrieNode)}}
-}
-
-func (t *Trie) Insert(word string) {
-	node := t.Root
-	for _, ch := range word {
-		if node.Children[ch] == nil {
-			node.Children[ch] = &TrieNode{Children: make(map[rune]*TrieNode)}
-		}
-		node = node.Children[ch]
+func (f *Fenwick) Update(i, delta int) {
+	for i <= f.N {
+		f.Tree[i] += delta
+		i += i & -i
 	}
-	node.IsEnd = true
 }
 
-func (t *Trie) AutoComplete(prefix string) []string {
-	node := t.Root
-	for _, ch := range prefix {
-		if node.Children[ch] == nil { return nil }
-		node = node.Children[ch]
+func (f *Fenwick) Query(i int) int {
+	sum := 0
+	for i > 0 {
+		sum += f.Tree[i]
+		i -= i & -i
 	}
-	var results []string
-	var dfs func(n *TrieNode, path string)
-	dfs = func(n *TrieNode, path string) {
-		if n.IsEnd { results = append(results, prefix+path) }
-		for ch, child := range n.Children {
-			dfs(child, path+string(ch))
-		}
-	}
-	dfs(node, "")
-	return results
+	return sum
+}
+
+func (f *Fenwick) RangeQuery(l, r int) int {
+	return f.Query(r) - f.Query(l-1)
 }
 
 func main() {
-	trie := NewTrie()
-	for _, w := range []string{"cat", "car", "card", "care", "carpet"} {
-		trie.Insert(w)
+	f := NewFenwick(6)
+	for i, v := range []int{1, 3, 5, 7, 9, 11} {
+		f.Update(i+1, v)
 	}
-	fmt.Println(trie.AutoComplete("car")) // [car card care carpet]
+	fmt.Println(f.RangeQuery(2, 4)) // 15
 }
 ```
 
-## 37.4. Decision Matrix
+## 38.4. Decision Matrix
 
-| Use Trie When... | Avoid If... |
-|------------------|-------------|
-| Many strings share prefixes | Strings are random with no common prefixes |
-| Need fast prefix queries | Memory is extremely constrained |
-| Implementing autocomplete or spell checker | Only exact match lookups needed (use hash map) |
+| Use Segment Tree When... | Use Fenwick Tree When... |
+|--------------------------|--------------------------|
+| Need min/max queries | Only need sum queries |
+| Need lazy propagation | Point updates and prefix sums suffice |
+| Query operation is non-invertible | Operation is invertible (sum) |
 
 ### Edge Cases & Pitfalls
 
-- **Memory overhead:** Each node allocates a map; for dense alphabets (e.g., Unicode), use arrays or compressed tries.
-- **Empty string:** Decide whether empty string is a valid word in your Trie.
-- **Case sensitivity:** Normalize to lowercase before insertion unless case matters.
+- **1-based vs 0-based:** Fenwick trees are naturally 1-based; be careful with index mapping.
+- **Overflow:** Range sums can overflow `int`; use `int64` for large values.
+- **Lazy propagation:** For range updates, segment trees require lazy propagation, which adds complexity.
 
-## 37.5. Quick Reference
+## 38.5. Quick Reference
 
-| Operation | Go Type | Time | Space | Use Case |
-|-----------|---------|------|-------|----------|
-| Insert | `map[rune]*TrieNode` | <code>O(m)</code> | <code>O(m)</code> | Dictionary building |
-| Search | `map[rune]*TrieNode` | <code>O(m)</code> | <code>O(1)</code> | Word validation |
-| Prefix | `map[rune]*TrieNode` | <code>O(m)</code> | <code>O(k)</code> | Autocomplete |
-| Compressed Trie | Edge labels | <code>O(m)</code> | Reduced | Memory optimization |
+| Structure | Go Type | Query | Update | Space |
+|-----------|---------|-------|--------|-------|
+| Segment Tree | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(4n)</code> |
+| Fenwick Tree | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
+| Sparse Table | `[][]int` | <code>O(1)</code> | . | <code>O(n log n)</code> |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 37:</strong> Tries excel at prefix-based string operations with <code>O(m)</code> time complexity. In Go, use `map[rune]*TrieNode` for flexibility or fixed-size arrays for performance. Apply tries to autocomplete, spell checking, and any problem involving shared string prefixes.
+<strong>Summary Chapter 36:</strong> Segment trees and Fenwick trees solve range query problems efficiently. Use Fenwick trees for sum queries due to their simplicity and space efficiency. Use segment trees for min/max queries or when lazy propagation is needed. In Go, implement Fenwick trees with 1-based indexing for cleaner code.
 {{% /alert %}}
 
 ## See Also
 
 - [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
-- [Chapter 35: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-35/)
-- [Chapter 49: Suffix Arrays](/docs/Part-IX/Chapter-49/)
+- [Chapter 32: Linear Programming](/docs/Part-VII/Chapter-32/)
+- [Chapter 36: Trie Data Structures](/docs/Part-VII/Chapter-36/)

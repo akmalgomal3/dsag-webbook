@@ -1,7 +1,7 @@
 ---
-weight: 120200
-title: "Chapter 59: Mo's Algorithm"
-description: "Mo's Algorithm"
+weight: 120300
+title: "Chapter 59: Convex Hull"
+description: "Convex Hull"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,171 +11,148 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Mo's algorithm: when you have many range queries, sort them cleverly.</em>" : Unknown</strong>
+<strong>"<em>The convex hull is to <abbr title="Algorithms for solving geometric problems">computational geometry</abbr> what sorting is to algorithms.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 59 introduces Mo's algorithm: a <abbr title="A technique that divides a problem into blocks of size sqrt(N) to optimize query processing.">sqrt-decomposition</abbr> technique for efficiently answering offline range queries by reordering them to minimize recalculation.
+Chapter 60 covers the convex hull: the smallest convex shape containing a set of points, mapping Graham's and Andrew's algorithms for computing it.
 {{% /alert %}}
 
-## 59.1. The Offline Query Problem
+## 60.1. What Is a Convex Hull?
 
-**Definition:** Given an array and multiple range queries, <abbr title="An algorithm that answers range queries by sorting them in a specific order to minimize pointer movement.">Mo's algorithm</abbr> reorders queries so that each query's answer can be derived from the previous with minimal adjustment.
+**Definition:** The <abbr title="The smallest convex set that contains a given set of points, analogous to stretching a rubber band around the points.">convex hull</abbr> of a set of points is the smallest convex <abbr title="A plane figure bounded by straight line segments">polygon</abbr> containing them all. Imagine stretching a rubber band around nails on a board.
 
 **Background & Philosophy:**
-The philosophy is query caching via geometric sorting. Instead of processing queries exactly as the user inputs them (which might bounce randomly from the start of the array to the end and back), Mo's algorithm batches them together into blocks. It embraces the philosophy that moving pointers slightly left or right is infinitely faster than restarting a search from zero.
+The philosophy is exterior boundary isolation. When given thousands of chaotic, scattered points, the overwhelming majority are useless interior noise. The convex hull acts as a mathematical shrink-wrap, relentlessly isolating the extremely small subset of points that actually define the geometric perimeter.
 
 **Use Cases:**
-Competitive programming, batched offline data analytics, and historical database queries where all query requests are known entirely in advance.
+3D collision detection in video games (generating bounding boxes), pattern recognition in computer vision, and mapping physical territory borders in geographic information systems (GIS).
 
 **Memory Mechanics:**
-Mo's Algorithm drastically minimizes <code>O(N)</code> memory sweeps. By grouping the queries structurally into `√N` blocks and sorting them, the `curL` and `curR` pointers only creep incrementally forward and backward along the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array. This creates a beautifully predictable memory access pattern. The CPU hardware prefetcher recognizes this creeping movement and reliably loads the required array segments into the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> proactively, virtually eliminating performance-killing <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
+Andrew's Monotone Chain initially performs an <code>O(n log n)</code> sort on the points array. Because the array (`[]Point`) is completely <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, the sort leverages high <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality. After sorting, the algorithm builds the hull using a simple `[]Point` slice as a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>. Pushing and popping points from the end of this slice executes entirely in <code>O(1)</code> memory access without generating new <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations. Consequently, Andrew's Monotone Chain is blisteringly fast on modern CPUs, operating precisely at memory bus speed.
 
-### Why Reorder Queries?
+### Why It Matters
 
-| Naive | Mo's Algorithm |
-|-------|----------------|
-| <code>O(Q × range)</code> | <code>O((N + Q) × √N)</code> |
-| Process queries in given order | Sort queries by block, then endpoint |
+| Application | Use |
+|-------------|-----|
+| Collision detection | Bounding volume |
+| Geographic systems | Territory boundaries |
+| Image processing | Shape analysis |
+| Machine learning | Cluster boundaries |
 
-## 59.2. The Algorithm
+## 60.2. Andrew's Monotone Chain
 
-1. Divide array into blocks of size ≈ √N
-2. Sort queries by (block index, right endpoint)
-3. Maintain a "current window" [L, R] and its answer
-4. Expand/shrink L and R to match each query
-
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: Mo's Algorithm
+Sort points by x-coordinate, then build lower and upper hulls.
 
 ```go
 package main
 
 import (
 	"fmt"
-	"math"
 	"sort"
 )
 
-type Query struct {
-	l, r, idx int
+type Point struct{ x, y int }
+
+func convexHull(points []Point) []Point {
+    n := len(points)
+    if n <= 1 {
+        return points
+    }
+    
+    sort.Slice(points, func(i, j int) bool {
+        if points[i].x == points[j].x {
+            return points[i].y < points[j].y
+        }
+        return points[i].x < points[j].x
+    })
+    
+    build := func(hull []Point, points []Point) []Point {
+        for _, p := range points {
+            for len(hull) >= 2 && cross(hull[len(hull)-2], hull[len(hull)-1], p) <= 0 {
+                hull = hull[:len(hull)-1]
+            }
+            hull = append(hull, p)
+        }
+        return hull
+    }
+    
+    lower := build([]Point{}, points)
+    upper := build([]Point{}, reverse(points))
+    
+    return append(lower[:len(lower)-1], upper[:len(upper)-1]...)
 }
 
-// freq tracks element occurrences for distinct count queries
-var freq = make(map[int]int)
-
-// add increments frequency and bumps curAns when a new distinct element appears
-func add(val int, curAns *int) {
-	freq[val]++
-	if freq[val] == 1 {
-		*curAns++
-	}
+func reverse(points []Point) []Point {
+    reversed := make([]Point, len(points))
+    for i := range points {
+        reversed[i] = points[len(points)-1-i]
+    }
+    return reversed
 }
 
-// remove decrements frequency and drops curAns when the last copy is removed
-func remove(val int, curAns *int) {
-	freq[val]--
-	if freq[val] == 0 {
-		*curAns--
-	}
-}
-
-func mosAlgorithm(arr []int, queries []Query) []int {
-	blockSize := int(math.Sqrt(float64(len(arr))))
-
-	sort.Slice(queries, func(i, j int) bool {
-		bi := queries[i].l / blockSize
-		bj := queries[j].l / blockSize
-		if bi != bj {
-			return bi < bj
-		}
-		return queries[i].r < queries[j].r
-	})
-
-	results := make([]int, len(queries))
-	curL, curR := 0, -1
-	curAns := 0
-	// Reset global frequency map before processing
-	freq = make(map[int]int)
-
-	for _, q := range queries {
-		for curL > q.l {
-			curL--
-			add(arr[curL], &curAns)
-		}
-		for curR < q.r {
-			curR++
-			add(arr[curR], &curAns)
-		}
-		for curL < q.l {
-			remove(arr[curL], &curAns)
-			curL++
-		}
-		for curR > q.r {
-			remove(arr[curR], &curAns)
-			curR--
-		}
-		results[q.idx] = curAns
-	}
-	return results
+func cross(o, a, b Point) int {
+    return (a.x-o.x)*(b.y-o.y) - (a.y-o.y)*(b.x-o.x)
 }
 
 func main() {
-	arr := []int{1, 2, 1, 3, 2, 4, 1, 5}
-	queries := []Query{
-		{l: 0, r: 3, idx: 0}, // [1,2,1,3] distinct: 3
-		{l: 2, r: 5, idx: 1}, // [1,3,2,4] distinct: 4
-		{l: 1, r: 4, idx: 2}, // [2,1,3,2] distinct: 3
-		{l: 0, r: 7, idx: 3}, // full array distinct: 5
-	}
-	results := mosAlgorithm(arr, queries)
-	fmt.Println("Array:", arr)
-	fmt.Println("Distinct element counts per range query:")
-	for _, q := range queries {
-		fmt.Printf("  [%d, %d]: %d\n", q.l, q.r, results[q.idx])
-	}
+    points := []Point{{0, 3}, {1, 1}, {2, 2}, {4, 4}, {0, 0}, {1, 2}, {3, 1}, {3, 3}}
+    fmt.Println(convexHull(points))
 }
 ```
 
-## 59.3. When It Works
+## 60.3. Algorithm Comparison
 
-| Problem | Add/Remove | Complexity |
-|---------|-----------|------------|
-| Distinct elements in range | Update frequency map | <code>O((N+Q)√N)</code> |
-| Mode in range | Update frequency counts | <code>O((N+Q)√N)</code> |
-| Sum of frequencies | Simple arithmetic | <code>O((N+Q)√N)</code> |
+| Algorithm | Time | Space | Simplicity |
+|-----------|------|-------|------------|
+| Graham scan | <code>O(n log n)</code> | <code>O(n)</code> | Moderate |
+| Andrew's monotone chain | <code>O(n log n)</code> | <code>O(n)</code> | Simple |
+| Jarvis march | <code>O(nh)</code> | <code>O(1)</code> | Simple (h = hull points) |
+| QuickHull | <code>O(n log n)</code> avg | <code>O(n)</code> | Moderate |
 
-## 59.4. Decision Matrix
+## 60.4. Geometric Primitives
 
-| Use Mo's When... | Use Segment Tree When... |
-|-----------------|---------------------------|
-| Offline queries (all known upfront) | Online queries (arrive dynamically) |
-| Add/remove is <code>O(1)</code> or <code>O(log n)</code> | Queries need arbitrary combine |
-| Array is static | Array updates frequently |
+| Primitive | Formula | Meaning |
+|-----------|---------|---------|
+| Cross product | (a-o) × (b-o) | Orientation of o→a→b |
+| Cross > 0 | . | Counter-clockwise turn |
+| Cross < 0 | . | Clockwise turn |
+| Cross = 0 | . | Collinear |
+
+## 60.5. Decision Matrix
+
+| Use Andrew's When... | Use Jarvis When... |
+|---------------------|-------------------|
+| General case | h is very small (h << n) |
+| Simplicity preferred | No sorting overhead allowed |
+| Collinear points on hull | Only extreme points needed |
 
 ### Edge Cases & Pitfalls
 
-- **Online queries:** Mo's only works offline — all queries must be known.
-- **Update operations:** Standard Mo's doesn't handle point updates (use Mo's with modifications).
-- **Block size tuning:** √N is theoretical; experiment with N^0.5 to N^0.7.
+- **Collinear points:** Decide whether to include intermediate points on edges.
+- **Duplicate points:** Remove or handle gracefully.
+- **All points collinear:** Hull is a line segment.
+- **Integer overflow:** Use 64-bit integers for <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross products</abbr>.
 
-## 59.5. Quick Reference
+## 60.6. Quick Reference
 
-| Parameter | Formula |
-|-----------|---------|
-| Block size | √N (or N/√Q) |
-| Sort order | Block(L), then R (alternating direction) |
-| Complexity | <code>O((N + Q) × √N × cost_add_remove)</code> |
+| Concept | Value |
+|---------|-------|
+| Lower bound | <code>Ω(n log n)</code> (reduction from sorting) |
+| Output size | h points (h ≤ n) |
+| Orientation | Cross product sign |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `sort` | Query sorting |
+| `sort` | Point sorting |
+| `image` | Point representations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 59:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. It is a niche but powerful technique for competitive programming and offline batch processing.
+<strong>Summary Chapter 58:</strong> The convex hull is <abbr title="Algorithms for solving geometric problems">computational geometry</abbr>'s gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time with elegant simplicity — sort, then sweep. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr>, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 55: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-55/)
-- [Chapter 57: Kadane's Algorithm](/docs/Part-XI/Chapter-57/)
-- [Chapter 58: Minimax and Game Trees](/docs/Part-XII/Chapter-58/)
+- [Chapter 32: Linear Programming](/docs/Part-VII/Chapter-32/)
+- [Chapter 52: A* Search](/docs/Part-X/Chapter-52/)
+- [Chapter 58: Mo's Algorithm](/docs/Part-XII/Chapter-58/)

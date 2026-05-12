@@ -1,105 +1,112 @@
 ---
-weight: 70800
-title: "Chapter 36: Approximate Algorithms"
-description: "Approximate Algorithms"
+weight: 70900
+title: "Chapter 36: Trie Data Structures"
+description: "Trie Data Structures"
 icon: "article"
-date: "2024-08-24T23:42:51+07:00"
-lastmod: "2024-08-24T23:42:51+07:00"
+date: "2024-08-24T23:42:09+07:00"
+lastmod: "2024-08-24T23:42:09+07:00"
 draft: false
 toc: true
 katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithms are the soul of computing, and approximate algorithms are the art of making the impossible possible.</em>" : David Williamson</strong>
+<strong>"<em>Words are, of course, the most powerful drug used by mankind.</em>" : Rudyard Kipling</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 36 explores approximation algorithms: greedy heuristics, local search, and randomized rounding tailored specifically for solving NP-hard problems.
+Chapter 37 covers <abbr title="A tree data structure for storing and searching strings with common prefixes.">Trie</abbr> (<abbr title="A tree storing strings where common prefixes are shared, also called a Trie.">prefix tree</abbr>) data structures: efficient storage and retrieval of strings with common prefixes. Essential for autocomplete, spell checking, and IP routing.
 {{% /alert %}}
 
-## 36.1. Greedy Approximation
+## 37.1. Trie Fundamentals
 
-**Definition:** Greedy algorithms continuously select the locally optimal choice at every isolated step. For a variety of <abbr title="A class of problems at least as hard as NP-Complete problems.">NP-hard</abbr> problems, a greedy approach yields a mathematically provable, bounded <abbr title="A guarantee of how close an approximation is to the optimal solution.">approximation ratio</abbr>.
+**Definition:** A Trie is a tree where each node represents a character. Paths from root to leaf form complete words. All descendants of a node share the same prefix.
 
 **Background & Philosophy:**
-The philosophy embraces pragmatic imperfection. When a problem is <abbr title="A class of problems at least as hard as NP-Complete problems.">NP-Hard</abbr> (like calculating the flawless shortest route for 1,000 delivery trucks), finding the perfect mathematical answer might take a supercomputer millions of years. Approximate algorithms proudly trade absolute perfection for guaranteed speed, securing answers that are "good enough" (e.g., guaranteed to be no worse than 2x the optimal cost).
+The philosophy is structural prefix sharing. Instead of storing ten words that start with "auto" as ten distinct strings, a Trie stores the prefix "a-u-t-o" exactly once, branching off only when the words diverge. It transforms string retrieval from an <code>O(N)</code> scan into an <code>O(m)</code> traversal based strictly on the word's length, independent of dictionary size.
 
 **Use Cases:**
-Heuristic routing in Google Maps, grouping millions of distinct products into the fewest possible shipping boxes (Set Cover), and optimizing layouts for microchip circuitry.
+Search engine autocomplete engines, routing IP addresses in networking hardware (<abbr title="A space-optimized Trie with edge labels, also known as a Radix Trie.">Radix Tries</abbr>), and mobile phone predictive text keyboards.
 
 **Memory Mechanics:**
-Because approximate algorithms often fall back on greedy sorting or minimum spanning trees (MST), their memory footprint heavily depends on the underlying graph structures. A common greedy approximation requires sorting edge weights <code>O(E log E)</code>, relying entirely on <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slices that process quickly in <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>. Randomization (like Max-Cut) simply iterates through memory flipping bits randomly, which operates efficiently but places heavy demands on the entropy generator's shared memory lock if not isolated per thread.
+A standard Trie is incredibly memory-hungry. Each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> in Go typically holds a `map[rune]*TrieNode`. Allocating millions of tiny maps across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> severely fragments <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes massive <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> tracing overhead. High-performance production Tries (like Double-Array Tries or Radix Trees) compress these <abbr title="A variable that stores a memory address.">pointers</abbr> into packed, flat arrays to drastically reduce memory footprints and restore <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.
 
 ### Operations & Complexity
 
-| Problem | Approx Ratio | Time | Description |
-|---------|-------------|------|------------|
-| Set Cover | H(n) ≈ ln n | <code>O(n log n)</code> | Greedy iteratively picks the maximum coverage |
-| <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover | 2 | <code>O(V + E)</code> | Pick both endpoints of an uncovered <abbr title="A connection between two vertices in a graph.">edge</abbr> |
-| Knapsack (fractional) | 1 (Exact) | <code>O(n log n)</code> | Strictly optimal for fractional variables |
-| TSP (metric) | 2 (MST-based) | <code>O(V²)</code> | Employs the double-tree technique |
+| Operation | Time | Space | Description |
+|-----------|------|-------|-------------|
+| Insert | <code>O(m)</code> | <code>O(m)</code> | m = word length |
+| Search | <code>O(m)</code> | <code>O(1)</code> | Exact match |
+| StartsWith | <code>O(m)</code> | <code>O(1)</code> | Prefix check |
+| Delete | <code>O(m)</code> | <code>O(1)</code> | Remove word |
+
+## 37.2. Basic Trie
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+
+Use a map for children to support any character set dynamically.
 
 ```go
 package main
 
-import (
-    "fmt"
-    "sort"
-)
+import "fmt"
 
-// Fractional Knapsack - mathematically optimal greedy approach
-type Item struct {
-    Weight int
-    Value  int
+type TrieNode struct {
+	Children map[rune]*TrieNode
+	IsEnd    bool
 }
 
-func fractionalKnapsack(items []Item, capacity int) float64 {
-    sort.Slice(items, func(i, j int) bool {
-        vi, vj := float64(items[i].Value)/float64(items[i].Weight),
-            float64(items[j].Value)/float64(items[j].Weight)
-        return vi > vj
-    })
-    totalValue := 0.0
-    remaining := capacity
-    for _, item := range items {
-        if remaining <= 0 {
-            break
-        }
-        if item.Weight <= remaining {
-            totalValue += float64(item.Value)
-            remaining -= item.Weight
-        } else {
-            totalValue += float64(item.Value) * float64(remaining) / float64(item.Weight)
-            remaining = 0
-        }
-    }
-    return totalValue
+type Trie struct {
+	Root *TrieNode
+}
+
+func NewTrie() *Trie {
+	return &Trie{Root: &TrieNode{Children: make(map[rune]*TrieNode)}}
+}
+
+func (t *Trie) Insert(word string) {
+	node := t.Root
+	for _, ch := range word {
+		if node.Children[ch] == nil {
+			node.Children[ch] = &TrieNode{Children: make(map[rune]*TrieNode)}
+		}
+		node = node.Children[ch]
+	}
+	node.IsEnd = true
+}
+
+func (t *Trie) Search(word string) bool {
+	node := t.Root
+	for _, ch := range word {
+		if node.Children[ch] == nil { return false }
+		node = node.Children[ch]
+	}
+	return node.IsEnd
+}
+
+func (t *Trie) StartsWith(prefix string) bool {
+	node := t.Root
+	for _, ch := range prefix {
+		if node.Children[ch] == nil { return false }
+		node = node.Children[ch]
+	}
+	return true
 }
 
 func main() {
-    items := []Item{{10, 60}, {20, 100}, {30, 120}}
-    fmt.Println("Max value:", fractionalKnapsack(items, 50))
+	trie := NewTrie()
+	words := []string{"cat", "car", "card", "care", "dog"}
+	for _, w := range words { trie.Insert(w) }
+	
+	fmt.Println(trie.Search("car"))   // true
+	fmt.Println(trie.Search("cart"))  // false
+	fmt.Println(trie.StartsWith("ca")) // true
 }
 ```
 
-{{% alert icon="📌" context="warning" %}}
-Fractional knapsack is flawlessly optimal because it can act greedily based solely upon the <abbr title="The data associated with a key in a key-value pair.">value</abbr>/weight ratio. The strict 0/1 Knapsack is absolutely NOT optimal utilizing a greedy approach; you must deploy DP or a Fully <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">Polynomial Time</abbr> Approximation Scheme (<abbr title="Fully Polynomial Time Approximation Scheme - finds near-optimal solutions in polynomial time.">FPTAS</abbr>).
-{{% /alert %}}
+## 37.3. Autocomplete
 
-## 36.2. <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover 2-Approximation
-
-**Definition:** A <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover is a curated set of vertices that seamlessly touches every single <abbr title="A connection between two vertices in a graph.">edge</abbr> within a <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>. A greedy 2-approximation vigorously selects both endpoints of any <abbr title="A connection between two vertices in a graph.">edge</abbr> that currently remains uncovered.
-
-### Operations & Complexity
-
-| Algorithm | Approx Ratio | Time | Space |
-|-----------|-------------|------|-------|
-| Greedy (both endpoints) | 2 | <code>O(V + E)</code> | <code>O(V)</code> |
-| LP Rounding | 2 | <code>O(poly)</code> | <code>O(V + E)</code> |
-| Best known mathematical | 2 - o(1) | . | A formal PTAS does not exist yet |
+**Definition:** Given a prefix, return all words in the Trie that start with that prefix.
 
 ### Idiomatic Go Implementation
 
@@ -108,167 +115,86 @@ package main
 
 import "fmt"
 
-type Graph struct {
-    V     int
-    Edges [][2]int
+type TrieNode struct {
+	Children map[rune]*TrieNode
+	IsEnd    bool
 }
 
-func vertexCoverApprox(g Graph) map[int]bool {
-    covered := make(map[int]bool)
-    used := make([]bool, len(g.Edges))
-    for {
-        found := false
-        for i, e := range g.Edges {
-            if used[i] {
-                continue
-            }
-            u, v := e[0], e[1]
-            if !covered[u] && !covered[v] {
-                covered[u] = true
-                covered[v] = true
-                used[i] = true
-                found = true
-                break
-            }
-        }
-        if !found {
-            break
-        }
-    }
-    return covered
+type Trie struct {
+	Root *TrieNode
 }
 
-func main() {
-    g := Graph{V: 4, Edges: [][2]int{{0, 1}, {1, 2}, {2, 3}, {3, 0}}}
-    cover := vertexCoverApprox(g)
-    fmt.Println("Vertex Cover:", cover)
-}
-```
-
-## 36.3. Metric TSP Heuristic (Nearest Neighbor)
-
-**Definition:** A Metric TSP explicitly fulfills the triangle inequality. The Nearest Neighbor heuristic constructs a tour by repeatedly visiting the closest unvisited city. This is a practical heuristic (not a constant-factor approximation) — in the worst case, nearest neighbor can produce tours up to O(log n) times the optimal. For a provable 2-approximation, use the MST double-tree approach: compute an MST, double its edges, form an Euler tour, and shortcut repeated vertices.
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import (
-    "fmt"
-    "math"
-)
-
-func nearestNeighborTSP(dist [][]float64) []int {
-    n := len(dist)
-    visited := make([]bool, n)
-    tour := make([]int, 0, n)
-    current := 0
-    visited[current] = true
-    tour = append(tour, current)
-    for len(tour) < n {
-        next := -1
-        minDist := math.MaxFloat64
-        for i := 0; i < n; i++ {
-            if !visited[i] && dist[current][i] < minDist {
-                minDist = dist[current][i]
-                next = i
-            }
-        }
-        if next == -1 {
-            break
-        }
-        visited[next] = true
-        tour = append(tour, next)
-        current = next
-    }
-    return tour
+func NewTrie() *Trie {
+	return &Trie{Root: &TrieNode{Children: make(map[rune]*TrieNode)}}
 }
 
-func tourLength(tour []int, dist [][]float64) float64 {
-    total := 0.0
-    for i := 0; i < len(tour); i++ {
-        j := (i + 1) % len(tour)
-        total += dist[tour[i]][tour[j]]
-    }
-    return total
+func (t *Trie) Insert(word string) {
+	node := t.Root
+	for _, ch := range word {
+		if node.Children[ch] == nil {
+			node.Children[ch] = &TrieNode{Children: make(map[rune]*TrieNode)}
+		}
+		node = node.Children[ch]
+	}
+	node.IsEnd = true
+}
+
+func (t *Trie) AutoComplete(prefix string) []string {
+	node := t.Root
+	for _, ch := range prefix {
+		if node.Children[ch] == nil { return nil }
+		node = node.Children[ch]
+	}
+	var results []string
+	var dfs func(n *TrieNode, path string)
+	dfs = func(n *TrieNode, path string) {
+		if n.IsEnd { results = append(results, prefix+path) }
+		for ch, child := range n.Children {
+			dfs(child, path+string(ch))
+		}
+	}
+	dfs(node, "")
+	return results
 }
 
 func main() {
-    dist := [][]float64{
-        {0, 10, 15, 20},
-        {10, 0, 35, 25},
-        {15, 35, 0, 30},
-        {20, 25, 30, 0},
-    }
-    tour := nearestNeighborTSP(dist)
-    fmt.Println("Tour:", tour)
-    fmt.Println("Length:", tourLength(tour, dist))
+	trie := NewTrie()
+	for _, w := range []string{"cat", "car", "card", "care", "carpet"} {
+		trie.Insert(w)
+	}
+	fmt.Println(trie.AutoComplete("car")) // [car card care carpet]
 }
 ```
 
-## 36.4. Randomized Approximation
+## 37.4. Decision Matrix
 
-**Definition:** Randomized algorithms inject calculated random choices to forge an expected, highly reliable approximation ratio.
+| Use Trie When... | Avoid If... |
+|------------------|-------------|
+| Many strings share prefixes | Strings are random with no common prefixes |
+| Need fast prefix queries | Memory is extremely constrained |
+| Implementing autocomplete or spell checker | Only exact match lookups needed (use hash map) |
 
-### Idiomatic Go Implementation
+### Edge Cases & Pitfalls
 
-```go
-package main
+- **Memory overhead:** Each node allocates a map; for dense alphabets (e.g., Unicode), use arrays or compressed tries.
+- **Empty string:** Decide whether empty string is a valid word in your Trie.
+- **Case sensitivity:** Normalize to lowercase before insertion unless case matters.
 
-import (
-    "fmt"
-    "math/rand"
-)
+## 37.5. Quick Reference
 
-func maxCutRandom(edges [][2]int, n int) (map[int]bool, int) {
-    setA := make(map[int]bool)
-    for i := 0; i < n; i++ {
-        if rand.Float64() < 0.5 {
-            setA[i] = true
-        }
-    }
-    cutSize := 0
-    for _, e := range edges {
-        _, inA := setA[e[0]]
-        _, inB := setA[e[1]]
-        if inA != inB {
-            cutSize++
-        }
-    }
-    return setA, cutSize
-}
-
-func main() {
-    edges := [][2]int{{0, 1}, {1, 2}, {2, 3}, {3, 0}, {0, 2}}
-    set, size := maxCutRandom(edges, 4)
-    fmt.Println("Set A:", set)
-    fmt.Println("Cut size:", size)
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amplification tactic: execute the algorithm <code>k</code> times, aggressively picking the absolute best result to crush the probability of failure exponentially.
-{{% /alert %}}
-
-## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
-
-| Name | Go Type | Time | Space | Use Case |
-|------|---------|------|-------|----------|
-| <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover | `map[int]bool` | <code>O(V+E)</code> | <code>O(V)</code> | Greedy 2-approx |
-| Set Cover | <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority queue</abbr> | <code>O(n log n)</code> | varies | Greedy ln n-approx |
-| TSP Metric | `[]int` tour | <code>O(n^2)</code> | <code>O(n)</code> | 2-approx MST double-tree |
-| TSP Metric | `[]int` tour | <code>O(n^3)</code> | <code>O(n)</code> | 1.5-approx Christofides |
-| Max-Cut | `map[int]bool` | <code>O(E)</code> | <code>O(V)</code> | Random partition |
-| Knapsack Frac | `[]Item` | <code>O(n log n)</code> | <code>O(n)</code> | Greedy optimal |
-| Knapsack 0/1 | DP | 1 | <code>O(nW)</code> | `[][]int` matrix |
+| Operation | Go Type | Time | Space | Use Case |
+|-----------|---------|------|-------|----------|
+| Insert | `map[rune]*TrieNode` | <code>O(m)</code> | <code>O(m)</code> | Dictionary building |
+| Search | `map[rune]*TrieNode` | <code>O(m)</code> | <code>O(1)</code> | Word validation |
+| Prefix | `map[rune]*TrieNode` | <code>O(m)</code> | <code>O(k)</code> | Autocomplete |
+| Compressed Trie | Edge labels | <code>O(m)</code> | Reduced | Memory optimization |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 36:</strong> This chapter discusses approximation algorithms designed for NP-hard problems: greedy fractional knapsack (provably optimal), a 2-approximation for <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover, nearest neighbor and Christofides methods for metric TSP, alongside a randomized Max-Cut approach. Leverage greedy techniques for lightning-fast solutions, randomized algorithms for robust expected ratios, and Christofides for a rigorous 1.5 guarantee on metric TSPs.
+<strong>Summary Chapter 35:</strong> Tries excel at prefix-based string operations with <code>O(m)</code> time complexity. In Go, use `map[rune]*TrieNode` for flexibility or fixed-size arrays for performance. Apply tries to autocomplete, spell checking, and any problem involving shared string prefixes.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 25: Greedy Algorithms](/docs/Part-VI/Chapter-25/)
-- [Chapter 28: Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-28/)
-- [Chapter 43: Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-43/)
+- [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-34/)
+- [Chapter 48: Suffix Arrays](/docs/Part-IX/Chapter-48/)

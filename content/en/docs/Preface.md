@@ -15,7 +15,7 @@ Written for software engineers who build real systems, not just solve interview 
 
 ## How to Use This Book
 
-This book contains **60 chapters** across **12 parts**. Each chapter is self-contained and designed for a 7 to 10 minute reading time.
+This book contains **59 chapters** across **12 parts**. Each chapter is self-contained and designed for a 7 to 10 minute reading time.
 
 | If You Are... | Start Here |
 |---------------|-----------|

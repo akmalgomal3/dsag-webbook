@@ -1,51 +1,62 @@
 ---
-weight: 70300
-title: "Chapter 31: Cryptographic Foundations Algorithms"
-description: "Cryptographic Foundations Algorithms"
+weight: 70400
+title: "Chapter 31: Blockchain Data Structures and Algorithms"
+description: "Blockchain Data Structures and Algorithms"
 icon: "article"
-date: "2024-08-24T23:42:47+07:00"
-lastmod: "2024-08-24T23:42:47+07:00"
+date: "2024-08-24T23:42:48+07:00"
+lastmod: "2024-08-24T23:42:48+07:00"
 draft: false
 toc: true
 katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>To keep a system secure, we need to be always on our toes. If we wait for the attackers to find vulnerabilities, it's already too late.</em>" : Whitfield Diffie</strong>
+<strong>"<em>Blockchain is the tech. Bitcoin is merely the first mainstream manifestation of its potential.</em>" : Marc Kenigsberg</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 31 explores cryptographic primitives: hash functions, symmetric encryption, asymmetric encryption, and digital signatures utilizing Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr>.
+Chapter 32 explores fundamental blockchain data structures: hash chains, Merkle trees, Proof of Work, and basic implementations in Go.
 {{% /alert %}}
 
-## 31.1. Hash Functions
+## 32.1. Block Structure
 
-**Definition:** A <abbr title="A function mapping data of arbitrary size to fixed-size values">hash function</abbr> maps arbitrary inputs to deterministic fixed-size outputs. Cryptographic hashes must be robustly preimage-resistant and collision-resistant.
+**Definition:** A block acts as a container for transactions, maintaining a cryptographic hash that directly references the preceding block, thus creating an immutable chain.
 
 **Background & Philosophy:**
-The philosophy is mathematical asymmetry and mathematical impossibility. Cryptography relies on one-way functions (like factoring large primes or elliptic curve discrete logarithms) that are trivial to compute in one direction but take billions of years to reverse without a key.
+The philosophy is cryptographic immutability and trustless verification. Instead of relying on a centralized database that can be secretly altered, a blockchain strings state changes together via cryptographic hashes, guaranteeing that modifying any past data instantly invalidates the entire subsequent chain.
 
 **Use Cases:**
-HTTPS encryption, securing user passwords via bcrypt, and verifying blockchain transactions through ECDSA signatures.
+Bitcoin, Ethereum smart contracts, supply chain tracking, and decentralized voting systems where a transparent public ledger is demanded.
 
 **Memory Mechanics:**
-Cryptographic hashing requires constant-time memory execution to prevent "timing attacks". If comparing an unauthorized hash `A` against a stored password hash `B`, a naive string comparison exits early on the first mismatched byte. An attacker can precisely measure this execution time to deduce the correct bytes one by one. The `subtle.ConstantTimeCompare` function forces the CPU to iterate through the entire memory slice regardless of matches, neutralizing the timing side-channel.
+Blockchain operations primarily rely on cryptographic hashing functions (like SHA-256). These functions load small chunks of data (typically 64-byte blocks) directly into CPU registers to perform massive amounts of bitwise operations. This requires very little <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory but maximizes ALU (Arithmetic Logic Unit) utilization. For mining (PoW), the tight loop alters only the `nonce` integer in memory, ensuring that the hash payload stays hot inside the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
 
 ### Operations & Complexity
 
-| Algorithm | Output Size | Security <abbr title="The set of all nodes at a given depth.">Level</abbr> | Description |
-|-----------|-------------|----------|------------|
-| SHA-256 | 256 bits | Secure | Industry standard |
-| SHA-512 | 512 bits | Secure | Slower, but larger bounds |
-| MD5 | 128 bits | Broken | Do not use |
-| SHA-1 | 160 bits | Broken | Deprecated |
+| Operation | Complexity | Description |
+|---------|--------------|------------|
+| Create block | <code>O(t)</code> | t = number of transactions |
+| Hash block | <code>O(t)</code> | SHA-256 over entire data |
+| Verification | <code>O(1)</code> | Direct hash comparison |
+| Append | <code>O(1)</code> | Attach at the chain's end |
 
 ### Pseudocode
 
 ```text
-HashSHA256(data):
-    h = SHA256(data)
-    return encode hex(h)
+CalculateHash(block):
+    record = concat(block.Index, block.Timestamp, block.Data, block.PrevHash, block.Nonce)
+    return SHA256(record)
+
+CreateBlock(index, data, prevHash):
+    block = new Block(index, current time, data, prevHash, nonce=0)
+    block.Hash = CalculateHash(block)
+    return block
+
+IsValid(newBlock, prevBlock):
+    if prevBlock.Index + 1 != newBlock.Index: return false
+    if newBlock.PrevHash != prevBlock.Hash: return false
+    if CalculateHash(newBlock) != newBlock.Hash: return false
+    return true
 ```
 
 ### Idiomatic Go Implementation
@@ -57,65 +68,101 @@ import (
     "crypto/sha256"
     "encoding/hex"
     "fmt"
+    "time"
 )
 
-func hashSHA256(data []byte) string {
-    h := sha256.Sum256(data)
+type Block struct {
+    Index        int
+    Timestamp    int64
+    Data         string
+    PrevHash     string
+    Hash         string
+    Nonce        int
+}
+
+func calculateHash(b Block) string {
+    record := fmt.Sprintf("%d%d%s%s%d", b.Index, b.Timestamp, b.Data, b.PrevHash, b.Nonce)
+    h := sha256.Sum256([]byte(record))
     return hex.EncodeToString(h[:])
 }
 
+func createBlock(index int, data string, prevHash string) Block {
+    b := Block{
+        Index:     index,
+        Timestamp: time.Now().Unix(),
+        Data:      data,
+        PrevHash:  prevHash,
+        Nonce:     0,
+    }
+    b.Hash = calculateHash(b)
+    return b
+}
+
+func isValid(newBlock, prevBlock Block) bool {
+    if prevBlock.Index+1 != newBlock.Index {
+        return false
+    }
+    if newBlock.PrevHash != prevBlock.Hash {
+        return false
+    }
+    if calculateHash(newBlock) != newBlock.Hash {
+        return false
+    }
+    return true
+}
+
 func main() {
-    data := []byte("hello world")
-    fmt.Println("SHA-256:", hashSHA256(data))
+    genesis := createBlock(0, "Genesis", "0")
+    block1 := createBlock(1, "Tx1", genesis.Hash)
+    fmt.Println("Valid:", isValid(block1, genesis))
+    fmt.Println("Genesis hash:", genesis.Hash)
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Strictly rely on `crypto/sha256` or `crypto/sha512` from the stdlib. Avoid MD5 and SHA-1 for security contexts entirely. For password hashing, utilize `golang.org/x/crypto/bcrypt` or `argon2`.
+Consistently utilize `crypto/sha256` for cryptographic hashing. A timestamp generated via `time.Now()` is easily manipulated; strictly prefer robust NTP syncs or a reliable consensus timestamp.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use SHA-256 When... | Avoid If... |
-|------------------------|------------------|
-| Performing data integrity checks | Storing passwords (use bcrypt/argon2 instead) |
-| Generating cryptographic checksums | You need raw speed without security (use xxhash) |
+| Use Standard Arrays When... | Avoid If... |
+|----------------------|------------------|
+| Using a local, single-node chain | Working within complex distributed consensus systems |
+| Prototyping or educational purposes | Pushing to production without aggressive security audits |
 
 ### Edge Cases & Pitfalls
 
-- **Length extension attacks:** SHA-256 is vulnerable to length extension attacks. Employ HMACs when necessary.
-- **Timing attacks:** Never compare hashes utilizing the standard `==` operator. Always use `hmac.Equal` or `subtle.ConstantTimeCompare`.
+- **Genesis block:** Consistently validate that the chain initiates from a firmly known and trusted genesis block.
+- **Hash <abbr title="An event when two keys hash to the same index.">collision</abbr>:** A SHA-256 <abbr title="An event when two keys hash to the same index.">collision</abbr> is virtually impossible in practice, but theoretically exists.
+- **Longest chain:** In a PoW environment, invariably respect and follow the chain exhibiting the highest cumulative difficulty.
 
-## 31.2. Symmetric Encryption
+## 32.2. Merkle <abbr title="A hierarchical data structure with a root node and child nodes.">Tree</abbr>
 
-**Definition:** Symmetric encryption utilizes the exact same <abbr title="A field or set of fields used to identify a record.">key</abbr> for both encryption and decryption. <abbr title="An authenticated encryption algorithm using AES in Galois/Counter Mode.">AES-GCM</abbr> stands as the heavily recommended standard mode.
+**Definition:** A Merkle <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> represents a <abbr title="A tree data structure in which each node has at most two children.">binary tree</abbr> where every <abbr title="A node with no children in a tree.">leaf</abbr> constitutes a transaction hash, and every internal <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> is the hash concatenation of its respective children.
 
 ### Operations & Complexity
 
-| Algorithm | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Size | Mode | Security <abbr title="The set of all nodes at a given depth.">Level</abbr> |
-|-----------|----------|------|----------|
-| AES-128 | 128 bits | GCM | Secure |
-| AES-256 | 256 bits | GCM | Secure |
-| ChaCha20-Poly1305 | 256 bits | AEAD | Secure, strong alternative |
+| Operation | Complexity | Description |
+|---------|--------------|------------|
+| Build | <code>O(n)</code> | n = volume of transactions |
+| <abbr title="The topmost node in a tree data structure.">Root</abbr> | <code>O(1)</code> | The peak hash of the <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> |
+| Proof inclusion | <code>O(log n)</code> | Processing log n hash siblings |
+| Verify proof | <code>O(log n)</code> | Recomputing the <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> to the <abbr title="The topmost node in a tree data structure.">root</abbr> |
 
 ### Pseudocode
 
 ```text
-EncryptAESGCM(plaintext, key):
-    block = AES(key)
-    gcm = GCM(block)
-    nonce = random bytes of size gcm.NonceSize
-    ciphertext = gcm.Seal(nonce, nonce, plaintext, nil)
-    return encode hex(ciphertext), encode hex(nonce)
-
-DecryptAESGCM(ciphertextHex, key):
-    ciphertext = decode hex(ciphertextHex)
-    block = AES(key)
-    gcm = GCM(block)
-    nonceSize = gcm.NonceSize
-    nonce = ciphertext[0:nonceSize]
-    ciphertext = ciphertext[nonceSize:]
-    return gcm.Open(nil, nonce, ciphertext, nil)
+BuildMerkleRoot(transactions):
+    if length(transactions) == 0: return ""
+    if length(transactions) == 1: return transactions[0]
+    level = empty list
+    for i from 0 to length(transactions)-1 step 2:
+        left = transactions[i]
+        right = transactions[i]  // duplicate last if odd
+        if i+1 < length(transactions):
+            right = transactions[i+1]
+        level.append(HashPair(left, right))
+    return BuildMerkleRoot(level)
 ```
 
 ### Idiomatic Go Implementation
@@ -124,270 +171,85 @@ DecryptAESGCM(ciphertextHex, key):
 package main
 
 import (
-    "crypto/aes"
-    "crypto/cipher"
-    "crypto/rand"
-    "encoding/hex"
-    "fmt"
-    "io"
-)
-
-func encryptAESGCM(plaintext, key []byte) (string, string, error) {
-    block, err := aes.NewCipher(key)
-    if err != nil {
-        return "", "", err
-    }
-    gcm, err := cipher.NewGCM(block)
-    if err != nil {
-        return "", "", err
-    }
-    nonce := make([]byte, gcm.NonceSize())
-    if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-        return "", "", err
-    }
-    ciphertext := gcm.Seal(nonce, nonce, plaintext, nil)
-    return hex.EncodeToString(ciphertext), hex.EncodeToString(nonce), nil
-}
-
-func decryptAESGCM(ciphertextHex string, key []byte) ([]byte, error) {
-    ciphertext, err := hex.DecodeString(ciphertextHex)
-    if err != nil {
-        return nil, err
-    }
-    block, err := aes.NewCipher(key)
-    if err != nil {
-        return nil, err
-    }
-    gcm, err := cipher.NewGCM(block)
-    if err != nil {
-        return nil, err
-    }
-    nonceSize := gcm.NonceSize()
-    nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
-    return gcm.Open(nil, nonce, ciphertext, nil)
-}
-
-func main() {
-    key := make([]byte, 32)
-    if _, err := io.ReadFull(rand.Reader, key); err != nil {
-        panic(err)
-    }
-    plain := []byte("secret message")
-    ct, _, err := encryptAESGCM(plain, key)
-    if err != nil {
-        panic(err)
-    }
-    pt, err := decryptAESGCM(ct, key)
-    if err != nil {
-        panic(err)
-    }
-    fmt.Println("Decrypted:", string(pt))
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-The <abbr title="A random number used once in cryptographic operations.">nonce</abbr> MUST be completely unique per encryption event when utilizing the same <abbr title="A field or set of fields used to identify a record.">key</abbr>. The standard GCM nonce size is 12 bytes. Never reuse nonces under any circumstance.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use AES-GCM When... | Avoid If... |
-|------------------------|------------------|
-| Encrypting data at rest or in transit | Lacking authentication (use CBC+HMAC, or strictly GCM) |
-| Hardware AES-NI is physically available | Operating on embedded systems lacking AES support (use ChaCha20 instead) |
-
-### Edge Cases & Pitfalls
-
-- **<abbr title="A field or set of fields used to identify a record.">Key</abbr> reuse with identical nonce:** A fatal security flaw for GCM. Consistently generate cryptographically random nonces.
-- **Unauthenticated encryption:** ECB and CBC modes (without HMAC) are vulnerable to tampering and modifications.
-- **IV reuse in CTR mode:** This error completely shatters the encryption's security.
-
-## 31.3. Asymmetric Encryption
-
-**Definition:** Asymmetric encryption utilizes a specific pair of <abbr title="A key shared publicly for encryption or signature verification.">public</abbr> (encryption) and <abbr title="A secret key used for decryption or signing.">private</abbr> (decryption) keys. RSA and <abbr title="An elliptic curve digital signature algorithm providing security and efficiency.">ECDSA</abbr> serve as the established standards.
-
-### Operations & Complexity
-
-| Algorithm | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Size | Sign | Verify | Description |
-|-----------|----------|------|--------|------------|
-| RSA-2048 | 2048 bits | <code>O(n³)</code> | <code>O(n^2)</code> | Aging standard |
-| RSA-4096 | 4096 bits | <code>O(n³)</code> | <code>O(n^2)</code> | More secure, much slower |
-| ECDSA P-256 | 256 bits | <code>O(n^2)</code> | <code>O(n^2)</code> | Considerably faster, shorter |
-| Ed25519 | 256 bits | <code>O(n^2)</code> | <code>O(n^2)</code> | Modern, heavily recommended |
-
-### Pseudocode
-
-```text
-GenerateECDSAKey():
-    privateKey = generate key on curve P256
-    privBytes = marshal private key
-    privPEM = PEM encode privBytes
-    return privateKey, privPEM
-
-SignECDSA(privateKey, message):
-    hash = SHA256(message)
-    r, s = ECDSA sign(privateKey, hash)
-    signature = concat(r bytes, s bytes)
-    return signature, hash
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import (
-    "crypto/ecdsa"
-    "crypto/elliptic"
-    "crypto/rand"
-    "crypto/sha256"
-    "crypto/x509"
-    "encoding/pem"
-    "fmt"
-    "math/big"
-)
-
-func generateECDSAKey() (*ecdsa.PrivateKey, []byte, error) {
-    priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-    if err != nil {
-        return nil, nil, err
-    }
-    privBytes, err := x509.MarshalECPrivateKey(priv)
-    if err != nil {
-        return nil, nil, err
-    }
-    privPEM := pem.EncodeToMemory(&pem.Block{Type: "EC PRIVATE KEY", Bytes: privBytes})
-    return priv, privPEM, nil
-}
-
-func signECDSA(priv *ecdsa.PrivateKey, msg []byte) ([]byte, []byte, error) {
-    hash := sha256.Sum256(msg)
-    r, s, err := ecdsa.Sign(rand.Reader, priv, hash[:])
-    if err != nil {
-        return nil, nil, err
-    }
-    sig := append(r.Bytes(), s.Bytes()...)
-    return sig, hash[:], nil
-}
-
-func main() {
-    priv, _, err := generateECDSAKey()
-    if err != nil {
-        panic(err)
-    }
-    msg := []byte("authenticate this")
-    sig, hash, err := signECDSA(priv, msg)
-    if err != nil {
-        panic(err)
-    }
-    // Reconstruct big.Int values from signature bytes for verification
-    r := new(big.Int).SetBytes(sig[:len(sig)/2])
-    s := new(big.Int).SetBytes(sig[len(sig)/2:])
-    valid := ecdsa.Verify(&priv.PublicKey, hash, r, s)
-    fmt.Println("Signature valid:", valid)
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-`crypto/ecdsa` yields a raw signature (r, s) that frequently requires encoding (ASN.1 DER) for broad interoperability. For modern applications, strongly prefer `crypto/ed25519` as it's considerably simpler.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use Ed25519 When... | Avoid If... |
-|------------------------|------------------|
-| Needing new digital signatures | Working within legacy systems demanding RSA |
-| Performance is highly critical | Actually needing raw encryption (Ed25519 only signs data) |
-
-### Edge Cases & Pitfalls
-
-- **Randomness quality:** Keys and signatures depend intensely upon `crypto/rand`. Never utilize the insecure `math/rand`.
-- **Timing attacks:** ECDSA verification must run in strict constant-time. Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> reliably handles this.
-
-## 31.4. Digital Signatures and HMAC
-
-**Definition:** <abbr title="A hash-based message authentication code for verifying data integrity.">HMAC</abbr> (Hash-based Message Authentication Code) leverages a secret <abbr title="A field or set of fields used to identify a record.">key</abbr> to authenticate data integrity. Digital signatures use asymmetric keys to ensure robust non-repudiation.
-
-### Operations & Complexity
-
-| Primitive | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Type | Size | Description |
-|----------|----------|------|------------|
-| HMAC-SHA256 | Symmetric | 256 bits | Message authentication |
-| ECDSA | Asymmetric | 512 bits signature | Ensures non-repudiation |
-| Ed25519 | Asymmetric | 64 bytes signature | Modern, exceptionally fast |
-
-### Pseudocode
-
-```text
-HMACSHA256(message, key):
-    h = HMAC(SHA256, key)
-    h.update(message)
-    return encode hex(h.digest())
-
-VerifyHMAC(message, key, mac):
-    expected = HMACSHA256(message, key)
-    return constant time compare(expected, mac)
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import (
-    "crypto/hmac"
     "crypto/sha256"
     "encoding/hex"
     "fmt"
 )
 
-func hmacSHA256(message, key []byte) string {
-    h := hmac.New(sha256.New, key)
-    h.Write(message)
-    return hex.EncodeToString(h.Sum(nil))
+func hashPair(a, b string) string {
+    h := sha256.Sum256([]byte(a + b))
+    return hex.EncodeToString(h[:])
 }
 
-func verifyHMAC(message, key []byte, mac string) bool {
-    expected := hmacSHA256(message, key)
-    return hmac.Equal([]byte(expected), []byte(mac))
+func buildMerkleRoot(transactions []string) string {
+    if len(transactions) == 0 {
+        return ""
+    }
+    if len(transactions) == 1 {
+        return transactions[0]
+    }
+    var level []string
+    for i := 0; i < len(transactions); i += 2 {
+        left := transactions[i]
+        right := left
+        if i+1 < len(transactions) {
+            right = transactions[i+1]
+        }
+        level = append(level, hashPair(left, right))
+    }
+    return buildMerkleRoot(level)
 }
 
 func main() {
-    key := []byte("super-secret-key")
-    msg := []byte("authenticated message")
-    mac := hmacSHA256(msg, key)
-    fmt.Println("HMAC:", mac)
-    fmt.Println("Verify:", verifyHMAC(msg, key, mac))
+    txs := []string{
+        "tx1-hash", "tx2-hash", "tx3-hash", "tx4-hash",
+    }
+    root := buildMerkleRoot(txs)
+    fmt.Println("Merkle Root:", root)
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute a standard `==` to evaluate a MAC.
+Duplicating the final element for an odd count is known as "duplicating the last hash". You must ensure parity between the build and verify logic.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use HMAC When... | Use Digital Signature When... |
-|---------------------|----------------------------------|
-| Both involved parties possess the shared secret <abbr title="A field or set of fields used to identify a record.">key</abbr> | Genuine non-repudiation is mandatory |
-| Performance is highly critical | The verification step occurs via a third party |
+| Use Merkle <abbr title="A hierarchical data structure with a root node and child nodes.">Tree</abbr> When... | Avoid If... |
+|----------------------------|------------------|
+| Verifying a subset of transactions efficiently | Every single transaction is always required immediately |
+| Building light clients | Managing microscopic datasets, where <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> overhead is unjustifiable |
 
 ### Edge Cases & Pitfalls
 
-- **<abbr title="A field or set of fields used to identify a record.">Key</abbr> length < hash size:** HMAC automatically hashes the key first. Keys shorter than the block size are acceptable.
-- **Truncated MAC:** Do not truncate an HMAC signature without undergoing a rigorous security analysis.
+- **Odd leaves:** Relentlessly duplicate the final hash prior to executing a pairing round.
+- **Second preimage attack:** Differentiate the <abbr title="A node with no children in a tree.">leaf</abbr> hashes from internal <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> hashes securely (e.g., utilize standard prefixing).
 
-## 31.5. Password Hashing
+## 32.3. Proof of Work
 
-**Definition:** Password hashing (distinct from encryption) represents a deliberately slow one-way function engineered specifically to thwart brute-force attacks.
+**Definition:** PoW mandates that a miner isolates a specific nonce such that the resulting block hash contains a predefined string of leading zeros (the difficulty target).
 
 ### Operations & Complexity
 
-| Algorithm | Work Factor | Memory | Description |
-|-----------|-------------|--------|------------|
-| bcrypt | Cost 10-14 | Low | Legacy standard, sufficiently secure |
-| scrypt | N, r, p | Configurable | Memory-hard defense |
-| Argon2 | Time, Memory | High | PHC winner, highly recommended |
+| Parameter | Complexity | Description |
+|-----------|--------------|------------|
+| Mining | <code>O(2^d)</code> | d = difficulty in bits |
+| Verification | <code>O(1)</code> | Extremely fast, single hash |
+| Difficulty adjust | <code>O(1)</code> | Calculated per block epoch |
+
+### Pseudocode
+
+```text
+Mine(data, prevHash, difficulty):
+    prefix = string of difficulty zeros
+    nonce = 0
+    loop:
+        record = concat(data, prevHash, nonce)
+        hash = SHA256(record)
+        if hash starts with prefix:
+            return hash, nonce
+        nonce += 1
+```
 
 ### Idiomatic Go Implementation
 
@@ -395,56 +257,90 @@ Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute 
 package main
 
 import (
-	"fmt"
-
-	"golang.org/x/crypto/bcrypt"
+    "crypto/sha256"
+    "encoding/hex"
+    "fmt"
+    "strings"
 )
 
+func mine(data string, prevHash string, difficulty int) (string, int) {
+    prefix := strings.Repeat("0", difficulty)
+    var nonce int
+    for {
+        record := fmt.Sprintf("%s%s%d", data, prevHash, nonce)
+        hash := sha256.Sum256([]byte(record))
+        hashStr := hex.EncodeToString(hash[:])
+        if strings.HasPrefix(hashStr, prefix) {
+            return hashStr, nonce
+        }
+        nonce++
+    }
+}
+
 func main() {
-	password := []byte("my-secure-password")
-
-	// Hash dengan bcrypt, cost factor 12
-	hashed, err := bcrypt.GenerateFromPassword(password, 12)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("bcrypt hash: %s\n", hashed)
-
-	// Verifikasi
-	err = bcrypt.CompareHashAndPassword(hashed, password)
-	if err != nil {
-		fmt.Println("Password mismatch")
-	} else {
-		fmt.Println("Password verified")
-	}
+    hash, nonce := mine("hello", "prev123", 4)
+    fmt.Printf("Hash: %s, Nonce: %d\n", hash, nonce)
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Never use SHA-256 for password hashing. SHA-256 is designed for speed and can be brute-forced at billions of hashes per second with GPUs. Always use a dedicated password hashing algorithm like **bcrypt**, **scrypt**, or **Argon2** (PHC winner). These algorithms are deliberately slow and memory-hard.
+The PoW example provided acts purely as a demonstration. A rigorous production PoW mandates dynamic difficulty adjustment, massive nonce ranges, and P2P consensus mechanisms. Furthermore, Go is suboptimal for pure mining operations lacking raw native GPU bindings.
 {{% /alert %}}
 
-For production, prefer `golang.org/x/crypto/argon2` over bcrypt for its memory-hard properties.
+### Decision Matrix
+
+| Use PoW When... | Avoid If... |
+|--------------------|------------------|
+| Absolute, uncompromising decentralization is demanded | Energy efficiency is a core network objective |
+| Robust Byzantine fault tolerance is non-negotiable | Extremely high <abbr title="The amount of data processed in a given amount of time.">throughput</abbr> is critically required |
+
+### Edge Cases & Pitfalls
+
+- **Difficulty too low:** Leaves the blockchain heavily susceptible to rapid attacks.
+- **Timestamp manipulation:** Miners can aggressively manipulate timestamps to artificially skew the network's difficulty.
+
+## 32.4. Basic Consensus Algorithms
+
+**Definition:** Consensus algorithms fundamentally ensure that a massive, distributed network of nodes unequivocally agrees upon an identical, uniform state.
+
+### Operations & Complexity
+
+| Algorithm | Communication | Fault Tolerance | Description |
+|-----------|------------|-----------------|------------|
+| PoW | Broadcast | 51% | E.g., Bitcoin |
+| PoS | Broadcast | 33% | E.g., Ethereum 2.0 |
+| PBFT | <code>O(n²)</code> | f < n/3 | Ideal for permissioned systems |
+| Raft | <code>O(n)</code> | Leader failure | Strong for localized Key-value stores |
+
+### Decision Matrix
+
+| Use Raft/PBFT When... | Use PoW/PoS When... |
+|--------------------------|------------------------|
+| Network is highly permissioned | Network is strictly permissionless |
+| All validators are known entities | Operating with purely anonymous participants |
+| Low latency is critically important | Maximum, unquestionable decentralization is the priority |
+
+### Edge Cases & Pitfalls
+
+- **Nothing-at-stake:** A PoS validator may seamlessly vote on multiple forks simultaneously. Severe slashing rigorously punishes this behavior.
+- **Long-range attack:** An attacker possessing archaic private keys can surreptitiously construct an alternative chain.
 
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| SHA-256 | `crypto/sha256` | <code>O(n)</code> | 32 bytes | Data integrity |
-| AES-GCM | `crypto/aes` + `crypto/cipher` | <code>O(n)</code> | varies | Standard symmetric encryption |
-| HMAC | `crypto/hmac` | <code>O(n)</code> | . | Authenticate messages |
-| ECDSA | `crypto/ecdsa` | <code>O(n)</code> | . | Standard digital signatures |
-| Ed25519 | `crypto/ed25519` | <code>O(n)</code> | . | Fast, modern signatures |
-| bcrypt | `golang.org/x/crypto/bcrypt` | <code>O(cost)</code> | . | Hash passwords |
-| Argon2 | `golang.org/x/crypto/argon2` | . | . | Advanced password hashing |
-| TLS | `crypto/tls` | . | . | Secure transport layers |
+| Block | `struct` | <code>O(1)</code> create | <code>O(1)</code> | Core transaction container |
+| Merkle Tree | recursive hash | <code>O(n)</code> build | <code>O(n)</code> | Quick subset verification |
+| PoW Mining | brute-force loop | <code>O(2^k)</code> | . | Fundamental consensus |
+| Chain | `[]Block` | <code>O(1)</code> append | grows | Underlying ledger |
+| Hash | `crypto/sha256` | <code>O(n)</code> | 32 bytes | Rigid data integrity |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 31:</strong> This chapter dissects cryptographic primitives in Go: hashing (SHA-256), symmetric encryption (AES-GCM), asymmetric encryption (ECDSA/Ed25519), HMACs, digital signatures, and password hashing (bcrypt/Argon2). Rely exclusively on the standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> `crypto/` package for cryptographic operations and rigorously avoid MD5/SHA-1 for anything security-related.
+<strong>Summary Chapter 30:</strong> This chapter dissects foundational blockchain data structures: linked blocks utilizing SHA-256 hashes, Merkle trees engineered for transaction subset verification, Proof of Work (PoW), and foundational Proof of Stake (PoS) consensus strategies. Leverage Merkle trees for light clients, PoW for uncompromising decentralization, and PoS when maximizing energy efficiency.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 30: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
-- [Chapter 32: Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-32/)
-- [Chapter 47: Bloom Filters](/docs/Part-IX/Chapter-47/)
+- [Chapter 29: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-29/)
+- [Chapter 30: Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-30/)
+- [Chapter 36: Trie Data Structures](/docs/Part-VII/Chapter-36/)

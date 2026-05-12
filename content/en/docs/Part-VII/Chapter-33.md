@@ -1,7 +1,7 @@
 ---
-weight: 70500
-title: "Chapter 33: Linear Programming"
-description: "Linear Programming"
+weight: 70600
+title: "Chapter 33: Polynomial and FFT"
+description: "Polynomial and FFT"
 icon: "article"
 date: "2024-08-24T23:42:49+07:00"
 lastmod: "2024-08-24T23:42:49+07:00"
@@ -11,240 +11,59 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Optimization is a powerful tool for solving many types of problems, and linear programming provides one of the most fundamental approaches.</em>" : John Nash</strong>
+<strong>"<em>Algorithms are the backbone of modern computing. Without them, even the most powerful hardware would be rendered useless.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 33 covers linear programming: fundamental formulation, the Simplex algorithm, and implementations in Go leveraging both iterative methods and external solvers.
+Chapter 34 explores polynomials and the Fast Fourier Transform (FFT). Go's stdlib lacks a native FFT; utilize `math/cmplx` for complex operations or rely on external libraries.
 {{% /alert %}}
 
-## 33.1. Linear Programming Formulation
+## 34.1. Polynomial Representation
 
-**Definition:** <abbr title="Optimizing a linear objective function under linear equality and inequality constraints.">Linear Programming</abbr> (LP) aims to maximize or minimize a linear <abbr title="The function to be maximized or minimized in an optimization problem.">objective function</abbr> subject strictly to linear equality and inequality <abbr title="Conditions or restrictions in an optimization problem that define the solution space.">constraints</abbr>.
+**Definition:** A polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n is gracefully represented as a slice of coefficients: `[a₀, a₁, ..., aₙ]`.
 
 **Background & Philosophy:**
-The philosophy is geometric optimization. Linear constraints form a convex <abbr title="A plane figure bounded by straight line segments">polygon</abbr> (or polytope in N-dimensions) representing the <abbr title="The set of all valid solutions satisfying all constraints in an optimization problem.">"feasible region"</abbr>. The fundamental theorem of LP states that the optimal solution *always* lies on a vertex (corner) of this polytope. Because of this mathematical certainty, solvers do not need to check infinite interior points; they only need to "walk" along the edges from corner to corner until they find the peak.
+The philosophy is the dual representation of data. A polynomial can be represented either by its coefficients or by its evaluated points. Multiplying coefficients takes <code>O(n^2)</code> time, but multiplying evaluated points takes <code>O(n)</code> time. FFT translates coefficients into points in <code>O(n log n)</code>, allowing blisteringly fast math.
 
 **Use Cases:**
-Airline crew scheduling, financial portfolio optimization, manufacturing supply chains, and routing massive logistical fleets.
+Digital signal processing (audio/image compression), quantum mechanics, and multiplying incredibly large numbers (e.g., 100,000 digits) efficiently.
 
 **Memory Mechanics:**
-LP solvers (like Simplex) use a tableau (a 2D matrix) to represent equations. Modifying this tableau involves Gaussian elimination, scanning and updating entire rows. Because the matrix elements are <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, the CPU processes them efficiently using SIMD instructions. However, in enormous real-world models with millions of variables, these matrices are hyper-sparse (mostly zeros). Efficient LP solvers discard the 2D array format entirely, using specialized sparse memory maps to prevent exhausting system <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
-
-Standard form:
-```
-maximize: cᵀx
-subject to: Ax ≤ b, x ≥ 0
-```
-
-### Operations & Complexity
-
-| Algorithm | Worst Case | Average | Description |
-|-----------|------------|---------|------------|
-| <abbr title="An algorithm for solving linear programming problems by traversing polytope vertices.">Simplex</abbr> | <code>O(2^n)</code> | <code>O(n³)</code> | Pivot-based <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> traversal |
-| Interior Point | <code>O(n³·⁵L)</code> | <code>O(n³)</code> | Strictly polynomial |
-| Dual Simplex | <code>O(2^n)</code> | <code>O(n³)</code> | Starts from a dual feasible state |
-
-### Pseudocode
-
-```text
-Solve2DLP(c1, c2, constraints):
-    bestVal = -infinity
-    bestX, bestY = 0, 0
-    for each pair of constraints (i, j):
-        compute intersection point (x, y)
-        if x < 0 or y < 0: continue
-        if point satisfies all constraints:
-            val = c1*x + c2*y
-            if val > bestVal:
-                bestVal = val
-                bestX, bestY = x, y
-    return bestX, bestY, bestVal
-```
-
-### Idiomatic Go Implementation
-
-Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> does not provide a native LP solver. Use C bindings or write a highly simplified implementation for trivial cases.
-
-```go
-package main
-
-import (
-    "fmt"
-    "math"
-)
-
-// Simplified Simplex for 2 variables (graphical corner-point method)
-func solve2DLP(c1, c2 float64, constraints [][3]float64) (float64, float64, float64) {
-    bestVal := math.Inf(-1)
-    var bestX, bestY float64
-    // Find corner points from constraint intersections
-    n := len(constraints)
-    for i := 0; i < n; i++ {
-        for j := i + 1; j < n; j++ {
-            a1, b1, c1c := constraints[i][0], constraints[i][1], constraints[i][2]
-            a2, b2, c2c := constraints[j][0], constraints[j][1], constraints[j][2]
-            det := a1*b2 - a2*b1
-            if math.Abs(det) < 1e-9 {
-                continue
-            }
-            x := (c1c*b2 - c2c*b1) / det
-            y := (a1*c2c - a2*c1c) / det
-            if x < 0 || y < 0 {
-                continue
-            }
-            valid := true
-            for _, con := range constraints {
-                if con[0]*x+con[1]*y > con[2]+1e-9 {
-                    valid = false
-                    break
-                }
-            }
-            if valid {
-                val := c1*x + c2*y
-                if val > bestVal {
-                    bestVal = val
-                    bestX, bestY = x, y
-                }
-            }
-        }
-    }
-    return bestX, bestY, bestVal
-}
-
-func main() {
-    // max 3x + 2y subject to x + y <= 4, x + 2y <= 5, x,y >= 0
-    constraints := [][3]float64{
-        {1, 1, 4},
-        {1, 2, 5},
-        {-1, 0, 0}, // x >= 0  (encoded as -1*x + 0*y <= 0)
-        {0, -1, 0}, // y >= 0  (encoded as 0*x + -1*y <= 0)
-    }
-    x, y, val := solve2DLP(3, 2, constraints)
-    fmt.Printf("x=%.2f y=%.2f val=%.2f\n", x, y, val)
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-Writing a full, robust Simplex implementation in Go from scratch is incredibly verbose and error-prone. For production systems, leverage bindings to GLPK, lp_solve, or robust Go libraries such as `github.com/codered/lp`.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use LP When... | Avoid If... |
-|-------------------|------------------|
-| Both the objective and constraints are strictly linear | The objective is non-linear (employ NLP instead) |
-| Variables represent continuous domains | Variables demand integer values (employ MILP) |
-
-### Edge Cases & Pitfalls
-
-- **Infeasible problem:** Constraints blatantly contradict each other. Verify using phase-I of the Simplex method.
-- **Unbounded problem:** The objective function can grow to infinity. Verify the feasible region's boundaries.
-- **Degeneracy:** Simplex can fall into infinite cycling. Counteract this by implementing Bland's rule.
-
-## 33.2. Integer Linear Programming
-
-**Definition:** Integer Linear Programming (ILP) strictly mandates that some or all variables represent integer values. Branch and Bound stands as the industry-standard resolution method.
-
-### Operations & Complexity
-
-| Algorithm | Worst Case | Description |
-|-----------|------------|------------|
-| Branch and Bound | <code>O(2^n)</code> | Exponential exploration |
-| Cutting Plane | <code>O(2^n)</code> | Polynomial solely for the LP relaxation |
-
-### Pseudocode
-
-```text
-KnapsackILP(weights, values, capacity):
-    n = length(weights)
-    dp = 2D table (n+1) x (capacity+1) initialized to 0
-    for i from 1 to n:
-        for w from 0 to capacity:
-            dp[i][w] = dp[i-1][w]
-            if weights[i-1] <= w:
-                dp[i][w] = max(dp[i][w], dp[i-1][w-weights[i-1]] + values[i-1])
-    return dp[n][capacity]
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import (
-    "fmt"
-)
-
-// 0/1 Knapsack treated as an ILP via DP (pseudo-polynomial time)
-func knapsackILP(weights, values []int, capacity int) int {
-    n := len(weights)
-    dp := make([][]int, n+1)
-    for i := range dp {
-        dp[i] = make([]int, capacity+1)
-    }
-    for i := 1; i <= n; i++ {
-        for w := 0; w <= capacity; w++ {
-            dp[i][w] = dp[i-1][w]
-            if weights[i-1] <= w {
-                dp[i][w] = max(dp[i][w], dp[i-1][w-weights[i-1]]+values[i-1])
-            }
-        }
-    }
-    return dp[n][capacity]
-}
-
-func max(a, b int) int {
-    if a > b {
-        return a
-    }
-    return b
-}
-
-func main() {
-    weights := []int{2, 3, 4, 5}
-    values := []int{3, 4, 5, 6}
-    fmt.Println("Knapsack ILP:", knapsackILP(weights, values, 5))
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-0/1 Knapsack is inherently NP-hard, yet resolvable within pseudo-polynomial <code>O(nW)</code> bounds. Branch and Bound serves as a much more universally applicable approach for standard ILP.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use DP When... | Use Branch & Bound When... |
-|-------------------|-------------------------------|
-| Solving Knapsack with a reasonably small W | Facing a generalized ILP problem |
-| Pseudo-polynomial performance is acceptable | An exact, globally optimal solution is absolutely required |
-
-### Edge Cases & Pitfalls
-
-- **Integer overflow:** The required DP table can expand massively. Utilize heavy space optimization (e.g., 1D arrays).
-- **Feasibility:** Consistently verify if any mathematical solution actively satisfies the defined constraints.
-
-## 33.3. Duality and Sensitivity
-
-**Definition:** Every single LP (the primal) possesses an associated dual. Strong duality states: the optimal primal equals the optimal dual, provided a feasible solution exists.
+FFT's memory access pattern is governed by the "butterfly" operation, which intertwines elements mathematically using a bit-reversal permutation. This creates a highly <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory read pattern that brutally thrashes the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> if implemented naively. High-performance FFT libraries pre-calculate and cache the sine/cosine "twiddle factors" into an array and heavily optimize memory strides to keep data trapped in the L1/L2 caches.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Dual formulation | <code>O(mn)</code> | Structurally converting constraints |
-| Shadow price | <code>O(1)</code> | Readily available from the optimal tableau |
-| Sensitivity range | <code>O(n)</code> | Calculated per individual variable |
+| Evaluation (Horner's) | <code>O(n)</code> | Highly optimal |
+| Naive Evaluation | <code>O(n^2)</code> | Features repetitive exponentiation |
+| Addition | <code>O(n)</code> | Strict element-wise addition |
+| Naive Multiplication | <code>O(n^2)</code> | Standard mathematical convolution |
+| FFT Multiplication | <code>O(n log n)</code> | Rapid DFT-based execution |
 
 ### Pseudocode
 
 ```text
-FormulateDual(A, b, c):
-    m = number of rows in A
-    n = number of cols in A
-    dual objective: minimize b^T y
-    dual constraints: A^T y >= c, y >= 0
-    return dual formulation
+EvaluatePolynomial(p, x):
+    result = 0
+    for i from length(p)-1 down to 0:
+        result = result * x + p[i]
+    return result
+
+AddPolynomials(a, b):
+    maxLen = max(length(a), length(b))
+    result = new array of size maxLen initialized to 0
+    for i from 0 to maxLen-1:
+        if i < length(a): result[i] += a[i]
+        if i < length(b): result[i] += b[i]
+    return result
+
+MultiplyNaive(a, b):
+    result = new array of size length(a)+length(b)-1 initialized to 0
+    for i from 0 to length(a)-1:
+        for j from 0 to length(b)-1:
+            result[i+j] += a[i] * b[j]
+    return result
 ```
 
 ### Idiomatic Go Implementation
@@ -254,54 +73,186 @@ package main
 
 import "fmt"
 
-// Dual formulation of max c^T x subject to Ax <= b is min b^T y subject to A^T y >= c, y >= 0
-func formulateDual(A [][]float64, b, c []float64) {
-    m, n := len(A), len(A[0])
-    fmt.Println("Dual variables:", m)
-    fmt.Println("Dual objective: minimize b^T y")
-    fmt.Printf("Dual constraints: A^T y >= c (%d constraints)\n", n)
+// Polynomials are strictly represented as coefficients [a0, a1, a2, ...]
+type Polynomial []float64
+
+func (p Polynomial) Evaluate(x float64) float64 {
+    result := 0.0
+    for i := len(p) - 1; i >= 0; i-- {
+        result = result*x + p[i]
+    }
+    return result
+}
+
+func (p Polynomial) Add(other Polynomial) Polynomial {
+    maxLen := len(p)
+    if len(other) > maxLen {
+        maxLen = len(other)
+    }
+    result := make(Polynomial, maxLen)
+    for i := 0; i < maxLen; i++ {
+        if i < len(p) {
+            result[i] += p[i]
+        }
+        if i < len(other) {
+            result[i] += other[i]
+        }
+    }
+    return result
+}
+
+func multiplyNaive(a, b Polynomial) Polynomial {
+    result := make(Polynomial, len(a)+len(b)-1)
+    for i := range a {
+        for j := range b {
+            result[i+j] += a[i] * b[j]
+        }
+    }
+    return result
 }
 
 func main() {
-    A := [][]float64{{1, 1}, {1, 2}}
-    b := []float64{4, 5}
-    c := []float64{3, 2}
-    formulateDual(A, b, c)
+    p := Polynomial{1, -3, 2} // Represents 2x² - 3x + 1
+    fmt.Println("P(2) =", p.Evaluate(2))
+    q := Polynomial{1, 1} // Represents x + 1
+    fmt.Println("P * Q =", multiplyNaive(p, q))
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-The Dual LP proves highly beneficial for intensive sensitivity analysis and driving primal-dual algorithms. Within Go, calculating the dual formulation manually is rarely necessary; external solvers naturally provide this data.
+Go inherently lacks operator overloading. Always employ explicit method receivers for polynomial operations. A flat slice representation operates much more efficiently than a struct relying on pointers.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use Dual When... | Avoid If... |
-|---------------------|------------------|
-| Conducting deep sensitivity analysis | The primal solution independently suffices |
-| The primal model is infeasible | Exploring the dual yields no actionable benefit |
+| Use Slice Representation When... | Avoid If... |
+|----------------------|------------------|
+| Degrees are small to medium (< 10⁴) | You are managing sparse polynomials (use a map instead) |
+| All coefficients are fundamentally non-zero | The degree is massive yet remains highly sparse |
 
 ### Edge Cases & Pitfalls
 
-- **Weak duality:** Any feasible dual <abbr title="The data associated with a key in a key-value pair.">value</abbr> definitively bounds the primal. The gap fails to reach zero solely if the system is infeasible or unbounded.
-- **Complementary slackness:** Strictly utilize this to verify the ultimate optimality.
+- **Leading zeros:** Rigorously trim trailing zeros in the array to prevent generating a false, artificially high degree.
+- **Zero polynomial:** It is represented by `[]float64{0}`, not a completely empty slice `nil`.
 
-## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## 34.2. FFT and Convolution
+
+**Definition:** The Fast Fourier Transform (FFT) calculates the Discrete Fourier Transform with a complexity of <code>O(n log n)</code>. It is heavily utilized for executing polynomial multiplication via convolution.
+
+### Operations & Complexity
+
+| Algorithm | Time | Space | Description |
+|-----------|------|-------|------------|
+| Naive DFT | <code>O(n²)</code> | <code>O(n)</code> | Direct mathematical execution |
+| Cooley-Tukey FFT | <code>O(n log n)</code> | <code>O(n)</code> | Standard recursive method |
+| Iterative FFT | <code>O(n log n)</code> | <code>O(1)</code> in-place | Memory-efficient in-place execution |
+| Bluestein | <code>O(n log n)</code> | <code>O(n)</code> | Supports arbitrary input sizes |
+
+Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation demands roughly 100 lines of code. For production integrity, depend on libraries like `github.com/mjibson/go-dsp` or `github.com/cpmech/fftx`.
+
+### Decision Matrix
+
+| Use FFT When... | Avoid If... |
+|--------------------|------------------|
+| Multiplying massive polynomials (degree > 100) | Dealing with very small degrees (naive is far quicker) |
+| Running signal convolutions | An exact, flawless integer result is heavily required (due to rounding errors) |
+
+### Edge Cases & Pitfalls
+
+- **Non-power-of-2 constraints:** Pad the input with trailing zeros. For completely arbitrary sizes, integrate Bluestein's or Rader's algorithms.
+- **Floating point error:** The mathematical outcome of an FFT may harbor an error margin of ~1e-9. Actively round the outcome to achieve pristine integer results.
+- **Inverse scaling oversight:** Never forget to vigorously divide the outcome by n immediately following the inverse FFT phase.
+
+## 34.3. Polynomial Interpolation
+
+**Definition:** Interpolation derives a precise polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n that flawlessly intersects n+1 designated points.
+
+### Operations & Complexity
+
+| Method | Time | Space | Description |
+|--------|------|-------|------------|
+| Lagrange | <code>O(n^2)</code> | <code>O(n)</code> | Operates via a direct mathematical formula |
+| Newton Divided Diff | <code>O(n^2)</code> | <code>O(n)</code> | Facilitates an incremental buildup |
+| FFT Interpolation | <code>O(n log n)</code> | <code>O(n)</code> | Evaluated at the roots of unity |
+
+### Pseudocode
+
+```text
+LagrangeInterpolation(x, y, xi):
+    n = length(x)
+    result = 0
+    for i from 0 to n-1:
+        term = y[i]
+        for j from 0 to n-1:
+            if i != j:
+                term *= (xi - x[j]) / (x[i] - x[j])
+        result += term
+    return result
+```
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import "fmt"
+
+func lagrangeInterpolation(x []float64, y []float64, xi float64) float64 {
+    n := len(x)
+    result := 0.0
+    for i := 0; i < n; i++ {
+        term := y[i]
+        for j := 0; j < n; j++ {
+            if i != j {
+                term *= (xi - x[j]) / (x[i] - x[j])
+            }
+        }
+        result += term
+    }
+    return result
+}
+
+func main() {
+    x := []float64{0, 1, 2}
+    y := []float64{1, 3, 2}
+    fmt.Println("P(1.5) =", lagrangeInterpolation(x, y, 1.5))
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+Lagrange interpolation holds remarkable stability solely for a sparse number of equidistant points. For a large volume of points or Chebyshev nodes, transition immediately to divided differences or barycentric interpolation.
+{{% /alert %}}
+
+### Decision Matrix
+
+| Use Lagrange When... | Avoid If... |
+|-------------------------|------------------|
+| The volume of points is tiny (< 50) | The volume of points is large (triggers the Runge phenomenon) |
+| Evaluating a single specific coordinate | Evaluating a massive number of points (evaluate via basis polynomials instead) |
+
+### Edge Cases & Pitfalls
+
+- **Runge phenomenon:** Interpolating aggressively over numerous equidistant nodes guarantees fierce oscillation. Switch to Chebyshev nodes.
+- **Identical x coordinates:** Evaluating two distinct points sharing an identical x coordinate forces an undefined mathematical outcome (division by zero).
+
+## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| LP Solver | External / custom | <code>O(n^3)</code> avg | varies | Continuous variable optimization |
-| Knapsack DP | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | Integer-based programming |
-| Constraints | `[]float64` | . | . | Defining mathematical bounds |
-| Objective | `[]float64` | . | . | Establishing coefficients |
-| Dual | Formulation | <code>O(mn)</code> | varies | Executing sensitivity analysis |
+| Polynomial | `[]float64` | <code>O(n)</code> | <code>O(n)</code> | Standard coefficient storage |
+| Horner evaluation | func | <code>O(n)</code> | <code>O(1)</code> | Hyper-fast value evaluation |
+| Naive multiply | nested loop | <code>O(n²)</code> | <code>O(n)</code> | Handling tiny polynomial degrees |
+| FFT multiply | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n)</code> | Handling massive polynomial degrees |
+| Interpolation | func | <code>O(n²)</code> | <code>O(n)</code> | Precise data curve fitting |
+| DFT | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(n)</code> | Thorough signal analysis |
+| FFT | custom/3rd party | <code>O(n log n)</code> | <code>O(n)</code> | Extreme high-speed transformation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 33:</strong> This chapter discusses linear programming: grasping standard formulations, applying the Simplex algorithm conceptually for 2 variables, tackling integer linear programming through <abbr title="Finding optimal solutions by pruning search trees">branch and bound</abbr> (and DP for knapsack variants), and examining duality for sensitivity analysis. Strongly prefer external solvers for production environments; reserve manual implementations purely for deep educational exercises.
+<strong>Summary Chapter 32:</strong> This chapter dissects polynomial representation employing coefficient slices, hyper-fast Horner evaluation occurring in <code>O(n)</code>, and both naive <code>O(n^2)</code> and advanced FFT <code>O(n log n)</code> multiplications, alongside Lagrange interpolation. Rely on FFT strictly for massive <abbr title="The number of edges incident to a vertex.">degree</abbr> polynomial multiplications and Horner for rapid evaluations.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 2: Complexity Analysis](/docs/Part-I/Chapter-2/)
-- [Chapter 15: All-Pairs Shortest Paths](/docs/Part-IV/Chapter-15/)
-- [Chapter 29: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-29/)
+- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-28/)
+- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-34/)
+- [Chapter 38: Bit Manipulation](/docs/Part-VII/Chapter-38/)

@@ -1,69 +1,63 @@
 ---
-weight: 70100
-title: "Chapter 29: Vector, Matrix, and Tensor Operations"
-description: "Vector, Matrix, and Tensor Operations"
+weight: 70200
+title: "Chapter 29: Parallel and Distributed Algorithms"
+description: "Parallel and Distributed Algorithms"
 icon: "article"
-date: "2024-08-24T23:42:45+07:00"
-lastmod: "2024-08-24T23:42:45+07:00"
+date: "2024-08-24T23:42:46+07:00"
+lastmod: "2024-08-24T23:42:46+07:00"
 draft: false
 toc: true
 katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Linear algebra is the mathematics of data. Matrices and vectors are the language in which modern algorithms speak.</em>" : Gilbert Strang</strong>
+<strong>"<em>Parallel programming is not about making programs faster, but about creating solutions that can solve larger problems.</em>" : Jeff Dean</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 29 covers vector, matrix, and tensor operations with <abbr title="Code style considered standard and natural for Go">idiomatic Go</abbr> implementations utilizing slices and `gonum`.
+Chapter 30 discusses parallel and distributed algorithms employing goroutines, channels, synchronization primitives, and worker pools in Go.
 {{% /alert %}}
 
-## 29.1. Vector Operations
+## 30.1. Parallelism in Go
 
-**Definition:** A vector is a one-dimensional <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> representing a directed magnitude. Basic operations include addition, scalar multiplication, <abbr title="An operation returning the scalar product of two vectors">dot product</abbr>, and <abbr title="An operation on vectors producing a perpendicular vector">cross product</abbr>.
+**Definition:** Parallelism involves executing computations simultaneously across multiple CPU cores. Go provides <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> (lightweight threads) and <abbr title="A Go construct for communication between goroutines.">channels</abbr> for inter-process communication.
 
 **Background & Philosophy:**
-The philosophy is representing data mathematically. Instead of isolated variables, numbers are grouped into spatial structures (Vectors, Matrices), enabling batch transformations that hardware GPUs and <abbr title="Single Instruction Multiple Data - parallel processing technique.">SIMD</abbr> CPU instructions are structurally designed to optimize flawlessly.
+The philosophy stems from Amdahl's Law: hardware clock speeds have plateaued, so to compute faster, we must compute wider. It trades the straightforwardness of sequential programming for the complexities of coordination, state sharing, and consensus.
 
 **Use Cases:**
-Core foundation for 3D Graphics programming, deep learning backpropagation, and PageRank algorithms determining internet search results.
+Processing terabytes of logs asynchronously, distributing HTTP requests across clusters, and parallel matrix multiplication.
 
 **Memory Mechanics:**
-Vectors map perfectly to 1D slices in Go. Because `[]float64` is a strictly <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, operations like <abbr title="An operation returning the scalar product of two vectors">dot product</abbr> exhibit perfect <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The CPU prefetcher can rapidly stream the bytes into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>.
+Parallelism directly exposes the harsh reality of hardware <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> coherence. When two goroutines on different CPU cores write to adjacent array elements simultaneously, they cause "False Sharing". The CPU hardware must lock and invalidate the L1 cache lines across the entire motherboard, destroying performance. Properly padding memory structures or isolating data chunks to avoid false sharing is mandatory for true parallel speedup.
 
 ### Operations & Complexity
 
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Addition | <code>O(n)</code> | Element-wise |
-| <abbr title="An operation returning the scalar product of two vectors">Dot Product</abbr> | <code>O(n)</code> | Σ(aᵢ × bᵢ) |
-| Norm (L2) | <code>O(n)</code> | √(Σaᵢ²) |
-| <abbr title="An operation on vectors producing a perpendicular vector">Cross Product</abbr> | <code>O(1)</code> | Specific to 3D |
+| Model | Time | Overhead | Description |
+|-------|------|----------|------------|
+| Sequential | <code>O(T)</code> | 0 | Baseline |
+| <abbr title="A lightweight concurrent execution thread managed by the Go runtime">Goroutine</abbr> | <code>O(T/p)</code> | ~2μs spawn | Lightweight thread |
+| Worker Pool | <code>O(T/p)</code> | Fixed pool | Reuses goroutines |
+| SIMD (Go asm) | <code>O(T/vec)</code> | Manual | AVX/SSE |
 
 ### Pseudocode
 
 ```text
-AddVectors(a, b):
-    if length(a) != length(b):
-        error "dimension mismatch"
-    result = new array of length(a)
-    for i from 0 to length(a)-1:
-        result[i] = a[i] + b[i]
-    return result
-
-DotProduct(a, b):
-    if length(a) != length(b):
-        error "dimension mismatch"
-    sum = 0
-    for i from 0 to length(a)-1:
-        sum += a[i] * b[i]
-    return sum
-
-Norm(a):
-    sum = 0
-    for each v in a:
-        sum += v * v
-    return sqrt(sum)
+ParallelSum(arr):
+    numWorkers = number of CPU cores
+    chunk = ceil(length(arr) / numWorkers)
+    partials = new array of size numWorkers
+    for each worker i:
+        start = i * chunk
+        end = min(start + chunk, length(arr))
+        spawn worker:
+            sum = 0
+            for each v in arr[start:end]:
+                sum += v
+            partials[i] = sum
+    wait for all workers
+    total = sum of all partials
+    return total
 ```
 
 ### Idiomatic Go Implementation
@@ -73,169 +67,236 @@ package main
 
 import (
     "fmt"
-    "math"
+    "runtime"
+    "sync"
 )
 
-func addVectors(a, b []float64) []float64 {
-    if len(a) != len(b) {
-        panic("dimension mismatch")
-    }
-    result := make([]float64, len(a))
-    for i := range a {
-        result[i] = a[i] + b[i]
-    }
-    return result
-}
+func parallelSum(arr []int) int {
+    numCPU := runtime.NumCPU()
+    n := len(arr)
+    chunk := (n + numCPU - 1) / numCPU
+    var wg sync.WaitGroup
+    partials := make([]int, numCPU)
 
-func dotProduct(a, b []float64) float64 {
-    if len(a) != len(b) {
-        panic("dimension mismatch")
+    for i := 0; i < numCPU; i++ {
+        start := i * chunk
+        end := start + chunk
+        if start >= n {
+            break
+        }
+        if end > n {
+            end = n
+        }
+        wg.Add(1)
+        go func(idx, s, e int) {
+            defer wg.Done()
+            sum := 0
+            for _, v := range arr[s:e] {
+                sum += v
+            }
+            partials[idx] = sum
+        }(i, start, end)
     }
-    var sum float64
-    for i := range a {
-        sum += a[i] * b[i]
+    wg.Wait()
+    total := 0
+    for _, v := range partials {
+        total += v
     }
-    return sum
-}
-
-func norm(a []float64) float64 {
-    var sum float64
-    for _, v := range a {
-        sum += v * v
-    }
-    return math.Sqrt(sum)
+    return total
 }
 
 func main() {
-    a := []float64{1, 2, 3}
-    b := []float64{4, 5, 6}
-    fmt.Println("Add:", addVectors(a, b))
-    fmt.Println("Dot:", dotProduct(a, b))
-    fmt.Println("Norm:", norm(a))
+    arr := make([]int, 1000000)
+    for i := range arr {
+        arr[i] = i + 1
+    }
+    fmt.Println("Parallel sum:", parallelSum(arr))
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Go lacks operator overloading. Define explicit functions for every vector operation. Consider using `gonum.org/v1/gonum/floats` for large-scale vector manipulations.
+Go's <abbr title="The period during which a computer program is executing.">runtime</abbr> scheduler utilizes an M:N scheduling model. Do not spawn goroutines for microscopic tasks; enforce a minimum threshold for tasks to yield a tangible benefit.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use Slices When... | Avoid If... |
-|----------------------|------------------|
-| Dimensions are small to medium (< 10⁶) | Operations are complex matrices (use gonum) |
-| Using custom logic or sparse data | Relying on highly optimized BLAS/LAPACK |
+| Use Goroutines When... | Avoid If... |
+|--------------------------|------------------|
+| The task is CPU-bound and execution time > 1ms | The task is excessively small (< 100μs) |
+| Dealing with independent sub-problems | Dealing with highly shared state lacking synchronization |
+| Constructing pipeline stages | There is a strict, strong sequential dependency |
 
 ### Edge Cases & Pitfalls
 
-- **Dimension mismatch:** Always rigorously validate slice lengths.
-- **NaN propagation:** Carefully handle and mitigate undefined values.
-- **Precision loss:** For massive vectors, implement Kahan summation to prevent float drift.
+- **Goroutine leak:** Always verify that channels are closed or `defer close()` is guaranteed to be called.
+- **<abbr title="A bug when multiple threads access shared data without synchronization.">Data race</abbr>:** Extensively use `go test -race` for detection. Rely on <abbr title="A synchronization primitive ensuring mutual exclusion.">sync.Mutex</abbr> or channels for safety.
+- **Too many goroutines:** While millions of goroutines are permissible, they can consume massive amounts of stack memory (starting at 2KB each).
 
-## 29.2. Matrix Operations
+## 30.2. Synchronization and Concurrency
 
-**Definition:** A matrix is a two-dimensional array. Critical operations include transposition, multiplication, determinant calculation, and inversion.
-
-**Memory Mechanics:**
-In Go, matrices are often modeled naively as `[][]float64`, which creates `V` slice headers scattered across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. High-performance numerical packages like `gonum` use a 1D flat slice `[]float64` for a matrix and manually index via `stride * row + col`. This ensures strict <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory layout, enabling the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch matrix rows efficiently and preventing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> fragmentation.
+**Definition:** Synchronization coordinates access to shared states. Go supplies standard tools such as Mutex, RWMutex, WaitGroup, and channels for orchestration.
 
 ### Operations & Complexity
 
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Transpose | <code>O(n²)</code> | Rows ↔ Columns |
-| Matrix Multiply | <code>O(n³)</code> naive, <code>O(n^2.81)</code> Strassen | Standard multiplication |
-| Determinant | <code>O(n³)</code> | LU decomposition |
-| Inverse | <code>O(n³)</code> | Gauss-Jordan elimination |
+| Primitive | Lock | Unlock | Description |
+|-----------|------|--------|------------|
+| sync.Mutex | `Lock()` | `Unlock()` | Absolute mutual exclusion |
+| sync.RWMutex | `RLock()` R, `Lock()` W | `RUnlock()` / `Unlock()` | Multiple concurrent readers, single writer |
+| sync.Map | `Load()` avg | . | Specialized concurrent-safe map |
+| Channel | `<-ch` send/recv | . | Pure CSP-style communication |
+
+Hierarchical preference: channels > `sync/atomic` > `sync.Mutex`. Utilize `sync.Map` exclusively for intensely read-heavy concurrent access; otherwise, standard maps protected by a mutex are generally faster.
+
+### Decision Matrix
+
+| Use When... | Avoid If... |
+|----------------|------------------|
+| Channels: coordination, building pipelines | Only needing a basic counter (use atomic instead) |
+| Mutex: complex state updates | Simple counter updates (atomic is much faster) |
+| sync.Map: many readers, infrequent writes | Write-heavy workloads |
+
+### Edge Cases & Pitfalls
+
+- **<abbr title="A state where concurrent processes wait on each other indefinitely.">Deadlock</abbr>:** Absolutely ensure locks are always unlocked; utilize `defer mu.Unlock()`.
+- **Priority inversion:** An `RWMutex` writer can suffer from starvation if readers perpetually acquire the lock.
+- **Copying sync primitives:** Never copy a `sync.Mutex` by <abbr title="The data associated with a key in a key-value pair.">value</abbr> (always pass it by <abbr title="A variable that stores a memory address.">pointer</abbr>).
+
+## 30.3. Parallel Algorithms
+
+**Definition:** Algorithms designed specifically to run efficiently across multiple processors through diligent task or data decomposition.
+
+### Operations & Complexity
+
+| Algorithm | Sequential | Parallel (p processors) |
+|-----------|------------|-----------------------|
+| Parallel Prefix Sum | <code>O(n)</code> | <code>O(n/p + log p)</code> |
+| Parallel <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge Sort</abbr> | <code>O(n log n)</code> | <code>O(n/p log(n/p))</code> |
+| Parallel BFS | <code>O(V+E)</code> | <code>O((V+E)/p + d·log p)</code> |
+| Map-Reduce | <code>O(n)</code> | <code>O(n/p)</code> |
+
+### Pseudocode
+
+```text
+ParallelMap(arr, f):
+    n = length(arr)
+    result = new array of size n
+    numWorkers = number of CPU cores
+    chunk = ceil(n / numWorkers)
+    for each worker i:
+        start = i * chunk
+        end = min(start + chunk, n)
+        spawn worker:
+            for j from start to end-1:
+                result[j] = f(arr[j])
+    wait for all workers
+    return result
+```
 
 ### Idiomatic Go Implementation
 
-`gonum.org/v1/gonum/mat` serves as the de facto standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> for linear algebra in Go. Do not implement matrix operations from scratch unless specifically for educational purposes.
+```go
+package main
+
+import (
+    "fmt"
+    "runtime"
+    "sync"
+)
+
+func parallelMap(arr []int, f func(int) int) []int {
+    n := len(arr)
+    result := make([]int, n)
+    numCPU := runtime.NumCPU()
+    chunk := (n + numCPU - 1) / numCPU
+    var wg sync.WaitGroup
+    for i := 0; i < numCPU; i++ {
+        start := i * chunk
+        end := start + chunk
+        if start >= n {
+            break
+        }
+        if end > n {
+            end = n
+        }
+        wg.Add(1)
+        go func(s, e int) {
+            defer wg.Done()
+            for j := s; j < e; j++ {
+                result[j] = f(arr[j])
+            }
+        }(start, end)
+    }
+    wg.Wait()
+    return result
+}
+
+func main() {
+    arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
+    squared := parallelMap(arr, func(x int) int { return x * x })
+    fmt.Println("Squared:", squared)
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+**Amdahl's Law:** If 90% of your codebase is parallelizable, the absolute maximum theoretical speedup is 10×. Parallelizing tiny fragments is rarely worth the overhead.
+{{% /alert %}}
 
 ### Decision Matrix
 
-| Use Gonum When... | Implement Manually When... |
-|----------------------|------------------------------|
-| Working with dense matrices and standard operations | Building custom sparse matrices |
-| Needing SVD or eigenvalue decomposition | Running under extremely strict memory constraints |
+| Use Parallel Map When... | Avoid If... |
+|-----------------------------|------------------|
+| The function is pure with zero side effects | The function performs I/O operations |
+| The <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> is massive, > 10K elements | The <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> is small (< 1K elements) |
 
 ### Edge Cases & Pitfalls
 
-- **Singular matrix:** Inverses do not exist; you must consistently check for errors.
-- **Floating-point error:** Never perform a strict `==` check; always use an epsilon delta.
-- **Memory layout:** Go slices are row-major. Maintain an awareness of cache locality.
+- **False sharing:** Goroutines writing to adjacent array elements force cache coherence updates, severely degrading performance.
+- **Uneven workload:** Dynamic work stealing proves vastly superior when dealing with severe load imbalances.
 
-## 29.3. Tensors and Multidimensional Data
+## 30.4. Worker Pools and Pipelines
 
-**Definition:** A tensor generalizes a matrix to arbitrary dimensions. Within Machine Learning, a rank-3 tensor frequently represents a batch of images (B × H × W × C).
+**Definition:** A worker pool strictly limits the maximum number of running goroutines; a pipeline seamlessly connects processing stages through channels.
 
 ### Operations & Complexity
 
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Tensor Add | <code>O(n)</code> | Element-wise addition |
-| Tensor Contraction | <code>O(n^k)</code> | Sum over specific indices |
-| Reshape | <code>O(1)</code> | Viewing memory without a copy |
+| Pattern | Throughput | Latency | Description |
+|---------|------------|---------|------------|
+| Worker Pool | High | Low | Bounds concurrency |
+| Pipeline | Medium | Low | Stream processing architecture |
+| Fan-out/Fan-in | Very High | Medium | Highly parallel stages |
 
-Rank-3 tensors formulated via nested slices in Go carry heavy <abbr title="A variable that stores a memory address.">pointer</abbr> overhead. For significantly large tensors, utilize a flat 1D slice with manual indexing: `flat[i*H*W + j*W + k]`.
-
-### Decision Matrix
-
-| Use Nested Slices When... | Use Flat Slices When... |
-|-----------------------------|---------------------------|
-| Dimensions are small and intuitive access matters | Tensors are massive, focusing purely on performance |
-| Rapidly prototyping | Facilitating GPU transfers or SIMD optimizations |
-
-### Edge Cases & Pitfalls
-
-- **Nil slices:** Always verify `len(slice) > 0` before attempting to access `slice[0]`.
-- **Jagged arrays:** Go slices of slices are not inherently uniform. Mathematical tensors *must* be uniform.
-- **GC pressure:** Deeply nested slices yield countless individual objects. Flat slices dramatically ease Garbage Collection.
-
-## 29.4. Matrix Computation Optimization
-
-**Definition:** Techniques strategically designed to accelerate matrix operations via leveraging cache locality, data blocking, and explicit parallelization.
-
-### Operations & Complexity
-
-| Technique | Speedup | Description |
-|--------|---------|------------|
-| Loop reordering | 2-10x | Dramatically enhances cache locality |
-| Block matrix | 2-5x | Ensure operations fit nicely within L1/L2 caches |
-| Goroutine parallel | p× (cores) | Apply row-wise decomposition |
-| Strassen | 0.8-2x | Theoretical limit, rarely practical for everyday n |
-
-A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically due to <abbr title="The tendency of a processor to access memory addresses that are near each other.">cache</abbr> locality on matrix b's rows. Thoroughly profile your code prior to declaring a complete optimization.
+Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, large buffers mitigate blocking. For purely CPU-bound tasks, very small buffers often suffice.
 
 ### Decision Matrix
 
-| Use Parallel When... | Avoid If... |
-|-------------------------|------------------|
-| The matrix exceeds 256×256 dimensions | The matrix is tiny (goroutine overhead kills performance) |
-| The problem is CPU-bound on a dense matrix | You have a sparse matrix (leverage CSR/CSC arrays instead) |
+| Use Worker Pool When... | Use Pipeline When... |
+|----------------------------|-------------------------|
+| Resources are strictly limited (DB connections, file descriptors) | Engaging in stream processing |
+| Tasks are completely homogeneous | Executing multi-stage transformations |
 
 ### Edge Cases & Pitfalls
 
-- **False sharing:** Strongly segregate data chunks by at least a few cache lines (e.g., 64 bytes).
-- **Load imbalance:** Rely upon a dynamic task queue for heavily non-uniform matrix structures.
-- **Numerical stability:** Aggressive parallel summation can potentially aggravate floating-point inaccuracies.
+- **Channel deadlock:** Guarantee that there is always an active goroutine reading from every channel.
+- **Panic propagation:** Proactively use `defer/recover()` within worker goroutines or utilize dedicated error channels.
 
 ## Quick Reference
 
-| Name | Go Type | Complexity | Access | Use Case |
-|------|---------|------------|--------|----------|
-| Vector | `[]float64` | <code>O(1)</code> access | varies | 1D Data |
-| Matrix | `[][]float64` | <code>O(1)</code> access | varies | 2D Data |
-| Tensor | `[][][]float64` | <code>O(1)</code> access | varies | ML batching |
-| Dense Matrix | `[]float64` flat | <code>O(1)</code> access | varies | Heavy linear algebra |
-| Sparse | `map[int]map[int]float64` | <code>O(1)</code> access avg | varies | Graphs, NLP sparse arrays |
+| Name | Go Type | Time | Space | Use Case |
+|------|---------|------|-------|----------|
+| Mutex | `sync.Mutex` | . | 1 word | Shared state protection |
+| RWMutex | `sync.RWMutex` | . | 1 word | Read-heavy caching |
+| WaitGroup | `sync.WaitGroup` | . | 1 word | Barrier synchronization |
+| Atomic | `sync/atomic` | <code>O(1)</code> | . | Lock-free counters and flags |
+| Channel | `chan T` | Blocking | varies | Pure CSP communication |
+| sync.Map | `sync.Map` | . | . | Highly concurrent maps |
+| Context | `context.Context` | . | . | Cancellations and timeouts |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 29:</strong> This chapter covers vector, matrix, and tensor operations with idiomatic Go implementations. Utilize standard slices for vectors, the `gonum` package for large-scale linear algebra, nested slices for small-scale tensors, and manually indexed flat slices for large tensors. Parallelizing code with goroutines becomes highly effective when matrix dimensions exceed 256×256.
+<strong>Summary Chapter 28:</strong> This chapter discusses parallelism in Go using goroutines, synchronization primitives (Mutex, RWMutex, atomic, WaitGroup), channels, as well as worker pool and pipeline patterns. Utilize goroutines for independent CPU-bound tasks, channels for coordination, and worker pools to strictly bound concurrency when resources are limited.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 30: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
-- [Chapter 34: Polynomial and FFT](/docs/Part-VII/Chapter-34/)
-- [Chapter 39: Bit Manipulation](/docs/Part-VII/Chapter-39/)
+- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-28/)
+- [Chapter 30: Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-30/)
+- [Chapter 31: Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-31/)

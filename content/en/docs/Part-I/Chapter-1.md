@@ -382,4 +382,4 @@ func main() {
 
 - [Chapter 2: Complexity Analysis](/docs/Part-I/Chapter-2/)
 - [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
-- [Chapter 40: Origins of Algorithms](/docs/Part-VIII/Chapter-40/)
+- [Chapter 39: Origins of Algorithms](/docs/Part-VIII/Chapter-39/)

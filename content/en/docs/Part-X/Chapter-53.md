@@ -1,7 +1,7 @@
 ---
-weight: 100300
-title: "Chapter 53: A* Search"
-description: "A* Search"
+weight: 100400
+title: "Chapter 54 - Tarjan's Bridge-Finding Algorithm"
+description: "Tarjan's Bridge-Finding Algorithm"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,209 +11,124 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A* is the closest thing to a silver bullet in pathfinding.</em>" : Steve Rabin</strong>
+<strong>"<em>Bridges are the weakest links in any network.</em>" — Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 53 covers A* (A-Star) search: the dominant pathfinding algorithm combining Dijkstra's completeness with <abbr title="A technique that employs practical methods to find solutions that are sufficient for the immediate goals.">heuristic</abbr> guidance for optimal and efficient navigation.
+Chapter 54 covers Tarjan's algorithm for finding bridges (cut edges) in undirected graphs — edges whose removal disconnects the graph.
 {{% /alert %}}
 
-## 53.1. From Dijkstra to A*
+## 54.1. Bridges and Articulation Points
 
-**Definition:** <abbr title="A best-first search algorithm that finds the shortest path from a start node to a goal node using a heuristic function.">A* search</abbr> extends Dijkstra by prioritizing nodes based on:
+**Definition:** A <abbr title="An edge in an undirected graph whose removal increases the number of connected components.">bridge</abbr> (cut edge) is an edge whose removal disconnects the graph. An <abbr title="A vertex whose removal increases the number of connected components.">articulation point</abbr> (cut vertex) is a vertex with the same property.
 
-`f(n) = g(n) + h(n)`
+### Why They Matter
 
-Where:
-- `g(n)`: Cost from start to n (Dijkstra's priority)
-- `h(n)`: Heuristic estimate from n to goal (guidance)
+| Domain | Bridge Significance |
+|--------|---------------------|
+| Network design | Single points of failure |
+| Road networks | Critical roads |
+| Social networks | Key connectors |
+| Electrical grids | Vulnerable transmission lines |
 
-**Background & Philosophy:**
-The philosophy is directed intuition. Dijkstra explores blindly in all directions (like a water spill), and Greedy Best-First searches purely on intuition (often hitting dead ends). A* perfectly marries the two. By formally evaluating `f(n) = g(n) + h(n)` (actual cost + guessed cost), A* proves mathematically that as long as the guess never overestimates reality, it will find the perfect path with minimal exploration.
+## 54.2. Tarjan's Bridge Algorithm
 
-**Use Cases:**
-AI pathfinding in video games, GPS navigation systems planning physical routes, and robotic motion planning.
-
-**Memory Mechanics:**
-A* aggressively relies upon a Priority Queue (a <abbr title="A heap where each parent is less than or equal to its children">Min-Heap</abbr>) and tracking maps (`cameFrom`, `gScore`). In Go, `map[[2]int]float64` is heavily utilized to map 2D grid coordinates to values. Maps in Go hash keys and scatter data <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>ly across the heap. For a sprawling map (like a 10,000x10,000 grid), millions of map accesses cause severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. High-performance A* implementations abandon maps, instead flattening the 2D grid into a massive 1D slice where `index = y*width + x`, enabling <code>O(1)</code> contiguous memory lookups and restoring blazing CPU speeds.
-
-| Algorithm | Priority | Guarantees |
-|-----------|----------|------------|
-| Dijkstra | g(n) | Optimal, explores broadly |
-| Greedy Best-First | h(n) | Fast, not optimal |
-| A* | g(n) + h(n) | Optimal if h is admissible |
-
-## 53.2. The Heuristic
-
-An <abbr title="A heuristic that never overestimates the true cost to reach the goal.">admissible heuristic</abbr> never overestimates the true cost. Common choices:
-
-| Domain | Heuristic | Admissible? |
-|--------|-----------|-------------|
-| Grid (4-way) | <abbr title="Distance measured along axes at right angles">Manhattan distance</abbr> | Yes |
-| Grid (8-way) | Chebyshev distance | Yes |
-| Euclidean space | <abbr title="The straight-line distance between two points">Euclidean distance</abbr> | Yes |
-| Road networks | Precomputed landmarks | Approximate |
-
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: A* Core
+Using DFS discovery times and low values:
 
 ```go
-package main
-
-import (
-	"container/heap"
-	"fmt"
-	"math"
-)
-
-type Node struct {
-	x, y int
-	g, f float64
-}
-
-type PriorityQueue []*Node
-
-func (pq PriorityQueue) Len() int            { return len(pq) }
-func (pq PriorityQueue) Less(i, j int) bool  { return pq[i].f < pq[j].f }
-func (pq PriorityQueue) Swap(i, j int)       { pq[i], pq[j] = pq[j], pq[i] }
-func (pq *PriorityQueue) Push(x interface{}) { *pq = append(*pq, x.(*Node)) }
-func (pq *PriorityQueue) Pop() interface{} {
-	old := *pq
-	n := len(old)
-	item := old[n-1]
-	*pq = old[:n-1]
-	return item
-}
-
-// heuristic returns Manhattan distance between two points.
-func heuristic(a, b [2]int) float64 {
-	return math.Abs(float64(a[0]-b[0])) + math.Abs(float64(a[1]-b[1]))
-}
-
-// neighbors returns passable adjacent cells (4-directional) within bounds.
-func neighbors(pos [2]int, grid [][]int) [][2]int {
-	dirs := [][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
-	var result [][2]int
-	for _, d := range dirs {
-		nx, ny := pos[0]+d[0], pos[1]+d[1]
-		if ny >= 0 && ny < len(grid) && nx >= 0 && nx < len(grid[0]) && grid[ny][nx] == 1 {
-			result = append(result, [2]int{nx, ny})
-		}
-	}
-	return result
-}
-
-// reconstructPath builds the path from start to goal using cameFrom.
-func reconstructPath(cameFrom map[[2]int][2]int, current [2]int) [][2]int {
-	var path [][2]int
-	for {
-		path = append([][2]int{current}, path...)
-		prev, ok := cameFrom[current]
-		if !ok {
-			break
-		}
-		current = prev
-	}
-	return path
-}
-
-// aStar finds the shortest path on a grid from start to goal.
-// grid[y][x] == 1 means passable, 0 means blocked.
-// Returns the path (nil if none) and the total cost.
-func aStar(grid [][]int, start, goal [2]int) ([][2]int, float64) {
-	open := &PriorityQueue{}
-	heap.Init(open)
-	heap.Push(open, &Node{x: start[0], y: start[1], g: 0, f: heuristic(start, goal)})
-
-	cameFrom := make(map[[2]int][2]int)
-	gScore := map[[2]int]float64{start: 0}
-	fScore := map[[2]int]float64{start: heuristic(start, goal)}
-
-	for open.Len() > 0 {
-		current := heap.Pop(open).(*Node)
-		pos := [2]int{current.x, current.y}
-
-		if pos == goal {
-			return reconstructPath(cameFrom, pos), gScore[pos]
-		}
-
-		for _, nb := range neighbors(pos, grid) {
-			tentativeG := gScore[pos] + 1.0 // uniform cost per step
-
-			if g, exists := gScore[nb]; !exists || tentativeG < g {
-				cameFrom[nb] = pos
-				gScore[nb] = tentativeG
-				f := tentativeG + heuristic(nb, goal)
-				fScore[nb] = f
-				heap.Push(open, &Node{x: nb[0], y: nb[1], g: tentativeG, f: f})
-			}
-		}
-	}
-	// No path found
-	return nil, math.Inf(1)
-}
-
-func main() {
-	// 5x5 grid: 1 = passable, 0 = blocked (an obstacle in the middle column)
-	grid := [][]int{
-		{1, 1, 1, 1, 1},
-		{1, 1, 0, 1, 1},
-		{1, 1, 0, 1, 1},
-		{1, 1, 1, 1, 1},
-		{1, 1, 1, 1, 1},
-	}
-	start, goal := [2]int{0, 0}, [2]int{4, 4}
-	path, cost := aStar(grid, start, goal)
-	if path == nil {
-		fmt.Println("No path found.")
-		return
-	}
-	fmt.Printf("Shortest path cost: %.0f\n", cost)
-	fmt.Printf("Path: %v\n", path)
+func findBridges(graph [][]int, n int) [][]int {
+    visited := make([]bool, n)
+    disc := make([]int, n)  // Discovery times
+    low := make([]int, n)   // Lowest reachable discovery time
+    bridges := [][]int{}
+    time := 0
+    
+    var dfs func(u, parent int)
+    dfs = func(u, parent int) {
+        visited[u] = true
+        disc[u] = time
+        low[u] = time
+        time++
+        
+        for _, v := range graph[u] {
+            if v == parent {
+                continue
+            }
+            if !visited[v] {
+                dfs(v, u)
+                low[u] = min(low[u], low[v])
+                
+                // If lowest reachable from v is below u, edge u-v is a bridge
+                if low[v] > disc[u] {
+                    bridges = append(bridges, []int{u, v})
+                }
+            } else {
+                low[u] = min(low[u], disc[v])
+            }
+        }
+    }
+    
+    for i := 0; i < n; i++ {
+        if !visited[i] {
+            dfs(i, -1)
+        }
+    }
+    
+    return bridges
 }
 ```
 
-## 53.3. Properties
+## 54.3. Algorithm Analysis
 
-| Condition | Guarantee |
-|-----------|-----------|
-| h admissible | A* finds optimal path |
-| h consistent | No node re-expansion needed |
-| h = 0 | A* becomes Dijkstra |
-| h perfect | A* goes directly to goal |
+| Aspect | Complexity |
+|--------|------------|
+| Time | O(V + E) |
+| Space | O(V) |
+| Visits each edge | Once |
 
-## 53.4. Decision Matrix
+### Key Insight
 
-| Use A* When... | Use Dijkstra When... |
-|----------------|---------------------|
-| Goal is rigorously known | Single-source all destinations |
-| Good heuristic exists | No heuristic exists or graph is uniform |
-| Pathfinding occurs in grids or maps | General network routing |
+Edge (u, v) is a bridge if and only if no back edge connects v's subtree to u or above. This is precisely what `low[v] > disc[u]` checks.
+
+## 54.4. Articulation Points
+
+Similar logic: vertex u is an articulation point if:
+- Root with ≥2 children in DFS tree
+- Non-root with `low[v] ≥ disc[u]` for some child v
+
+## 54.5. Decision Matrix
+
+| Find Bridges When... | Find Articulation Points When... |
+|---------------------|----------------------------------|
+| Edge failures matter | Node failures matter |
+| Network links analyzed | Server/router failures analyzed |
+| Road segments critical | Intersections critical |
 
 ### Edge Cases & Pitfalls
 
-- **<abbr title=\"A heuristic that overestimates the true cost and may lead to suboptimal solutions.\">Inadmissible heuristic</abbr>:** May easily find suboptimal paths.
-- **Tie-breaking:** f-score ties degrade heavily to BFS without secondary ordering logic.
-- **Memory:** A* aggressively keeps all nodes in memory. For huge graphs, strictly deploy IDA* (Iterative Deepening A*).
-- **Dynamic obstacles:** Requires full replanning (deploy D* Lite for shifting environments).
+- **Multiple edges:** Parallel edges between two vertices mean neither is a bridge.
+- **Self-loops:** Ignore for bridge finding.
+- **<abbr title="A graph with vertices not connected by any path">Disconnected graph</abbr>:** Run DFS from each component.
 
-## 53.5. Quick Reference
+## 54.6. Quick Reference
 
-| Heuristic | Formula | Best For |
-|-----------|---------|----------|
-| Manhattan | <code>\|x₁-x₂\| + \|y₁-y₂\|</code> | 4-way grids |
-| Euclidean | <code>√((x₁-x₂)² + (y₁-y₂)²)</code> | Free movement |
-| Diagonal | <code>max(\|Δx\|, \|Δy\|)</code> | 8-way grids |
+| Condition | Meaning |
+|-----------|---------|
+| low[v] > disc[u] | Edge u-v is a bridge |
+| low[v] ≥ disc[u] | Vertex u is articulation point (non-root) |
+| Root with 2+ children | Root is articulation point |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `container/heap` | Priority queue for managing the open set |
+| No direct stdlib | Implement for network analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 53:</strong> A* is the gold standard for informed pathfinding, combining the optimality of Dijkstra with the efficiency of <abbr title="A technique that employs practical methods to find solutions that are sufficient for the immediate goals.">heuristic</abbr> guidance. The quality of the heuristic entirely determines its performance: a perfect heuristic makes A* instant, while a zero heuristic collapses it to Dijkstra. In game development, robotics, and mapping, A* dominates because it powerfully respects both mathematical correctness and physical speed.
+<strong>Summary Chapter 53:</strong> Tarjan's bridge-finding algorithm exemplifies the power of DFS: a single linear traversal reveals the critical vulnerabilities of an entire network. By tracking discovery times and lowest reachable ancestors, it identifies every bridge in O(V + E) time. In network reliability, infrastructure planning, and system design, knowing your bridges is knowing your risks.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 14: Single-Source Shortest Paths](/docs/Part-IV/Chapter-14/)
-- [Chapter 51: Topological Sort](/docs/Part-X/Chapter-51/)
-- [Chapter 52: Strongly Connected Components](/docs/Part-X/Chapter-52/)
+- [Chapter 51 — Topological Sort](/docs/Part-X/Chapter-50/)
+- [Chapter 52 — Strongly Connected Components](/docs/Part-X/Chapter-51/)
+- [Chapter 12 — Graphs and Graph Representations](/docs/Part-III/Chapter-12/)
+

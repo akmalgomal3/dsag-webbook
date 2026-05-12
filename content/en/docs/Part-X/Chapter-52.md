@@ -1,7 +1,7 @@
 ---
-weight: 100200
-title: "Chapter 52: Strongly Connected Components"
-description: "Strongly Connected Components"
+weight: 100300
+title: "Chapter 52: A* Search"
+description: "A* Search"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,159 +11,209 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>To understand a <abbr title="A graph where edges have direction from one vertex to another">directed graph</abbr>, first find its strongly connected components.</em>" : Robert Tarjan</strong>
+<strong>"<em>A* is the closest thing to a silver bullet in pathfinding.</em>" : Steve Rabin</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 52 explores strongly connected components (SCCs): maximal subgraphs where every vertex is reachable from every other vertex, mapping <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> and <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> algorithms for finding them.
+Chapter 53 covers A* (A-Star) search: the dominant pathfinding algorithm combining Dijkstra's completeness with <abbr title="A technique that employs practical methods to find solutions that are sufficient for the immediate goals.">heuristic</abbr> guidance for optimal and efficient navigation.
 {{% /alert %}}
 
-## 52.1. What Are SCCs?
+## 53.1. From Dijkstra to A*
 
-**Definition:** A <abbr title="A maximal subgraph of a directed graph where every vertex is reachable from every other vertex.">strongly connected component</abbr> is a maximal set of vertices where each vertex is reachable from every other. SCCs partition a <abbr title="A graph where edges have direction from one vertex to another">directed graph</abbr> into a DAG of meta-nodes.
+**Definition:** <abbr title="A best-first search algorithm that finds the shortest path from a start node to a goal node using a heuristic function.">A* search</abbr> extends Dijkstra by prioritizing nodes based on:
+
+`f(n) = g(n) + h(n)`
+
+Where:
+- `g(n)`: Cost from start to n (Dijkstra's priority)
+- `h(n)`: Heuristic estimate from n to goal (guidance)
 
 **Background & Philosophy:**
-The philosophy is condensation. Complex directed graphs (like the entire World Wide Web) are incomprehensibly chaotic. SCC algorithms group tightly interconnected nodes (where everyone can reach everyone) into singular "meta-nodes." This elegantly collapses a chaotic graph into a strictly Directed <abbr title="A graph containing no cycles">Acyclic Graph</abbr> (DAG), allowing researchers to analyze macro-structures.
+The philosophy is directed intuition. Dijkstra explores blindly in all directions (like a water spill), and Greedy Best-First searches purely on intuition (often hitting dead ends). A* perfectly marries the two. By formally evaluating `f(n) = g(n) + h(n)` (actual cost + guessed cost), A* proves mathematically that as long as the guess never overestimates reality, it will find the perfect path with minimal exploration.
 
 **Use Cases:**
-Analyzing Twitter follow-clusters, optimizing database query joins, and designing compiler logic to handle mutually recursive function calls.
+AI pathfinding in video games, GPS navigation systems planning physical routes, and robotic motion planning.
 
 **Memory Mechanics:**
-<abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's algorithm</abbr> is a memory-heavy two-pass system. It requires generating a completely reversed graph (`transposed [][]int`). In Go, allocating this duplicate graph essentially doubles the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> footprint, which triggers massive <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead for huge datasets. <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's algorithm</abbr>, conversely, executes in a single pass using integer tracking arrays (`discovery` and `low-link`). Tarjan entirely avoids allocating a secondary graph, saving significant <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, but places immense pressure on the recursive <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>.
+A* aggressively relies upon a Priority Queue (a <abbr title="A heap where each parent is less than or equal to its children">Min-Heap</abbr>) and tracking maps (`cameFrom`, `gScore`). In Go, `map[[2]int]float64` is heavily utilized to map 2D grid coordinates to values. Maps in Go hash keys and scatter data <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>ly across the heap. For a sprawling map (like a 10,000x10,000 grid), millions of map accesses cause severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. High-performance A* implementations abandon maps, instead flattening the 2D grid into a massive 1D slice where `index = y*width + x`, enabling <code>O(1)</code> contiguous memory lookups and restoring blazing CPU speeds.
 
-### Condensation Graph
+| Algorithm | Priority | Guarantees |
+|-----------|----------|------------|
+| Dijkstra | g(n) | Optimal, explores broadly |
+| Greedy Best-First | h(n) | Fast, not optimal |
+| A* | g(n) + h(n) | Optimal if h is admissible |
 
-Contracting each SCC to a single node yields the <abbr title="A DAG formed by contracting each SCC of a directed graph into a single vertex.">condensation graph</abbr> — always a DAG.
+## 53.2. The Heuristic
 
-| Original Graph | SCCs | Condensation |
-|---------------|------|--------------|
-| Complex directed | {A,B,C}, {D}, {E,F} | DAG of 3 nodes |
+An <abbr title="A heuristic that never overestimates the true cost to reach the goal.">admissible heuristic</abbr> never overestimates the true cost. Common choices:
 
-## 52.2. Kosaraju's Algorithm
+| Domain | Heuristic | Admissible? |
+|--------|-----------|-------------|
+| Grid (4-way) | <abbr title="Distance measured along axes at right angles">Manhattan distance</abbr> | Yes |
+| Grid (8-way) | Chebyshev distance | Yes |
+| Euclidean space | <abbr title="The straight-line distance between two points">Euclidean distance</abbr> | Yes |
+| Road networks | Precomputed landmarks | Approximate |
 
-1. DFS on original graph, push nodes to stack in finish order
-2. Reverse all edges
-3. DFS from stack top on reversed graph — each tree is an SCC
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: A* Core
 
 ```go
 package main
 
-import "fmt"
+import (
+	"container/heap"
+	"fmt"
+	"math"
+)
 
-func kosaraju(graph [][]int, n int) [][]int {
-    // Step 1: DFS and fill stack
-    visited := make([]bool, n)
-    stack := []int{}
-    
-    var dfs1 func(u int)
-    dfs1 = func(u int) {
-        visited[u] = true
-        for _, v := range graph[u] {
-            if !visited[v] {
-                dfs1(v)
-            }
-        }
-        stack = append(stack, u)
-    }
-    
-    for i := 0; i < n; i++ {
-        if !visited[i] {
-            dfs1(i)
-        }
-    }
-    
-    // Step 2: Build transpose
-    transposed := make([][]int, n)
-    for u, edges := range graph {
-        for _, v := range edges {
-            transposed[v] = append(transposed[v], u)
-        }
-    }
-    
-    // Step 3: DFS on transpose in stack order
-    visited = make([]bool, n)
-    var scc []int
-    var result [][]int
-    
-    var dfs2 func(u int)
-    dfs2 = func(u int) {
-        visited[u] = true
-        scc = append(scc, u)
-        for _, v := range transposed[u] {
-            if !visited[v] {
-                dfs2(v)
-            }
-        }
-    }
-    
-    for i := len(stack) - 1; i >= 0; i-- {
-        v := stack[i]
-        if !visited[v] {
-            scc = nil
-            dfs2(v)
-            result = append(result, append([]int(nil), scc...))
-        }
-    }
-    
-    return result
+type Node struct {
+	x, y int
+	g, f float64
+}
+
+type PriorityQueue []*Node
+
+func (pq PriorityQueue) Len() int            { return len(pq) }
+func (pq PriorityQueue) Less(i, j int) bool  { return pq[i].f < pq[j].f }
+func (pq PriorityQueue) Swap(i, j int)       { pq[i], pq[j] = pq[j], pq[i] }
+func (pq *PriorityQueue) Push(x interface{}) { *pq = append(*pq, x.(*Node)) }
+func (pq *PriorityQueue) Pop() interface{} {
+	old := *pq
+	n := len(old)
+	item := old[n-1]
+	*pq = old[:n-1]
+	return item
+}
+
+// heuristic returns Manhattan distance between two points.
+func heuristic(a, b [2]int) float64 {
+	return math.Abs(float64(a[0]-b[0])) + math.Abs(float64(a[1]-b[1]))
+}
+
+// neighbors returns passable adjacent cells (4-directional) within bounds.
+func neighbors(pos [2]int, grid [][]int) [][2]int {
+	dirs := [][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+	var result [][2]int
+	for _, d := range dirs {
+		nx, ny := pos[0]+d[0], pos[1]+d[1]
+		if ny >= 0 && ny < len(grid) && nx >= 0 && nx < len(grid[0]) && grid[ny][nx] == 1 {
+			result = append(result, [2]int{nx, ny})
+		}
+	}
+	return result
+}
+
+// reconstructPath builds the path from start to goal using cameFrom.
+func reconstructPath(cameFrom map[[2]int][2]int, current [2]int) [][2]int {
+	var path [][2]int
+	for {
+		path = append([][2]int{current}, path...)
+		prev, ok := cameFrom[current]
+		if !ok {
+			break
+		}
+		current = prev
+	}
+	return path
+}
+
+// aStar finds the shortest path on a grid from start to goal.
+// grid[y][x] == 1 means passable, 0 means blocked.
+// Returns the path (nil if none) and the total cost.
+func aStar(grid [][]int, start, goal [2]int) ([][2]int, float64) {
+	open := &PriorityQueue{}
+	heap.Init(open)
+	heap.Push(open, &Node{x: start[0], y: start[1], g: 0, f: heuristic(start, goal)})
+
+	cameFrom := make(map[[2]int][2]int)
+	gScore := map[[2]int]float64{start: 0}
+	fScore := map[[2]int]float64{start: heuristic(start, goal)}
+
+	for open.Len() > 0 {
+		current := heap.Pop(open).(*Node)
+		pos := [2]int{current.x, current.y}
+
+		if pos == goal {
+			return reconstructPath(cameFrom, pos), gScore[pos]
+		}
+
+		for _, nb := range neighbors(pos, grid) {
+			tentativeG := gScore[pos] + 1.0 // uniform cost per step
+
+			if g, exists := gScore[nb]; !exists || tentativeG < g {
+				cameFrom[nb] = pos
+				gScore[nb] = tentativeG
+				f := tentativeG + heuristic(nb, goal)
+				fScore[nb] = f
+				heap.Push(open, &Node{x: nb[0], y: nb[1], g: tentativeG, f: f})
+			}
+		}
+	}
+	// No path found
+	return nil, math.Inf(1)
 }
 
 func main() {
-    graph := [][]int{{1}, {2}, {0}}
-    fmt.Println(kosaraju(graph, 3))
+	// 5x5 grid: 1 = passable, 0 = blocked (an obstacle in the middle column)
+	grid := [][]int{
+		{1, 1, 1, 1, 1},
+		{1, 1, 0, 1, 1},
+		{1, 1, 0, 1, 1},
+		{1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1},
+	}
+	start, goal := [2]int{0, 0}, [2]int{4, 4}
+	path, cost := aStar(grid, start, goal)
+	if path == nil {
+		fmt.Println("No path found.")
+		return
+	}
+	fmt.Printf("Shortest path cost: %.0f\n", cost)
+	fmt.Printf("Path: %v\n", path)
 }
 ```
 
-## 52.3. Tarjan's Algorithm
+## 53.3. Properties
 
-Single-pass DFS using discovery times and low-link values to identify SCC roots.
+| Condition | Guarantee |
+|-----------|-----------|
+| h admissible | A* finds optimal path |
+| h consistent | No node re-expansion needed |
+| h = 0 | A* becomes Dijkstra |
+| h perfect | A* goes directly to goal |
 
-| Algorithm | Passes | Space | Simplicity |
-|-----------|--------|-------|------------|
-| Kosaraju | 2 DFS + transpose | <code>O(V + E)</code> | Easier to understand |
-| Tarjan | 1 DFS | <code>O(V)</code> | Slightly faster |
+## 53.4. Decision Matrix
 
-## 52.4. Applications
-
-| Application | SCC Use |
-|-------------|---------|
-| **2-SAT** | Each SCC gives a variable assignment |
-| **Dead code** | Unreachable SCCs in call graphs |
-| **Web crawling** | Find clusters of mutually linking pages |
-| **Package management** | Detect circular dependencies |
-
-## 52.5. Decision Matrix
-
-| Use Kosaraju When... | Use Tarjan When... |
-|---------------------|-------------------|
-| Teaching or learning the concept | Production code |
-| Memory is not a critical constraint | Minimizing passes matters |
-| Two-pass logic is clearer | Single-pass simplicity is strictly preferred |
+| Use A* When... | Use Dijkstra When... |
+|----------------|---------------------|
+| Goal is rigorously known | Single-source all destinations |
+| Good heuristic exists | No heuristic exists or graph is uniform |
+| Pathfinding occurs in grids or maps | General network routing |
 
 ### Edge Cases & Pitfalls
 
-- **Single-node SCCs:** Every isolated vertex strictly functions as its own independent SCC.
-- **Self-loops:** Immediately create SCCs of size 1.
-- **Large graphs:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr> may overflow; strictly use an iterative DFS or explicitly increase the stack size.
+- **<abbr title=\"A heuristic that overestimates the true cost and may lead to suboptimal solutions.\">Inadmissible heuristic</abbr>:** May easily find suboptimal paths.
+- **Tie-breaking:** f-score ties degrade heavily to BFS without secondary ordering logic.
+- **Memory:** A* aggressively keeps all nodes in memory. For huge graphs, strictly deploy IDA* (Iterative Deepening A*).
+- **Dynamic obstacles:** Requires full replanning (deploy D* Lite for shifting environments).
 
-## 52.6. Quick Reference
+## 53.5. Quick Reference
 
-| Concept | Value |
-|---------|-------|
-| Time complexity | <code>O(V + E)</code> |
-| Space complexity | <code>O(V)</code> |
-| Condensation | Always a DAG |
+| Heuristic | Formula | Best For |
+|-----------|---------|----------|
+| Manhattan | <code>\|x₁-x₂\| + \|y₁-y₂\|</code> | 4-way grids |
+| Euclidean | <code>√((x₁-x₂)² + (y₁-y₂)²)</code> | Free movement |
+| Diagonal | <code>max(\|Δx\|, \|Δy\|)</code> | 8-way grids |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| No direct stdlib | Implement manually for deep graph analysis |
+| `container/heap` | Priority queue for managing the open set |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 52:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> elegant two-pass approach and <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> single-pass efficiency both achieve <code>O(V + E)</code>, proving that deep structural insights often come from simple traversals.
+<strong>Summary Chapter 51:</strong> A* is the gold standard for informed pathfinding, combining the optimality of Dijkstra with the efficiency of <abbr title="A technique that employs practical methods to find solutions that are sufficient for the immediate goals.">heuristic</abbr> guidance. The quality of the heuristic entirely determines its performance: a perfect heuristic makes A* instant, while a zero heuristic collapses it to Dijkstra. In game development, robotics, and mapping, A* dominates because it powerfully respects both mathematical correctness and physical speed.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 51: Topological Sort](/docs/Part-X/Chapter-51/)
-- [Chapter 53: A* Search](/docs/Part-X/Chapter-53/)
-- [Chapter 54: Tarjan's Bridge-Finding Algorithm](/docs/Part-X/Chapter-54/)
+- [Chapter 14: Single-Source Shortest Paths](/docs/Part-IV/Chapter-14/)
+- [Chapter 50: Topological Sort](/docs/Part-X/Chapter-50/)
+- [Chapter 51: Strongly Connected Components](/docs/Part-X/Chapter-51/)

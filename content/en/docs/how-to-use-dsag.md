@@ -42,18 +42,18 @@ Focus on high-frequency topics.
 - Chapter 2: Complexity Analysis
 - Chapter 5 to 8: Basic Data Structures
 - Chapter 9 to 12: Trees, Graphs
-- Chapter 19 to 22: Sorting & Searching
-- Chapter 23 to 26: Paradigms (Divide & Conquer, DP, Greedy)
+- Chapter 19 to 21: Sorting & Searching
+- Chapter 22 to 25: Paradigms (Divide & Conquer, DP, Greedy)
 
 **Priority 2 (High Value):**
 - Chapter 13 to 18: Graph Algorithms
-- Chapter 37 to 39: Trie, Segment Tree, Bit Manipulation
-- Chapter 55 to 57: Specialized Sorting & Techniques
+- Chapter 36 to 38: Trie, Segment Tree, Bit Manipulation
+- Chapter 54 to 56: Specialized Sorting & Techniques
 
 **Priority 3 (Differentiation):**
-- Chapter 40 to 44: History & Philosophy
-- Chapter 45 to 50: Advanced Data Structures
-- Chapter 58 to 60: Advanced Topics
+- Chapter 39 to 43: History & Philosophy
+- Chapter 44 to 49: Advanced Data Structures
+- Chapter 57 to 59: Advanced Topics
 
 ## Using Code Examples
 

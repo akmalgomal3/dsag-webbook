@@ -1,62 +1,170 @@
 ---
-weight: 70400
-title: "Chapter 32: Blockchain Data Structures and Algorithms"
-description: "Blockchain Data Structures and Algorithms"
+weight: 70500
+title: "Chapter 32: Linear Programming"
+description: "Linear Programming"
 icon: "article"
-date: "2024-08-24T23:42:48+07:00"
-lastmod: "2024-08-24T23:42:48+07:00"
+date: "2024-08-24T23:42:49+07:00"
+lastmod: "2024-08-24T23:42:49+07:00"
 draft: false
 toc: true
 katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Blockchain is the tech. Bitcoin is merely the first mainstream manifestation of its potential.</em>" : Marc Kenigsberg</strong>
+<strong>"<em>Optimization is a powerful tool for solving many types of problems, and linear programming provides one of the most fundamental approaches.</em>" : John Nash</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 32 explores fundamental blockchain data structures: hash chains, Merkle trees, Proof of Work, and basic implementations in Go.
+Chapter 33 covers linear programming: fundamental formulation, the Simplex algorithm, and implementations in Go leveraging both iterative methods and external solvers.
 {{% /alert %}}
 
-## 32.1. Block Structure
+## 33.1. Linear Programming Formulation
 
-**Definition:** A block acts as a container for transactions, maintaining a cryptographic hash that directly references the preceding block, thus creating an immutable chain.
+**Definition:** <abbr title="Optimizing a linear objective function under linear equality and inequality constraints.">Linear Programming</abbr> (LP) aims to maximize or minimize a linear <abbr title="The function to be maximized or minimized in an optimization problem.">objective function</abbr> subject strictly to linear equality and inequality <abbr title="Conditions or restrictions in an optimization problem that define the solution space.">constraints</abbr>.
 
 **Background & Philosophy:**
-The philosophy is cryptographic immutability and trustless verification. Instead of relying on a centralized database that can be secretly altered, a blockchain strings state changes together via cryptographic hashes, guaranteeing that modifying any past data instantly invalidates the entire subsequent chain.
+The philosophy is geometric optimization. Linear constraints form a convex <abbr title="A plane figure bounded by straight line segments">polygon</abbr> (or polytope in N-dimensions) representing the <abbr title="The set of all valid solutions satisfying all constraints in an optimization problem.">"feasible region"</abbr>. The fundamental theorem of LP states that the optimal solution *always* lies on a vertex (corner) of this polytope. Because of this mathematical certainty, solvers do not need to check infinite interior points; they only need to "walk" along the edges from corner to corner until they find the peak.
 
 **Use Cases:**
-Bitcoin, Ethereum smart contracts, supply chain tracking, and decentralized voting systems where a transparent public ledger is demanded.
+Airline crew scheduling, financial portfolio optimization, manufacturing supply chains, and routing massive logistical fleets.
 
 **Memory Mechanics:**
-Blockchain operations primarily rely on cryptographic hashing functions (like SHA-256). These functions load small chunks of data (typically 64-byte blocks) directly into CPU registers to perform massive amounts of bitwise operations. This requires very little <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory but maximizes ALU (Arithmetic Logic Unit) utilization. For mining (PoW), the tight loop alters only the `nonce` integer in memory, ensuring that the hash payload stays hot inside the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
+LP solvers (like Simplex) use a tableau (a 2D matrix) to represent equations. Modifying this tableau involves Gaussian elimination, scanning and updating entire rows. Because the matrix elements are <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, the CPU processes them efficiently using SIMD instructions. However, in enormous real-world models with millions of variables, these matrices are hyper-sparse (mostly zeros). Efficient LP solvers discard the 2D array format entirely, using specialized sparse memory maps to prevent exhausting system <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
+
+Standard form:
+```
+maximize: cᵀx
+subject to: Ax ≤ b, x ≥ 0
+```
 
 ### Operations & Complexity
 
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Create block | <code>O(t)</code> | t = number of transactions |
-| Hash block | <code>O(t)</code> | SHA-256 over entire data |
-| Verification | <code>O(1)</code> | Direct hash comparison |
-| Append | <code>O(1)</code> | Attach at the chain's end |
+| Algorithm | Worst Case | Average | Description |
+|-----------|------------|---------|------------|
+| <abbr title="An algorithm for solving linear programming problems by traversing polytope vertices.">Simplex</abbr> | <code>O(2^n)</code> | <code>O(n³)</code> | Pivot-based <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> traversal |
+| Interior Point | <code>O(n³·⁵L)</code> | <code>O(n³)</code> | Strictly polynomial |
+| Dual Simplex | <code>O(2^n)</code> | <code>O(n³)</code> | Starts from a dual feasible state |
 
 ### Pseudocode
 
 ```text
-CalculateHash(block):
-    record = concat(block.Index, block.Timestamp, block.Data, block.PrevHash, block.Nonce)
-    return SHA256(record)
+Solve2DLP(c1, c2, constraints):
+    bestVal = -infinity
+    bestX, bestY = 0, 0
+    for each pair of constraints (i, j):
+        compute intersection point (x, y)
+        if x < 0 or y < 0: continue
+        if point satisfies all constraints:
+            val = c1*x + c2*y
+            if val > bestVal:
+                bestVal = val
+                bestX, bestY = x, y
+    return bestX, bestY, bestVal
+```
 
-CreateBlock(index, data, prevHash):
-    block = new Block(index, current time, data, prevHash, nonce=0)
-    block.Hash = CalculateHash(block)
-    return block
+### Idiomatic Go Implementation
 
-IsValid(newBlock, prevBlock):
-    if prevBlock.Index + 1 != newBlock.Index: return false
-    if newBlock.PrevHash != prevBlock.Hash: return false
-    if CalculateHash(newBlock) != newBlock.Hash: return false
-    return true
+Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> does not provide a native LP solver. Use C bindings or write a highly simplified implementation for trivial cases.
+
+```go
+package main
+
+import (
+    "fmt"
+    "math"
+)
+
+// Simplified Simplex for 2 variables (graphical corner-point method)
+func solve2DLP(c1, c2 float64, constraints [][3]float64) (float64, float64, float64) {
+    bestVal := math.Inf(-1)
+    var bestX, bestY float64
+    // Find corner points from constraint intersections
+    n := len(constraints)
+    for i := 0; i < n; i++ {
+        for j := i + 1; j < n; j++ {
+            a1, b1, c1c := constraints[i][0], constraints[i][1], constraints[i][2]
+            a2, b2, c2c := constraints[j][0], constraints[j][1], constraints[j][2]
+            det := a1*b2 - a2*b1
+            if math.Abs(det) < 1e-9 {
+                continue
+            }
+            x := (c1c*b2 - c2c*b1) / det
+            y := (a1*c2c - a2*c1c) / det
+            if x < 0 || y < 0 {
+                continue
+            }
+            valid := true
+            for _, con := range constraints {
+                if con[0]*x+con[1]*y > con[2]+1e-9 {
+                    valid = false
+                    break
+                }
+            }
+            if valid {
+                val := c1*x + c2*y
+                if val > bestVal {
+                    bestVal = val
+                    bestX, bestY = x, y
+                }
+            }
+        }
+    }
+    return bestX, bestY, bestVal
+}
+
+func main() {
+    // max 3x + 2y subject to x + y <= 4, x + 2y <= 5, x,y >= 0
+    constraints := [][3]float64{
+        {1, 1, 4},
+        {1, 2, 5},
+        {-1, 0, 0}, // x >= 0  (encoded as -1*x + 0*y <= 0)
+        {0, -1, 0}, // y >= 0  (encoded as 0*x + -1*y <= 0)
+    }
+    x, y, val := solve2DLP(3, 2, constraints)
+    fmt.Printf("x=%.2f y=%.2f val=%.2f\n", x, y, val)
+}
+```
+
+{{% alert icon="📌" context="warning" %}}
+Writing a full, robust Simplex implementation in Go from scratch is incredibly verbose and error-prone. For production systems, leverage bindings to GLPK, lp_solve, or robust Go libraries such as `github.com/codered/lp`.
+{{% /alert %}}
+
+### Decision Matrix
+
+| Use LP When... | Avoid If... |
+|-------------------|------------------|
+| Both the objective and constraints are strictly linear | The objective is non-linear (employ NLP instead) |
+| Variables represent continuous domains | Variables demand integer values (employ MILP) |
+
+### Edge Cases & Pitfalls
+
+- **Infeasible problem:** Constraints blatantly contradict each other. Verify using phase-I of the Simplex method.
+- **Unbounded problem:** The objective function can grow to infinity. Verify the feasible region's boundaries.
+- **Degeneracy:** Simplex can fall into infinite cycling. Counteract this by implementing Bland's rule.
+
+## 33.2. Integer Linear Programming
+
+**Definition:** Integer Linear Programming (ILP) strictly mandates that some or all variables represent integer values. Branch and Bound stands as the industry-standard resolution method.
+
+### Operations & Complexity
+
+| Algorithm | Worst Case | Description |
+|-----------|------------|------------|
+| Branch and Bound | <code>O(2^n)</code> | Exponential exploration |
+| Cutting Plane | <code>O(2^n)</code> | Polynomial solely for the LP relaxation |
+
+### Pseudocode
+
+```text
+KnapsackILP(weights, values, capacity):
+    n = length(weights)
+    dp = 2D table (n+1) x (capacity+1) initialized to 0
+    for i from 1 to n:
+        for w from 0 to capacity:
+            dp[i][w] = dp[i-1][w]
+            if weights[i-1] <= w:
+                dp[i][w] = max(dp[i][w], dp[i-1][w-weights[i-1]] + values[i-1])
+    return dp[n][capacity]
 ```
 
 ### Idiomatic Go Implementation
@@ -65,104 +173,78 @@ IsValid(newBlock, prevBlock):
 package main
 
 import (
-    "crypto/sha256"
-    "encoding/hex"
     "fmt"
-    "time"
 )
 
-type Block struct {
-    Index        int
-    Timestamp    int64
-    Data         string
-    PrevHash     string
-    Hash         string
-    Nonce        int
-}
-
-func calculateHash(b Block) string {
-    record := fmt.Sprintf("%d%d%s%s%d", b.Index, b.Timestamp, b.Data, b.PrevHash, b.Nonce)
-    h := sha256.Sum256([]byte(record))
-    return hex.EncodeToString(h[:])
-}
-
-func createBlock(index int, data string, prevHash string) Block {
-    b := Block{
-        Index:     index,
-        Timestamp: time.Now().Unix(),
-        Data:      data,
-        PrevHash:  prevHash,
-        Nonce:     0,
+// 0/1 Knapsack treated as an ILP via DP (pseudo-polynomial time)
+func knapsackILP(weights, values []int, capacity int) int {
+    n := len(weights)
+    dp := make([][]int, n+1)
+    for i := range dp {
+        dp[i] = make([]int, capacity+1)
     }
-    b.Hash = calculateHash(b)
+    for i := 1; i <= n; i++ {
+        for w := 0; w <= capacity; w++ {
+            dp[i][w] = dp[i-1][w]
+            if weights[i-1] <= w {
+                dp[i][w] = max(dp[i][w], dp[i-1][w-weights[i-1]]+values[i-1])
+            }
+        }
+    }
+    return dp[n][capacity]
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
     return b
 }
 
-func isValid(newBlock, prevBlock Block) bool {
-    if prevBlock.Index+1 != newBlock.Index {
-        return false
-    }
-    if newBlock.PrevHash != prevBlock.Hash {
-        return false
-    }
-    if calculateHash(newBlock) != newBlock.Hash {
-        return false
-    }
-    return true
-}
-
 func main() {
-    genesis := createBlock(0, "Genesis", "0")
-    block1 := createBlock(1, "Tx1", genesis.Hash)
-    fmt.Println("Valid:", isValid(block1, genesis))
-    fmt.Println("Genesis hash:", genesis.Hash)
+    weights := []int{2, 3, 4, 5}
+    values := []int{3, 4, 5, 6}
+    fmt.Println("Knapsack ILP:", knapsackILP(weights, values, 5))
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Consistently utilize `crypto/sha256` for cryptographic hashing. A timestamp generated via `time.Now()` is easily manipulated; strictly prefer robust NTP syncs or a reliable consensus timestamp.
+0/1 Knapsack is inherently NP-hard, yet resolvable within pseudo-polynomial <code>O(nW)</code> bounds. Branch and Bound serves as a much more universally applicable approach for standard ILP.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use Standard Arrays When... | Avoid If... |
-|----------------------|------------------|
-| Using a local, single-node chain | Working within complex distributed consensus systems |
-| Prototyping or educational purposes | Pushing to production without aggressive security audits |
+| Use DP When... | Use Branch & Bound When... |
+|-------------------|-------------------------------|
+| Solving Knapsack with a reasonably small W | Facing a generalized ILP problem |
+| Pseudo-polynomial performance is acceptable | An exact, globally optimal solution is absolutely required |
 
 ### Edge Cases & Pitfalls
 
-- **Genesis block:** Consistently validate that the chain initiates from a firmly known and trusted genesis block.
-- **Hash <abbr title="An event when two keys hash to the same index.">collision</abbr>:** A SHA-256 <abbr title="An event when two keys hash to the same index.">collision</abbr> is virtually impossible in practice, but theoretically exists.
-- **Longest chain:** In a PoW environment, invariably respect and follow the chain exhibiting the highest cumulative difficulty.
+- **Integer overflow:** The required DP table can expand massively. Utilize heavy space optimization (e.g., 1D arrays).
+- **Feasibility:** Consistently verify if any mathematical solution actively satisfies the defined constraints.
 
-## 32.2. Merkle <abbr title="A hierarchical data structure with a root node and child nodes.">Tree</abbr>
+## 33.3. Duality and Sensitivity
 
-**Definition:** A Merkle <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> represents a <abbr title="A tree data structure in which each node has at most two children.">binary tree</abbr> where every <abbr title="A node with no children in a tree.">leaf</abbr> constitutes a transaction hash, and every internal <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> is the hash concatenation of its respective children.
+**Definition:** Every single LP (the primal) possesses an associated dual. Strong duality states: the optimal primal equals the optimal dual, provided a feasible solution exists.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Build | <code>O(n)</code> | n = volume of transactions |
-| <abbr title="The topmost node in a tree data structure.">Root</abbr> | <code>O(1)</code> | The peak hash of the <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> |
-| Proof inclusion | <code>O(log n)</code> | Processing log n hash siblings |
-| Verify proof | <code>O(log n)</code> | Recomputing the <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> to the <abbr title="The topmost node in a tree data structure.">root</abbr> |
+| Dual formulation | <code>O(mn)</code> | Structurally converting constraints |
+| Shadow price | <code>O(1)</code> | Readily available from the optimal tableau |
+| Sensitivity range | <code>O(n)</code> | Calculated per individual variable |
 
 ### Pseudocode
 
 ```text
-BuildMerkleRoot(transactions):
-    if length(transactions) == 0: return ""
-    if length(transactions) == 1: return transactions[0]
-    level = empty list
-    for i from 0 to length(transactions)-1 step 2:
-        left = transactions[i]
-        right = transactions[i]  // duplicate last if odd
-        if i+1 < length(transactions):
-            right = transactions[i+1]
-        level.append(HashPair(left, right))
-    return BuildMerkleRoot(level)
+FormulateDual(A, b, c):
+    m = number of rows in A
+    n = number of cols in A
+    dual objective: minimize b^T y
+    dual constraints: A^T y >= c, y >= 0
+    return dual formulation
 ```
 
 ### Idiomatic Go Implementation
@@ -170,177 +252,56 @@ BuildMerkleRoot(transactions):
 ```go
 package main
 
-import (
-    "crypto/sha256"
-    "encoding/hex"
-    "fmt"
-)
+import "fmt"
 
-func hashPair(a, b string) string {
-    h := sha256.Sum256([]byte(a + b))
-    return hex.EncodeToString(h[:])
-}
-
-func buildMerkleRoot(transactions []string) string {
-    if len(transactions) == 0 {
-        return ""
-    }
-    if len(transactions) == 1 {
-        return transactions[0]
-    }
-    var level []string
-    for i := 0; i < len(transactions); i += 2 {
-        left := transactions[i]
-        right := left
-        if i+1 < len(transactions) {
-            right = transactions[i+1]
-        }
-        level = append(level, hashPair(left, right))
-    }
-    return buildMerkleRoot(level)
+// Dual formulation of max c^T x subject to Ax <= b is min b^T y subject to A^T y >= c, y >= 0
+func formulateDual(A [][]float64, b, c []float64) {
+    m, n := len(A), len(A[0])
+    fmt.Println("Dual variables:", m)
+    fmt.Println("Dual objective: minimize b^T y")
+    fmt.Printf("Dual constraints: A^T y >= c (%d constraints)\n", n)
 }
 
 func main() {
-    txs := []string{
-        "tx1-hash", "tx2-hash", "tx3-hash", "tx4-hash",
-    }
-    root := buildMerkleRoot(txs)
-    fmt.Println("Merkle Root:", root)
+    A := [][]float64{{1, 1}, {1, 2}}
+    b := []float64{4, 5}
+    c := []float64{3, 2}
+    formulateDual(A, b, c)
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Duplicating the final element for an odd count is known as "duplicating the last hash". You must ensure parity between the build and verify logic.
+The Dual LP proves highly beneficial for intensive sensitivity analysis and driving primal-dual algorithms. Within Go, calculating the dual formulation manually is rarely necessary; external solvers naturally provide this data.
 {{% /alert %}}
 
 ### Decision Matrix
 
-| Use Merkle <abbr title="A hierarchical data structure with a root node and child nodes.">Tree</abbr> When... | Avoid If... |
-|----------------------------|------------------|
-| Verifying a subset of transactions efficiently | Every single transaction is always required immediately |
-| Building light clients | Managing microscopic datasets, where <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> overhead is unjustifiable |
+| Use Dual When... | Avoid If... |
+|---------------------|------------------|
+| Conducting deep sensitivity analysis | The primal solution independently suffices |
+| The primal model is infeasible | Exploring the dual yields no actionable benefit |
 
 ### Edge Cases & Pitfalls
 
-- **Odd leaves:** Relentlessly duplicate the final hash prior to executing a pairing round.
-- **Second preimage attack:** Differentiate the <abbr title="A node with no children in a tree.">leaf</abbr> hashes from internal <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> hashes securely (e.g., utilize standard prefixing).
+- **Weak duality:** Any feasible dual <abbr title="The data associated with a key in a key-value pair.">value</abbr> definitively bounds the primal. The gap fails to reach zero solely if the system is infeasible or unbounded.
+- **Complementary slackness:** Strictly utilize this to verify the ultimate optimality.
 
-## 32.3. Proof of Work
-
-**Definition:** PoW mandates that a miner isolates a specific nonce such that the resulting block hash contains a predefined string of leading zeros (the difficulty target).
-
-### Operations & Complexity
-
-| Parameter | Complexity | Description |
-|-----------|--------------|------------|
-| Mining | <code>O(2^d)</code> | d = difficulty in bits |
-| Verification | <code>O(1)</code> | Extremely fast, single hash |
-| Difficulty adjust | <code>O(1)</code> | Calculated per block epoch |
-
-### Pseudocode
-
-```text
-Mine(data, prevHash, difficulty):
-    prefix = string of difficulty zeros
-    nonce = 0
-    loop:
-        record = concat(data, prevHash, nonce)
-        hash = SHA256(record)
-        if hash starts with prefix:
-            return hash, nonce
-        nonce += 1
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import (
-    "crypto/sha256"
-    "encoding/hex"
-    "fmt"
-    "strings"
-)
-
-func mine(data string, prevHash string, difficulty int) (string, int) {
-    prefix := strings.Repeat("0", difficulty)
-    var nonce int
-    for {
-        record := fmt.Sprintf("%s%s%d", data, prevHash, nonce)
-        hash := sha256.Sum256([]byte(record))
-        hashStr := hex.EncodeToString(hash[:])
-        if strings.HasPrefix(hashStr, prefix) {
-            return hashStr, nonce
-        }
-        nonce++
-    }
-}
-
-func main() {
-    hash, nonce := mine("hello", "prev123", 4)
-    fmt.Printf("Hash: %s, Nonce: %d\n", hash, nonce)
-}
-```
-
-{{% alert icon="📌" context="warning" %}}
-The PoW example provided acts purely as a demonstration. A rigorous production PoW mandates dynamic difficulty adjustment, massive nonce ranges, and P2P consensus mechanisms. Furthermore, Go is suboptimal for pure mining operations lacking raw native GPU bindings.
-{{% /alert %}}
-
-### Decision Matrix
-
-| Use PoW When... | Avoid If... |
-|--------------------|------------------|
-| Absolute, uncompromising decentralization is demanded | Energy efficiency is a core network objective |
-| Robust Byzantine fault tolerance is non-negotiable | Extremely high <abbr title="The amount of data processed in a given amount of time.">throughput</abbr> is critically required |
-
-### Edge Cases & Pitfalls
-
-- **Difficulty too low:** Leaves the blockchain heavily susceptible to rapid attacks.
-- **Timestamp manipulation:** Miners can aggressively manipulate timestamps to artificially skew the network's difficulty.
-
-## 32.4. Basic Consensus Algorithms
-
-**Definition:** Consensus algorithms fundamentally ensure that a massive, distributed network of nodes unequivocally agrees upon an identical, uniform state.
-
-### Operations & Complexity
-
-| Algorithm | Communication | Fault Tolerance | Description |
-|-----------|------------|-----------------|------------|
-| PoW | Broadcast | 51% | E.g., Bitcoin |
-| PoS | Broadcast | 33% | E.g., Ethereum 2.0 |
-| PBFT | <code>O(n²)</code> | f < n/3 | Ideal for permissioned systems |
-| Raft | <code>O(n)</code> | Leader failure | Strong for localized Key-value stores |
-
-### Decision Matrix
-
-| Use Raft/PBFT When... | Use PoW/PoS When... |
-|--------------------------|------------------------|
-| Network is highly permissioned | Network is strictly permissionless |
-| All validators are known entities | Operating with purely anonymous participants |
-| Low latency is critically important | Maximum, unquestionable decentralization is the priority |
-
-### Edge Cases & Pitfalls
-
-- **Nothing-at-stake:** A PoS validator may seamlessly vote on multiple forks simultaneously. Severe slashing rigorously punishes this behavior.
-- **Long-range attack:** An attacker possessing archaic private keys can surreptitiously construct an alternative chain.
-
-## Quick Reference
+## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Block | `struct` | <code>O(1)</code> create | <code>O(1)</code> | Core transaction container |
-| Merkle Tree | recursive hash | <code>O(n)</code> build | <code>O(n)</code> | Quick subset verification |
-| PoW Mining | brute-force loop | <code>O(2^k)</code> | . | Fundamental consensus |
-| Chain | `[]Block` | <code>O(1)</code> append | grows | Underlying ledger |
-| Hash | `crypto/sha256` | <code>O(n)</code> | 32 bytes | Rigid data integrity |
+| LP Solver | External / custom | <code>O(n^3)</code> avg | varies | Continuous variable optimization |
+| Knapsack DP | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | Integer-based programming |
+| Constraints | `[]float64` | . | . | Defining mathematical bounds |
+| Objective | `[]float64` | . | . | Establishing coefficients |
+| Dual | Formulation | <code>O(mn)</code> | varies | Executing sensitivity analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 32:</strong> This chapter dissects foundational blockchain data structures: linked blocks utilizing SHA-256 hashes, Merkle trees engineered for transaction subset verification, Proof of Work (PoW), and foundational Proof of Stake (PoS) consensus strategies. Leverage Merkle trees for light clients, PoW for uncompromising decentralization, and PoS when maximizing energy efficiency.
+<strong>Summary Chapter 31:</strong> This chapter discusses linear programming: grasping standard formulations, applying the Simplex algorithm conceptually for 2 variables, tackling integer linear programming through <abbr title="Finding optimal solutions by pruning search trees">branch and bound</abbr> (and DP for knapsack variants), and examining duality for sensitivity analysis. Strongly prefer external solvers for production environments; reserve manual implementations purely for deep educational exercises.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 30: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-30/)
-- [Chapter 31: Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-31/)
-- [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)
+- [Chapter 2: Complexity Analysis](/docs/Part-I/Chapter-2/)
+- [Chapter 15: All-Pairs Shortest Paths](/docs/Part-IV/Chapter-15/)
+- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-28/)

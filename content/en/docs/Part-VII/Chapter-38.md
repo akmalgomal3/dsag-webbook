@@ -1,7 +1,7 @@
 ---
-weight: 71000
-title: "Chapter 38: Segment Tree and Fenwick Tree"
-description: "Segment Tree and Fenwick Tree"
+weight: 71100
+title: "Chapter 38: Bit Manipulation"
+description: "Bit Manipulation"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,184 +11,182 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Efficiency is doing things right; effectiveness is doing the right things.</em>" : Peter Drucker</strong>
+<strong>"<em>There are 10 types of people in the world: those who understand binary and those who don't.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 38 covers <abbr title="A binary tree for range queries storing aggregated results over array segments.">segment trees</abbr> and <abbr title="A tree structure for efficient prefix sum queries using bitwise operations.">Fenwick trees</abbr> (Binary Indexed Trees): data structures for efficient range queries and point updates on arrays.
+Chapter 39 covers <abbr title="Operations performed directly on individual bits of integers.">bit manipulation</abbr> techniques in Go: <abbr title="Operations performed directly on individual bits of binary numbers.">bitwise</abbr> operators, common tricks, and algorithms that exploit binary representation for efficiency.
 {{% /alert %}}
 
-## 38.1. Segment Tree
+## 39.1. Bitwise Operators
 
-**Definition:** A segment tree is a <abbr title="A tree where each node has at most two children">binary tree</abbr> where each node stores the result of a query (sum, min, max) over a segment of the array. It supports range queries and point updates in <code>O(log n)</code>.
+**Definition:** Bitwise operators manipulate individual bits of integers. They are fundamental for low-level optimization, flags, and compact data representation.
 
 **Background & Philosophy:**
-The philosophy is precomputed aggregation. When an array is repeatedly updated and queried for range sums (e.g., sum from index 100 to 5000), a linear scan <code>O(n)</code> is too slow. Segment and Fenwick trees pre-calculate chunks of the array hierarchically, reducing the scan to a mathematical traversal of <code>O(log n)</code> boundaries.
+The philosophy is mechanical sympathy. High-level languages abstract numbers into base-10 logic. Bit manipulation strips away the abstraction to directly instruct the CPU's ALU (Arithmetic Logic Unit) using native hardware gates (AND, OR, XOR). It trades code readability for maximum execution speed.
 
 **Use Cases:**
-Competitive programming, dynamic financial ledgers querying balances over specific date ranges, and mapping visible objects in 2D game rendering.
+Writing network protocol parsers, configuring hardware registers, cryptographic hashing, and compressing 64 boolean flags into a single 64-bit integer using <abbr title="A pattern of bits used to select or modify specific bits within a value.">bitmasks</abbr>.
 
 **Memory Mechanics:**
-Both trees elegantly abandon <abbr title="A variable that stores a memory address.">pointer</abbr>-based nodes. A Segment Tree allocates an array of `4*n` size. A Fenwick Tree (Binary Indexed Tree) is incredibly optimal, allocating exactly `n+1` size array. Fenwick tree uses bitwise operations (`i & -i`) to instantly jump to the next aggregation block. This purely <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> layout guarantees flawless <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> hits and zero <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> overhead during updates.
+Bitwise operations execute exclusively inside the CPU registers. They bypass the <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> entirely once the variable is loaded. A `uint64` takes 8 bytes of memory but can store 64 distinct boolean states. An array of 64 `bool` in Go would take 64 bytes (plus slice headers). Using bitmasks heavily compresses memory footprints, making it the supreme choice for memory-constrained embedded systems or massive graph traversal arrays.
 
-### Operations & Complexity
+### Go Bitwise Operators
 
-| Operation | Time | Space | Description |
-|-----------|------|-------|-------------|
-| Build | <code>O(n)</code> | <code>O(4n)</code> | Construct tree from array |
-| Range Query | <code>O(log n)</code> | <code>O(1)</code> | Query over [l, r] |
-| Point Update | <code>O(log n)</code> | <code>O(1)</code> | Update single element |
+| Operator | Name | Example | Result |
+|----------|------|---------|--------|
+| `&` | AND | `5 & 3` | `1` (0101 & 0011 = 0001) |
+| `\|` | OR | `5 \| 3` | `7` (0101 \| 0011 = 0111) |
+| `^` | XOR | `5 ^ 3` | `6` (0101 ^ 0011 = 0110) |
+| `&^` | AND NOT | `5 &^ 3` | `4` (clears bits) |
+| `<<` | Left Shift | `1 << 3` | `8` |
+| `>>` | Right Shift | `8 >> 2` | `2` |
 
-## 38.2. Range Sum Query
+## 39.2. Common Bit Tricks
 
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+### Check if Power of Two
 
-Use a slice-based tree with 1-based or 0-based indexing.
-
-```go
-package main
-
-import "fmt"
-
-type SegmentTree struct {
-	Tree []int
-	N    int
-}
-
-func NewSegmentTree(arr []int) *SegmentTree {
-	n := len(arr)
-	st := &SegmentTree{Tree: make([]int, 4*n), N: n}
-	st.build(0, 0, n-1, arr)
-	return st
-}
-
-func (st *SegmentTree) build(node, l, r int, arr []int) {
-	if l == r {
-		st.Tree[node] = arr[l]
-		return
-	}
-	mid := (l + r) / 2
-	st.build(2*node+1, l, mid, arr)
-	st.build(2*node+2, mid+1, r, arr)
-	st.Tree[node] = st.Tree[2*node+1] + st.Tree[2*node+2]
-}
-
-func (st *SegmentTree) Query(node, l, r, ql, qr int) int {
-	if ql > r || qr < l { return 0 }
-	if ql <= l && r <= qr { return st.Tree[node] }
-	mid := (l + r) / 2
-	return st.Query(2*node+1, l, mid, ql, qr) + st.Query(2*node+2, mid+1, r, ql, qr)
-}
-
-func (st *SegmentTree) Update(node, l, r, idx, val int) {
-	if l == r {
-		st.Tree[node] = val
-		return
-	}
-	mid := (l + r) / 2
-	if idx <= mid {
-		st.Update(2*node+1, l, mid, idx, val)
-	} else {
-		st.Update(2*node+2, mid+1, r, idx, val)
-	}
-	st.Tree[node] = st.Tree[2*node+1] + st.Tree[2*node+2]
-}
-
-func main() {
-	arr := []int{1, 3, 5, 7, 9, 11}
-	st := NewSegmentTree(arr)
-	fmt.Println(st.Query(0, 0, len(arr)-1, 1, 3)) // 15 (3+5+7)
-	st.Update(0, 0, len(arr)-1, 2, 10)
-	fmt.Println(st.Query(0, 0, len(arr)-1, 1, 3)) // 20 (3+10+7)
-}
-```
-
-## 38.3. Fenwick Tree (Binary Indexed Tree)
-
-**Definition:** A Fenwick tree achieves the same <code>O(log n)</code> query/update as a segment tree but uses <code>O(n)</code> space and has better constant factors.
-
-### Operations & Complexity
-
-| Operation | Time | Space | Description |
-|-----------|------|-------|-------------|
-| Build | <code>O(n)</code> | <code>O(n)</code> | Construct from array |
-| Prefix Sum | <code>O(log n)</code> | <code>O(1)</code> | Sum of [0, i] |
-| Range Query | <code>O(log n)</code> | <code>O(1)</code> | Sum of [l, r] |
-| Point Update | <code>O(log n)</code> | <code>O(1)</code> | Add delta to index |
-
-### Idiomatic Go Implementation
+A power of two has exactly one bit set. `n & (n-1)` clears the lowest set bit.
 
 ```go
 package main
 
 import "fmt"
 
-type Fenwick struct {
-	Tree []int
-	N    int
-}
-
-func NewFenwick(n int) *Fenwick {
-	return &Fenwick{Tree: make([]int, n+1), N: n}
-}
-
-func (f *Fenwick) Update(i, delta int) {
-	for i <= f.N {
-		f.Tree[i] += delta
-		i += i & -i
-	}
-}
-
-func (f *Fenwick) Query(i int) int {
-	sum := 0
-	for i > 0 {
-		sum += f.Tree[i]
-		i -= i & -i
-	}
-	return sum
-}
-
-func (f *Fenwick) RangeQuery(l, r int) int {
-	return f.Query(r) - f.Query(l-1)
+func isPowerOfTwo(n int) bool {
+	return n > 0 && (n&(n-1)) == 0
 }
 
 func main() {
-	f := NewFenwick(6)
-	for i, v := range []int{1, 3, 5, 7, 9, 11} {
-		f.Update(i+1, v)
-	}
-	fmt.Println(f.RangeQuery(2, 4)) // 15
+	fmt.Println(isPowerOfTwo(16)) // true
+	fmt.Println(isPowerOfTwo(18)) // false
 }
 ```
 
-## 38.4. Decision Matrix
+### Count Set Bits (Hamming Weight)
 
-| Use Segment Tree When... | Use Fenwick Tree When... |
-|--------------------------|--------------------------|
-| Need min/max queries | Only need sum queries |
-| Need lazy propagation | Point updates and prefix sums suffice |
-| Query operation is non-invertible | Operation is invertible (sum) |
+```go
+package main
+
+import "fmt"
+
+func countBits(n int) int {
+	count := 0
+	for n != 0 {
+		n &= n - 1 // clear lowest set bit
+		count++
+	}
+	return count
+}
+
+func main() {
+	fmt.Println(countBits(0b101101)) // 4
+}
+```
+
+### Get Lowest Set Bit
+
+```go
+func lowestSetBit(n int) int {
+	return n & -n
+}
+```
+
+### Swap Without Temporary Variable
+
+```go
+func swap(a, b int) (int, int) {
+	a = a ^ b
+	b = a ^ b
+	a = a ^ b
+	return a, b
+}
+```
+
+## 39.3. Bit Masking Applications
+
+### Subset Enumeration
+
+Generate all subsets of a set using bit masks.
+
+```go
+package main
+
+import "fmt"
+
+func subsets(nums []int) [][]int {
+	n := len(nums)
+	var result [][]int
+	for mask := 0; mask < (1 << n); mask++ {
+		var subset []int
+		for i := 0; i < n; i++ {
+			if mask&(1<<i) != 0 {
+				subset = append(subset, nums[i])
+			}
+		}
+		result = append(result, subset)
+	}
+	return result
+}
+
+func main() {
+	fmt.Println(len(subsets([]int{1, 2, 3}))) // 8
+}
+```
+
+### Toggle Bit
+
+```go
+func toggleBit(n, i int) int {
+	return n ^ (1 << i)
+}
+
+func setBit(n, i int) int {
+	return n | (1 << i)
+}
+
+func clearBit(n, i int) int {
+	return n &^ (1 << i)
+}
+
+func isBitSet(n, i int) bool {
+	return (n & (1 << i)) != 0
+}
+```
+
+## 39.4. Decision Matrix
+
+| Use Bit Manipulation When... | Avoid If... |
+|------------------------------|-------------|
+| Need compact boolean flags | Code readability is more important than micro-optimization |
+| Solving subset/combination problems | Operations involve non-integer data |
+| Optimizing known bottlenecks | Premature optimization without profiling |
+| Working with hardware/Protocol flags | Team unfamiliar with bitwise operations |
 
 ### Edge Cases & Pitfalls
 
-- **1-based vs 0-based:** Fenwick trees are naturally 1-based; be careful with index mapping.
-- **Overflow:** Range sums can overflow `int`; use `int64` for large values.
-- **Lazy propagation:** For range updates, segment trees require lazy propagation, which adds complexity.
+- **Sign extension:** Right shift of negative numbers preserves sign bit in Go (arithmetic shift).
+- **Overflow:** Left shift can overflow; use `uint` for bit manipulation to avoid sign issues.
+- **Precedence:** Bitwise operators have lower precedence than arithmetic; use parentheses.
+- **Go's `int` size:** `int` is 32 or 64 bits depending on architecture; use explicit sizes when needed.
 
-## 38.5. Quick Reference
+## 39.5. Quick Reference
 
-| Structure | Go Type | Query | Update | Space |
-|-----------|---------|-------|--------|-------|
-| Segment Tree | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(4n)</code> |
-| Fenwick Tree | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
-| Sparse Table | `[][]int` | <code>O(1)</code> | . | <code>O(n log n)</code> |
+| Operation | Expression | Use Case |
+|-----------|-----------|----------|
+| Power of two | `(n & (n-1)) == 0` | Capacity checks |
+| Count bits | `n & (n-1)` loop | Hamming distance |
+| Isolate lowest bit | `n & -n` | Fenwick tree |
+| Clear lowest bit | `n & (n-1)` | Bit counting |
+| Toggle bit | `n ^ (1 << i)` | Flag flipping |
+| Subset enumeration | `for mask := 0; mask < (1<<n); mask++` | Combinatorics |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 38:</strong> Segment trees and Fenwick trees solve range query problems efficiently. Use Fenwick trees for sum queries due to their simplicity and space efficiency. Use segment trees for min/max queries or when lazy propagation is needed. In Go, implement Fenwick trees with 1-based indexing for cleaner code.
+<strong>Summary Chapter 37:</strong> Bit manipulation provides compact and efficient solutions for specific problem classes. Master the core tricks: power-of-two checks, bit counting, and subset enumeration. In Go, prefer `uint` for bitwise operations to avoid sign extension surprises, and always prioritize code clarity over clever bit tricks unless performance is critical.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
-- [Chapter 33: Linear Programming](/docs/Part-VII/Chapter-33/)
-- [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)
+- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-28/)
+- [Chapter 33: Polynomial and FFT](/docs/Part-VII/Chapter-33/)
+- [Chapter 42: Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-42/)

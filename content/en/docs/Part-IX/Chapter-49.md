@@ -1,7 +1,7 @@
 ---
-weight: 90500
-title: "Chapter 49: Suffix Arrays"
-description: "Suffix Arrays"
+weight: 90600
+title: "Chapter 49: Persistent Data Structures"
+description: "Persistent Data Structures"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,131 +11,115 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>String algorithms are the hidden engines of the modern world.</em>" : Unknown</strong>
+<strong>"<em>Persistence is the path to immutability.</em>" : Chris Okasaki</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 49 introduces suffix arrays — a space-efficient alternative to suffix trees for string searching, <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr>, and bioinformatics.
+Chapter 50 explores persistent data structures — structures that preserve previous versions when modified, enabling time-travel debugging and functional programming paradigms.
 {{% /alert %}}
 
-## 49.1. The String Search Problem
+## 50.1. What Is Persistence?
 
-**Definition:** A <abbr title="A sorted array of all suffixes of a string, enabling efficient string matching and analysis.">suffix array</abbr> is the lexicographically sorted array of all suffixes of a string. It enables powerful string operations with <code>O(n log n)</code> construction and <code>O(m log n)</code> pattern search.
+**Definition:** A <abbr title="A data structure that always preserves the previous version of itself when it is modified, enabling access to any version.">persistent data structure</abbr> preserves all previous versions after modification. There are two flavors:
 
 **Background & Philosophy:**
-The philosophy is reducing complex string geometries into mathematically sortable integers. Suffix Trees are incredibly powerful but hideously complex to build and store. A Suffix Array abandons the tree structure entirely, opting simply to sort pointers to the suffixes. It relies on the insight that binary search over a sorted list of suffixes solves <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> elegantly.
+The philosophy is absolute immutability. In standard data structures, an update destroys the past. Persistent structures treat data like a timeline: an update does not overwrite the old data; it creates a new "version" of the world that points back to the unchanged parts of the old world.
 
 **Use Cases:**
-Bioinformatics (DNA sequence alignment), full-text search engines, and data compression (Burrows-Wheeler Transform).
+Git version control (trees and blobs), functional programming languages (Clojure, Haskell), and time-travel debugging tools.
 
 **Memory Mechanics:**
-A <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr> allocates a node for every character, severely fragmenting <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. A Suffix Array merely stores an array of integers (the starting indices of suffixes). For a string of length `N`, it strictly requires <code>O(N)</code> contiguous memory (just `4N` or `8N` bytes). This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> integer array allows the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch data flawlessly during binary searches, making it vastly superior to Suffix Trees in real-world memory performance.
+Persistent structures rely heavily on <abbr title="A technique where only the nodes along the path from root to the modified node are copied, sharing unchanged subtrees.">"Path Copying"</abbr>. Instead of deep-copying an entire 1-million node tree (which would instantly exhaust memory), they only copy the <code>O(log n)</code> nodes along the path from the root to the modified leaf. This structural sharing heavily depends on the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> to reclaim versions that are no longer referenced. Because nodes are never modified in-place, persistent structures completely eliminate data races, making them inherently thread-safe without any memory locks.
 
-### Suffix Array vs <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr>
+| Type | Behavior | Example |
+|------|----------|---------|
+| **Partial persistence** | Read all versions, write only latest | Versioned logs |
+| **Full persistence** | Read and write any version | Functional data structures |
 
-| Aspect | Suffix Array | <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr> |
-|--------|--------------|-------------|
-| Space | <code>O(n)</code> integers | <code>O(n)</code> pointers (heavy) |
-| Construction | <code>O(n log n)</code> or <code>O(n)</code> | <code>O(n)</code> |
-| Pattern search | <code>O(m log n)</code> | <code>O(m)</code> |
-| Implementation | Moderate | Complex |
+## 50.2. Path Copying
 
-## 49.2. Construction
+The key technique: when updating a node, copy the path from root to that node, sharing unchanged subtrees.
 
-For string "banana":
-
-| Index | Suffix |
-|-------|--------|
-| 5 | a |
-| 3 | ana |
-| 1 | anana |
-| 0 | banana |
-| 4 | na |
-| 2 | nana |
-
-Suffix array: [5, 3, 1, 0, 4, 2]
-
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: Naive Construction
+### Persistent Linked List
 
 ```go
 package main
 
-import (
-	"fmt"
-	"sort"
-)
+import "fmt"
 
-func buildSuffixArray(s string) []int {
-    n := len(s)
-    sa := make([]int, n)
-    for i := range sa {
-        sa[i] = i
-    }
-    sort.Slice(sa, func(i, j int) bool {
-        return s[sa[i]:] < s[sa[j]:]
-    })
-    return sa
+type List struct {
+    val  int
+    next *List
+}
+
+// Prepend returns a NEW list, original unchanged
+func (l *List) Prepend(v int) *List {
+    return &List{val: v, next: l}
 }
 
 func main() {
-    sa := buildSuffixArray("banana")
-    fmt.Println(sa) // [5 3 1 0 4 2]
+    // Original list still valid
+    list1 := &List{val: 1}
+    list2 := list1.Prepend(2)
+    
+    fmt.Println(list1.val) // 1
+    fmt.Println(list2.val) // 2
 }
 ```
 
-## 49.3. Pattern Search
+## 50.3. Persistent <abbr title="A tree where each node has at most two children">Binary Tree</abbr>
 
-With a suffix array, <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> finds all occurrences of pattern P in <code>O(\|P\| log n)</code> time.
+Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchanged siblings are shared.
 
-### Longest Common Prefix (LCP)
+| Operation | Time | Space |
+|-----------|------|-------|
+| Update | <code>O(log n)</code> | <code>O(log n)</code> new nodes |
+| Access | <code>O(log n)</code> | <code>O(1)</code> |
 
-The <abbr title="An array storing the length of the longest common prefix between each adjacent pair of suffixes in the suffix array.">LCP array</abbr> enables:
-- Finding repeated substrings
-- Computing number of distinct substrings
-- Solving bioinformatics problems
+## 50.4. Applications
 
-## 49.4. Applications
+| Application | Why Persistence |
+|-------------|-----------------|
+| **Git** | Every commit is a persistent snapshot |
+| **Undo/redo** | Each state preserved automatically |
+| **Functional programming** | Immutability by default |
+| **Time-travel debugging** | Inspect any past program state |
+| **Concurrent structures** | No locks needed for read-only versions |
 
-| Application | How Suffix Array Helps |
-|-------------|----------------------|
-| **Full-text search** | Find all occurrences of a word |
-| **Bioinformatics** | DNA sequence alignment |
-| **Data compression** | Burrows-Wheeler transform |
-| **Plagiarism detection** | Find longest common substring |
+## 50.5. Decision Matrix
 
-## 49.5. Decision Matrix
-
-| Use Suffix Arrays When... | Use Tries When... |
-|---------------------------|-------------------|
-| Searching in one static text | Dynamic dictionary of words |
-| Space matters | Prefix queries dominate |
-| Multiple pattern searches | Single pattern, many texts |
+| Use Persistence When... | Use Mutation When... |
+|-------------------------|---------------------|
+| History matters | Only latest state needed |
+| Functional style | Imperative style |
+| Concurrent reads | Single-threaded performance |
+| Undo functionality | Memory is constrained |
 
 ### Edge Cases & Pitfalls
 
-- **Sentinel character:** Append `$` to ensure no suffix is a prefix of another.
-- **Memory:** For large texts (genomes), use compressed suffix arrays.
-- **Construction time:** <code>O(n² log n)</code> naive sort is too slow for n > 10⁵ — use doubling or SA-IS algorithm.
+- **Space growth:** n updates create <code>O(n log n)</code> nodes — garbage collection essential.
+- **Node sharing:** Modifying a "shared" node corrupts all versions — immutability must be stringently enforced.
+- **Amortization:** Some persistent structures (queues) use lazy evaluation for efficiency.
 
-## 49.6. Quick Reference
+## 50.6. Quick Reference
 
-| Algorithm | Time | Space |
-|-----------|------|-------|
-| Naive sort | <code>O(n² log n)</code> | <code>O(n)</code> |
-| Doubling | <code>O(n log n)</code> | <code>O(n)</code> |
-| SA-IS | <code>O(n)</code> | <code>O(n)</code> |
+| Structure | Persistent Variant | Overhead |
+|-----------|-------------------|----------|
+| Linked list | Fully persistent | <code>O(1)</code> per update |
+| <abbr title="A tree where each node has at most two children">Binary tree</abbr> | Path copying | <code>O(log n)</code> per update |
+| Array | Fat nodes / copy-on-write | <code>O(1)</code>–<code>O(n)</code> |
+| Queue | Banker's method | <code>O(1)</code> amortized |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `strings` | `Index`, `Contains` for simple cases |
-| `index/suffixarray` | Go's production-ready suffix array implementation |
+| Immutable by convention | Slices share arrays (but not truly persistent) |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 49:</strong> Suffix arrays prove that sorting can solve complex string problems elegantly. By lexicographically sorting all suffixes, they transform <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> into binary search — a beautiful <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr> from string complexity to array simplicity. For static text search, they offer the best balance of speed, space, and implementation clarity.
+<strong>Summary Chapter 48:</strong> Persistent data structures trade space for time travel — preserving every version of data by sharing unchanged parts and copying only modified paths. They enable the functional programming paradigm, version control systems, and undo functionality. The insight is profound: immutability is not a limitation but a superpower that eliminates entire classes of bugs.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 35: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-35/)
-- [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)
-- [Chapter 50: Persistent Data Structures](/docs/Part-IX/Chapter-50/)
+- [Chapter 36: Trie Data Structures](/docs/Part-VII/Chapter-36/)
+- [Chapter 48: Suffix Arrays](/docs/Part-IX/Chapter-48/)
+- [Chapter 41: Evolution of Data Structures](/docs/Part-VIII/Chapter-41/)

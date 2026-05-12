@@ -1,7 +1,7 @@
 ---
-weight: 60200
-title: "Chapter 24: Dynamic Programming"
-description: "Dynamic Programming"
+weight: 60300
+title: "Chapter 24: Greedy Algorithms"
+description: "Greedy Algorithms"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,172 +11,211 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Those who cannot remember the past are condemned to repeat it.</em>" : George Santayana</strong>
+<strong>"<em>Greed, for lack of a better word, is good.</em>" : Gordon Gekko</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 24 covers <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (DP): a method for solving complex problems by breaking them into <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr> and storing solutions to avoid redundant computation.
+Chapter 25 covers <abbr title="An algorithm making locally optimal choices at each step.">greedy algorithms</abbr>: making locally optimal choices at each step to find a <abbr title="The best possible solution over the entire search space">global optimum</abbr>. Learn when greediness works and when it fails.
 {{% /alert %}}
 
-## 24.1. DP Fundamentals
+## 25.1. Greedy Strategy
 
-**Definition:** <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> solves problems by breaking them into smaller <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>, solving each subproblem once, and storing the result for reuse. It applies when a problem exhibits **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>** and **<abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>**.
+**Definition:** A <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> builds a solution piece by piece, always choosing the next piece that offers the most immediate benefit. It works only when the problem has the **greedy choice property** and **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>**.
 
 **Background & Philosophy:**
-"Those who cannot remember the past are condemned to repeat it." DP is the philosophy of trading space for time. It recognizes that in many recursive problems, the exact same subproblems are evaluated millions of times. By explicitly memoizing (caching) these results, it transforms exponential <code>O(2^n)</code> chaos into polynomial <code>O(n)</code> order.
+The philosophy of Greed is local optimization. Instead of examining all possible futures (like <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>) or storing all past states (like <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">DP</abbr>), a <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> makes the mathematically best choice right now and never reconsiders it. It trades guarantees of absolute correctness for blinding speed.
 
 **Use Cases:**
-Sequence alignment in bioinformatics (DNA matching), pricing complex financial derivatives, and solving optimization problems like the Knapsack problem for resource allocation.
+Network packet routing (<abbr title="An algorithm finding shortest paths in non-negative weighted graphs.">Dijkstra</abbr>), data compression (<abbr title="A greedy algorithm for lossless data compression using variable-length codes.">Huffman coding</abbr>), and resource scheduling where constraints allow sorting to define priority.
 
 **Memory Mechanics:**
-DP introduces severe memory demands. A 2D DP table for LCS allocates `m * n` memory cells. In Go, `[][]int` allocates a slice of slice headers, each pointing to a separate underlying array. This scatters memory and causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. A powerful memory optimization trick in DP is "state <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr>": since calculating row `i` often only requires row `i-1`, developers can discard the rest of the matrix and only keep two 1D slices in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, drastically improving <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and reducing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
+Greedy algorithms almost always require the data to be sorted first. This means their memory profile is dictated by the sorting algorithm (usually <code>O(log n)</code> auxiliary space for Quick Sort). Once sorted, the greedy phase is a simple linear scan (<code>O(n)</code>). This sequential access pattern provides flawless <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> performance.
 
-### Two Approaches
+### When Greedy Works
 
-| Approach | Method | Space | Use Case |
-|----------|--------|-------|----------|
-| Top-down (Memoization) | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> | <code>O(n)</code> | Natural recursive formulation |
-| Bottom-up (Tabulation) | Iterative table filling | <code>O(n)</code> or <code>O(n^2)</code> | Better constant factors, no <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
+| Problem | Greedy Choice | Proof |
+|---------|--------------|-------|
+| Fractional Knapsack | Highest value/weight ratio | Exchange argument |
+| Activity Selection | Earliest finish time | Staying ahead |
+| Huffman Coding | Lowest frequency pair | Cut-and-paste |
+| Minimum Spanning Tree | Lightest safe edge | Cut property |
 
-## 24.2. Fibonacci and Memoization
+## 25.2. Fractional Knapsack
 
-**Definition:** The classic Fibonacci sequence demonstrates DP. Without memoization, it has <code>O(2^n)</code> complexity; with memoization, it drops to <code>O(n)</code>.
+**Definition:** Given items with weights and values, fill a knapsack to maximize value. Unlike 0/1 knapsack, you can take fractions of items.
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
-Use a `map[int]int` for memoization or a slice for tabulation.
+Sort by value-to-weight ratio in descending order.
 
 ```go
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
-// Top-down with memoization
-func fibMemo(n int, memo map[int]int) int {
-	if n <= 1 { return n }
-	if v, ok := memo[n]; ok { return v }
-	memo[n] = fibMemo(n-1, memo) + fibMemo(n-2, memo)
-	return memo[n]
+type Item struct {
+	Weight int
+	Value  int
 }
 
-// Bottom-up tabulation
-func fibTab(n int) int {
-	if n <= 1 { return n }
-	dp := make([]int, n+1)
-	dp[0], dp[1] = 0, 1
-	for i := 2; i <= n; i++ {
-		dp[i] = dp[i-1] + dp[i-2]
+func fractionalKnapsack(items []Item, capacity int) float64 {
+	sort.Slice(items, func(i, j int) bool {
+		vi := float64(items[i].Value) / float64(items[i].Weight)
+		vj := float64(items[j].Value) / float64(items[j].Weight)
+		return vi > vj
+	})
+	
+	var total float64
+	for _, item := range items {
+		if capacity >= item.Weight {
+			total += float64(item.Value)
+			capacity -= item.Weight
+		} else {
+			total += float64(item.Value) * float64(capacity) / float64(item.Weight)
+			break
+		}
 	}
-	return dp[n]
+	return total
 }
 
 func main() {
-	fmt.Println(fibMemo(30, map[int]int{})) // 832040
-	fmt.Println(fibTab(30))                 // 832040
+	items := []Item{{10, 60}, {20, 100}, {30, 120}}
+	fmt.Println(fractionalKnapsack(items, 50)) // 240
 }
 ```
 
-## 24.3. 0/1 Knapsack Problem
+## 25.3. Activity Selection
 
-**Definition:** Given items with weights and values, select items to maximize total value without exceeding a weight capacity. Each item can be taken at most once.
+**Definition:** Given activities with start and finish times, select the maximum number of non-overlapping activities.
 
 ### Idiomatic Go Implementation
 
-Use a 2D DP table or optimize to 1D.
+Always pick the activity with the earliest finish time.
 
 ```go
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
-func knapsack(weights, values []int, capacity int) int {
-	n := len(weights)
-	dp := make([][]int, n+1)
-	for i := range dp { dp[i] = make([]int, capacity+1) }
-	
-	for i := 1; i <= n; i++ {
-		for w := 0; w <= capacity; w++ {
-			if weights[i-1] <= w {
-				dp[i][w] = max(dp[i-1][w], dp[i-1][w-weights[i-1]]+values[i-1])
-			} else {
-				dp[i][w] = dp[i-1][w]
-			}
-		}
-	}
-	return dp[n][capacity]
+type Activity struct {
+	Start  int
+	Finish int
 }
 
-func max(a, b int) int { if a > b { return a }; return b }
+func activitySelection(activities []Activity) []Activity {
+	sort.Slice(activities, func(i, j int) bool {
+		return activities[i].Finish < activities[j].Finish
+	})
+	
+	var selected []Activity
+	var lastFinish int
+	for _, act := range activities {
+		if act.Start >= lastFinish {
+			selected = append(selected, act)
+			lastFinish = act.Finish
+		}
+	}
+	return selected
+}
 
 func main() {
-	weights := []int{2, 3, 4, 5}
-	values := []int{3, 4, 5, 6}
-	fmt.Println(knapsack(weights, values, 5)) // 7
+	acts := []Activity{{1, 4}, {3, 5}, {0, 6}, {5, 7}, {3, 8}, {5, 9}}
+	fmt.Println(len(activitySelection(acts))) // 4
 }
 ```
 
-## 24.4. Longest Common Subsequence (LCS)
+## 25.4. Huffman Coding
 
-**Definition:** Given two sequences, find the length of the longest subsequence present in both. A subsequence maintains relative order but need not be contiguous.
+**Definition:** Huffman coding constructs an optimal prefix-free binary code by greedily merging the two least frequent symbols.
 
 ### Idiomatic Go Implementation
 
+Use `container/heap` for the priority queue.
+
 ```go
 package main
 
-import "fmt"
+import (
+	"container/heap"
+	"fmt"
+)
 
-func lcs(s1, s2 string) int {
-	m, n := len(s1), len(s2)
-	dp := make([][]int, m+1)
-	for i := range dp { dp[i] = make([]int, n+1) }
-	
-	for i := 1; i <= m; i++ {
-		for j := 1; j <= n; j++ {
-			if s1[i-1] == s2[j-1] {
-				dp[i][j] = dp[i-1][j-1] + 1
-			} else {
-				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
-			}
-		}
+type Node struct {
+	Char  rune
+	Freq  int
+	Left  *Node
+	Right *Node
+}
+
+type NodeHeap []*Node
+
+func (h NodeHeap) Len() int           { return len(h) }
+func (h NodeHeap) Less(i, j int) bool { return h[i].Freq < h[j].Freq }
+func (h NodeHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *NodeHeap) Push(x interface{}) { *h = append(*h, x.(*Node)) }
+func (h *NodeHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	*h = old[:n-1]
+	return old[n-1]
+}
+
+func buildHuffman(freq map[rune]int) *Node {
+	h := &NodeHeap{}
+	heap.Init(h)
+	for ch, f := range freq {
+		heap.Push(h, &Node{Char: ch, Freq: f})
 	}
-	return dp[m][n]
+	for h.Len() > 1 {
+		a := heap.Pop(h).(*Node)
+		b := heap.Pop(h).(*Node)
+		heap.Push(h, &Node{Freq: a.Freq + b.Freq, Left: a, Right: b})
+	}
+	return heap.Pop(h).(*Node)
 }
 
 func main() {
-	fmt.Println(lcs("ABCDE", "ACE")) // 3
+	freq := map[rune]int{'a': 5, 'b': 9, 'c': 12, 'd': 13, 'e': 16, 'f': 45}
+	root := buildHuffman(freq)
+	fmt.Println(root.Freq) // 100
 }
 ```
 
-## 24.5. Decision Matrix
+## 25.5. Decision Matrix
 
-| Use DP When... | Avoid If... |
-|----------------|-------------|
-| Problem has overlapping subproblems | <abbr title="An algorithm making locally optimal choices at each step.">Greedy</abbr> choice property holds (use greedy instead) |
-| Optimal substructure exists | Subproblems are independent (use divide and conquer) |
-| Brute force is exponential | A simpler algorithm achieves same result |
+| Use Greedy When... | Avoid If... |
+|--------------------|-------------|
+| Greedy choice property provably holds | Local optimum ≠ global optimum |
+| Need fast, simple approximation | Exact optimal solution required |
+| Problem structure supports exchange argument | Counterexamples exist (e.g., 0/1 knapsack) |
 
 ### Edge Cases & Pitfalls
 
-- **Space optimization:** Many DP problems can reduce from <code>O(n^2)</code> to <code>O(n)</code> by only keeping the previous row.
-- **Integer overflow:** Knapsack and similar problems may overflow; use `int64` for large values.
-- **Base cases:** Incorrect initialization of DP table leads to wrong answers.
+- **Proving correctness:** Always verify the greedy choice property before implementing.
+- **Fractional vs 0/1:** Greedy works for fractional knapsack but fails for 0/1 knapsack.
+- **Tie-breaking:** When multiple choices have equal value, the tie-breaking strategy matters.
 
-## 24.6. Quick Reference
+## 25.6. Quick Reference
 
-| Problem | Go Type | Time | Space | Approach |
-|---------|---------|------|-------|----------|
-| Fibonacci | `[]int` or `map` | <code>O(n)</code> | <code>O(n)</code> | Tabulation |
-| Knapsack 0/1 | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | 2D DP |
-| LCS | `[][]int` | <code>O(mn)</code> | <code>O(mn)</code> | 2D DP |
-| Coin Change | `[]int` | <code>O(nk)</code> | <code>O(n)</code> | 1D DP |
+| Problem | Greedy Choice | Time | Space | Optimal? |
+|---------|--------------|------|-------|----------|
+| Fractional Knapsack | Max value/weight | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
+| Activity Selection | Earliest finish | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
+| Huffman Coding | Min frequency pair | <code>O(n log n)</code> | <code>O(n)</code> | Yes |
+| 0/1 Knapsack | . | . | . | No (use DP) |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 24:</strong> <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> transforms exponential-time recursive problems into polynomial-time solutions by storing subproblem results. Master the pattern: define states, write the recurrence, initialize base cases, and fill the table. In Go, use slices for tabulation and maps for sparse memoization.
+<strong>Summary Chapter 23:</strong> Greedy algorithms provide fast, elegant solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 23: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/Part-VI/Chapter-23/)
-- [Chapter 25: Greedy Algorithms](/docs/Part-VI/Chapter-25/)
-- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-23/)
+- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-25/)
+- [Chapter 35: Approximate Algorithms](/docs/Part-VII/Chapter-35/)

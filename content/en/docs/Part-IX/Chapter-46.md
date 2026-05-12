@@ -1,7 +1,7 @@
 ---
-weight: 90200
-title: "Chapter 46: Skip Lists"
-description: "Skip Lists"
+weight: 90300
+title: "Chapter 46: Bloom Filters"
+description: "Bloom Filters"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,174 +11,153 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Skip lists are a probabilistic alternative to balanced trees.</em>" : William Pugh</strong>
+<strong>"<em>A Bloom filter is a data structure that tells you an element is definitely not in a set, or maybe in a set.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 46 introduces skip lists: a randomized linked list structure achieving <code>O(log n)</code> search without complex rebalancing logic.
+Chapter 47 explores Bloom filters: a space-efficient probabilistic data structure for set membership testing with zero false negatives.
 {{% /alert %}}
 
-## 46.1. The Problem with Balanced Trees
+## 47.1. The Membership Problem
 
-**Definition:** <abbr title="A data structure that allows fast search within an ordered sequence of elements using a hierarchy of linked lists that skip over intermediate elements.">Skip lists</abbr> offer the performance of balanced trees with the absolute simplicity of linked lists. Invented by William Pugh in 1989 as a simpler alternative to red-black trees.
+**Definition:** A <abbr title="A space-efficient probabilistic data structure that is used to test whether an element is a member of a set, with possible false positives but no false negatives.">Bloom filter</abbr> answers: "Is element X in set S?" with:
+- **"No"** : Definitely not in set (100% accurate)
+- **"Maybe"** : Might be in set (possible <abbr title="An error where a test incorrectly indicates the presence of a condition when it is not present.">false positive</abbr>)
 
 **Background & Philosophy:**
-The philosophy is probabilistic simplicity. Balancing an AVL or Red-Black tree involves incredibly complex rotations and edge cases. A Skip List abandons rigid mathematical guarantees, replacing them with coin flips. By randomly promoting elements to "express lanes," it achieves <code>O(log n)</code> performance statistically, drastically simplifying the code.
+The philosophy is acceptable inaccuracy. A Bloom Filter trades absolute certainty for extreme compression. It happily accepts a small margin of "False Positives" to mathematically guarantee zero "False Negatives", crushing gigabytes of data down into megabytes.
 
 **Use Cases:**
-Concurrent databases (Redis Sorted Sets, LevelDB) and in-memory indexing where lock contention must be minimized.
+Web browsers checking malicious URLs, CDNs preventing cache pollution, and databases (Cassandra, RocksDB) skipping expensive disk reads for non-existent keys.
 
 **Memory Mechanics:**
-Skip lists avoid the massive, locked restructuring events required by B-Trees. However, they allocate nodes with variable-length arrays of `next` <abbr title="A variable that stores a memory address.">pointers</abbr>. In Go, `make([]*Node, level)` triggers <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocation for every single insertion. This scatters memory nodes wildly across the heap, completely destroying <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> coherence during a traversal. Thus, while algorithmically <code>O(log n)</code>, Skip Lists often lose to B-Trees purely due to <abbr title="Inefficient RAM usage creating small unusable blocks">memory fragmentation</abbr>.
+A Bloom Filter relies on a single, massive bit array (often represented in Go as `[]uint64`). It hashes an item multiple times to flip specific bits. This requires jumping to completely random indices in the bit array. Because the array is usually several megabytes, these jumps constantly trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. However, executing 7 rapid cache misses in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> is still infinitely faster than executing a single mechanical seek on a physical hard drive.
 
-### Why Skip Lists?
+### Space Efficiency
 
-| Aspect | Balanced Tree | Skip List |
-|--------|---------------|-----------|
-| Code complexity | High (rotations) | Low (randomized levels) |
-| Deterministic | Yes | Probabilistic |
-| Concurrency | Hard (tree restructuring) | Easier (local updates) |
-| Cache performance | Poor (pointer chasing) | Moderate |
+| Structure | Bits per Element | <abbr title="An error indicating a condition is present when it is not">False Positive</abbr> Rate |
+|-----------|-----------------|---------------------|
+| Hash table | 64+ | 0% |
+| Bloom filter | 10 | 1% |
 
-## 46.2. Structure
+Storing 1 billion URLs: hash table ≈ 8 GB, Bloom filter ≈ 1 GB.
 
-A skip list is a hierarchy of linked lists. The bottom level contains all elements. Each higher level acts as an "express lane" skipping over elements below.
+## 47.2. How It Works
 
-### Level Assignment
+A Bloom filter is a bit array of m bits, initially all 0, with k independent hash functions.
 
-Each element's level is determined by coin flips:
-- Level 1: probability 1/2
-- Level 2: probability 1/4
-- Level k: probability 1/2^k
-
-Expected number of levels is securely bounded by <code>O(log n)</code>.
-
-## 46.3. Operations
-
-### Search
-
-Start at the top-left, move right while current ≤ target, drop down when exceeded.
-
-### Insertion
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main
 
 import (
 	"fmt"
-	"math/rand"
+	"hash/fnv"
 )
 
-type Node struct {
-	key     int
-	forward []*Node
+type BloomFilter struct {
+	bits []uint64
+	m    uint32
+	k    int
 }
 
-type SkipList struct {
-	head     *Node
-	level    int
-	maxLevel int
-}
-
-func NewSkipList(maxLevel int) *SkipList {
-	return &SkipList{
-		head:     &Node{forward: make([]*Node, maxLevel)},
-		level:    1,
-		maxLevel: maxLevel,
+func NewBloomFilter(m uint32, k int) *BloomFilter {
+	// Allocate bits/64 elements
+	return &BloomFilter{
+		bits: make([]uint64, (m+63)/64),
+		m:    m,
+		k:    k,
 	}
 }
 
-func (sl *SkipList) randomLevel() int {
-	lvl := 1
-	for rand.Float64() < 0.5 && lvl < sl.maxLevel {
-		lvl++
-	}
-	return lvl
+func (bf *BloomFilter) hash(item []byte, i int) uint32 {
+	h := fnv.New32a()
+	h.Write(item)
+	// Mix in the hash index i
+	h.Write([]byte{byte(i)})
+	return h.Sum32()
 }
 
-func (sl *SkipList) Insert(key int) {
-	update := make([]*Node, sl.maxLevel)
-	current := sl.head
+func (bf *BloomFilter) Add(item []byte) {
+	for i := 0; i < bf.k; i++ {
+		idx := bf.hash(item, i) % bf.m
+		bf.bits[idx/64] |= (1 << (idx % 64))
+	}
+}
 
-	for i := sl.level - 1; i >= 0; i-- {
-		for current.forward[i] != nil && current.forward[i].key < key {
-			current = current.forward[i]
+func (bf *BloomFilter) Contains(item []byte) bool {
+	for i := 0; i < bf.k; i++ {
+		idx := bf.hash(item, i) % bf.m
+		if (bf.bits[idx/64] & (1 << (idx % 64))) == 0 {
+			return false // Definitely not present
 		}
-		update[i] = current
 	}
-
-	level := sl.randomLevel()
-	if level > sl.level {
-		for i := sl.level; i < level; i++ {
-			update[i] = sl.head
-		}
-		sl.level = level
-	}
-
-	node := &Node{key: key, forward: make([]*Node, level)}
-	for i := 0; i < level; i++ {
-		node.forward[i] = update[i].forward[i]
-		update[i].forward[i] = node
-	}
+	return true // Maybe present
 }
 
 func main() {
-	sl := NewSkipList(16)
-	sl.Insert(10)
-	fmt.Println("Skip list functional.")
+	bf := NewBloomFilter(1000, 3)
+	bf.Add([]byte("golang"))
+	fmt.Println(bf.Contains([]byte("golang"))) // true
+	fmt.Println(bf.Contains([]byte("rust")))   // false (probably)
 }
 ```
 
-| Operation | Average | Worst |
-|-----------|---------|-------|
-| Search | <code>O(log n)</code> | <code>O(n)</code> |
-| Insert | <code>O(log n)</code> | <code>O(n)</code> |
-| Delete | <code>O(log n)</code> | <code>O(n)</code> |
+## 47.3. Optimal Parameters
 
-## 46.4. Analysis
+For desired false positive rate ε and n expected elements:
 
-With incredibly high probability, skip lists maintain <code>O(log n)</code> height. The expected number of pointers is 2n, ensuring strong space efficiency.
+| Parameter | Formula | Typical Value |
+|-----------|---------|---------------|
+| m (bits) | -n ln(ε) / (ln 2)² | ~10n for ε=1% |
+| k (hashes) | m/n · ln 2 | ~7 for ε=1% |
 
-### Comparison
+### False Positive Rate
 
-| Structure | Search | Insert | Delete | Space |
-|-----------|--------|--------|--------|-------|
-| Skip list | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
-| Red-black tree | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
-| AVL tree | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(n)</code> |
+p ≈ (1 - e^(-kn/m))^k
 
-## 46.5. Decision Matrix
+## 47.4. Variants
 
-| Choose Skip Lists When... | Choose Trees When... |
-|---------------------------|---------------------|
-| Simplicity is paramount | Strict deterministic guarantees are mandated |
-| Concurrent modifications exist | Peak cache efficiency is critical |
-| Teaching or learning the concept | Running production with strict SLAs |
+| Variant | Feature | Use Case |
+|---------|---------|----------|
+| **Counting Bloom filter** | Supports deletion | Network caching |
+| **Cuckoo filter** | Better cache behavior | High-performance systems |
+| **Scalable Bloom filter** | Grows dynamically | Unknown set sizes |
+
+## 47.5. Decision Matrix
+
+| Use Bloom Filters When... | Use Hash Sets When... |
+|---------------------------|-----------------------|
+| Memory is severely constrained | Memory is abundant |
+| False positives are acceptable | False positives are strictly unacceptable |
+| No deletions are needed | Deletions are continually required |
 
 ### Edge Cases & Pitfalls
 
-- **Bad randomness:** A deterministic pseudo-random generator is essential for predictability.
-- **Max level:** Always securely set the max level to `log₂(max_elements) + 1`.
-- **Worst case:** Extremely unlikely but theoretically possible: all elements settle at level 1.
+- **Hash quality:** Poor hash functions dramatically increase collision rates.
+- **Saturation:** When perfectly full, every single query returns "maybe."
+- **No deletion:** Standard Bloom filters cannot effectively remove items.
+- **Counting overflow:** Counting Bloom filters can violently overflow with too many insertions.
 
-## 46.6. Quick Reference
+## 47.6. Quick Reference
 
-| Parameter | Typical Value |
-|-----------|---------------|
-| p (promotion probability) | 0.5 |
-| Max level | 16 to 32 |
-| Expected pointers | 2n |
+| Setting | Bits/Element | Hashes | False Positive |
+|---------|--------------|--------|----------------|
+| Conservative | 16 | 11 | 0.01% |
+| Balanced | 10 | 7 | 1% |
+| Aggressive | 6 | 4 | 5% |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `sync.Map` | Heavily inspired by skip list principles |
+| `github.com/bits-and-blooms` | Production-grade Bloom filters |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 46:</strong> Skip lists prove that randomization can replace deterministic complexity. By flipping coins to build express lanes through a linked list, they achieve balanced-tree performance with code simple enough to write in minutes. When you need <code>O(log n)</code> with minimal implementation risk, skip lists are often the right choice.
+<strong>Summary Chapter 45:</strong> Bloom filters sacrifice absolute certainty for massive space savings. They answer membership queries with no false negatives and tunable <abbr title="An error where a test incorrectly indicates the presence of a condition when it is not present.">false positives</abbr> — ideal when memory is scarce and a small error rate is acceptable. Every large-scale system from databases to CDNs uses Bloom filters to avoid expensive lookups.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
-- [Chapter 28: Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-28/)
-- [Chapter 45: B-Trees](/docs/Part-IX/Chapter-45/)
+- [Chapter 7: Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
+- [Chapter 44: B-Trees](/docs/Part-IX/Chapter-44/)
+- [Chapter 47: LRU Cache](/docs/Part-IX/Chapter-47/)

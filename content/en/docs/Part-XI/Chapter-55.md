@@ -1,7 +1,7 @@
 ---
-weight: 110100
-title: "Chapter 55: Counting, Radix, and Bucket Sort"
-description: "Counting, Radix, and Bucket Sort"
+weight: 110200
+title: "Chapter 55: Sliding Window and Two Pointers"
+description: "Sliding Window and Two Pointers"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,181 +11,164 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Linear-time sorting is not magic — it is the reward of making strong assumptions about your data.</em>" : Unknown</strong>
+<strong>"<em>If <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> is <code>O(n^2)</code>, two pointers or sliding window often reduce it to <code>O(n)</code>.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 55 explores linear-time sorting algorithms — <abbr title="An integer sorting algorithm using frequency counting">counting sort</abbr>, <abbr title="A sorting algorithm processing digits individually">radix sort</abbr>, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> — that beat the <code>O(n log n)</code> comparison bound by exploiting data structure.
+Chapter 56 covers sliding window and two pointers — two fundamental techniques for solving subarray and substring problems in optimal <abbr title="An algorithm whose running time grows linearly with input size">linear time</abbr>.
 {{% /alert %}}
 
-## 55.1. Beyond Comparison Sorting
+## 56.1. The Two Pointers Technique
 
-**Definition:** <abbr title="Sorting algorithms that do not rely on comparing elements, instead using assumptions about the data distribution.">Non-comparison sorts</abbr> achieve <code>O(n)</code> time by making assumptions about the input domain. They aggressively trade general applicability for raw speed.
+**Definition:** The <abbr title="A technique using two indices to traverse a data structure, typically one starting from each end or both from the start.">two pointers</abbr> technique explicitly maintains two indices moving through a sequence to isolate pairs, triplets, or partitions perfectly satisfying a set mathematical condition.
 
 **Background & Philosophy:**
-The philosophy is breaking the comparison barrier. Mathematical proofs guarantee that comparison-based sorting (Merge, Quick) can never be faster than <code>O(n log n)</code>. Non-comparison sorts (Counting, Radix) completely bypass this law by making strict assumptions about the data (e.g., "all elements are integers between 0 and k"). They trade universal applicability for raw, linear speed.
+The philosophy is dynamic bounds management. Instead of running a nested loop <code>O(n^2)</code> to re-evaluate every possible sub-array combination, these algorithms maintain a "memory" of the previous state. By incrementally adding to the front and removing from the back, they reduce a quadratic <abbr title="The set of all candidate solutions in a problem">search space</abbr> into a linear <code>O(n)</code> stroll.
 
 **Use Cases:**
-Rendering engines sorting 3D polygons by depth, network routers organizing packets by priority flags, and sorting massive arrays of dates/timestamps.
+Network congestion control (TCP sliding windows), video streaming buffer management, and parsing continuous streams of market data for moving averages.
 
 **Memory Mechanics:**
-Non-comparison sorts are notoriously memory-hungry. <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr> allocates an auxiliary array of size `k`. If `k` is 1 billion, it allocates a massive chunk of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> just to count. <abbr title="A sorting algorithm processing digits individually">Radix Sort</abbr> performs multiple passes, often allocating and copying data into 10 or 256 distinct "buckets" during each pass. While algorithmically <code>O(n)</code>, the constant <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> and heavy <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> tracing caused by these bucket arrays in Go can make them ironically slower than a highly-optimized in-place Quick Sort for datasets that easily fit within the L1/L2 caches.
+Sliding Window and Two Pointers are exceptionally hardware-friendly. They operate entirely in-place (<code>O(1)</code> memory) utilizing just two integer indices (`left` and `right`). As these indices scan sequentially across a slice, they capitalize perfectly on the CPU's <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The hardware prefetcher predicts the memory access pattern flawlessly, ensuring the data is already waiting in the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> before the Go runtime even executes the loop.
 
-| Algorithm | Assumption | Time | Space |
-|-----------|-----------|------|-------|
-| <abbr title="An integer sorting algorithm using frequency counting">Counting sort</abbr> | Integers in range [0, k] | <code>O(n + k)</code> | <code>O(k)</code> |
-| <abbr title="A sorting algorithm processing digits individually">Radix sort</abbr> | d-digit integers | <code>O(d(n + k))</code> | <code>O(n + k)</code> |
-| <abbr title="A sorting algorithm distributing elements into buckets">Bucket sort</abbr> | Uniform distribution | <code>O(n)</code> avg | <code>O(n)</code> |
+### Classic: Pair Sum
 
-## 55.2. <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr>
-
-Count occurrences, then compute <abbr title="An array where each element is the sum of all preceding elements, enabling O(1) range sum queries.">prefix sums</abbr> for exact array positions.
-
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+Given a sorted array, find a precise pair summing exactly to a target:
 
 ```go
 package main
 
 import "fmt"
 
-func countingSort(arr []int, max int) []int {
-    count := make([]int, max+1)
-    for _, v := range arr {
-        count[v]++
-    }
-    
-    // Prefix sum gives exact sequential positions
-    for i := 1; i <= max; i++ {
-        count[i] += count[i-1]
-    }
-    
-    output := make([]int, len(arr))
-    for i := len(arr) - 1; i >= 0; i-- {
-        v := arr[i]
-        count[v]--
-        output[count[v]] = v
-    }
-    
-    return output
-}
-
-func main() {
-    arr := []int{4, 2, 2, 8, 3, 3, 1}
-    fmt.Println(countingSort(arr, 8)) // [1 2 2 3 3 4 8]
-}
-```
-
-## 55.3. Radix Sort
-
-Sort digit by digit from least significant to most significant, rigidly utilizing counting sort as the stable mathematical subroutine.
-
-| Variant | Order | Stable? |
-|---------|-------|---------|
-| LSD | Least significant digit first | Yes |
-| MSD | Most significant digit first | Yes (with recursion) |
-
-### Idiomatic Go: LSD Radix Sort
-
-```go
-package main
-
-import "fmt"
-
-func maxElement(arr []int) int {
-    max := arr[0]
-    for _, v := range arr {
-        if v > max {
-            max = v
+func twoSumSorted(arr []int, target int) []int {
+    left, right := 0, len(arr)-1
+    for left < right {
+        sum := arr[left] + arr[right]
+        if sum == target {
+            return []int{left, right}
+        } else if sum < target {
+            left++
+        } else {
+            right--
         }
     }
-    return max
-}
-
-func countingSortByDigit(arr []int, exp int) {
-    n := len(arr)
-    output := make([]int, n)
-    count := make([]int, 10)
-
-    for i := 0; i < n; i++ {
-        index := (arr[i] / exp) % 10
-        count[index]++
-    }
-
-    for i := 1; i < 10; i++ {
-        count[i] += count[i-1]
-    }
-
-    for i := n - 1; i >= 0; i-- {
-        index := (arr[i] / exp) % 10
-        output[count[index]-1] = arr[i]
-        count[index]--
-    }
-
-    for i := 0; i < n; i++ {
-        arr[i] = output[i]
-    }
-}
-
-func radixSort(arr []int) {
-    if len(arr) == 0 {
-        return
-    }
-    max := maxElement(arr)
-    for exp := 1; max/exp > 0; exp *= 10 {
-        countingSortByDigit(arr, exp)
-    }
+    return nil
 }
 
 func main() {
-    arr := []int{170, 45, 75, 90, 802, 24, 2, 66}
-    radixSort(arr)
-    fmt.Println(arr)
+    arr := []int{2, 7, 11, 15}
+    fmt.Println(twoSumSorted(arr, 9)) // [0 1]
 }
 ```
 
-## 55.4. Bucket Sort
+| Variation | Pointer Movement |
+|-----------|-----------------|
+| Opposite ends | Converge inward simultaneously |
+| Same direction | Fast and slow tracking (cycle detection) |
+| Partitioning | Segregation based strictly upon a mathematical condition |
 
-Distribute elements into distinct physical buckets based entirely on range, sort each bucket individually (often utilizing <abbr title="A sorting algorithm that builds the final sorted array one item at a time.">insertion sort</abbr>), then sequentially concatenate them.
+## 56.2. Sliding Window
 
-| Step | Time |
-|------|------|
-| Distribute to buckets | <code>O(n)</code> |
-| Sort each bucket | <code>O(n)</code> avg (if uniformly distributed) |
-| Concatenate | <code>O(n)</code> |
+**Definition:** The <abbr title="A technique for finding a subarray or substring that satisfies a condition by maintaining a window of elements and adjusting its bounds.">sliding window</abbr> paradigm elegantly maintains a subarray/substring that rigorously satisfies a specific condition, organically expanding and contracting the window bounds as needed.
 
-## 55.5. Decision Matrix
+### Fixed-Size Window
 
-| Use Counting Sort When... | Use Radix Sort When... | Use Bucket Sort When... |
-|---------------------------|------------------------|------------------------|
-| Small integer range exists | Large integers, fixed digits | Uniform distribution known |
-| k = <code>O(n)</code> | d is small | Processing floating-point numbers |
+Calculate the maximum sum of exactly `k` consecutive elements:
+
+```go
+package main
+
+import "fmt"
+
+func maxSumWindow(arr []int, k int) int {
+    if len(arr) < k {
+        return 0
+    }
+    maxSum, windowSum := 0, 0
+    for i := 0; i < len(arr); i++ {
+        windowSum += arr[i]
+        if i >= k {
+            windowSum -= arr[i-k]
+        }
+        if i >= k-1 && windowSum > maxSum {
+            maxSum = windowSum
+        }
+    }
+    return maxSum
+}
+
+func main() {
+    arr := []int{1, 4, 2, 10, 2, 3, 1, 0, 20}
+    fmt.Println(maxSumWindow(arr, 4)) // 24
+}
+```
+
+### Variable-Size Window
+
+Determine the longest substring fundamentally lacking any repeating characters:
+
+```go
+package main
+
+import "fmt"
+
+func lengthOfLongestSubstring(s string) int {
+    charIndex := map[byte]int{}
+    maxLen := 0
+    start := 0
+    
+    for i := 0; i < len(s); i++ {
+        if idx, ok := charIndex[s[i]]; ok && idx >= start {
+            start = idx + 1
+        }
+        charIndex[s[i]] = i
+        if i-start+1 > maxLen {
+            maxLen = i - start + 1
+        }
+    }
+    return maxLen
+}
+
+func main() {
+    fmt.Println(lengthOfLongestSubstring("abcabcbb")) // 3
+}
+```
+
+## 56.3. Decision Matrix
+
+| Use Two Pointers When... | Use Sliding Window When... |
+|--------------------------|---------------------------|
+| Dealing with sorted data requiring pair conditions | Processing a strictly contiguous subarray or substring |
+| Partitioning diverse arrays | Summing or averaging distinct constraints |
+| Cycle detection (fast/slow algorithms) | Identifying frequency or diversity constraints |
 
 ### Edge Cases & Pitfalls
 
-- **Counting sort:** k >> n completely ruins performance, causing it to run vastly slower than comparison sorts.
-- **Radix sort:** `d log n` may easily exceed `log n` for remarkably large numbers.
-- **Bucket sort:** A highly skewed distribution rapidly degenerates performance to <code>O(n^2)</code>.
-- **Stability:** Absolutely mandatory for radix sort to function; counting sort natively provides this stability.
+- **Empty input:** Handle empty slices or strings gracefully to prevent panics.
+- **Window bounds:** Off-by-one boundary tracking errors remain profoundly common.
+- **Monotonicity:** The sliding window concept relies completely on the fact that expanding/shrinking scales monotonically.
+- **Duplicate elements:** Use a map to track heavy frequency counts for "at most K distinct" variants.
 
-## 55.6. Quick Reference
+## 56.4. Quick Reference
 
-| Algorithm | Best Case | Worst Case | Stable? |
-|-----------|-----------|------------|---------|
-| Counting | <code>O(n + k)</code> | <code>O(n + k)</code> | Yes |
-| Radix (LSD) | <code>O(d(n + k))</code> | <code>O(d(n + k))</code> | Yes |
-| Bucket | <code>O(n)</code> | <code>O(n^2)</code> | Yes |
+| Problem Type | Technique | Time |
+|--------------|-----------|------|
+| Pair sum in sorted array | Two pointers | <code>O(n)</code> |
+| 3Sum | Two pointers nested | <code>O(n^2)</code> |
+| Container with most water | Two pointers | <code>O(n)</code> |
+| Longest substring K distinct | Sliding window | <code>O(n)</code> |
+| Minimum window substring | Sliding window | <code>O(n)</code> |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `sort.Ints` | Standard <abbr title="A sorting algorithm that only compares elements">comparison sort</abbr> (quicksort/heap sort hybrid) |
-| No native non-<abbr title="A sorting algorithm that only compares elements">comparison sort</abbr> | Implement manually for specialized, integer-bound cases |
+| `strings` | Use `Contains` and `Index` for simplistic, pre-packaged substring operations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 55:</strong> Linear-time sorting algorithms prove that the <code>O(n log n)</code> comparison <abbr title="A function that grows no faster than the given function">lower bound</abbr> applies only when you know nothing about your data. By deliberately exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> achieve <code>O(n)</code> — a powerful reminder that algorithmic efficiency consistently emerges from deeply understanding your specific problem domain.
+<strong>Summary Chapter 54:</strong> Two pointers and sliding window are the absolute bread and butter of linear-time array and string processing. They confidently replace disastrous nested loops with elegant single passes, mathematically exploiting ordering or contiguous structure. Mastering these patterns means instantly recognizing when a problem explicitly asks for "pairs," "subarrays," or "substrings" — and intuitively choosing the right traversal strategy.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 19: Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
-- [Chapter 20: Advanced Sorting Algorithms](/docs/Part-V/Chapter-20/)
-- [Chapter 57: Kadane's Algorithm](/docs/Part-XI/Chapter-57/)
+- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-54/)
+- [Chapter 56: Kadane's Algorithm](/docs/Part-XI/Chapter-56/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-23/)

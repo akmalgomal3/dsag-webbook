@@ -1,7 +1,7 @@
 ---
-weight: 120100
-title: "Chapter 58: Minimax and Game Trees"
-description: "Minimax and Game Trees"
+weight: 120200
+title: "Chapter 58: Mo's Algorithm"
+description: "Mo's Algorithm"
 icon: "article"
 date: "2024-08-24T23:42:09+07:00"
 lastmod: "2024-08-24T23:42:09+07:00"
@@ -11,34 +11,41 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Chess is as elaborate a waste of human intelligence as you can find outside an advertising agency.</em>" : Raymond Chandler</strong>
+<strong>"<em>Mo's algorithm: when you have many range queries, sort them cleverly.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 58 explores minimax — the foundational algorithm for two-player zero-sum games, and alpha-beta pruning that makes it practical.
+Chapter 59 introduces Mo's algorithm: a <abbr title="A technique that divides a problem into blocks of size sqrt(N) to optimize query processing.">sqrt-decomposition</abbr> technique for efficiently answering offline range queries by reordering them to minimize recalculation.
 {{% /alert %}}
 
-## 58.1. Game Trees
+## 59.1. The Offline Query Problem
 
-**Definition:** A <abbr title="A directed graph representing all possible game states and moves in a two-player game.">game tree</abbr> represents all possible sequences of moves. In two-player zero-sum games, one player's gain is the other's loss.
+**Definition:** Given an array and multiple range queries, <abbr title="An algorithm that answers range queries by sorting them in a specific order to minimize pointer movement.">Mo's algorithm</abbr> reorders queries so that each query's answer can be derived from the previous with minimal adjustment.
 
 **Background & Philosophy:**
-The philosophy is deterministic pessimism. <abbr title="A decision rule used in two-player zero-sum games that minimizes the possible loss for a worst-case scenario.">Minimax</abbr> assumes the opponent is flawlessly intelligent and infinitely malicious. By mapping out every possible future and aggressively planning against the absolute worst-case scenario, the algorithm guarantees it will never make a catastrophic mistake.
+The philosophy is query caching via geometric sorting. Instead of processing queries exactly as the user inputs them (which might bounce randomly from the start of the array to the end and back), Mo's algorithm batches them together into blocks. It embraces the philosophy that moving pointers slightly left or right is infinitely faster than restarting a search from zero.
 
 **Use Cases:**
-Classic turn-based, perfect-information board games like Chess, Checkers, and Tic-Tac-Toe, as well as business negotiation models in Game Theory.
+Competitive programming, batched offline data analytics, and historical database queries where all query requests are known entirely in advance.
 
 **Memory Mechanics:**
-<abbr title="A technique that eliminates branches in a game tree that cannot affect the final minimax decision.">Minimax</abbr> relies exclusively on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> to navigate the game tree via Depth-First Search. Without <abbr title="An optimization technique for minimax that eliminates branches that cannot possibly influence the final decision.">Alpha-Beta pruning</abbr>, the tree expands exponentially, pushing millions of frames onto the <abbr title="Memory used to execute functions and store local variables.">stack</abbr> and threatening an <abbr title="An error caused by using more stack memory than allocated.">Out of Memory (OOM)</abbr> crash. Alpha-Beta pruning acts as a memory circuit breaker, abruptly stopping the recursion when a mathematical threshold is crossed. This drastically shrinks the active <abbr title="Memory used to execute functions and store local variables.">stack</abbr> depth and keeps the algorithm firmly within the physical limits of the L1/L2 caches.
+Mo's Algorithm drastically minimizes <code>O(N)</code> memory sweeps. By grouping the queries structurally into `√N` blocks and sorting them, the `curL` and `curR` pointers only creep incrementally forward and backward along the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array. This creates a beautifully predictable memory access pattern. The CPU hardware prefetcher recognizes this creeping movement and reliably loads the required array segments into the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> proactively, virtually eliminating performance-killing <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
 
-### The Minimax Principle
+### Why Reorder Queries?
 
-- **Maximizer** (AI): Tries to maximize the score
-- **Minimizer** (Opponent): Tries to minimize the score
+| Naive | Mo's Algorithm |
+|-------|----------------|
+| <code>O(Q × range)</code> | <code>O((N + Q) × √N)</code> |
+| Process queries in given order | Sort queries by block, then endpoint |
 
-Assume the opponent plays optimally — pessimistic but safe.
+## 59.2. The Algorithm
 
-## 58.2. Minimax Algorithm
+1. Divide array into blocks of size ≈ √N
+2. Sort queries by (block index, right endpoint)
+3. Maintain a "current window" [L, R] and its answer
+4. Expand/shrink L and R to match each query
+
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: Mo's Algorithm
 
 ```go
 package main
@@ -46,224 +53,129 @@ package main
 import (
 	"fmt"
 	"math"
+	"sort"
 )
 
-// Board interface for two-player zero-sum games
-type Board interface {
-	isGameOver() bool
-	evaluate() int
-	getMoves() []int
-	makeMove(move int)
-	undoMove(move int)
+type Query struct {
+	l, r, idx int
 }
 
-// TicTacToe implements Board for a 3x3 board.
-// 0=empty, 1=X (maximizer), 2=O (minimizer)
-type TicTacToe struct {
-	board [9]int
-}
+// freq tracks element occurrences for distinct count queries
+var freq = make(map[int]int)
 
-func (t *TicTacToe) isGameOver() bool {
-	return t.evaluate() != 0 || len(t.getMoves()) == 0
-}
-
-func (t *TicTacToe) evaluate() int {
-	lines := [8][3]int{
-		{0, 1, 2}, {3, 4, 5}, {6, 7, 8},
-		{0, 3, 6}, {1, 4, 7}, {2, 5, 8},
-		{0, 4, 8}, {2, 4, 6},
-	}
-	for _, l := range lines {
-		a, b, c := t.board[l[0]], t.board[l[1]], t.board[l[2]]
-		if a != 0 && a == b && b == c {
-			if a == 1 {
-				return 10 // X wins
-			}
-			return -10 // O wins
-		}
-	}
-	return 0
-}
-
-func (t *TicTacToe) getMoves() []int {
-	var moves []int
-	for i, v := range t.board {
-		if v == 0 {
-			moves = append(moves, i)
-		}
-	}
-	return moves
-}
-
-func (t *TicTacToe) makeMove(move int) {
-	xCount, oCount := 0, 0
-	for _, v := range t.board {
-		switch v {
-		case 1:
-			xCount++
-		case 2:
-			oCount++
-		}
-	}
-	if xCount == oCount {
-		t.board[move] = 1
-	} else {
-		t.board[move] = 2
+// add increments frequency and bumps curAns when a new distinct element appears
+func add(val int, curAns *int) {
+	freq[val]++
+	if freq[val] == 1 {
+		*curAns++
 	}
 }
 
-func (t *TicTacToe) undoMove(move int) {
-	t.board[move] = 0
+// remove decrements frequency and drops curAns when the last copy is removed
+func remove(val int, curAns *int) {
+	freq[val]--
+	if freq[val] == 0 {
+		*curAns--
+	}
 }
 
-func (t *TicTacToe) String() string {
-	s := "\n"
-	for i := 0; i < 3; i++ {
-		for j := 0; j < 3; j++ {
-			switch t.board[i*3+j] {
-			case 0:
-				s += "."
-			case 1:
-				s += "X"
-			case 2:
-				s += "O"
-			}
-			if j < 2 {
-				s += " "
-			}
-		}
-		s += "\n"
-	}
-	return s
-}
+func mosAlgorithm(arr []int, queries []Query) []int {
+	blockSize := int(math.Sqrt(float64(len(arr))))
 
-// minimax with alpha-beta pruning
-func minimaxAB(board Board, depth int, alpha, beta int, isMaximizing bool) int {
-	if depth == 0 || board.isGameOver() {
-		return board.evaluate()
-	}
-	if isMaximizing {
-		maxEval := math.MinInt64
-		for _, move := range board.getMoves() {
-			board.makeMove(move)
-			eval := minimaxAB(board, depth-1, alpha, beta, false)
-			board.undoMove(move)
-			if eval > maxEval {
-				maxEval = eval
-			}
-			if eval > alpha {
-				alpha = eval
-			}
-			if beta <= alpha {
-				break
-			}
+	sort.Slice(queries, func(i, j int) bool {
+		bi := queries[i].l / blockSize
+		bj := queries[j].l / blockSize
+		if bi != bj {
+			return bi < bj
 		}
-		return maxEval
-	}
-	minEval := math.MaxInt64
-	for _, move := range board.getMoves() {
-		board.makeMove(move)
-		eval := minimaxAB(board, depth-1, alpha, beta, true)
-		board.undoMove(move)
-		if eval < minEval {
-			minEval = eval
-		}
-		if eval < beta {
-			beta = eval
-		}
-		if beta <= alpha {
-			break
-		}
-	}
-	return minEval
-}
+		return queries[i].r < queries[j].r
+	})
 
-func bestMove(board Board) int {
-	bestVal := math.MinInt64
-	bestIdx := -1
-	for _, move := range board.getMoves() {
-		board.makeMove(move)
-		val := minimaxAB(board, len(board.getMoves()), math.MinInt64, math.MaxInt64, false)
-		board.undoMove(move)
-		if val > bestVal {
-			bestVal = val
-			bestIdx = move
+	results := make([]int, len(queries))
+	curL, curR := 0, -1
+	curAns := 0
+	// Reset global frequency map before processing
+	freq = make(map[int]int)
+
+	for _, q := range queries {
+		for curL > q.l {
+			curL--
+			add(arr[curL], &curAns)
 		}
+		for curR < q.r {
+			curR++
+			add(arr[curR], &curAns)
+		}
+		for curL < q.l {
+			remove(arr[curL], &curAns)
+			curL++
+		}
+		for curR > q.r {
+			remove(arr[curR], &curAns)
+			curR--
+		}
+		results[q.idx] = curAns
 	}
-	return bestIdx
+	return results
 }
 
 func main() {
-	game := &TicTacToe{}
-	// X (AI, maximizer) plays first at center (move 4)
-	game.makeMove(4)
-	fmt.Println("X (AI) plays center:", game)
-	// O (opponent, minimizer) plays top-left (move 0)
-	game.makeMove(0)
-	fmt.Println("O responds at top-left:", game)
-	// X computes and plays the best move using alpha-beta minimax
-	move := bestMove(game)
-	game.makeMove(move)
-	fmt.Printf("X's best response is move %d:%s\n", move, game)
-	if game.evaluate() > 0 {
-		fmt.Println("X wins!")
-	} else if game.evaluate() < 0 {
-		fmt.Println("O wins!")
-	} else if len(game.getMoves()) == 0 {
-		fmt.Println("Draw!")
-	} else {
-		fmt.Println("Game continues...")
+	arr := []int{1, 2, 1, 3, 2, 4, 1, 5}
+	queries := []Query{
+		{l: 0, r: 3, idx: 0}, // [1,2,1,3] distinct: 3
+		{l: 2, r: 5, idx: 1}, // [1,3,2,4] distinct: 4
+		{l: 1, r: 4, idx: 2}, // [2,1,3,2] distinct: 3
+		{l: 0, r: 7, idx: 3}, // full array distinct: 5
+	}
+	results := mosAlgorithm(arr, queries)
+	fmt.Println("Array:", arr)
+	fmt.Println("Distinct element counts per range query:")
+	for _, q := range queries {
+		fmt.Printf("  [%d, %d]: %d\n", q.l, q.r, results[q.idx])
 	}
 }
 ```
 
-## 58.3. Alpha-Beta Pruning
+## 59.3. When It Works
 
-**Definition:** <abbr title="An optimization technique for minimax that eliminates branches that cannot possibly influence the final decision.">Alpha-beta pruning</abbr> skips evaluating branches that cannot affect the final decision.
+| Problem | Add/Remove | Complexity |
+|---------|-----------|------------|
+| Distinct elements in range | Update frequency map | <code>O((N+Q)√N)</code> |
+| Mode in range | Update frequency counts | <code>O((N+Q)√N)</code> |
+| Sum of frequencies | Simple arithmetic | <code>O((N+Q)√N)</code> |
 
-| Without Pruning | With Pruning |
-|-----------------|--------------|
-| <code>O(b^d)</code> | <code>O(b^(d/2))</code> in best case |
-| Examines all nodes | Skips irrelevant subtrees |
+## 59.4. Decision Matrix
 
-### Key Insight
-
-If the maximizer already has a move worth 5, and the minimizer finds a response worth 3, the minimizer will never choose a path allowing 5 — so stop exploring that branch.
-
-## 58.4. Decision Matrix
-
-| Use Minimax When... | Use Heuristics When... |
-|---------------------|------------------------|
-| Perfect information games | Imperfect information (poker, etc.) |
-| Small <abbr title="The set of all possible states in a problem">state space</abbr> | <abbr title="The set of all possible states in a problem">State space</abbr> too large for full search |
-| Deterministic moves | Stochastic elements |
+| Use Mo's When... | Use Segment Tree When... |
+|-----------------|---------------------------|
+| Offline queries (all known upfront) | Online queries (arrive dynamically) |
+| Add/remove is <code>O(1)</code> or <code>O(log n)</code> | Queries need arbitrary combine |
+| Array is static | Array updates frequently |
 
 ### Edge Cases & Pitfalls
 
-- **Horizon effect:** Bad moves beyond search depth are invisible.
-- **<abbr title="A function that assigns a score to a game state to determine how favorable it is for a player.">Evaluation function</abbr>:** A poor heuristic defeats perfect search.
-- **Transpositions:** Same position via different paths — use transposition tables.
-- **Memory:** Deep searches exhaust memory — iterative deepening helps.
+- **Online queries:** Mo's only works offline — all queries must be known.
+- **Update operations:** Standard Mo's doesn't handle point updates (use Mo's with modifications).
+- **Block size tuning:** √N is theoretical; experiment with N^0.5 to N^0.7.
 
-## 58.5. Quick Reference
+## 59.5. Quick Reference
 
-| Enhancement | Benefit |
-|-------------|---------|
-| Alpha-beta pruning | Reduces nodes by ~50% |
-| Iterative deepening | Time-bounded search |
-| Transposition table | Avoids recomputing states |
-| Move ordering | Better pruning with good moves first |
+| Parameter | Formula |
+|-----------|---------|
+| Block size | √N (or N/√Q) |
+| Sort order | Block(L), then R (alternating direction) |
+| Complexity | <code>O((N + Q) × √N × cost_add_remove)</code> |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| No direct stdlib | Implement natively for game AI |
+| `sort` | Query sorting |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 58:</strong> <abbr title="A decision rule used in two-player zero-sum games that minimizes possible loss for a worst-case scenario.">Minimax</abbr> is the algorithmic embodiment of strategic thinking: assume your opponent is as smart as you, and plan accordingly. Alpha-beta pruning proves that even in exhaustive search, clever ordering can eliminate the impossible. From chess engines to checkers bots, minimax remains the conceptual foundation of competitive game AI.
+<strong>Summary Chapter 57:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. It is a niche but powerful technique for competitive programming and offline batch processing.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
-- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)
-- [Chapter 59: Mo's Algorithm](/docs/Part-XII/Chapter-59/)
+- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-54/)
+- [Chapter 56: Kadane's Algorithm](/docs/Part-XI/Chapter-56/)
+- [Chapter 57: Minimax and Game Trees](/docs/Part-XII/Chapter-57/)
