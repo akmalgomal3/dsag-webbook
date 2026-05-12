@@ -79,7 +79,7 @@ The philosophy is absolute minimization of writes. It scans the entire unsorted 
 Used in embedded systems where writing to <abbr title="A type of non-volatile memory that wears out with repeated writes.">Flash memory</abbr> or EEPROM is extremely costly or degrades hardware life, as it guarantees exactly `n-1` writes.
 
 **Memory Mechanics:**
-Selection sort reads aggressively but writes minimally. It scans the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array repeatedly, which is <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> friendly for reading. However, the swap operation involves jumping to an arbitrary minimum index, which causes minor <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> compared to the strictly adjacent swaps of Bubble Sort.
+Selection sort reads extensively but writes minimally. It scans the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array repeatedly, which is <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> friendly for reading. However, the swap operation involves jumping to an arbitrary minimum index, which causes minor <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> compared to the strictly adjacent swaps of Bubble Sort.
 
 ### Operations & Complexity
 
@@ -128,7 +128,7 @@ The philosophy mirrors how humans sort playing cards in their hands: take one ca
 The absolute best algorithm for small datasets (e.g., `n < 20`). It is the heavily optimized base case for hybrid algorithms like Timsort (used in Python and Rust) and pdqsort (used in Go 1.19+).
 
 **Memory Mechanics:**
-Insertion sort continuously shifts elements one position to the right. In <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, this translates to overlapping memory move operations. Because it shifts elements sequentially in a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block, it is incredibly hardware-friendly. On modern CPUs, the branch predictor and cache prefetcher perfectly anticipate this linear memory access pattern, making it blisteringly fast for small arrays.
+Insertion sort continuously shifts elements one position to the right. In <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, this translates to overlapping memory move operations. Because it shifts elements sequentially in a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block, it is very hardware-friendly. On modern CPUs, the branch predictor and cache prefetcher anticipate this linear memory access pattern, making it fast for small arrays.
 
 ### Operations & Complexity
 

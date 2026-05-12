@@ -101,7 +101,7 @@ Maps in Go are implemented as an array of buckets. Each bucket typically holds u
 
 ```text
 MapOps():
-    m = empty hash map with capacity 100
+    m = empty hashmap with capacity 100
     insert ("foo", 1) into m
     insert ("bar", 2) into m
     if "foo" exists in m:

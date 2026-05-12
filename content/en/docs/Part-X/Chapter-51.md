@@ -23,7 +23,7 @@ Chapter 52 explores strongly connected components (SCCs): maximal subgraphs wher
 **Definition:** A <abbr title="A maximal subgraph of a directed graph where every vertex is reachable from every other vertex.">strongly connected component</abbr> is a maximal set of vertices where each vertex is reachable from every other. SCCs partition a <abbr title="A graph where edges have direction from one vertex to another">directed graph</abbr> into a DAG of meta-nodes.
 
 **Background & Philosophy:**
-The philosophy is condensation. Complex directed graphs (like the entire World Wide Web) are incomprehensibly chaotic. SCC algorithms group tightly interconnected nodes (where everyone can reach everyone) into singular "meta-nodes." This elegantly collapses a chaotic graph into a strictly Directed <abbr title="A graph containing no cycles">Acyclic Graph</abbr> (DAG), allowing researchers to analyze macro-structures.
+The philosophy is condensation. Complex directed graphs (like the entire World Wide Web) are large and interconnected. SCC algorithms group tightly interconnected nodes (where everyone can reach everyone) into singular "meta-nodes." This collapses the graph into a Directed <abbr title="A graph containing no cycles">Acyclic Graph</abbr> (DAG), allowing analysis of macro-structures.
 
 **Use Cases:**
 Analyzing Twitter follow-clusters, optimizing database query joins, and designing compiler logic to handle mutually recursive function calls.
@@ -159,7 +159,7 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 | No direct stdlib | Implement manually for deep graph analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 50:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> elegant two-pass approach and <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> single-pass efficiency both achieve <code>O(V + E)</code>, proving that deep structural insights often come from simple traversals.
+<strong>Summary Chapter 50:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> two-pass approach and <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> single-pass efficiency both achieve <code>O(V + E)</code>, proving that deep structural insights often come from simple traversals.
 {{% /alert %}}
 
 ## See Also

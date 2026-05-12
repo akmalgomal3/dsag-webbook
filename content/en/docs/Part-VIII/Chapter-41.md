@@ -29,7 +29,7 @@ The philosophy is direct physical mapping. Early computing architectures did not
 Low-level buffers, raster image pixel mapping, and hardware registers mapping.
 
 **Memory Mechanics:**
-The array is the only data structure that requires absolutely zero meta-data overhead. In Go, an array `[10]int` allocates exactly 80 bytes. No pointers, no length fields, no capacity trackers. This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> perfection means iterating over an array achieves 100% L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> hit rates, executing at the physical maximum limit of the hardware's clock speed.
+The array is the only data structure that requires zero meta-data overhead. In Go, an array `[10]int` allocates exactly 80 bytes. No pointers, no length fields, no capacity trackers. This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> perfection means iterating over an array achieves 100% L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> hit rates, executing at the physical maximum limit of the hardware's clock speed.
 
 ### Why Arrays Dominated Early Computing
 
@@ -90,7 +90,7 @@ A Hash Table operates heavily on pseudo-random memory access. Hashing scatters v
 Modern CPUs have immense performance gaps between Registers and main <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Structures now rigidly optimize for:
 - **Cache lines:** B-trees favor sequential access and pack nodes tightly.
 - **Branch prediction:** Array-based logic avoids `if` statements, keeping CPU pipelines full.
-- **Prefetching:** Array-based heaps ruthlessly outperform pointer-based trees due to linear indexing.
+- **Prefetching:** Array-based heaps outperform pointer-based trees due to linear indexing.
 
 ### Concurrency (2010s)
 

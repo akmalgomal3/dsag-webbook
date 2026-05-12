@@ -29,7 +29,7 @@ The philosophy of the <abbr title="A linked list where each node points only to 
 Used fundamentally in hash table collision resolution (chaining), building immutable data structures in functional programming, and lock-free concurrent algorithms where updating a single `next` pointer via an atomic swap operation guarantees <abbr title="Property ensuring correct code under concurrent execution">thread safety</abbr>.
 
 **Memory Mechanics:**
-Every `Node` in a linked list is allocated dynamically on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. Because they are created at different times, the OS scatters them randomly across <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. This fragmentation destroys <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. When the CPU accesses a node, it fetches adjacent memory into the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>, but the next node is likely elsewhere, leading to a <abbr title="A state where the data requested for processing is not found in the cache memory.">cache miss</abbr>. This makes linear traversal of a linked list significantly slower than iterating a slice in modern hardware.
+Each `Node` is allocated independently on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>, scattering memory across <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. This destroys <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. Traversing a linked list triggers <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>, making it significantly slower than iterating a slice.
 
 ### Operations & Complexity
 
@@ -197,7 +197,7 @@ The philosophy of a circular list is infinite continuity. It models systems that
 Used heavily in operating system task scheduling (round-robin thread execution), multiplayer board game turn management, and buffering continuous audio/video streams.
 
 **Memory Mechanics:**
-By linking the tail back to the head, there are strictly zero `nil` pointers in a fully populated circular list. The memory footprint matches a singly linked list, but from a garbage collection perspective, isolated circular lists form memory islands. If the `CircularList` struct is destroyed but the nodes still point to each other, Go's modern mark-and-sweep <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> is still smart enough to detect they are unreachable from the root and will reclaim the memory, preventing a leak.
+By linking the tail back to the head, there are no `nil` pointers in a fully populated circular list. The memory footprint matches a singly linked list. If the `CircularList` struct is destroyed but the nodes still reference each other, Go's mark-and-sweep <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> detects they are unreachable and reclaims them.
 
 ### Idiomatic Go Implementation
 

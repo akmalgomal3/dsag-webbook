@@ -29,7 +29,7 @@ The philosophy is dynamic bounds management. Instead of running a nested loop <c
 Network congestion control (TCP sliding windows), video streaming buffer management, and parsing continuous streams of market data for moving averages.
 
 **Memory Mechanics:**
-Sliding Window and Two Pointers are exceptionally hardware-friendly. They operate entirely in-place (<code>O(1)</code> memory) utilizing just two integer indices (`left` and `right`). As these indices scan sequentially across a slice, they capitalize perfectly on the CPU's <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The hardware prefetcher predicts the memory access pattern flawlessly, ensuring the data is already waiting in the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> before the Go runtime even executes the loop.
+Sliding Window and Two Pointers are exceptionally hardware-friendly. They operate entirely in-place (<code>O(1)</code> memory) utilizing just two integer indices (`left` and `right`). As these indices scan sequentially across a slice, they capitalize perfectly on the CPU's <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The hardware prefetcher predicts the memory access pattern, ensuring the data is already waiting in the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> before the Go runtime even executes the loop.
 
 ### Classic: Pair Sum
 
@@ -69,7 +69,7 @@ func main() {
 
 ## 56.2. Sliding Window
 
-**Definition:** The <abbr title="A technique for finding a subarray or substring that satisfies a condition by maintaining a window of elements and adjusting its bounds.">sliding window</abbr> paradigm elegantly maintains a subarray/substring that rigorously satisfies a specific condition, organically expanding and contracting the window bounds as needed.
+**Definition:** The <abbr title="A technique for finding a subarray or substring that satisfies a condition by maintaining a window of elements and adjusting its bounds.">sliding window</abbr> paradigm maintains a subarray/substring that satisfies a condition, expanding and contracting the window bounds as needed.
 
 ### Fixed-Size Window
 
@@ -164,7 +164,7 @@ func main() {
 | `strings` | Use `Contains` and `Index` for simplistic, pre-packaged substring operations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 54:</strong> Two pointers and sliding window are the absolute bread and butter of linear-time array and string processing. They confidently replace disastrous nested loops with elegant single passes, mathematically exploiting ordering or contiguous structure. Mastering these patterns means instantly recognizing when a problem explicitly asks for "pairs," "subarrays," or "substrings" — and intuitively choosing the right traversal strategy.
+<strong>Summary Chapter 54:</strong> Two pointers and sliding window are fundamental patterns for linear-time array and string processing. They replace nested loops with single passes, exploiting ordering or contiguous structure. Mastering these patterns means recognizing when a problem asks for "pairs," "subarrays," or "substrings" and choosing the right traversal strategy.
 {{% /alert %}}
 
 ## See Also

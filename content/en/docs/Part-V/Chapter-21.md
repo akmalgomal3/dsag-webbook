@@ -29,7 +29,7 @@ The philosophy is exhaustive <abbr title="A straightforward approach trying all 
 Used when searching through unindexed data, short arrays, or streams of data where sorting is impossible or more expensive than a single linear scan.
 
 **Memory Mechanics:**
-Linear search exhibits perfect <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> prefetcher predicts the access pattern flawlessly, loading <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory blocks into the L1 cache ahead of the CPU. Thus, for very small arrays (e.g., `n < 64`), Linear Search is often faster than Binary Search due to zero branch misprediction overhead.
+Linear search exhibits excellent <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> prefetcher predicts the access pattern, loading <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory blocks into the L1 cache ahead of the CPU. Thus, for very small arrays (e.g., `n < 64`), Linear Search is often faster than Binary Search due to zero branch misprediction overhead.
 
 ### Operations & Complexity
 

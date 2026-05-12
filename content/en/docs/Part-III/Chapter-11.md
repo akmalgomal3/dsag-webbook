@@ -100,18 +100,18 @@ func main() {
 ```
 
 ### The Go GC Pressure Problem
-While trees are elegant, **allocating millions of `*Node` structs scatters memory randomly across the <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>.** Every time you call `&Node{}`, you create work for the Go Garbage Collector. During a GC sweep, the <abbr title="The period during which a computer program is executing.">runtime</abbr> must painstakingly trace every single left and right <abbr title="A variable that stores a memory address.">pointer</abbr> across the entire <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr> <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>.
+While trees represent data hierarchically, **allocating millions of `*Node` structs scatters memory randomly across the <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>.** Every time you call `&Node{}`, you create work for the Go Garbage Collector. During a GC sweep, the <abbr title="The period during which a computer program is executing.">runtime</abbr> must painstakingly trace every single left and right <abbr title="A variable that stores a memory address.">pointer</abbr> across the entire <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr> <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>.
 - **Mitigation:** If you need a massive <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> that is built once and rarely deleted from, consider implementing a <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> using a pre-allocated flat slice (`[]Node`) and integer indexes instead of raw memory <abbr title="A variable that stores a memory address.">pointers</abbr>.
 
 ## 11.2. Self-Balancing Trees (AVL)
 
-**Definition:** Standard BSTs degenerate into <code>O(n)</code> linked lists if data is inserted in sorted order. AVL and Red-Black trees aggressively maintain an <code>O(log n)</code> <abbr title="The length of the longest path from a node to a leaf.">height</abbr> by executing structural rotations upon insertion or deletion.
+**Definition:** Standard BSTs degenerate into <code>O(n)</code> linked lists if data is inserted in sorted order. AVL and Red-Black trees maintain an <code>O(log n)</code> <abbr title="The length of the longest path from a node to a leaf.">height</abbr> by executing structural rotations upon insertion or deletion.
 
 **Background & Philosophy:**
-Unpredictability is the enemy of scalable systems. A standard BST is unpredictable because its shape depends entirely on insertion order. Self-balancing trees embody the philosophy of proactive maintenance: spending a tiny bit of extra effort upfront (rotations) to prevent catastrophic degradation later.
+Unpredictability is the enemy of scalable systems. A standard BST is unpredictable because its shape depends entirely on insertion order. Self-balancing trees embody the philosophy of proactive maintenance: spending a small amount of extra effort upfront (rotations) to prevent severe degradation later.
 
 **Use Cases:**
-Essential for backend indexing systems like the Linux completely fair scheduler (CFS) which uses a Red-Black tree to track process execution times, or building robust maps/sets where worst-case performance must be mathematically bounded.
+Essential for backend indexing systems like the Linux completely fair scheduler (CFS) which uses a Red-Black tree to track process execution times, or building maps/sets where worst-case performance must be mathematically bounded.
 
 **Memory Mechanics:**
 Maintaining balance requires tracking tree depth or color. An AVL tree node usually adds an `int` or `int8` field to store the height. Because Go aligns structs to memory word boundaries, adding a single `int8` might still consume 8 bytes of padding depending on field ordering. The rotations themselves are remarkably cheap, executed by swapping three or four 64-bit pointers without allocating any new <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap memory</abbr>.
@@ -181,7 +181,7 @@ func rotateRight[K cmp.Ordered, V any](y *AVLNode[K, V]) *AVLNode[K, V] {
 
 | Use Balanced Trees When... | Avoid If... |
 |---------------------|------------------|
-| You strictly mandate a guaranteed <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(log n)</code> | Data is entirely static (simply sort a slice and use <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr>) |
+| You strictly mandate a guaranteed <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(log n)</code> | Data is entirely static (sort a slice and use <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr>) |
 | Managing in-memory indexes | The heavy <abbr title="A variable that stores a memory address.">pointer</abbr> overhead and GC tracing stalls your application |
 
 ## 11.3. <abbr title="A hierarchical data structure with a root node and child nodes.">Tree</abbr> Augmentation
@@ -268,7 +268,7 @@ func (n *AugNode[K]) Rank(key K) int {
 | Sorted Slice | `[]T` | <code>O(log n)</code> search | Zero GC overhead | Read-heavy, static data |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 11:</strong> Utilizing Generics `[K cmp.Ordered]` makes <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> implementations in Go radically safer and vastly more reusable. However, always remain fiercely aware of the architectural cost of trees in Go: allocating millions of tiny structs generates heavy GC tracing pressure. If your <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> is static, a simple sorted slice paired with `sort.Search` is infinitely faster and friendlier to the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
+<strong>Summary Chapter 11:</strong> Generics `[K cmp.Ordered]` make tree implementations type-safe and reusable. Be aware of the GC cost: pointer-based trees generate heavy tracing pressure for large datasets. For static data, a sorted slice with `sort.Search` delivers <code>O(log n)</code> search with zero allocation overhead.
 {{% /alert %}}
 
 ## See Also

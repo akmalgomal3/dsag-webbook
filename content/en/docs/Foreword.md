@@ -9,7 +9,7 @@ draft: false
 toc: true
 ---
 
-Algorithms are not recipes. They are not magic spells. They are **compressed wisdom**: the distilled experience of generations of problem-solvers who faced the same fundamental challenge: how to impose order on chaos with finite resources.
+Algorithms are **compressed wisdom**: the distilled experience of generations of problem-solvers who faced the same fundamental challenge — how to impose order on chaos with finite resources.
 
 This book approaches that challenge from a practitioner's perspective. It does not ask you to memorize red-black tree rotations (though you will understand them). It asks you to internalize a deeper question: **given my constraints (time, space, maintainability, team skill), what is the right tool for this job?**
 

@@ -172,7 +172,7 @@ func main() {
 |------------------|-------------|
 | Many strings share prefixes | Strings are random with no common prefixes |
 | Need fast prefix queries | Memory is extremely constrained |
-| Implementing autocomplete or spell checker | Only exact match lookups needed (use hash map) |
+| Implementing autocomplete or spell checker | Only exact match lookups needed (use hashmap) |
 
 ### Edge Cases & Pitfalls
 

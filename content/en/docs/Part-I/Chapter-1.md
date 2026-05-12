@@ -26,7 +26,7 @@ Chapter 1 focuses on the fundamental role of algorithms in modern software, expl
 Algorithms exist to solve problems efficiently. As data scales, naive approaches fail. Big-O notation was adopted to provide a hardware-independent mathematical framework to evaluate algorithm scalability. The core philosophy is "predictability": knowing how code will behave before it runs on massive datasets.
 
 **Use Cases:**
-Used daily by software engineers to choose between alternative solutions (for example, using a hash map versus an array for fast lookups) and when designing distributed systems that must handle millions of concurrent requests.
+Used daily by software engineers to choose between alternative solutions (for example, using a hashmap versus an array for fast lookups) and when designing distributed systems that must handle millions of concurrent requests.
 
 **Memory Mechanics:**
 In memory, algorithmic complexity directly affects CPU cache utilization and RAM allocation. An <code>O(n)</code> array traversal loads contiguous memory blocks efficiently into the CPU cache, leveraging spatial locality. In contrast, algorithms with poor memory access patterns or exponential complexity cause frequent cache misses, forcing the CPU to repeatedly fetch data from slower <abbr title="The primary volatile storage directly accessible by the CPU">main memory</abbr>.
@@ -138,7 +138,7 @@ When calling standard library functions like `sort.Ints`, Go utilizes an introso
 |--------|-----------|--------------|------------|
 | <abbr title="The process of arranging elements in a specific order.">Sorting</abbr> | `sort.Ints` | <code>O(n log n)</code> | Go stdlib, introsort hybrid |
 | <abbr title="The process of finding a specific element in a data structure.">Searching</abbr> | <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary search</abbr> | <code>O(log n)</code> | Requires sorted data |
-| Hashing | `map` lookup | <code>O(1)</code> avg | Built-in Go <abbr title="A hash table-based implementation of the Map interface.">hash map</abbr> |
+| Hashing | `map` lookup | <code>O(1)</code> avg | Built-in Go <abbr title="A hash table-based implementation of the Map interface.">hashmap</abbr> |
 | <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">Graph</abbr> | Dijkstra | <code>O((V+E) log V)</code> | With <abbr title="A heap implemented using a binary tree.">binary heap</abbr> |
 
 ### Pseudocode
@@ -210,7 +210,7 @@ Implementing a priority queue for task scheduling requires a Heap, designing an 
 **Memory Mechanics:**
 - **Arrays and Slices:** Stored as contiguous bytes in RAM. A slice in Go is a small struct (pointer to array, length, capacity). Modifying it updates the contiguous block directly, making iteration exceptionally fast.
 - **Maps:** Stored non-contiguously. They consist of an array of bucket pointers. Looking up a value involves <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> the key to find the bucket's memory address, then traversing the bucket.
-- **Trees and Heaps:** A standard node-based tree scatters structs randomly across heap memory, connected by pointers. A Binary Heap, however, is often backed by an array. It keeps elements contiguous, allowing parent and child traversal via simple index arithmetic (such as `2*i + 1`), making it highly cache-friendly.
+- **Trees and Heaps:** A standard node-based tree scatters structs randomly across heap memory, connected by pointers. A binary heap, however, is often backed by an array. It keeps elements contiguous, allowing parent and child traversal via simple index arithmetic (such as `2*i + 1`), making it highly cache-friendly.
 
 ### Operations & Complexity
 

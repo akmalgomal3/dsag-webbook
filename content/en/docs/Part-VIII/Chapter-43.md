@@ -20,7 +20,7 @@ Chapter 44 reflects on what algorithms and data structures reveal about thinking
 
 ## 44.1. Algorithms as Philosophy
 
-**Definition:** An algorithm is not merely code — it is a **procedural philosophy**: a way of decomposing reality into manageable steps. Every algorithm embodies assumptions about:
+**Definition:** An algorithm embodies a **procedural philosophy**: a way of decomposing reality into manageable steps. Every algorithm operates on assumptions about:
 - What matters (optimization criteria)
 - What is knowable (information available)
 - What is computable (resources and time)
@@ -29,10 +29,10 @@ Chapter 44 reflects on what algorithms and data structures reveal about thinking
 The core philosophy of software engineering is managing complexity. Abstraction allows us to build colossal structures (like internet routing or generative AI) by hiding the microscopic details inside black boxes. The danger arises when the abstraction leaks.
 
 **Use Cases:**
-Translating ambiguous, contradictory human business requirements into flawlessly executing software states.
+Translating ambiguous human business requirements into executing software states.
 
 **Memory Mechanics:**
-The ultimate philosophical boundary of <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> is memory state tracking. Every variable, every lock, every <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> consumes <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Complex architectures attempt to abstract this away (via the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>). The pragmatic engineer respects that no abstraction can perfectly shield them from physical hardware limits; uncontrolled recursion still blows the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>, and fragmented objects still choke the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr>.
+The fundamental constraint of <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> is memory state tracking. Every variable, every lock, every <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> consumes <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Complex architectures attempt to abstract this away (via the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>). The pragmatic engineer respects that no abstraction can perfectly shield them from physical hardware limits; uncontrolled recursion still blows the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>, and fragmented objects still choke the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr>.
 
 ### The Algorithmic Mindset
 
@@ -80,7 +80,7 @@ The <abbr title="The halting problem: determining whether a program will finish 
 
 Go's design mirrors algorithmic virtues:
 - **Simplicity:** Few features, clear semantics
-- **Composition:** Small pieces, powerful combinations
+- **Composition:** Small pieces, effective combinations
 - **Explicitness:** No hidden costs, no magic
 - **Pragmatism:** Worse is better when it works
 

@@ -15,15 +15,15 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr> — the mathematically elegant <code>O(n)</code> solution resolving the maximum subarray problem, serving as an outstanding foundation to <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> thinking.
+Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr> — an <code>O(n)</code> solution for the maximum subarray problem, serving as a foundation for <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> thinking.
 {{% /alert %}}
 
 ## 57.1. The Maximum Subarray Problem
 
-**Definition:** Given an array of integers (often containing negative numbers), seamlessly find the strictly contiguous subarray offering the absolute largest internal sum. First solved flawlessly in <code>O(n)</code> by Jay Kadane in 1984.
+**Definition:** Given an array of integers (often containing negative numbers), find the contiguous subarray with the largest sum. First solved in <code>O(n)</code> by Jay Kadane in 1984.
 
 **Background & Philosophy:**
-The philosophy is aggressive amnesia. Kadane’s is the ultimate distillation of <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>. It constantly asks a localized question: "Is the accumulated baggage of the past dragging me down so much that I'm better off starting entirely fresh right now?" If the running sum drops below the current element, it fiercely cuts ties with the past.
+The philosophy is aggressive amnesia. Kadane's algorithm is a clean application of <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>: it asks a localized question at each step. "Is the accumulated baggage of the past dragging me down so much that I'm better off starting fresh right now?" If the running sum drops below the current element, it cuts ties with the past.
 
 **Use Cases:**
 Identifying the most profitable sequence of trades in algorithmic finance, and genomic sequence analysis where negative scores represent mutations and positive scores represent matches.
@@ -124,7 +124,7 @@ The recurrence captures the unyielding essence of <abbr title="A method for solv
 | No direct equivalent | Requires manual implementation specifically tailored for financial or stock tracking |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 55:</strong> Kadane's algorithm acts as an absolute masterpiece of <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> simplicity. In a blistering single pass executing with merely <code>O(1)</code> auxiliary space, it cleanly solves a complex problem that intuitively seems to mandate rigorously examining all <code>O(n^2)</code> possible subarrays. The core mathematical lesson flawlessly transcends the specific problem: whenever tackling "best subarray" questions, instantly ask if the optimal state ending at position i can be efficiently derived directly from position i-1. If it genuinely can, Kadane's profound insight applies.
+<strong>Summary Chapter 55:</strong> Kadane's algorithm is a clean demonstration of <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> principles. In a single pass with <code>O(1)</code> auxiliary space, it solves a problem that intuitively seems to require examining all <code>O(n^2)</code> possible subarrays. The core lesson: whenever tackling "best subarray" questions, ask if the optimal state ending at position i can be derived from position i-1. If it can, Kadane's insight applies.
 {{% /alert %}}
 
 ## See Also

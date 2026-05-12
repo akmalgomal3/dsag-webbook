@@ -29,7 +29,7 @@ The philosophy is precomputed aggregation. When an array is repeatedly updated a
 Competitive programming, dynamic financial ledgers querying balances over specific date ranges, and mapping visible objects in 2D game rendering.
 
 **Memory Mechanics:**
-Both trees elegantly abandon <abbr title="A variable that stores a memory address.">pointer</abbr>-based nodes. A Segment Tree allocates an array of `4*n` size. A Fenwick Tree (Binary Indexed Tree) is incredibly optimal, allocating exactly `n+1` size array. Fenwick tree uses bitwise operations (`i & -i`) to instantly jump to the next aggregation block. This purely <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> layout guarantees flawless <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> hits and zero <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> overhead during updates.
+Both trees use array-based storage instead of <abbr title="A variable that stores a memory address.">pointer</abbr>-based nodes. A Segment Tree allocates an array of `4*n` size. A Fenwick Tree (Binary Indexed Tree) is compact, allocating exactly `n+1` size array. Fenwick tree uses bitwise operations (`i & -i`) to jump to the next aggregation block. This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> layout provides excellent <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> performance and zero <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> overhead during updates.
 
 ### Operations & Complexity
 

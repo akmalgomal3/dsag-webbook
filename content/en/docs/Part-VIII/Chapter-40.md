@@ -23,7 +23,7 @@ Chapter 41 covers the 20th-century revolution that transformed algorithms from m
 **Definition:** The early 20th century saw a crisis in mathematics. <abbr title="A German mathematician who posed 23 problems that shaped 20th-century mathematics.">Hilbert</abbr> asked: Can all mathematical truths be derived mechanically? Three answers emerged:
 
 **Background & Philosophy:**
-The philosophical question was absolute certainty: can a machine flawlessly deduce the entire universe of mathematics? The shattering realization by Gödel and Turing was that <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> has fundamental limits. The philosophy shifted from "we can calculate anything" to "what is fundamentally impossible to calculate?"
+The philosophical question was about certainty: can a machine deduce the entire universe of mathematics? The realization by Gödel and Turing was that <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> has fundamental limits.
 
 **Use Cases:**
 These theoretical bounds directly define what modern programmers cannot do: you cannot write a perfect debugger that finds infinite loops (due to the <abbr title="Determining whether a program will finish or run forever">Halting Problem</abbr>), and you cannot write a perfect mathematical verifier.

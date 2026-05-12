@@ -23,7 +23,7 @@ Chapter 29 covers vector, matrix, and tensor operations with <abbr title="Code s
 **Definition:** A vector is a one-dimensional <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> representing a directed magnitude. Basic operations include addition, scalar multiplication, <abbr title="An operation returning the scalar product of two vectors">dot product</abbr>, and <abbr title="An operation on vectors producing a perpendicular vector">cross product</abbr>.
 
 **Background & Philosophy:**
-The philosophy is representing data mathematically. Instead of isolated variables, numbers are grouped into spatial structures (Vectors, Matrices), enabling batch transformations that hardware GPUs and <abbr title="Single Instruction Multiple Data - parallel processing technique.">SIMD</abbr> CPU instructions are structurally designed to optimize flawlessly.
+The philosophy is representing data mathematically. Instead of isolated variables, numbers are grouped into spatial structures (Vectors, Matrices), enabling batch transformations that GPUs and <abbr title="Single Instruction Multiple Data - parallel processing technique.">SIMD</abbr> CPU instructions handle efficiently.
 
 **Use Cases:**
 Core foundation for 3D Graphics programming, deep learning backpropagation, and PageRank algorithms determining internet search results.

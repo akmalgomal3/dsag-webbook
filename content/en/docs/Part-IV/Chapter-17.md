@@ -385,7 +385,7 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Need to aggressively minimize transportation or assignment cost | You only need max flow without caring about cost |
+| Need to minimize transportation or assignment cost | You only need max flow without caring about cost |
 | All edge costs are positive | There is a negative cost cycle |
 
 ## 17.5. Quick Reference

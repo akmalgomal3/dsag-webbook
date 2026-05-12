@@ -297,7 +297,7 @@ The PoW example provided acts purely as a demonstration. A rigorous production P
 ### Edge Cases & Pitfalls
 
 - **Difficulty too low:** Leaves the blockchain heavily susceptible to rapid attacks.
-- **Timestamp manipulation:** Miners can aggressively manipulate timestamps to artificially skew the network's difficulty.
+- **Timestamp manipulation:** Miners can manipulate timestamps to skew the network's difficulty.
 
 ## 32.4. Basic Consensus Algorithms
 

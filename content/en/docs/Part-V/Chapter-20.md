@@ -90,7 +90,7 @@ func main() {
 **Definition:** Quick Sort selects a pivot, partitions the array into elements less than and greater than the pivot, and recursively sorts each partition.
 
 **Background & Philosophy:**
-Invented by Tony Hoare, Quick Sort's philosophy is "partitioning". Instead of meticulously merging sorted halves, it aggressively throws smaller elements to the left of a pivot and larger to the right, and then recursively sorts the sub-arrays. It gambles on probability: with a random pivot, the tree is statistically balanced.
+Invented by Tony Hoare, Quick Sort's philosophy is "partitioning". Instead of meticulously merging sorted halves, it partitions by moving smaller elements to the left of a pivot and larger to the right, then recursively sorts the sub-arrays. It gambles on probability: with a random pivot, the tree is statistically balanced.
 
 **Use Cases:**
 The default general-purpose sorting algorithm for arrays in most programming languages (C++, Java primitives) because of its unmatched in-memory speed.

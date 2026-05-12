@@ -20,7 +20,7 @@ Chapter 55 explores linear-time sorting algorithms — <abbr title="An integer s
 
 ## 55.1. Beyond Comparison Sorting
 
-**Definition:** <abbr title="Sorting algorithms that do not rely on comparing elements, instead using assumptions about the data distribution.">Non-comparison sorts</abbr> achieve <code>O(n)</code> time by making assumptions about the input domain. They aggressively trade general applicability for raw speed.
+**Definition:** <abbr title="Sorting algorithms that do not rely on comparing elements, instead using assumptions about the data distribution.">Non-comparison sorts</abbr> achieve <code>O(n)</code> time by making assumptions about the input domain. They trade general applicability for raw speed.
 
 **Background & Philosophy:**
 The philosophy is breaking the comparison barrier. Mathematical proofs guarantee that comparison-based sorting (Merge, Quick) can never be faster than <code>O(n log n)</code>. Non-comparison sorts (Counting, Radix) completely bypass this law by making strict assumptions about the data (e.g., "all elements are integers between 0 and k"). They trade universal applicability for raw, linear speed.
@@ -181,7 +181,7 @@ Distribute elements into distinct physical buckets based entirely on range, sort
 | No native non-<abbr title="A sorting algorithm that only compares elements">comparison sort</abbr> | Implement manually for specialized, integer-bound cases |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 53:</strong> Linear-time sorting algorithms prove that the <code>O(n log n)</code> comparison <abbr title="A function that grows no faster than the given function">lower bound</abbr> applies only when you know nothing about your data. By deliberately exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> achieve <code>O(n)</code> — a powerful reminder that algorithmic efficiency consistently emerges from deeply understanding your specific problem domain.
+<strong>Summary Chapter 53:</strong> Linear-time sorting algorithms prove that the <code>O(n log n)</code> comparison <abbr title="A function that grows no faster than the given function">lower bound</abbr> applies only when you know nothing about your data. By exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> achieve <code>O(n)</code> — a reminder that algorithmic efficiency emerges from understanding your specific problem domain.
 {{% /alert %}}
 
 ## See Also

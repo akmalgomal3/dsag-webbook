@@ -26,7 +26,7 @@ Chapter 3 focuses on why Go is an exceptional language for data structures and a
 Go was designed at Google to solve problems of scale: large codebases, large teams, and large numbers of concurrent network connections. The philosophy behind Go is "simplicity and readability over cleverness". It avoids complex features like inheritance or pointer arithmetic in favor of orthogonal, composable tools like <abbr title="Go type defining method signatures">interfaces</abbr> and <abbr title="Lightweight thread managed by Go runtime">goroutines</abbr>.
 
 **Use Cases:**
-Go is widely used for building highly concurrent backend services (like microservices or API gateways), robust command-line tools (CLIs), and distributed systems infrastructure (such as Kubernetes or Docker).
+Go is widely used for building highly concurrent backend services (like microservices or API gateways), command-line tools (CLIs), and distributed systems infrastructure (such as Kubernetes or Docker).
 
 **Memory Mechanics:**
 Go utilizes a concurrent, mark-and-sweep <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector (GC)</abbr>. Unlike C or C++, where developers manually invoke `malloc` and `free`, Go's runtime tracks object references. The compiler performs <abbr title="The process of determining whether a variable can be safely allocated on the stack or if it must escape to the heap.">escape analysis</abbr> to decide if a variable can safely reside on the fast <abbr title="Memory used to execute functions and store local variables.">stack</abbr> or if it must "escape" to the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> to be managed by the GC. Writing algorithms that keep data on the stack drastically reduces GC pressure and improves CPU <abbr title="The tendency to reuse nearby or recent memory addresses">cache locality</abbr>.
@@ -136,10 +136,10 @@ func main() {
 Algorithmic paradigms are universal design patterns for solving problems. Instead of hacking together custom logic for every new challenge, developers map their problem onto an existing paradigm. The philosophy is "categorize before you code", reducing complex problems into known, solvable archetypes.
 
 **Use Cases:**
-Dynamic Programming is heavily used in bioinformatics for DNA sequence alignment. Greedy algorithms power network routing protocols like OSPF. Divide and conquer is the backbone of efficient sorting (MergeSort) and distributed data processing frameworks like MapReduce.
+dynamic programming is heavily used in bioinformatics for DNA sequence alignment. Greedy algorithms power network routing protocols like OSPF. Divide and conquer is the backbone of efficient sorting (MergeSort) and distributed data processing frameworks like MapReduce.
 
 **Memory Mechanics:**
-Paradigms rely heavily on the call stack. Recursive paradigms (Divide and Conquer, <abbr title="Incremental solution building with undo">Backtracking</abbr>) push a new frame onto the stack for every nested call. Go's goroutine stacks start small (2KB) and grow dynamically. However, excessive recursion can still lead to memory exhaustion. Dynamic Programming often trades space for time by caching subproblem results in a heap-allocated matrix (<abbr title="Technique of caching computed subproblem results">memoization</abbr>), requiring careful memory sizing.
+Paradigms rely heavily on the call stack. Recursive paradigms (divide and conquer, <abbr title="Incremental solution building with undo">backtracking</abbr>) push a new frame onto the stack for every nested call. Go's goroutine stacks start small (2KB) and grow dynamically. However, excessive recursion can still lead to memory exhaustion. Dynamic programming often trades space for time by caching subproblem results in a heap-allocated matrix (<abbr title="Technique of caching computed subproblem results">memoization</abbr>), requiring careful memory sizing.
 
 ### Operations & Complexity
 

@@ -23,13 +23,13 @@ Chapter 59 introduces Mo's algorithm: a <abbr title="A technique that divides a 
 **Definition:** Given an array and multiple range queries, <abbr title="An algorithm that answers range queries by sorting them in a specific order to minimize pointer movement.">Mo's algorithm</abbr> reorders queries so that each query's answer can be derived from the previous with minimal adjustment.
 
 **Background & Philosophy:**
-The philosophy is query caching via geometric sorting. Instead of processing queries exactly as the user inputs them (which might bounce randomly from the start of the array to the end and back), Mo's algorithm batches them together into blocks. It embraces the philosophy that moving pointers slightly left or right is infinitely faster than restarting a search from zero.
+The philosophy is query caching via geometric sorting. Instead of processing queries exactly as the user inputs them (which might bounce randomly from the start of the array to the end and back), Mo's algorithm batches them together into blocks. It embraces the philosophy that moving pointers left or right is substantially faster than restarting a search from zero.
 
 **Use Cases:**
 Competitive programming, batched offline data analytics, and historical database queries where all query requests are known entirely in advance.
 
 **Memory Mechanics:**
-Mo's Algorithm drastically minimizes <code>O(N)</code> memory sweeps. By grouping the queries structurally into `√N` blocks and sorting them, the `curL` and `curR` pointers only creep incrementally forward and backward along the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array. This creates a beautifully predictable memory access pattern. The CPU hardware prefetcher recognizes this creeping movement and reliably loads the required array segments into the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> proactively, virtually eliminating performance-killing <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
+Mo's Algorithm reduces <code>O(N)</code> memory sweeps. By grouping queries into `√N` blocks and sorting them, the `curL` and `curR` pointers move incrementally along the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array. This creates a predictable memory access pattern. The CPU hardware prefetcher recognizes the pattern and loads the required array segments into the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>, reducing <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
 
 ### Why Reorder Queries?
 
@@ -171,7 +171,7 @@ func main() {
 | `sort` | Query sorting |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 57:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. It is a niche but powerful technique for competitive programming and offline batch processing.
+<strong>Summary Chapter 57:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. It is a niche but effective technique for competitive programming and offline batch processing.
 {{% /alert %}}
 
 ## See Also

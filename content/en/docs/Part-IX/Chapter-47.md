@@ -157,7 +157,7 @@ func main() {
 - **Capacity 0:** Handle as no-op or error.
 - **Concurrency:** Standard LRU is not thread-safe. You MUST use `sync.RWMutex` or sharded locks for concurrent access.
 - **Memory overhead:** Each entry has ~48 bytes of <abbr title="A variable that stores a memory address.">pointer</abbr> overhead plus the map overhead.
-- **Scan resistance:** LRU fails catastrophically under sequential scans (all items become "recent" and flush the cache).
+- **Scan resistance:** LRU fails under sequential scans (all items become "recent" and flush the cache).
 
 ## 48.6. Quick Reference
 

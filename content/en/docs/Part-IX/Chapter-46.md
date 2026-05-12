@@ -31,7 +31,7 @@ The philosophy is acceptable inaccuracy. A Bloom Filter trades absolute certaint
 Web browsers checking malicious URLs, CDNs preventing cache pollution, and databases (Cassandra, RocksDB) skipping expensive disk reads for non-existent keys.
 
 **Memory Mechanics:**
-A Bloom Filter relies on a single, massive bit array (often represented in Go as `[]uint64`). It hashes an item multiple times to flip specific bits. This requires jumping to completely random indices in the bit array. Because the array is usually several megabytes, these jumps constantly trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. However, executing 7 rapid cache misses in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> is still infinitely faster than executing a single mechanical seek on a physical hard drive.
+A Bloom Filter relies on a single, massive bit array (often represented in Go as `[]uint64`). It hashes an item multiple times to flip specific bits. This requires jumping to completely random indices in the bit array. Because the array is usually several megabytes, these jumps constantly trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. However, executing 7 rapid cache misses in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> is still orders of magnitude faster than a single mechanical seek on a physical hard drive.
 
 ### Space Efficiency
 

@@ -41,7 +41,7 @@ A slice-based stack allocates a <abbr title="Memory blocks allocated in a single
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> 1.18+ Generic Implementation
 
-Before Go 1.18, developers relied on `interface{}` which sacrificed type safety and incurred boxing/unboxing overhead. Modern Go elegantly solves this with Generics `[T any]`.
+Before Go 1.18, developers relied on `interface{}` which sacrificed type safety and incurred boxing/unboxing overhead. Modern Go solves this with Generics `[T any]`.
 
 ```go
 package main
@@ -166,7 +166,7 @@ Historically, computer science textbooks prescribe **Linked Lists** for Queues a
 When choosing a data structure for a high-performance system like a game engine, a trading bot, or a database query planner, engineers must measure actual execution time rather than relying strictly on Big-O assumptions.
 
 **Memory Mechanics:**
-The difference is defined by how the CPU interacts with main memory. A slice is a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block. When the CPU fetches `slice[0]`, it pulls the next 64 bytes into the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> (pre-fetching). The CPU reads the slice at lightning speed. A <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">Linked List</abbr> allocates <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">nodes</abbr> randomly across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. Traversing the list triggers massive <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. Furthermore, every new node triggers <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> pressure, drastically slowing down the runtime.
+A slice occupies a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory block, leveraging CPU prefetching and L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. A <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">Linked List</abbr> allocates <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">nodes</abbr> randomly across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>, causing <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> and <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> pressure on traversal.
 
 ### The <abbr title="A test used to compare the performance of computer hardware or software.">Benchmark</abbr> Code (`_test.go`)
 
@@ -215,7 +215,7 @@ BenchmarkLinkedListPush-10      50     24.50 ms/op      56 MB/op  1000000 allocs
 2. **<abbr title="The process of determining whether a variable can be safely allocated on the stack or if it must escape to the heap.">Escape Analysis</abbr> & GC Pressure:** `list.PushBack()` dynamically allocates `&Element{}`. For 1 million items, it triggers 1,000,000 individual <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr> allocations. The Go Garbage Collector must traverse and trace every single node. The slice, conversely, only reallocates ~40 times.
 3. **Generics Penalty:** `container/list` relies entirely on `interface{}` or `any`. Retrieving a value requires a <abbr title="The period during which a computer program is executing.">runtime</abbr> type assertion `val := elem.Value.(int)`, adding massive overhead compared to a strongly typed Generic slice `[T any]`.
 
-**Verdict:** In Go, relentlessly favor slices and circular ring buffers. Only resort to linked lists if you are performing heavy insertions and deletions identically in the *middle* of an immense sequence.
+**Verdict:** In Go, favor slices and circular ring buffers. Only use linked lists for heavy insertions and deletions in the middle of large sequences.
 
 ## 6.4. Generic <abbr title="A double-ended queue allowing insertion and deletion at both ends.">Deque</abbr> (Double-Ended <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr>)
 
@@ -308,7 +308,7 @@ func main() {
 | <abbr title="A double-ended queue allowing insertion and deletion at both ends.">Deque</abbr> | `[]T` as <abbr title="A fixed-size buffer that wraps around when full">Circular Buffer</abbr> | <code>O(1)</code> | Extremely low | Highest performance |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 6:</strong> Elementary data structures in Go must be built with **Generics** to maintain strict type safety and eliminate <abbr title="A shared boundary across which two or more separate components exchange information.">interface</abbr> boxing overhead. Due to <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality and Go's Garbage Collector architecture, <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice-based ring buffers ruthlessly outperform <abbr title="A variable that stores a memory address.">pointer</abbr>-based linked lists.
+<strong>Summary Chapter 6:</strong> Elementary data structures in Go must be built with **Generics** to maintain strict type safety and eliminate <abbr title="A shared boundary across which two or more separate components exchange information.">interface</abbr> boxing overhead. Due to <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality and Go's Garbage Collector architecture, <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice-based ring buffers outperform <abbr title="A variable that stores a memory address.">pointer</abbr>-based linked lists.
 {{% /alert %}}
 
 ## See Also

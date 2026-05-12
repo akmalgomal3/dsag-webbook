@@ -23,13 +23,13 @@ Chapter 60 covers the convex hull: the smallest convex shape containing a set of
 **Definition:** The <abbr title="The smallest convex set that contains a given set of points, analogous to stretching a rubber band around the points.">convex hull</abbr> of a set of points is the smallest convex <abbr title="A plane figure bounded by straight line segments">polygon</abbr> containing them all. Imagine stretching a rubber band around nails on a board.
 
 **Background & Philosophy:**
-The philosophy is exterior boundary isolation. When given thousands of chaotic, scattered points, the overwhelming majority are useless interior noise. The convex hull acts as a mathematical shrink-wrap, relentlessly isolating the extremely small subset of points that actually define the geometric perimeter.
+The philosophy is exterior boundary isolation. When given thousands of scattered points, most are interior noise. The convex hull acts as a mathematical boundary, isolating the subset of points that define the geometric perimeter.
 
 **Use Cases:**
 3D collision detection in video games (generating bounding boxes), pattern recognition in computer vision, and mapping physical territory borders in geographic information systems (GIS).
 
 **Memory Mechanics:**
-Andrew's Monotone Chain initially performs an <code>O(n log n)</code> sort on the points array. Because the array (`[]Point`) is completely <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, the sort leverages high <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality. After sorting, the algorithm builds the hull using a simple `[]Point` slice as a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>. Pushing and popping points from the end of this slice executes entirely in <code>O(1)</code> memory access without generating new <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations. Consequently, Andrew's Monotone Chain is blisteringly fast on modern CPUs, operating precisely at memory bus speed.
+Andrew's Monotone Chain initially performs an <code>O(n log n)</code> sort on the points array. Because the array (`[]Point`) is completely <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, the sort leverages high <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality. After sorting, the algorithm builds the hull using a simple `[]Point` slice as a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>. Pushing and popping points from the end of this slice executes entirely in <code>O(1)</code> memory access without generating new <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations. Andrew's Monotone Chain is fast on modern CPUs, operating at memory bus speed.
 
 ### Why It Matters
 
@@ -148,7 +148,7 @@ func main() {
 | `image` | Point representations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 58:</strong> The convex hull is <abbr title="Algorithms for solving geometric problems">computational geometry</abbr>'s gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time with elegant simplicity — sort, then sweep. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr>, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
+<strong>Summary Chapter 58:</strong> The convex hull is <abbr title="Algorithms for solving geometric problems">computational geometry</abbr>'s gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time — sort, then sweep. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr>, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
 {{% /alert %}}
 
 ## See Also

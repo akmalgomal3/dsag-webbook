@@ -35,7 +35,7 @@ The philosophy is directed intuition. Dijkstra explores blindly in all direction
 AI pathfinding in video games, GPS navigation systems planning physical routes, and robotic motion planning.
 
 **Memory Mechanics:**
-A* aggressively relies upon a Priority Queue (a <abbr title="A heap where each parent is less than or equal to its children">Min-Heap</abbr>) and tracking maps (`cameFrom`, `gScore`). In Go, `map[[2]int]float64` is heavily utilized to map 2D grid coordinates to values. Maps in Go hash keys and scatter data <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>ly across the heap. For a sprawling map (like a 10,000x10,000 grid), millions of map accesses cause severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. High-performance A* implementations abandon maps, instead flattening the 2D grid into a massive 1D slice where `index = y*width + x`, enabling <code>O(1)</code> contiguous memory lookups and restoring blazing CPU speeds.
+A* relies on a Priority Queue (a <abbr title="A heap where each parent is less than or equal to its children">Min-Heap</abbr>) and tracking maps (`cameFrom`, `gScore`). In Go, `map[[2]int]float64` is used to map 2D grid coordinates to values. Maps in Go hash keys and scatter data <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>ly across the heap. For a large grid (like a 10,000x10,000 grid), millions of map accesses cause severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. High-performance A* implementations abandon maps, instead flattening the 2D grid into a 1D slice where `index = y*width + x`, enabling <code>O(1)</code> contiguous memory lookups and high CPU throughput.
 
 | Algorithm | Priority | Guarantees |
 |-----------|----------|------------|
@@ -193,7 +193,7 @@ func main() {
 
 - **<abbr title=\"A heuristic that overestimates the true cost and may lead to suboptimal solutions.\">Inadmissible heuristic</abbr>:** May easily find suboptimal paths.
 - **Tie-breaking:** f-score ties degrade heavily to BFS without secondary ordering logic.
-- **Memory:** A* aggressively keeps all nodes in memory. For huge graphs, strictly deploy IDA* (Iterative Deepening A*).
+- **Memory:** A* keeps all nodes in memory. For large graphs, deploy IDA* (Iterative Deepening A*).
 - **Dynamic obstacles:** Requires full replanning (deploy D* Lite for shifting environments).
 
 ## 53.5. Quick Reference

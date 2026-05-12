@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 13 covers graph traversal algorithms: Depth-First Search (DFS) and Breadth-First Search (BFS). Learn how to systematically explore graphs and their applications.
+Chapter 13 covers graph traversal algorithms: depth-first search (DFS) and breadth-first search (BFS). Learn how to systematically explore graphs and their applications.
 {{% /alert %}}
 
 ## 13.1. Depth-First Search (DFS)

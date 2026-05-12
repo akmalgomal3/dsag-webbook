@@ -86,7 +86,7 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Fractional knapsack is flawlessly optimal because it can act greedily based solely upon the <abbr title="The data associated with a key in a key-value pair.">value</abbr>/weight ratio. The strict 0/1 Knapsack is absolutely NOT optimal utilizing a greedy approach; you must deploy DP or a Fully <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">Polynomial Time</abbr> Approximation Scheme (<abbr title="Fully Polynomial Time Approximation Scheme - finds near-optimal solutions in polynomial time.">FPTAS</abbr>).
+Fractional knapsack is optimal because it can act greedily based on the <abbr title="The data associated with a key in a key-value pair.">value</abbr>/weight ratio. The 0/1 Knapsack is not optimal using a greedy approach; you must deploy DP or a Fully <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">Polynomial Time</abbr> Approximation Scheme (<abbr title="Fully Polynomial Time Approximation Scheme - finds near-optimal solutions in polynomial time.">FPTAS</abbr>).
 {{% /alert %}}
 
 ## 36.2. <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover 2-Approximation
@@ -248,7 +248,7 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amplification tactic: execute the algorithm <code>k</code> times, aggressively picking the absolute best result to crush the probability of failure exponentially.
+Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amplification tactic: execute the algorithm <code>k</code> times, selecting the best result to reduce the probability of failure exponentially.
 {{% /alert %}}
 
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
@@ -264,7 +264,7 @@ Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amp
 | Knapsack 0/1 | DP | 1 | <code>O(nW)</code> | `[][]int` matrix |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 34:</strong> This chapter discusses approximation algorithms designed for NP-hard problems: greedy fractional knapsack (provably optimal), a 2-approximation for <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover, nearest neighbor and Christofides methods for metric TSP, alongside a randomized Max-Cut approach. Leverage greedy techniques for lightning-fast solutions, randomized algorithms for robust expected ratios, and Christofides for a rigorous 1.5 guarantee on metric TSPs.
+<strong>Summary Chapter 34:</strong> This chapter discusses approximation algorithms designed for NP-hard problems: greedy fractional knapsack (provably optimal), a 2-approximation for <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover, nearest neighbor and Christofides methods for metric TSP, alongside a randomized Max-Cut approach. Leverage greedy techniques for lightning-fast solutions, randomized algorithms for consistent expected ratios, and Christofides for a rigorous 1.5 guarantee on metric TSPs.
 {{% /alert %}}
 
 ## See Also

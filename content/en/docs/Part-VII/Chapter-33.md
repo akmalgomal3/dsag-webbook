@@ -23,7 +23,7 @@ Chapter 34 explores polynomials and the Fast Fourier Transform (FFT). Go's stdli
 **Definition:** A polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n is gracefully represented as a slice of coefficients: `[a₀, a₁, ..., aₙ]`.
 
 **Background & Philosophy:**
-The philosophy is the dual representation of data. A polynomial can be represented either by its coefficients or by its evaluated points. Multiplying coefficients takes <code>O(n^2)</code> time, but multiplying evaluated points takes <code>O(n)</code> time. FFT translates coefficients into points in <code>O(n log n)</code>, allowing blisteringly fast math.
+The philosophy is the dual representation of data. A polynomial can be represented either by its coefficients or by its evaluated points. Multiplying coefficients takes <code>O(n^2)</code> time, but multiplying evaluated points takes <code>O(n)</code> time. FFT translates coefficients into points in <code>O(n log n)</code>, enabling fast multiplication.
 
 **Use Cases:**
 Digital signal processing (audio/image compression), quantum mechanics, and multiplying incredibly large numbers (e.g., 100,000 digits) efficiently.
@@ -165,7 +165,7 @@ Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation de
 
 ## 34.3. Polynomial Interpolation
 
-**Definition:** Interpolation derives a precise polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n that flawlessly intersects n+1 designated points.
+**Definition:** Interpolation derives a polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n that intersects n+1 designated points.
 
 ### Operations & Complexity
 
@@ -232,7 +232,7 @@ Lagrange interpolation holds remarkable stability solely for a sparse number of 
 
 ### Edge Cases & Pitfalls
 
-- **Runge phenomenon:** Interpolating aggressively over numerous equidistant nodes guarantees fierce oscillation. Switch to Chebyshev nodes.
+- **Runge phenomenon:** Interpolation over many equidistant nodes causes oscillation. Switch to Chebyshev nodes.
 - **Identical x coordinates:** Evaluating two distinct points sharing an identical x coordinate forces an undefined mathematical outcome (division by zero).
 
 ## Quick Reference

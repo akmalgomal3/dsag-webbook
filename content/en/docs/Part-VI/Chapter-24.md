@@ -211,7 +211,7 @@ func main() {
 | 0/1 Knapsack | . | . | . | No (use DP) |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 23:</strong> Greedy algorithms provide fast, elegant solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
+<strong>Summary Chapter 23:</strong> Greedy algorithms provide fast, straightforward solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
 {{% /alert %}}
 
 ## See Also

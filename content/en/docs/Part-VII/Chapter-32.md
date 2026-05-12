@@ -126,7 +126,7 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Writing a full, robust Simplex implementation in Go from scratch is incredibly verbose and error-prone. For production systems, leverage bindings to GLPK, lp_solve, or robust Go libraries such as `github.com/codered/lp`.
+Writing a full Simplex implementation in Go from scratch is verbose and error-prone. For production systems, leverage bindings to GLPK, lp_solve, or Go libraries such as `github.com/codered/lp`.
 {{% /alert %}}
 
 ### Decision Matrix

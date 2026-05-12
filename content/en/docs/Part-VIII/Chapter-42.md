@@ -20,7 +20,7 @@ Chapter 43 explores modern algorithmic thinking: complexity classes, approximati
 
 ## 43.1. Beyond Big-O
 
-**Definition:** Modern algorithm analysis considers significantly more than just mathematical <abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O</abbr> bounds. Real-world performance is bottlenecked by physical hardware laws.
+**Definition:** Modern algorithm analysis considers more than mathematical <abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O</abbr> bounds. Real-world performance is bottlenecked by physical hardware laws.
 
 **Background & Philosophy:**
 The classical era ignored constant factors. The modern philosophy acknowledges that an <code>O(n log n)</code> algorithm can easily run 100x slower than an <code>O(n^2)</code> algorithm if the latter obeys hardware-friendly sequential memory patterns. Algorithms are no longer evaluated in a theoretical vacuum; they must demonstrate "Mechanical Sympathy."
@@ -53,7 +53,7 @@ Beyond P and NP, modern computing deals with extreme scales of difficulty:
 
 ## 43.3. Approximation and Heuristics
 
-When exact solutions are too expensive, modern algorithms aggressively settle for "good enough":
+When exact solutions are too expensive, modern algorithms settle for "good enough":
 
 | Approach | Guarantee | Use Case |
 |----------|-----------|----------|
