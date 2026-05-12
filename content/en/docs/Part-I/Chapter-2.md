@@ -380,7 +380,7 @@ func main() {
 | Amortized | Average over sequence | — | — | Data structures analysis |
 | Probabilistic | Expected over randomness | — | — | Randomized algorithms |
 | Polynomial (P) | Tractable | — | — | Polynomial solvable problems |
-| <abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr> | No known poly algorithm | Use approximation/heuristic |
+| <abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr> | No known poly algorithm | — | — | Use approximation/heuristic |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 2:</strong> This chapter explains complexity analysis fundamentals, including time and <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">space complexity</abbr>, <abbr title="Relating to values or properties approached as a limit, used in algorithm analysis.">asymptotic</abbr> notation (<abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O</abbr>, <abbr title="A mathematical notation describing the lower bound of an algorithm's growth rate.">Big-Ω</abbr>, <abbr title="A mathematical notation describing the tight bound of an algorithm's growth rate.">Big-Θ</abbr>), and advanced topics like amortized and probabilistic analysis. Use these tools to compare algorithms, predict scalability, and identify performance bottlenecks before optimizing.

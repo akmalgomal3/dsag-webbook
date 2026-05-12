@@ -33,10 +33,10 @@ Essential for recursive sorting (Merge Sort, Quick Sort), fast multiplication (K
 
 ### Operations & Complexity
 
-| Phase | Operation | Complexity | Description |
-|------|---------|--------------|------------|
-| Divide | Divide problem | <code>O(1)</code> or <code>O(n)</code> | Usually split in the middle |
-| Conquer | Solve subproblem | T(n/b) | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> |
+| Phase | Operation | Complexity                                   | Description |
+|------|---------|----------------------------------------------|------------|
+| Divide | Divide problem | <code>O(1)</code> or <code>O(n)</code>       | Usually split in the middle |
+| Conquer | Solve subproblem | <code>T(n/b)</code>                          | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> |
 | Combine | Merge results | <code>O(n)</code> or <code>O(n log n)</code> | Merge, partition |
 
 ### Pseudocode
@@ -87,7 +87,7 @@ func main() {
 | Natural recursive structure | <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr> is strictly limited |
 
 ### Edge Cases & Pitfalls
-- **Case <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> on n > 10⁴ can cause a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>; convert to an iterative approach.
+- **Case <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> on <code>n > 10⁴</code> can cause a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>; convert to an iterative approach.
 - **Case base case:** Forgetting to handle `len <= 1` causes infinite <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>.
 - **Case off-by-one:** `arr[:mid]` and `arr[mid:]` for `mid = len/2` works perfectly for balanced splits.
 
@@ -175,7 +175,7 @@ func main() {
 ### Edge Cases & Pitfalls
 - **Case sorted input:** <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> with the last element as pivot degrades to <code>O(n^2)</code>; use a randomized pivot or median-of-three.
 - **Case duplicate elements:** Partitioning with just `<` can lead to imbalanced splits; consider three-way partitioning.
-- **Case small subarrays:** Switch to <abbr title="A sorting algorithm that builds the final sorted array one item at a time.">insertion sort</abbr> for n < 10-20 (hybrid sort).
+- **Case small subarrays:** Switch to <abbr title="A sorting algorithm that builds the final sorted array one item at a time.">insertion sort</abbr> for <code>n < 10-20</code> (hybrid sort).
 
 ## 23.3. Case Studies: Divide and Conquer Algorithms
 
