@@ -404,8 +404,8 @@ abbr[title]::after {
     content: attr(title);
     position: absolute;
     bottom: 120%;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    transform: none;
     background: #1e293b;
     color: #f8fafc;
     padding: 6px 10px;
@@ -415,7 +415,7 @@ abbr[title]::after {
     max-width: min(280px, 90vw);
     width: max-content;
     word-wrap: break-word;
-    text-align: center;
+    text-align: left;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
