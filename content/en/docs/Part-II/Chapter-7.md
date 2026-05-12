@@ -11,12 +11,12 @@ katex: true
 ---
 
 {{% alert icon="📘" context="success" %}}
-Chapter 7 focuses on <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables, covering Go's built-in map, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and consistent hashing architectures for distributed systems.
+Chapter 7 focuses on <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables, covering Go's built-in map, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and <abbr title="Hashing that minimizes rehashing when the table resizes">consistent hashing</abbr> architectures for distributed systems.
 {{% /alert %}}
 
 ## 7.1. Hash Tables
 
-**Definition:** A <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> maps keys to values using a hash function. Go provides the built-in `map[K]V` which is backed by a <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr>.
+**Definition:** A <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> maps keys to values using a <abbr title="A function mapping data of arbitrary size to fixed-size values">hash function</abbr>. Go provides the built-in `map[K]V` which is backed by a <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr>.
 
 **Background & Philosophy:**
 The primary philosophy of a hash table is trading space for time. By allocating a larger memory footprint than strictly necessary, we can probabilistically guarantee <code>O(1)</code> access time. Hash tables convert a search problem (which would otherwise require iterating through elements) into a direct mathematical computation of an index. 
@@ -285,7 +285,7 @@ func main() {
 | Consistent Hash | custom | <code>O(log n)</code> | . | Distributed systems |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 7:</strong> This chapter explores <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables in Go, including built-in maps, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and consistent hashing for distributed systems. Use built-in maps for general key-value storage, FNV for checksums, SHA-256 for data integrity, and consistent hashing when nodes frequently join or leave a cluster.
+<strong>Summary Chapter 7:</strong> This chapter explores <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables in Go, including built-in maps, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and <abbr title="Hashing that minimizes rehashing when the table resizes">consistent hashing</abbr> for distributed systems. Use built-in maps for general key-value storage, FNV for checksums, SHA-256 for data integrity, and <abbr title="Hashing that minimizes rehashing when the table resizes">consistent hashing</abbr> when nodes frequently join or leave a cluster.
 {{% /alert %}}
 
 ## See Also

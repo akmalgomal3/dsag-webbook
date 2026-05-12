@@ -20,7 +20,7 @@ Chapter 38 covers <abbr title="A binary tree for range queries storing aggregate
 
 ## 38.1. Segment Tree
 
-**Definition:** A segment tree is a binary tree where each node stores the result of a query (sum, min, max) over a segment of the array. It supports range queries and point updates in <code>O(log n)</code>.
+**Definition:** A segment tree is a <abbr title="A tree where each node has at most two children">binary tree</abbr> where each node stores the result of a query (sum, min, max) over a segment of the array. It supports range queries and point updates in <code>O(log n)</code>.
 
 **Background & Philosophy:**
 The philosophy is precomputed aggregation. When an array is repeatedly updated and queried for range sums (e.g., sum from index 100 to 5000), a linear scan <code>O(n)</code> is too slow. Segment and Fenwick trees pre-calculate chunks of the array hierarchically, reducing the scan to a mathematical traversal of <code>O(log n)</code> boundaries.
@@ -41,7 +41,7 @@ Both trees elegantly abandon <abbr title="A variable that stores a memory addres
 
 ## 38.2. Range Sum Query
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 Use a slice-based tree with 1-based or 0-based indexing.
 

@@ -32,15 +32,15 @@ The core philosophy of software engineering is managing complexity. Abstraction 
 Translating ambiguous, contradictory human business requirements into flawlessly executing software states.
 
 **Memory Mechanics:**
-The ultimate philosophical boundary of <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> is memory state tracking. Every variable, every lock, every goroutine consumes <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Complex architectures attempt to abstract this away (via the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>). The pragmatic engineer respects that no abstraction can perfectly shield them from physical hardware limits; uncontrolled recursion still blows the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>, and fragmented objects still choke the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr>.
+The ultimate philosophical boundary of <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> is memory state tracking. Every variable, every lock, every <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> consumes <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Complex architectures attempt to abstract this away (via the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>). The pragmatic engineer respects that no abstraction can perfectly shield them from physical hardware limits; uncontrolled recursion still blows the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>, and fragmented objects still choke the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr>.
 
 ### The Algorithmic Mindset
 
 | Principle | Everyday Analog | Computational Form |
 |-----------|----------------|-------------------|
 | **Abstraction** | Using a map instead of terrain | Data structures model reality |
-| **Decomposition** | Dividing a project into tasks | Divide and conquer |
-| **Memoization** | Writing down intermediate results | Dynamic programming |
+| **Decomposition** | Dividing a project into tasks | <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and conquer</abbr> |
+| **Memoization** | Writing down intermediate results | <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> |
 | **Trade-offs** | Speed vs. accuracy | Time vs. space complexity |
 | **Indirection** | Calling a plumber | Delegation, pointers, interfaces |
 
@@ -58,12 +58,12 @@ Knuth's warning: "Premature optimization is the root of all evil." Efficiency me
 | Complex Algorithm | Simple Alternative | Winner |
 |-------------------|-------------------|--------|
 | Optimal BST | Regular BST + cache | Often the latter |
-| Fibonacci heap | Binary heap | Binary heap in practice |
+| Fibonacci heap | <abbr title="A heap data structure implemented using a binary tree">Binary heap</abbr> | <abbr title="A heap data structure implemented using a binary tree">Binary heap</abbr> in practice |
 | Splay trees | Randomized BST | Comparable, simpler |
 
 ### Limitations Are Information
 
-The <abbr title="The halting problem: determining whether a program will finish running or continue to run forever.">halting problem</abbr> being undecidable is not a failure — it tells us that some questions require human judgment. NP-completeness guides us toward approximation rather than futile exact search.
+The <abbr title="The halting problem: determining whether a program will finish running or continue to run forever.">halting problem</abbr> being undecidable is not a failure — it tells us that some questions require human judgment. <abbr title="The property of being NP and as hard as any NP problem">NP-completeness</abbr> guides us toward approximation rather than futile exact search.
 
 ## 44.3. Ethics of Algorithms
 

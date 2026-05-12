@@ -29,7 +29,7 @@ Before standard complexity analysis existed, comparing algorithms required runni
 It is used during the system design phase to choose the right database indexing strategy, to select appropriate data structures for high-throughput APIs, and to identify potential bottlenecks in legacy systems before they fail under load.
 
 **Memory Mechanics:**
-While primarily a mathematical abstraction, complexity analysis directly mirrors physical memory constraints. A system with <code>O(n)</code> <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">Space Complexity</abbr> means memory allocation grows linearly. In <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, this translates to requesting larger blocks from the operating system's memory manager. High space complexity can lead to <abbr title="The process of swapping data between RAM and disk storage when RAM is full.">page swapping</abbr>, causing severe performance degradation as the system resorts to much slower <abbr title="Input/Output operations involving reading from or writing to a physical disk.">disk I/O</abbr>.
+While primarily a mathematical abstraction, complexity analysis directly mirrors physical memory constraints. A system with <code>O(n)</code> <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">Space Complexity</abbr> means <abbr title="The process of reserving memory for program use">memory allocation</abbr> grows linearly. In <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, this translates to requesting larger blocks from the operating system's memory manager. High space complexity can lead to <abbr title="The process of swapping data between RAM and disk storage when RAM is full.">page swapping</abbr>, causing severe performance degradation as the system resorts to much slower <abbr title="Input/Output operations involving reading from or writing to a physical disk.">disk I/O</abbr>.
 
 ### Operations & Complexity
 
@@ -367,7 +367,7 @@ func main() {
 ### Edge Cases & Pitfalls
 
 - **Amortized vs average:** Amortized is the <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> average over a sequence, not the expected <abbr title="The data associated with a key in a key-value pair.">value</abbr> over random inputs.
-- **Randomized seed:** In Go, the global `rand.Seed` is not thread-safe; use `rand.NewSource` per goroutine if needed.
+- **Randomized seed:** In Go, the global `rand.Seed` is not thread-safe; use `rand.NewSource` per <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> if needed.
 - **<abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr>:** Don't waste time looking for a polynomial algorithm for <abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr> problems; focus on approximation or heuristics.
 
 ### Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>

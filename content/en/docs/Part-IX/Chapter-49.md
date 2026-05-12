@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 49 introduces suffix arrays — a space-efficient alternative to suffix trees for string searching, pattern matching, and bioinformatics.
+Chapter 49 introduces suffix arrays — a space-efficient alternative to suffix trees for string searching, <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr>, and bioinformatics.
 {{% /alert %}}
 
 ## 49.1. The String Search Problem
@@ -23,17 +23,17 @@ Chapter 49 introduces suffix arrays — a space-efficient alternative to suffix 
 **Definition:** A <abbr title="A sorted array of all suffixes of a string, enabling efficient string matching and analysis.">suffix array</abbr> is the lexicographically sorted array of all suffixes of a string. It enables powerful string operations with <code>O(n log n)</code> construction and <code>O(m log n)</code> pattern search.
 
 **Background & Philosophy:**
-The philosophy is reducing complex string geometries into mathematically sortable integers. Suffix Trees are incredibly powerful but hideously complex to build and store. A Suffix Array abandons the tree structure entirely, opting simply to sort pointers to the suffixes. It relies on the insight that binary search over a sorted list of suffixes solves string matching elegantly.
+The philosophy is reducing complex string geometries into mathematically sortable integers. Suffix Trees are incredibly powerful but hideously complex to build and store. A Suffix Array abandons the tree structure entirely, opting simply to sort pointers to the suffixes. It relies on the insight that binary search over a sorted list of suffixes solves <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> elegantly.
 
 **Use Cases:**
 Bioinformatics (DNA sequence alignment), full-text search engines, and data compression (Burrows-Wheeler Transform).
 
 **Memory Mechanics:**
-A Suffix Tree allocates a node for every character, severely fragmenting <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. A Suffix Array merely stores an array of integers (the starting indices of suffixes). For a string of length `N`, it strictly requires <code>O(N)</code> contiguous memory (just `4N` or `8N` bytes). This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> integer array allows the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch data flawlessly during binary searches, making it vastly superior to Suffix Trees in real-world memory performance.
+A <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr> allocates a node for every character, severely fragmenting <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. A Suffix Array merely stores an array of integers (the starting indices of suffixes). For a string of length `N`, it strictly requires <code>O(N)</code> contiguous memory (just `4N` or `8N` bytes). This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> integer array allows the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch data flawlessly during binary searches, making it vastly superior to Suffix Trees in real-world memory performance.
 
-### Suffix Array vs Suffix Tree
+### Suffix Array vs <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr>
 
-| Aspect | Suffix Array | Suffix Tree |
+| Aspect | Suffix Array | <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr> |
 |--------|--------------|-------------|
 | Space | <code>O(n)</code> integers | <code>O(n)</code> pointers (heavy) |
 | Construction | <code>O(n log n)</code> or <code>O(n)</code> | <code>O(n)</code> |
@@ -55,7 +55,7 @@ For string "banana":
 
 Suffix array: [5, 3, 1, 0, 4, 2]
 
-### Idiomatic Go: Naive Construction
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: Naive Construction
 
 ```go
 package main
@@ -131,11 +131,11 @@ The <abbr title="An array storing the length of the longest common prefix betwee
 | `index/suffixarray` | Go's production-ready suffix array implementation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 49:</strong> Suffix arrays prove that sorting can solve complex string problems elegantly. By lexicographically sorting all suffixes, they transform pattern matching into binary search — a beautiful reduction from string complexity to array simplicity. For static text search, they offer the best balance of speed, space, and implementation clarity.
+<strong>Summary Chapter 49:</strong> Suffix arrays prove that sorting can solve complex string problems elegantly. By lexicographically sorting all suffixes, they transform <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> into binary search — a beautiful <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr> from string complexity to array simplicity. For static text search, they offer the best balance of speed, space, and implementation clarity.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 35: String Matching Algorithms](/docs/Part-VII/Chapter-35/)
+- [Chapter 35: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-35/)
 - [Chapter 37: Trie Data Structures](/docs/Part-VII/Chapter-37/)
 - [Chapter 50: Persistent Data Structures](/docs/Part-IX/Chapter-50/)

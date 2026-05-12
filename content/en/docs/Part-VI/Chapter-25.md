@@ -15,15 +15,15 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 25 covers <abbr title="An algorithm making locally optimal choices at each step.">greedy algorithms</abbr>: making locally optimal choices at each step to find a global optimum. Learn when greediness works and when it fails.
+Chapter 25 covers <abbr title="An algorithm making locally optimal choices at each step.">greedy algorithms</abbr>: making locally optimal choices at each step to find a <abbr title="The best possible solution over the entire search space">global optimum</abbr>. Learn when greediness works and when it fails.
 {{% /alert %}}
 
 ## 25.1. Greedy Strategy
 
-**Definition:** A greedy algorithm builds a solution piece by piece, always choosing the next piece that offers the most immediate benefit. It works only when the problem has the **greedy choice property** and **optimal substructure**.
+**Definition:** A <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> builds a solution piece by piece, always choosing the next piece that offers the most immediate benefit. It works only when the problem has the **greedy choice property** and **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>**.
 
 **Background & Philosophy:**
-The philosophy of Greed is local optimization. Instead of examining all possible futures (like <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>) or storing all past states (like <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">DP</abbr>), a greedy algorithm makes the mathematically best choice right now and never reconsiders it. It trades guarantees of absolute correctness for blinding speed.
+The philosophy of Greed is local optimization. Instead of examining all possible futures (like <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>) or storing all past states (like <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">DP</abbr>), a <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> makes the mathematically best choice right now and never reconsiders it. It trades guarantees of absolute correctness for blinding speed.
 
 **Use Cases:**
 Network packet routing (<abbr title="An algorithm finding shortest paths in non-negative weighted graphs.">Dijkstra</abbr>), data compression (<abbr title="A greedy algorithm for lossless data compression using variable-length codes.">Huffman coding</abbr>), and resource scheduling where constraints allow sorting to define priority.
@@ -44,7 +44,7 @@ Greedy algorithms almost always require the data to be sorted first. This means 
 
 **Definition:** Given items with weights and values, fill a knapsack to maximize value. Unlike 0/1 knapsack, you can take fractions of items.
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 Sort by value-to-weight ratio in descending order.
 
@@ -216,6 +216,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
-- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
+- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)
 - [Chapter 36: Approximate Algorithms](/docs/Part-VII/Chapter-36/)

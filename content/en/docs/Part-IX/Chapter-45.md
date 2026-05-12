@@ -38,7 +38,7 @@ Disk I/O is notoriously slow. A B-Tree node is specifically sized to perfectly m
 | Random access | 100 ns | 10 ms |
 | Sequential read | 10 GB/s | 200 MB/s |
 
-A binary tree with 1 million items requires ~20 disk seeks. A B-tree with 500 keys/node requires only ~3.
+A <abbr title="A tree where each node has at most two children">binary tree</abbr> with 1 million items requires ~20 disk seeks. A B-tree with 500 keys/node requires only ~3.
 
 ## 45.2. B-Tree Properties
 
@@ -50,7 +50,7 @@ For a B-tree of order <abbr title="The maximum number of children a node can hav
 - All leaves appear on the same level
 - A non-leaf node with k children contains k-1 keys
 
-### Idiomatic Go: B-Tree Node
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: B-Tree Node
 
 ```go
 package main

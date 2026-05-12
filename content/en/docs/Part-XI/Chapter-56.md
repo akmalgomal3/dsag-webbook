@@ -11,11 +11,11 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>If brute force is <code>O(n^2)</code>, two pointers or sliding window often reduce it to <code>O(n)</code>.</em>" : Unknown</strong>
+<strong>"<em>If <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> is <code>O(n^2)</code>, two pointers or sliding window often reduce it to <code>O(n)</code>.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 56 covers sliding window and two pointers — two fundamental techniques for solving subarray and substring problems in optimal linear time.
+Chapter 56 covers sliding window and two pointers — two fundamental techniques for solving subarray and substring problems in optimal <abbr title="An algorithm whose running time grows linearly with input size">linear time</abbr>.
 {{% /alert %}}
 
 ## 56.1. The Two Pointers Technique
@@ -23,7 +23,7 @@ Chapter 56 covers sliding window and two pointers — two fundamental techniques
 **Definition:** The <abbr title="A technique using two indices to traverse a data structure, typically one starting from each end or both from the start.">two pointers</abbr> technique explicitly maintains two indices moving through a sequence to isolate pairs, triplets, or partitions perfectly satisfying a set mathematical condition.
 
 **Background & Philosophy:**
-The philosophy is dynamic bounds management. Instead of running a nested loop <code>O(n^2)</code> to re-evaluate every possible sub-array combination, these algorithms maintain a "memory" of the previous state. By incrementally adding to the front and removing from the back, they reduce a quadratic search space into a linear <code>O(n)</code> stroll.
+The philosophy is dynamic bounds management. Instead of running a nested loop <code>O(n^2)</code> to re-evaluate every possible sub-array combination, these algorithms maintain a "memory" of the previous state. By incrementally adding to the front and removing from the back, they reduce a quadratic <abbr title="The set of all candidate solutions in a problem">search space</abbr> into a linear <code>O(n)</code> stroll.
 
 **Use Cases:**
 Network congestion control (TCP sliding windows), video streaming buffer management, and parsing continuous streams of market data for moving averages.
@@ -169,6 +169,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 55: Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+- [Chapter 55: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-55/)
 - [Chapter 57: Kadane's Algorithm](/docs/Part-XI/Chapter-57/)
-- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)

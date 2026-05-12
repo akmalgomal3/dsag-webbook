@@ -29,7 +29,7 @@ Algorithms exist to solve problems efficiently. As data scales, naive approaches
 Used daily by software engineers to choose between alternative solutions (for example, using a hash map versus an array for fast lookups) and when designing distributed systems that must handle millions of concurrent requests.
 
 **Memory Mechanics:**
-In memory, algorithmic complexity directly affects CPU cache utilization and RAM allocation. An <code>O(n)</code> array traversal loads contiguous memory blocks efficiently into the CPU cache, leveraging spatial locality. In contrast, algorithms with poor memory access patterns or exponential complexity cause frequent cache misses, forcing the CPU to repeatedly fetch data from slower main memory.
+In memory, algorithmic complexity directly affects CPU cache utilization and RAM allocation. An <code>O(n)</code> array traversal loads contiguous memory blocks efficiently into the CPU cache, leveraging spatial locality. In contrast, algorithms with poor memory access patterns or exponential complexity cause frequent cache misses, forcing the CPU to repeatedly fetch data from slower <abbr title="The primary volatile storage directly accessible by the CPU">main memory</abbr>.
 
 ### Operations & Complexity
 
@@ -372,7 +372,7 @@ func main() {
 | <abbr title="A specialized tree-based data structure that satisfies the heap property.">Heap</abbr> | `container/heap` | <code>O(log n)</code> push/pop | . | <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority queue</abbr> |
 | Sort | `sort` package | <code>O(n log n)</code> | . | Ordering data |
 | Search | `sort.Search` | <code>O(log n)</code> | . | <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary search</abbr> |
-| Concurrency | `goroutine`, `sync` | Parallel | Parallel algorithms |
+| Concurrency | `<abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr>`, `sync` | Parallel | Parallel algorithms |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 1:</strong> This chapter covers algorithmic complexity analysis with <abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O notation</abbr> and the fundamental relationship between algorithms and data structures. It introduces how to evaluate time and <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">space complexity</abbr>, choose appropriate algorithms for different input sizes, and considers ethical implications such as bias, transparency, and sustainability in algorithm design.

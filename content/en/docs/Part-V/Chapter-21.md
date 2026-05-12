@@ -23,7 +23,7 @@ Chapter 21 covers searching algorithms: <abbr title="A search algorithm checking
 **Definition:** Linear search sequentially checks each element until the target is found or the end is reached. It works on any data structure supporting traversal.
 
 **Background & Philosophy:**
-The philosophy is exhaustive brute-force checking. It assumes absolutely no structure or order in the data, making it the most resilient but least efficient searching method.
+The philosophy is exhaustive <abbr title="A straightforward approach trying all possible solutions">brute-force</abbr> checking. It assumes absolutely no structure or order in the data, making it the most resilient but least efficient searching method.
 
 **Use Cases:**
 Used when searching through unindexed data, short arrays, or streams of data where sorting is impossible or more expensive than a single linear scan.
@@ -39,7 +39,7 @@ Linear search exhibits perfect <abbr title="The tendency of a processor to acces
 | Best case | <code>O(1)</code> | Target at first position |
 | Space | <code>O(1)</code> | No extra memory |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 Use a simple loop. For slices, the built-in approach is often sufficient.
 

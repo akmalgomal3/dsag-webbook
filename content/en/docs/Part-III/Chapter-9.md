@@ -20,10 +20,10 @@ Chapter 9 covers tree data structures: binary search trees, self-balancing trees
 
 ## 9.1. Binary Search Tree (BST)
 
-**Definition:** A BST is a binary tree where each node's left subtree contains only values less than the node, and the right subtree contains only values greater.
+**Definition:** A BST is a <abbr title="A tree where each node has at most two children">binary tree</abbr> where each node's left subtree contains only values less than the node, and the right subtree contains only values greater.
 
 **Background & Philosophy:**
-Trees mirror the hierarchical nature of human logic and decision-making. The philosophy of a <abbr title="A binary tree where the left child is smaller and the right child is larger than the parent.">Binary Search Tree (BST)</abbr> is to combine the dynamic memory allocation flexibility of a linked list with the <code>O(log n)</code> search speed of a sorted array. It achieves this by enforcing a strict invariant: left is always smaller, right is always larger.
+Trees mirror the hierarchical nature of human logic and decision-making. The philosophy of a <abbr title="A binary tree where the left child is smaller and the right child is larger than the parent.">Binary Search Tree (BST)</abbr> is to combine the dynamic <abbr title="The process of reserving memory for program use">memory allocation</abbr> flexibility of a linked list with the <code>O(log n)</code> search speed of a sorted array. It achieves this by enforcing a strict invariant: left is always smaller, right is always larger.
 
 **Use Cases:**
 Used in implementing sets and dictionaries, executing fast range queries (e.g., "find all users aged 20 to 30"), and powering the underlying autocomplete logic in modern search engines via Tries.
@@ -39,7 +39,7 @@ A standard BST is <abbr title="Memory blocks allocated in fragmented, separate l
 | Insert | <code>O(log n)</code> | <code>O(n)</code> | Find position, attach |
 | Delete | <code>O(log n)</code> | <code>O(n)</code> | Three cases |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main

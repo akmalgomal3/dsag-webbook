@@ -9,7 +9,7 @@ draft: false
 toc: true
 ---
 
-You have reached the end of **Modern Data Structures and Algorithms in Go**: a journey through 60 chapters spanning 12 parts, from the ancient origins of algorithms to the cutting edge of computational thinking.
+You have reached the end of **Modern Data Structures and Algorithms in Go**: a journey through 60 chapters spanning 12 parts, from the ancient origins of algorithms to the cutting edge of <abbr title="Problem-solving approach using CS fundamentals">computational thinking</abbr>.
 
 ## What You Have Learned
 

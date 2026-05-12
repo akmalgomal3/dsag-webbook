@@ -23,7 +23,7 @@ Chapter 33 covers linear programming: fundamental formulation, the Simplex algor
 **Definition:** <abbr title="Optimizing a linear objective function under linear equality and inequality constraints.">Linear Programming</abbr> (LP) aims to maximize or minimize a linear <abbr title="The function to be maximized or minimized in an optimization problem.">objective function</abbr> subject strictly to linear equality and inequality <abbr title="Conditions or restrictions in an optimization problem that define the solution space.">constraints</abbr>.
 
 **Background & Philosophy:**
-The philosophy is geometric optimization. Linear constraints form a convex polygon (or polytope in N-dimensions) representing the <abbr title="The set of all valid solutions satisfying all constraints in an optimization problem.">"feasible region"</abbr>. The fundamental theorem of LP states that the optimal solution *always* lies on a vertex (corner) of this polytope. Because of this mathematical certainty, solvers do not need to check infinite interior points; they only need to "walk" along the edges from corner to corner until they find the peak.
+The philosophy is geometric optimization. Linear constraints form a convex <abbr title="A plane figure bounded by straight line segments">polygon</abbr> (or polytope in N-dimensions) representing the <abbr title="The set of all valid solutions satisfying all constraints in an optimization problem.">"feasible region"</abbr>. The fundamental theorem of LP states that the optimal solution *always* lies on a vertex (corner) of this polytope. Because of this mathematical certainty, solvers do not need to check infinite interior points; they only need to "walk" along the edges from corner to corner until they find the peak.
 
 **Use Cases:**
 Airline crew scheduling, financial portfolio optimization, manufacturing supply chains, and routing massive logistical fleets.
@@ -297,7 +297,7 @@ The Dual LP proves highly beneficial for intensive sensitivity analysis and driv
 | Dual | Formulation | <code>O(mn)</code> | varies | Executing sensitivity analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 33:</strong> This chapter discusses linear programming: grasping standard formulations, applying the Simplex algorithm conceptually for 2 variables, tackling integer linear programming through branch and bound (and DP for knapsack variants), and examining duality for sensitivity analysis. Strongly prefer external solvers for production environments; reserve manual implementations purely for deep educational exercises.
+<strong>Summary Chapter 33:</strong> This chapter discusses linear programming: grasping standard formulations, applying the Simplex algorithm conceptually for 2 variables, tackling integer linear programming through <abbr title="Finding optimal solutions by pruning search trees">branch and bound</abbr> (and DP for knapsack variants), and examining duality for sensitivity analysis. Strongly prefer external solvers for production environments; reserve manual implementations purely for deep educational exercises.
 {{% /alert %}}
 
 ## See Also

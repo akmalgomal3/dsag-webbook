@@ -29,7 +29,7 @@ The core philosophy of Dijkstra is "greedy expansion with guaranteed finality." 
 Dijkstra is the foundation of network routing (like OSPF in IP networks) and mapping software (like finding the fastest driving route considering distance and speed limits).
 
 **Memory Mechanics:**
-Dijkstra algorithm's efficiency relies heavily on a Min-Heap (<abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority Queue</abbr>). In Go, this is a dynamically resizing slice that utilizes <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. When the algorithm "relaxes" an edge, it pushes a new `State` struct into the heap. Because the heap is contiguous, <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality during bubbling up/down operations is excellent. However, the `dist` (distance) array is accessed randomly based on graph topology, which can trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> in massive, highly-connected graphs.
+Dijkstra algorithm's efficiency relies heavily on a <abbr title="A heap where each parent is less than or equal to its children">Min-Heap</abbr> (<abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority Queue</abbr>). In Go, this is a dynamically resizing slice that utilizes <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. When the algorithm "relaxes" an edge, it pushes a new `State` struct into the heap. Because the heap is contiguous, <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality during bubbling up/down operations is excellent. However, the `dist` (distance) array is accessed randomly based on graph topology, which can trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> in massive, highly-connected graphs.
 
 ### Operations & Complexity
 
@@ -40,7 +40,7 @@ Dijkstra algorithm's efficiency relies heavily on a Min-Heap (<abbr title="A que
 | Relax edges | <code>O(E)</code> total | Update distances |
 | Total | <code>O((V + E) log V)</code> | With <abbr title="A heap implemented using a binary tree.">binary heap</abbr> |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 Use `container/heap` for the <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr>.
 

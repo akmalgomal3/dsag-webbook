@@ -40,7 +40,7 @@ Because approximate algorithms often fall back on greedy sorting or minimum span
 | Knapsack (fractional) | 1 (Exact) | <code>O(n log n)</code> | Strictly optimal for fractional variables |
 | TSP (metric) | 2 (MST-based) | <code>O(V²)</code> | Employs the double-tree technique |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main

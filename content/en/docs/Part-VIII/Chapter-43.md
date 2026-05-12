@@ -35,7 +35,7 @@ Every jump in memory hierarchies (L1 cache -> L2 cache -> RAM -> Disk) incurs a 
 |--------|--------|---------|
 | **Cache efficiency** | 10–100x speedup | Arrays vs linked lists |
 | **Branch prediction** | 2–4x speedup | Sorted vs random data |
-| **Memory allocation** | GC pressure | Object pooling in Go |
+| **<abbr title="The process of reserving memory for program use">Memory allocation</abbr>** | GC pressure | Object pooling in Go |
 | **Parallelism** | Linear speedup | GPU algorithms |
 | **I/O patterns** | Orders of magnitude | Sequential vs random disk |
 
@@ -45,10 +45,10 @@ Beyond P and NP, modern computing deals with extreme scales of difficulty:
 
 | Class | Meaning | Example |
 |-------|---------|---------|
-| **BPP** | Bounded-error probabilistic polynomial time | Miller-Rabin primality |
-| **BQP** | Quantum polynomial time | Shor's algorithm |
+| **BPP** | Bounded-error probabilistic <abbr title="An algorithm whose running time is bounded by a polynomial expression">polynomial time</abbr> | Miller-Rabin primality |
+| **BQP** | Quantum <abbr title="An algorithm whose running time is bounded by a polynomial expression">polynomial time</abbr> | Shor's algorithm |
 | **PSPACE** | Polynomial space | Game solving |
-| **EXPTIME** | Exponential time | Chess (generalized) |
+| **EXPTIME** | <abbr title="An algorithm whose running time grows as a constant raised to input size">Exponential time</abbr> | Chess (generalized) |
 | **NC** | Efficiently parallelizable | Matrix multiplication |
 
 ## 43.3. Approximation and Heuristics
@@ -62,7 +62,7 @@ When exact solutions are too expensive, modern algorithms aggressively settle fo
 | **Heuristics** | No guarantee, often works | SAT solvers, neural nets |
 | **Metaheuristics** | Guided search | Genetic algorithms, simulated annealing |
 
-### Idiomatic Go: When to Approximate
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: When to Approximate
 
 ```go
 // Exact: O(n!) — impossible for n=50

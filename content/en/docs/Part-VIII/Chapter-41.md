@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>We may say most aptly that the Analytical Engine weaves algebraic patterns just as the Jacquard loom weaves flowers and leaves.</em>" : Ada Lovelace</strong>
+<strong>"<em>We may say most aptly that the <abbr title="Babbage's design for a general-purpose mechanical computer">Analytical Engine</abbr> weaves algebraic patterns just as the Jacquard loom weaves flowers and leaves.</em>" : Ada Lovelace</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -26,7 +26,7 @@ Chapter 41 covers the 20th-century revolution that transformed algorithms from m
 The philosophical question was absolute certainty: can a machine flawlessly deduce the entire universe of mathematics? The shattering realization by Gödel and Turing was that <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> has fundamental limits. The philosophy shifted from "we can calculate anything" to "what is fundamentally impossible to calculate?"
 
 **Use Cases:**
-These theoretical bounds directly define what modern programmers cannot do: you cannot write a perfect debugger that finds infinite loops (due to the Halting Problem), and you cannot write a perfect mathematical verifier.
+These theoretical bounds directly define what modern programmers cannot do: you cannot write a perfect debugger that finds infinite loops (due to the <abbr title="Determining whether a program will finish or run forever">Halting Problem</abbr>), and you cannot write a perfect mathematical verifier.
 
 **Memory Mechanics:**
 The theoretical models used infinite memory (an infinitely long tape). In reality, computer memory is severely finite. This physical limitation bridged the gap between pure mathematics and engineering, birthing the concept of <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">Space Complexity</abbr>.
@@ -74,16 +74,16 @@ Cook (1971) and Karp (1972) shifted the philosophy from "can we solve it?" to "c
 Cryptography relies exclusively on NP-Hard problems (like integer factorization) remaining unsolved in P. Logistics companies use NP-Complete awareness to choose approximation routing rather than freezing their servers looking for perfect answers.
 
 **Memory Mechanics:**
-Problems in P scale politely within <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Problems in EXPTIME or NP often require memory that scales exponentially alongside time. An algorithm executing a brute-force search over a set of 100 elements generates <code>2^100</code> branches. Tracking this state recursively effortlessly obliterates the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> and crashes the operating system via <abbr title="An error caused by using more stack memory than allocated.">Out of Memory (OOM)</abbr> termination.
+Problems in P scale politely within <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Problems in EXPTIME or NP often require memory that scales exponentially alongside time. An algorithm executing a <abbr title="A straightforward approach trying all possible solutions">brute-force</abbr> search over a set of 100 elements generates <code>2^100</code> branches. Tracking this state recursively effortlessly obliterates the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> and crashes the operating system via <abbr title="An error caused by using more stack memory than allocated.">Out of Memory (OOM)</abbr> termination.
 
 ### The P vs NP Question
 
-The most important open problem in computer science: If a solution can be verified in polynomial time, can it also be found in polynomial time?
+The most important open problem in computer science: If a solution can be verified in <abbr title="An algorithm whose running time is bounded by a polynomial expression">polynomial time</abbr>, can it also be found in <abbr title="An algorithm whose running time is bounded by a polynomial expression">polynomial time</abbr>?
 
 | Class | Definition | Example |
 |-------|------------|---------|
-| **P** | Solvable in polynomial time | Sorting, shortest path |
-| **NP** | Verifiable in polynomial time | Sudoku, factoring |
+| **P** | Solvable in <abbr title="An algorithm whose running time is bounded by a polynomial expression">polynomial time</abbr> | Sorting, shortest path |
+| **NP** | Verifiable in <abbr title="An algorithm whose running time is bounded by a polynomial expression">polynomial time</abbr> | Sudoku, factoring |
 | **NP-Complete** | Hardest problems in NP | 3-SAT, TSP, Knapsack |
 | **NP-Hard** | At least as hard as NP-Complete | Chess, protein folding |
 
@@ -108,7 +108,7 @@ The most important open problem in computer science: If a solution can be verifi
 | Gödel | Incompleteness | Limits of formal verification |
 | Turing | Universal computation | Basis of all modern computers |
 | Church | Lambda calculus | Foundation of functional programming |
-| Cook | NP-Completeness | Guides algorithm design strategy |
+| Cook | <abbr title="The property of being NP and as hard as any NP problem">NP-Completeness</abbr> | Guides algorithm design strategy |
 | Knuth | Algorithm analysis | Standardized Big-O notation |
 
 {{% alert icon="🎯" context="success" %}}

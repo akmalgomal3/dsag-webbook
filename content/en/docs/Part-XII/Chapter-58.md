@@ -235,7 +235,7 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 | Use Minimax When... | Use Heuristics When... |
 |---------------------|------------------------|
 | Perfect information games | Imperfect information (poker, etc.) |
-| Small state space | State space too large for full search |
+| Small <abbr title="The set of all possible states in a problem">state space</abbr> | <abbr title="The set of all possible states in a problem">State space</abbr> too large for full search |
 | Deterministic moves | Stochastic elements |
 
 ### Edge Cases & Pitfalls
@@ -264,6 +264,6 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 
 ## See Also
 
-- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
-- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
+- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)
 - [Chapter 59: Mo's Algorithm](/docs/Part-XII/Chapter-59/)

@@ -20,7 +20,7 @@ Chapter 31 explores cryptographic primitives: hash functions, symmetric encrypti
 
 ## 31.1. Hash Functions
 
-**Definition:** A hash function maps arbitrary inputs to deterministic fixed-size outputs. Cryptographic hashes must be robustly preimage-resistant and collision-resistant.
+**Definition:** A <abbr title="A function mapping data of arbitrary size to fixed-size values">hash function</abbr> maps arbitrary inputs to deterministic fixed-size outputs. Cryptographic hashes must be robustly preimage-resistant and collision-resistant.
 
 **Background & Philosophy:**
 The philosophy is mathematical asymmetry and mathematical impossibility. Cryptography relies on one-way functions (like factoring large primes or elliptic curve discrete logarithms) that are trivial to compute in one direction but take billions of years to reverse without a key.

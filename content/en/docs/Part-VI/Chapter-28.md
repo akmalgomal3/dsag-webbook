@@ -29,7 +29,7 @@ The philosophy is trading absolute certainty for overwhelming probability. Deter
 Randomized QuickSort is the underlying default sorting strategy in modern standard libraries, used constantly when data comes from untrusted networks where users might submit intentionally sorted arrays to DDOS the server via worst-case CPU burn.
 
 **Memory Mechanics:**
-Randomization heavily relies on Pseudo-Random Number Generators (PRNGs). Fetching from a PRNG requires querying a shared internal state. If multiple <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> request random numbers from the global `rand.Seed`, it creates massive <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> at the memory level. High-performance randomized algorithms allocate a distinct `rand.New(rand.NewSource())` per goroutine to maintain isolated <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> states, avoiding cross-thread memory stalling.
+Randomization heavily relies on Pseudo-Random Number Generators (PRNGs). Fetching from a PRNG requires querying a shared internal state. If multiple <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> request random numbers from the global `rand.Seed`, it creates massive <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> at the memory level. High-performance randomized algorithms allocate a distinct `rand.New(rand.NewSource())` per <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> to maintain isolated <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> states, avoiding cross-thread memory stalling.
 
 ### Operations & Complexity
 
@@ -368,6 +368,6 @@ Reservoir sampling guarantees that every single item possesses an exact mathemat
 
 ## See Also
 
-- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)
 - [Chapter 27: Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)
 - [Chapter 46: Skip Lists](/docs/Part-IX/Chapter-46/)

@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr> — the mathematically elegant <code>O(n)</code> solution resolving the maximum subarray problem, serving as an outstanding foundation to dynamic programming thinking.
+Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr> — the mathematically elegant <code>O(n)</code> solution resolving the maximum subarray problem, serving as an outstanding foundation to <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> thinking.
 {{% /alert %}}
 
 ## 57.1. The Maximum Subarray Problem
@@ -23,7 +23,7 @@ Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of
 **Definition:** Given an array of integers (often containing negative numbers), seamlessly find the strictly contiguous subarray offering the absolute largest internal sum. First solved flawlessly in <code>O(n)</code> by Jay Kadane in 1984.
 
 **Background & Philosophy:**
-The philosophy is aggressive amnesia. Kadane’s is the ultimate distillation of Dynamic Programming. It constantly asks a localized question: "Is the accumulated baggage of the past dragging me down so much that I'm better off starting entirely fresh right now?" If the running sum drops below the current element, it fiercely cuts ties with the past.
+The philosophy is aggressive amnesia. Kadane’s is the ultimate distillation of <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>. It constantly asks a localized question: "Is the accumulated baggage of the past dragging me down so much that I'm better off starting entirely fresh right now?" If the running sum drops below the current element, it fiercely cuts ties with the past.
 
 **Use Cases:**
 Identifying the most profitable sequence of trades in algorithmic finance, and genomic sequence analysis where negative scores represent mutations and positive scores represent matches.
@@ -116,19 +116,19 @@ The recurrence captures the unyielding essence of <abbr title="A method for solv
 |--------|-------|
 | Time | <code>O(n)</code> |
 | Space | <code>O(1)</code> |
-| Technique | Dynamic programming paradigm |
-| Key idea | Transform local optimum cleanly into global optimum |
+| Technique | <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> paradigm |
+| Key idea | Transform <abbr title="A solution better than neighbors but not globally best">local optimum</abbr> cleanly into <abbr title="The best possible solution over the entire search space">global optimum</abbr> |
 
 | Go stdlib | Usage |
 |-----------|-------|
 | No direct equivalent | Requires manual implementation specifically tailored for financial or stock tracking |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 57:</strong> Kadane's algorithm acts as an absolute masterpiece of dynamic programming simplicity. In a blistering single pass executing with merely <code>O(1)</code> auxiliary space, it cleanly solves a complex problem that intuitively seems to mandate rigorously examining all <code>O(n^2)</code> possible subarrays. The core mathematical lesson flawlessly transcends the specific problem: whenever tackling "best subarray" questions, instantly ask if the optimal state ending at position i can be efficiently derived directly from position i-1. If it genuinely can, Kadane's profound insight applies.
+<strong>Summary Chapter 57:</strong> Kadane's algorithm acts as an absolute masterpiece of <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> simplicity. In a blistering single pass executing with merely <code>O(1)</code> auxiliary space, it cleanly solves a complex problem that intuitively seems to mandate rigorously examining all <code>O(n^2)</code> possible subarrays. The core mathematical lesson flawlessly transcends the specific problem: whenever tackling "best subarray" questions, instantly ask if the optimal state ending at position i can be efficiently derived directly from position i-1. If it genuinely can, Kadane's profound insight applies.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
-- [Chapter 55: Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
+- [Chapter 55: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-55/)
 - [Chapter 56: Sliding Window and Two Pointers](/docs/Part-XI/Chapter-56/)

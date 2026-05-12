@@ -92,7 +92,7 @@ The Sieve fundamentally trades time for space. It requires an <abbr title="A col
 
 **Newton** (1671): Generalized iterative methods for roots and calculus.
 **Gauss** (1809): Gaussian elimination — systematic linear equation solving.
-**Babbage & Lovelace** (1830s): The Analytical Engine + first algorithm intended for machine execution.
+**Babbage & Lovelace** (1830s): The <abbr title="Babbage's design for a general-purpose mechanical computer">Analytical Engine</abbr> + first algorithm intended for machine execution.
 
 ### Decision Matrix
 
@@ -115,7 +115,7 @@ The Sieve fundamentally trades time for space. It requires an <abbr title="A col
 | 1800 BCE | Babylonian square root | Newton-Raphson |
 | 300 BCE | Euclid's GCD | Still used today |
 | 200 BCE | Sieve of Eratosthenes | Segmented sieve variants |
-| 820 CE | al-Khwarizmi's algebra | Symbolic computation |
+| 820 CE | al-Khwarizmi's algebra | <abbr title="Computer manipulation of mathematical expressions symbolically">Symbolic computation</abbr> |
 | 1830s | Babbage/Lovelace | Modern computer programs |
 
 {{% alert icon="🎯" context="success" %}}

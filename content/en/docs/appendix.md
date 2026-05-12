@@ -38,11 +38,11 @@ Quick reference for time and space complexity of common data structures and algo
 | Quicksort | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n²)</code> | <code>O(log n)</code> | No |
 | Mergesort | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n)</code> | Yes |
 | Heapsort | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(1)</code> | No |
-| Insertion Sort | <code>O(n)</code> | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(1)</code> | Yes |
-| Selection Sort | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(1)</code> | No |
-| Counting Sort | <code>O(n + k)</code> | <code>O(n + k)</code> | <code>O(n + k)</code> | <code>O(k)</code> | Yes |
-| Radix Sort | <code>O(d(n + k))</code> | <code>O(d(n + k))</code> | <code>O(d(n + k))</code> | <code>O(n + k)</code> | Yes |
-| Bucket Sort | <code>O(n)</code> | <code>O(n)</code> | <code>O(n²)</code> | <code>O(n)</code> | Yes |
+| <abbr title="A sorting algorithm building the final array one element at a time">Insertion Sort</abbr> | <code>O(n)</code> | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(1)</code> | Yes |
+| <abbr title="A sorting algorithm repeatedly finding the minimum element">Selection Sort</abbr> | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(1)</code> | No |
+| <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr> | <code>O(n + k)</code> | <code>O(n + k)</code> | <code>O(n + k)</code> | <code>O(k)</code> | Yes |
+| <abbr title="A sorting algorithm processing digits individually">Radix Sort</abbr> | <code>O(d(n + k))</code> | <code>O(d(n + k))</code> | <code>O(d(n + k))</code> | <code>O(n + k)</code> | Yes |
+| <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr> | <code>O(n)</code> | <code>O(n)</code> | <code>O(n²)</code> | <code>O(n)</code> | Yes |
 
 ### Graph Algorithms
 

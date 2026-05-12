@@ -295,7 +295,7 @@ func main() {
 | Slice | `[]T` | <code>O(1)</code> access | . | Dynamic array |
 | Map | `map[K]V` | <code>O(1)</code> avg | . | Key-value store |
 | <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">Linked List</abbr> | `container/list` | <code>O(n)</code> access | . | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr>, <abbr title="A double-ended queue allowing insertion and deletion at both ends.">deque</abbr> |
-| <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> | `[]T` + methods | <code>O(1)</code> push/pop | . | LIFO |
+| <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> | `[]T` + methods | <code>O(1)</code> push/pop | . | <abbr title="Last In, First Out stack discipline">LIFO</abbr> |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 5:</strong> This chapter covers fundamental data structures in Go: arrays, slices, maps, linked lists, and structs with methods. Use slices for dynamic collections, maps for fast key-value lookups, linked lists for frequent insertions/deletions at ends, and structs with methods to build custom abstractions like stacks.

@@ -20,13 +20,13 @@ Chapter 13 covers graph traversal algorithms: Depth-First Search (DFS) and Bread
 
 ## 13.1. Depth-First Search (DFS)
 
-**Definition:** DFS explores as far as possible along each branch before backtracking. It uses a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> (explicit or recursive <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>).
+**Definition:** DFS explores as far as possible along each branch before <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr>. It uses a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> (explicit or recursive <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>).
 
 **Background & Philosophy:**
 The philosophy of DFS is "aggressive exploration". It dives into the unknown, chasing a single <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> until it hits a dead end. This strategy naturally maps to how human problem-solving often works: follow an idea to its conclusion before trying an alternative.
 
 **Use Cases:**
-Essential for detecting cycles in a dependency <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> (like finding deadlocks in database transactions), generating mazes, solving Sudoku puzzles via backtracking, and computing <abbr title="A linear ordering of vertices such that for every directed edge uv, u comes before v.">topological sorts</abbr> for build systems.
+Essential for detecting cycles in a dependency <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> (like finding deadlocks in database transactions), generating mazes, solving Sudoku puzzles via <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr>, and computing <abbr title="A linear ordering of vertices such that for every directed edge uv, u comes before v.">topological sorts</abbr> for build systems.
 
 **Memory Mechanics:**
 DFS is intrinsically linked to <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> memory. When written recursively, each visited node pushes a new frame onto the CPU's <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. If the <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> is an incredibly long chain of nodes (e.g., 1 million nodes), this deep recursion can trigger a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>, crashing the program. To avoid this, Go engineers often write iterative DFS using an explicit slice `[]int` acting as a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>. This shifts the memory burden from the limited execution stack to the vast <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>.
@@ -39,7 +39,7 @@ DFS is intrinsically linked to <abbr title="A LIFO (Last In, First Out) abstract
 | Space | <code>O(V)</code> | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> or explicit <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
 | Path finding | Yes | Any <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr>, not necessarily shortest |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main
@@ -127,9 +127,9 @@ func main() {
 | Use DFS When... | Use BFS When... |
 |-----------------|-----------------|
 | Need to detect cycles | Shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> in unweighted <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> |
-| <abbr title="A linear ordering of vertices such that for every directed edge uv, u comes before v.">Topological sorting</abbr> | Level-order traversal |
+| <abbr title="A linear ordering of vertices such that for every directed edge uv, u comes before v.">Topological sorting</abbr> | <abbr title="Tree traversal visiting nodes level by level">Level-order traversal</abbr> |
 | Finding connected components | Finding shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> |
-| Backtracking problems | Web crawling breadth-first |
+| <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> problems | Web crawling breadth-first |
 
 ### Edge Cases & Pitfalls
 
@@ -141,7 +141,7 @@ func main() {
 
 | Algorithm | Go Type | Time | Space | Path | Use Case |
 |-----------|---------|------|-------|------|----------|
-| DFS | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr>/<abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> | <code>O(V+E)</code> | <code>O(V)</code> | Any | <abbr title="A path that starts and ends at the same vertex.">Cycle</abbr> detection, backtracking |
+| DFS | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr>/<abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> | <code>O(V+E)</code> | <code>O(V)</code> | Any | <abbr title="A path that starts and ends at the same vertex.">Cycle</abbr> detection, <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> |
 | BFS | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr> | <code>O(V+E)</code> | <code>O(V)</code> | Shortest | Unweighted shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> |
 
 {{% alert icon="🎯" context="success" %}}

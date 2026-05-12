@@ -18,7 +18,7 @@ katex: true
 Chapter 6 focuses on building elementary data structures (Stacks, Queues, Deques) utilizing Go 1.18+ Generics. Crucially, it explores hardware-level performance implications, demonstrating why <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> drastically outperforms node-based memory.
 {{% /alert %}}
 
-## 6.1. Stacks (LIFO)
+## 6.1. Stacks (<abbr title="Last In, First Out stack discipline">LIFO</abbr>)
 
 **Definition:** A <abbr title="Last In, First Out">LIFO</abbr> data structure where the last element added is the first one removed.
 
@@ -39,7 +39,7 @@ A slice-based stack allocates a <abbr title="Memory blocks allocated in a single
 | Pop | <code>O(1)</code> | Remove from top |
 | Peek | <code>O(1)</code> | View top element |
 
-### Idiomatic Go 1.18+ Generic Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> 1.18+ Generic Implementation
 
 Before Go 1.18, developers relied on `interface{}` which sacrificed type safety and incurred boxing/unboxing overhead. Modern Go elegantly solves this with Generics `[T any]`.
 
@@ -305,7 +305,7 @@ func main() {
 | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr> | `[]T` as Circular Buffer | <code>O(1)</code> | Extremely low | Ideal for strict FIFO |
 | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr> | Naive `slice[1:]` | <code>O(n)</code> | Zero (but causes Memory Leaks) | **Anti-Pattern** |
 | <abbr title="A double-ended queue allowing insertion and deletion at both ends.">Deque</abbr> | `container/list` | <code>O(1)</code> | Massive (1 alloc per <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr>) | Avoid for high performance |
-| <abbr title="A double-ended queue allowing insertion and deletion at both ends.">Deque</abbr> | `[]T` as Circular Buffer | <code>O(1)</code> | Extremely low | Highest performance |
+| <abbr title="A double-ended queue allowing insertion and deletion at both ends.">Deque</abbr> | `[]T` as <abbr title="A fixed-size buffer that wraps around when full">Circular Buffer</abbr> | <code>O(1)</code> | Extremely low | Highest performance |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 6:</strong> Elementary data structures in Go must be built with **Generics** to maintain strict type safety and eliminate <abbr title="A shared boundary across which two or more separate components exchange information.">interface</abbr> boxing overhead. Due to <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality and Go's Garbage Collector architecture, <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice-based ring buffers ruthlessly outperform <abbr title="A variable that stores a memory address.">pointer</abbr>-based linked lists.

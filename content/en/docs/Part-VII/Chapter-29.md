@@ -15,12 +15,12 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 29 covers vector, matrix, and tensor operations with idiomatic Go implementations utilizing slices and `gonum`.
+Chapter 29 covers vector, matrix, and tensor operations with <abbr title="Code style considered standard and natural for Go">idiomatic Go</abbr> implementations utilizing slices and `gonum`.
 {{% /alert %}}
 
 ## 29.1. Vector Operations
 
-**Definition:** A vector is a one-dimensional <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> representing a directed magnitude. Basic operations include addition, scalar multiplication, dot product, and cross product.
+**Definition:** A vector is a one-dimensional <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> representing a directed magnitude. Basic operations include addition, scalar multiplication, <abbr title="An operation returning the scalar product of two vectors">dot product</abbr>, and <abbr title="An operation on vectors producing a perpendicular vector">cross product</abbr>.
 
 **Background & Philosophy:**
 The philosophy is representing data mathematically. Instead of isolated variables, numbers are grouped into spatial structures (Vectors, Matrices), enabling batch transformations that hardware GPUs and <abbr title="Single Instruction Multiple Data - parallel processing technique.">SIMD</abbr> CPU instructions are structurally designed to optimize flawlessly.
@@ -29,16 +29,16 @@ The philosophy is representing data mathematically. Instead of isolated variable
 Core foundation for 3D Graphics programming, deep learning backpropagation, and PageRank algorithms determining internet search results.
 
 **Memory Mechanics:**
-Vectors map perfectly to 1D slices in Go. Because `[]float64` is a strictly <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, operations like dot product exhibit perfect <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The CPU prefetcher can rapidly stream the bytes into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>.
+Vectors map perfectly to 1D slices in Go. Because `[]float64` is a strictly <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, operations like <abbr title="An operation returning the scalar product of two vectors">dot product</abbr> exhibit perfect <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The CPU prefetcher can rapidly stream the bytes into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
 | Addition | <code>O(n)</code> | Element-wise |
-| Dot Product | <code>O(n)</code> | Σ(aᵢ × bᵢ) |
+| <abbr title="An operation returning the scalar product of two vectors">Dot Product</abbr> | <code>O(n)</code> | Σ(aᵢ × bᵢ) |
 | Norm (L2) | <code>O(n)</code> | √(Σaᵢ²) |
-| Cross Product | <code>O(1)</code> | Specific to 3D |
+| <abbr title="An operation on vectors producing a perpendicular vector">Cross Product</abbr> | <code>O(1)</code> | Specific to 3D |
 
 ### Pseudocode
 

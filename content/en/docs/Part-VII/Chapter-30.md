@@ -36,7 +36,7 @@ Parallelism directly exposes the harsh reality of hardware <abbr title="A smalle
 | Model | Time | Overhead | Description |
 |-------|------|----------|------------|
 | Sequential | <code>O(T)</code> | 0 | Baseline |
-| Goroutine | <code>O(T/p)</code> | ~2μs spawn | Lightweight thread |
+| <abbr title="A lightweight concurrent execution thread managed by the Go runtime">Goroutine</abbr> | <code>O(T/p)</code> | ~2μs spawn | Lightweight thread |
 | Worker Pool | <code>O(T/p)</code> | Fixed pool | Reuses goroutines |
 | SIMD (Go asm) | <code>O(T/vec)</code> | Manual | AVX/SSE |
 

@@ -42,7 +42,7 @@ A standard Trie is incredibly memory-hungry. Each <abbr title="A basic unit of a
 
 ## 37.2. Basic Trie
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 Use a map for children to support any character set dynamically.
 
@@ -196,5 +196,5 @@ func main() {
 ## See Also
 
 - [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
-- [Chapter 35: String Matching Algorithms](/docs/Part-VII/Chapter-35/)
+- [Chapter 35: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-35/)
 - [Chapter 49: Suffix Arrays](/docs/Part-IX/Chapter-49/)

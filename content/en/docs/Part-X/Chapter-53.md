@@ -35,7 +35,7 @@ The philosophy is directed intuition. Dijkstra explores blindly in all direction
 AI pathfinding in video games, GPS navigation systems planning physical routes, and robotic motion planning.
 
 **Memory Mechanics:**
-A* aggressively relies upon a Priority Queue (a Min-Heap) and tracking maps (`cameFrom`, `gScore`). In Go, `map[[2]int]float64` is heavily utilized to map 2D grid coordinates to values. Maps in Go hash keys and scatter data <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>ly across the heap. For a sprawling map (like a 10,000x10,000 grid), millions of map accesses cause severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. High-performance A* implementations abandon maps, instead flattening the 2D grid into a massive 1D slice where `index = y*width + x`, enabling <code>O(1)</code> contiguous memory lookups and restoring blazing CPU speeds.
+A* aggressively relies upon a Priority Queue (a <abbr title="A heap where each parent is less than or equal to its children">Min-Heap</abbr>) and tracking maps (`cameFrom`, `gScore`). In Go, `map[[2]int]float64` is heavily utilized to map 2D grid coordinates to values. Maps in Go hash keys and scatter data <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr>ly across the heap. For a sprawling map (like a 10,000x10,000 grid), millions of map accesses cause severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. High-performance A* implementations abandon maps, instead flattening the 2D grid into a massive 1D slice where `index = y*width + x`, enabling <code>O(1)</code> contiguous memory lookups and restoring blazing CPU speeds.
 
 | Algorithm | Priority | Guarantees |
 |-----------|----------|------------|
@@ -49,12 +49,12 @@ An <abbr title="A heuristic that never overestimates the true cost to reach the 
 
 | Domain | Heuristic | Admissible? |
 |--------|-----------|-------------|
-| Grid (4-way) | Manhattan distance | Yes |
+| Grid (4-way) | <abbr title="Distance measured along axes at right angles">Manhattan distance</abbr> | Yes |
 | Grid (8-way) | Chebyshev distance | Yes |
-| Euclidean space | Euclidean distance | Yes |
+| Euclidean space | <abbr title="The straight-line distance between two points">Euclidean distance</abbr> | Yes |
 | Road networks | Precomputed landmarks | Approximate |
 
-### Idiomatic Go: A* Core
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: A* Core
 
 ```go
 package main

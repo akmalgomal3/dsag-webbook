@@ -15,12 +15,12 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 24 covers <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (DP): a method for solving complex problems by breaking them into overlapping subproblems and storing solutions to avoid redundant computation.
+Chapter 24 covers <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (DP): a method for solving complex problems by breaking them into <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr> and storing solutions to avoid redundant computation.
 {{% /alert %}}
 
 ## 24.1. DP Fundamentals
 
-**Definition:** Dynamic programming solves problems by breaking them into smaller overlapping subproblems, solving each subproblem once, and storing the result for reuse. It applies when a problem exhibits **optimal substructure** and **overlapping subproblems**.
+**Definition:** <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> solves problems by breaking them into smaller <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>, solving each subproblem once, and storing the result for reuse. It applies when a problem exhibits **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>** and **<abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>**.
 
 **Background & Philosophy:**
 "Those who cannot remember the past are condemned to repeat it." DP is the philosophy of trading space for time. It recognizes that in many recursive problems, the exact same subproblems are evaluated millions of times. By explicitly memoizing (caching) these results, it transforms exponential <code>O(2^n)</code> chaos into polynomial <code>O(n)</code> order.
@@ -29,7 +29,7 @@ Chapter 24 covers <abbr title="A method for solving complex problems by breaking
 Sequence alignment in bioinformatics (DNA matching), pricing complex financial derivatives, and solving optimization problems like the Knapsack problem for resource allocation.
 
 **Memory Mechanics:**
-DP introduces severe memory demands. A 2D DP table for LCS allocates `m * n` memory cells. In Go, `[][]int` allocates a slice of slice headers, each pointing to a separate underlying array. This scatters memory and causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. A powerful memory optimization trick in DP is "state reduction": since calculating row `i` often only requires row `i-1`, developers can discard the rest of the matrix and only keep two 1D slices in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, drastically improving <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and reducing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
+DP introduces severe memory demands. A 2D DP table for LCS allocates `m * n` memory cells. In Go, `[][]int` allocates a slice of slice headers, each pointing to a separate underlying array. This scatters memory and causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. A powerful memory optimization trick in DP is "state <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr>": since calculating row `i` often only requires row `i-1`, developers can discard the rest of the matrix and only keep two 1D slices in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, drastically improving <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and reducing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
 
 ### Two Approaches
 
@@ -42,7 +42,7 @@ DP introduces severe memory demands. A 2D DP table for LCS allocates `m * n` mem
 
 **Definition:** The classic Fibonacci sequence demonstrates DP. Without memoization, it has <code>O(2^n)</code> complexity; with memoization, it drops to <code>O(n)</code>.
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 Use a `map[int]int` for memoization or a slice for tabulation.
 
@@ -172,11 +172,11 @@ func main() {
 | Coin Change | `[]int` | <code>O(nk)</code> | <code>O(n)</code> | 1D DP |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 24:</strong> Dynamic programming transforms exponential-time recursive problems into polynomial-time solutions by storing subproblem results. Master the pattern: define states, write the recurrence, initialize base cases, and fill the table. In Go, use slices for tabulation and maps for sparse memoization.
+<strong>Summary Chapter 24:</strong> <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> transforms exponential-time recursive problems into polynomial-time solutions by storing subproblem results. Master the pattern: define states, write the recurrence, initialize base cases, and fill the table. In Go, use slices for tabulation and maps for sparse memoization.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 23: Divide and Conquer](/docs/Part-VI/Chapter-23/)
+- [Chapter 23: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/Part-VI/Chapter-23/)
 - [Chapter 25: Greedy Algorithms](/docs/Part-VI/Chapter-25/)
-- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)

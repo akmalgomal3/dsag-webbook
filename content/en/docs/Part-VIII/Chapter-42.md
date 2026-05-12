@@ -49,7 +49,7 @@ The array is the only data structure that requires absolutely zero meta-data ove
 <abbr title="A data structure consisting of a group of nodes which together represent a sequence.">Linked lists</abbr> decoupled logical order from physical order. The philosophy is "dynamic resilience". Arrays are brittle—if they fill up, the program crashes. Linked lists isolated data into independent nodes, allowing infinite growth (up to physical <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> limits).
 
 **Memory Mechanics:**
-The transition from Arrays to Linked Lists marked the shift from <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory to <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory. Contiguous memory allows the CPU to fetch 64-byte cache lines effectively, ensuring near 100% cache hit rates. Pointer-based structures force the CPU to stall while fetching arbitrary <abbr title="A variable that stores a memory address.">pointer</abbr> addresses from main memory, making modern hardware paradoxically slower at traversing linked lists despite their theoretical <code>O(1)</code> insertion efficiency.
+The transition from Arrays to Linked Lists marked the shift from <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory to <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory. Contiguous memory allows the CPU to fetch 64-byte cache lines effectively, ensuring near 100% cache hit rates. Pointer-based structures force the CPU to stall while fetching arbitrary <abbr title="A variable that stores a memory address.">pointer</abbr> addresses from <abbr title="The primary volatile storage directly accessible by the CPU">main memory</abbr>, making modern hardware paradoxically slower at traversing linked lists despite their theoretical <code>O(1)</code> insertion efficiency.
 
 ### The Tree Explosion (1960s)
 
@@ -63,7 +63,7 @@ The transition from Arrays to Linked Lists marked the shift from <abbr title="Me
 
 ## 42.3. The Hash Table Revolution
 
-**Definition:** <abbr title="A data structure that implements an associative array abstract data type, a structure that can map keys to values.">Hash tables</abbr> (1953) offered <code>O(1)</code> average-case lookup by trading ordering for speed — a radical departure from comparison-based structures.
+**Definition:** <abbr title="A data structure that implements an associative array abstract data type, a structure that can map keys to values.">Hash tables</abbr> (1953) offered <code>O(1)</code> <abbr title="Expected runtime or resource usage over typical random inputs">average-case</abbr> lookup by trading ordering for speed — a radical departure from comparison-based structures.
 
 **Background & Philosophy:**
 The philosophy is index computation. Instead of searching by comparing elements against each other (which is mathematically bounded by <code>O(log n)</code>), hash tables calculate the memory destination directly from the data itself.
@@ -81,7 +81,7 @@ A Hash Table operates heavily on pseudo-random memory access. Hashing scatters v
 | Array | O(1) by index | Yes (by index) | Fixed-size random access |
 | BST | O(log n) | Yes | Dynamic sorted data |
 | Hash Table | O(1) avg | No | Fast key-value lookup |
-| Trie | O(m) | Yes (by prefix) | String matching |
+| Trie | O(m) | Yes (by prefix) | <abbr title="Finding occurrences of a pattern within a text">String matching</abbr> |
 
 ## 42.4. Modern Structures: Cache and Concurrency
 
@@ -105,7 +105,7 @@ Modern CPUs have immense performance gaps between Registers and main <abbr title
 | Choose Structure Based On... | Not Based On... |
 |------------------------------|-----------------|
 | Access patterns (read-heavy vs write-heavy) | Theoretical elegance alone |
-| Memory hierarchy (cache, disk, network) | Simplicity of implementation |
+| <abbr title="The structured tiers from fast registers to slow disk">Memory hierarchy</abbr> (cache, disk, network) | Simplicity of implementation |
 | Concurrency requirements | Historical precedent |
 
 ### Edge Cases & Pitfalls
@@ -122,7 +122,7 @@ Modern CPUs have immense performance gaps between Registers and main <abbr title
 | 1960s | Linked lists, trees | Dynamic data needs |
 | 1970s | Hash tables, B-trees | Database explosion |
 | 1980s | Graphs, heaps | Networking, OS |
-| 1990s | Self-adjusting structures | Amortized analysis |
+| 1990s | Self-adjusting structures | <abbr title="Average cost per operation over a worst-case sequence">Amortized analysis</abbr> |
 | 2000s | Cache-oblivious structures | CPU-memory gap |
 | 2010s | Concurrent, persistent | Multi-core, functional |
 

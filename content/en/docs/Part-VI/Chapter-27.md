@@ -29,7 +29,7 @@ The philosophy elevates recursion from a simple loop replacement to a structural
 Tree Traversals, parsing hierarchical data structures like ASTs in compilers, and orchestrating complex distributed tasks.
 
 **Memory Mechanics:**
-Advanced recursion heavily loads the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. In Go, parallel recursion (spawning goroutines for sub-branches) shifts this load from a single deep stack to thousands of shallow, 2KB goroutine stacks spread across the <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. This enables massive horizontal scaling without single-thread <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>, provided the developer sets a threshold to avoid goroutine overhead for trivially small sub-problems.
+Advanced recursion heavily loads the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. In Go, parallel recursion (spawning goroutines for sub-branches) shifts this load from a single deep stack to thousands of shallow, 2KB <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> stacks spread across the <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. This enables massive horizontal scaling without single-thread <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>, provided the developer sets a threshold to avoid <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> overhead for trivially small sub-problems.
 
 ### Operations & Complexity
 
@@ -681,7 +681,7 @@ Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub
 | Merge Sort | []int | <code>O(n log n)</code> | <code>O(n)</code> | Stable sorting |
 | Quick Sort | []int | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place sorting |
 | Knapsack 0/1 | [][]int | <code>O(nW)</code> | <code>O(nW)</code> | Combinatorial DP |
-| N-Queens | backtracking | <code>O(n!)</code> | <code>O(n)</code> | Constraint satisfaction |
+| N-Queens | <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> | <code>O(n!)</code> | <code>O(n)</code> | Constraint satisfaction |
 | Binary Search | []int | <code>O(log n)</code> | <code>O(1)</code> | Search on sorted |
 
 {{% alert icon="🎯" context="success" %}}
@@ -690,6 +690,6 @@ Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub
 
 ## See Also
 
-- [Chapter 23: Divide and Conquer](/docs/Part-VI/Chapter-23/)
-- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 23: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/Part-VI/Chapter-23/)
+- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
 - [Chapter 28: Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-28/)

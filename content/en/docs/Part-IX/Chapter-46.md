@@ -29,7 +29,7 @@ The philosophy is probabilistic simplicity. Balancing an AVL or Red-Black tree i
 Concurrent databases (Redis Sorted Sets, LevelDB) and in-memory indexing where lock contention must be minimized.
 
 **Memory Mechanics:**
-Skip lists avoid the massive, locked restructuring events required by B-Trees. However, they allocate nodes with variable-length arrays of `next` <abbr title="A variable that stores a memory address.">pointers</abbr>. In Go, `make([]*Node, level)` triggers <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocation for every single insertion. This scatters memory nodes wildly across the heap, completely destroying <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> coherence during a traversal. Thus, while algorithmically <code>O(log n)</code>, Skip Lists often lose to B-Trees purely due to memory fragmentation.
+Skip lists avoid the massive, locked restructuring events required by B-Trees. However, they allocate nodes with variable-length arrays of `next` <abbr title="A variable that stores a memory address.">pointers</abbr>. In Go, `make([]*Node, level)` triggers <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocation for every single insertion. This scatters memory nodes wildly across the heap, completely destroying <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> coherence during a traversal. Thus, while algorithmically <code>O(log n)</code>, Skip Lists often lose to B-Trees purely due to <abbr title="Inefficient RAM usage creating small unusable blocks">memory fragmentation</abbr>.
 
 ### Why Skip Lists?
 

@@ -15,21 +15,21 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 26 covers <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>: a systematic way to explore all potential solutions by building candidates incrementally and abandoning partial candidates ("backtracking") as soon as they cannot possibly lead to a valid solution.
+Chapter 26 covers <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>: a systematic way to explore all potential solutions by building candidates incrementally and abandoning partial candidates ("<abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr>") as soon as they cannot possibly lead to a valid solution.
 {{% /alert %}}
 
-## 26.1. Backtracking Fundamentals
+## 26.1. <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> Fundamentals
 
-**Definition:** Backtracking is a refined brute-force approach that builds a solution incrementally. If a partial solution violates constraints, the algorithm backtracks and tries the next alternative. It is equivalent to a depth-first search of the solution space.
+**Definition:** <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> is a refined <abbr title="A straightforward approach trying all possible solutions">brute-force</abbr> approach that builds a solution incrementally. If a partial solution violates constraints, the algorithm backtracks and tries the next alternative. It is equivalent to a depth-first search of the solution space.
 
 **Background & Philosophy:**
-The philosophy is exhaustive exploration with intelligent pruning. Unlike pure brute force which blindly evaluates complete solutions (trying every combination regardless of obvious impossibilities), backtracking actively evaluates partial solutions. The moment a partial solution breaks a rule, it abandons that entire branch of the search tree.
+The philosophy is exhaustive exploration with intelligent pruning. Unlike pure <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> which blindly evaluates complete solutions (trying every combination regardless of obvious impossibilities), <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> actively evaluates partial solutions. The moment a partial solution breaks a rule, it abandons that entire branch of the search tree.
 
 **Use Cases:**
 Solving constraint satisfaction problems like Sudoku or crossword puzzles, generating regular expression parsers, discovering passwords, and traversing complex logical state machines (N-Queens).
 
 **Memory Mechanics:**
-Backtracking uses the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> to represent the search space tree. In Go, passing a slice <abbr title="A variable that stores a memory address.">pointer</abbr> or mutating a shared slice across recursive calls avoids allocating millions of small arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. However, the developer must meticulously "undo" the mutation (`path = path[:len(path)-1]`) before returning to the parent frame, otherwise the shared memory state becomes permanently corrupted for adjacent branches.
+<abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> uses the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> to represent the <abbr title="The set of all candidate solutions in a problem">search space</abbr> tree. In Go, passing a slice <abbr title="A variable that stores a memory address.">pointer</abbr> or mutating a shared slice across recursive calls avoids allocating millions of small arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. However, the developer must meticulously "undo" the mutation (`path = path[:len(path)-1]`) before returning to the parent frame, otherwise the shared memory state becomes permanently corrupted for adjacent branches.
 
 ### Template Structure
 
@@ -205,11 +205,11 @@ func main() {
 | Sudoku | `[][]int` | <code>O(9^m)</code> | <code>O(81)</code> | Constraint propagation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 26:</strong> Backtracking systematically explores the solution space using depth-first search with pruning. Master the template: build candidates incrementally, validate constraints, recurse, and undo changes. In Go, use slices for state tracking and ensure proper cleanup after each recursive call.
+<strong>Summary Chapter 26:</strong> <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> systematically explores the solution space using depth-first search with pruning. Master the template: build candidates incrementally, validate constraints, recurse, and undo changes. In Go, use slices for state tracking and ensure proper cleanup after each recursive call.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
+- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
 - [Chapter 25: Greedy Algorithms](/docs/Part-VI/Chapter-25/)
 - [Chapter 58: Minimax and Game Trees](/docs/Part-XII/Chapter-58/)

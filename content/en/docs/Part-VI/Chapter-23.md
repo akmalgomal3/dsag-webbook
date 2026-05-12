@@ -29,7 +29,7 @@ The philosophy is breaking seemingly insurmountable problems into trivial base c
 Essential for recursive sorting (Merge Sort, Quick Sort), fast multiplication (Karatsuba), and processing independent queries in massive distributed databases via MapReduce architectures.
 
 **Memory Mechanics:**
-Divide and Conquer relies heavily on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Each recursive split pushes a new frame onto the stack. In Go, goroutine stacks start at 2KB and grow dynamically, preventing overflow for moderate depth <code>O(log n)</code>. When the divide step requires creating new slices `arr[:mid]`, Go merely copies a 24-byte slice header (pointer, length, capacity) without allocating new arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This makes Go's slice splitting an incredibly fast <code>O(1)</code> memory operation that does not trigger the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>.
+<abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr> relies heavily on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Each recursive split pushes a new frame onto the stack. In Go, <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> stacks start at 2KB and grow dynamically, preventing overflow for moderate depth <code>O(log n)</code>. When the divide step requires creating new slices `arr[:mid]`, Go merely copies a 24-byte <abbr title="A small struct describing a slice: pointer, length, capacity">slice header</abbr> (pointer, length, capacity) without allocating new arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This makes Go's slice splitting an incredibly fast <code>O(1)</code> memory operation that does not trigger the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>.
 
 ### Operations & Complexity
 
@@ -245,6 +245,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 24: Dynamic Programming](/docs/Part-VI/Chapter-24/)
-- [Chapter 26: Backtracking](/docs/Part-VI/Chapter-26/)
+- [Chapter 24: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-24/)
+- [Chapter 26: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/Part-VI/Chapter-26/)
 - [Chapter 27: Advanced Recursive Algorithms](/docs/Part-VI/Chapter-27/)

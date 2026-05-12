@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>To understand a directed graph, first find its strongly connected components.</em>" : Robert Tarjan</strong>
+<strong>"<em>To understand a <abbr title="A graph where edges have direction from one vertex to another">directed graph</abbr>, first find its strongly connected components.</em>" : Robert Tarjan</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -20,10 +20,10 @@ Chapter 52 explores strongly connected components (SCCs): maximal subgraphs wher
 
 ## 52.1. What Are SCCs?
 
-**Definition:** A <abbr title="A maximal subgraph of a directed graph where every vertex is reachable from every other vertex.">strongly connected component</abbr> is a maximal set of vertices where each vertex is reachable from every other. SCCs partition a directed graph into a DAG of meta-nodes.
+**Definition:** A <abbr title="A maximal subgraph of a directed graph where every vertex is reachable from every other vertex.">strongly connected component</abbr> is a maximal set of vertices where each vertex is reachable from every other. SCCs partition a <abbr title="A graph where edges have direction from one vertex to another">directed graph</abbr> into a DAG of meta-nodes.
 
 **Background & Philosophy:**
-The philosophy is condensation. Complex directed graphs (like the entire World Wide Web) are incomprehensibly chaotic. SCC algorithms group tightly interconnected nodes (where everyone can reach everyone) into singular "meta-nodes." This elegantly collapses a chaotic graph into a strictly Directed Acyclic Graph (DAG), allowing researchers to analyze macro-structures.
+The philosophy is condensation. Complex directed graphs (like the entire World Wide Web) are incomprehensibly chaotic. SCC algorithms group tightly interconnected nodes (where everyone can reach everyone) into singular "meta-nodes." This elegantly collapses a chaotic graph into a strictly Directed <abbr title="A graph containing no cycles">Acyclic Graph</abbr> (DAG), allowing researchers to analyze macro-structures.
 
 **Use Cases:**
 Analyzing Twitter follow-clusters, optimizing database query joins, and designing compiler logic to handle mutually recursive function calls.

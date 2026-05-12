@@ -18,15 +18,15 @@ katex: true
 Chapter 8 covers linked list data structures in Go: singly linked lists, doubly linked lists, and circular linked lists. Understand when linked lists outperform slices and when they fall short due to Go's garbage collector and <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> locality.
 {{% /alert %}}
 
-## 8.1. Singly Linked List
+## 8.1. <abbr title="A linked list where each node points only to the next node">Singly Linked List</abbr>
 
-**Definition:** A singly linked list is a linear collection of nodes where each node contains data and a <abbr title="A variable that stores a memory address.">pointer</abbr> to the next node. Unlike slices, linked lists do not require <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr>.
+**Definition:** A <abbr title="A linked list where each node points only to the next node">singly linked list</abbr> is a linear collection of nodes where each node contains data and a <abbr title="A variable that stores a memory address.">pointer</abbr> to the next node. Unlike slices, linked lists do not require <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr>.
 
 **Background & Philosophy:**
-The philosophy of the singly linked list is to optimize for dynamic growth. Before languages had automatically resizing arrays (like Go's slices), expanding an array required manually copying the entire memory block. Linked lists solved this by isolating each element, meaning an insertion only requires updating a single memory address rather than moving thousands of existing elements.
+The philosophy of the <abbr title="A linked list where each node points only to the next node">singly linked list</abbr> is to optimize for dynamic growth. Before languages had automatically resizing arrays (like Go's slices), expanding an array required manually copying the entire memory block. Linked lists solved this by isolating each element, meaning an insertion only requires updating a single memory address rather than moving thousands of existing elements.
 
 **Use Cases:**
-Used fundamentally in hash table collision resolution (chaining), building immutable data structures in functional programming, and lock-free concurrent algorithms where updating a single `next` pointer via an atomic swap operation guarantees thread safety.
+Used fundamentally in hash table collision resolution (chaining), building immutable data structures in functional programming, and lock-free concurrent algorithms where updating a single `next` pointer via an atomic swap operation guarantees <abbr title="Property ensuring correct code under concurrent execution">thread safety</abbr>.
 
 **Memory Mechanics:**
 Every `Node` in a linked list is allocated dynamically on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. Because they are created at different times, the OS scatters them randomly across <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. This fragmentation destroys <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. When the CPU accesses a node, it fetches adjacent memory into the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>, but the next node is likely elsewhere, leading to a <abbr title="A state where the data requested for processing is not found in the cache memory.">cache miss</abbr>. This makes linear traversal of a linked list significantly slower than iterating a slice in modern hardware.
@@ -41,7 +41,7 @@ Every `Node` in a linked list is allocated dynamically on the <abbr title="Memor
 | Insert tail | <code>O(n)</code> | Must traverse to end |
 | Search | <code>O(n)</code> | Linear scan |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 Use structs with pointer fields to build linked lists. Go's <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">garbage collector</abbr> handles memory management automatically.
 

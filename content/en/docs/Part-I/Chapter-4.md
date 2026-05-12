@@ -35,7 +35,7 @@ When you pass a <abbr title="A variable that stores a memory address.">pointer</
 
 | Operation | Go Construct | Complexity | Description |
 |---------|--------------|------------|------------|
-| <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> allocation | Local var | <code>O(1)</code> | Automatic, LIFO |
+| <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> allocation | Local var | <code>O(1)</code> | Automatic, <abbr title="Last In, First Out stack discipline">LIFO</abbr> |
 | <abbr title="A specialized tree-based data structure that satisfies the heap property.">Heap</abbr> allocation | `make`, `new`, `&T{}` | <code>O(1)</code> amortized | GC-managed |
 | <abbr title="A variable that stores a memory address.">Pointer</abbr> dereference | `*p` | <code>O(1)</code> | Safe, no arithmetic |
 | Slice re-slicing | `s[i:j]` | <code>O(1)</code> | Shares backing <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr> |

@@ -18,9 +18,9 @@ katex: true
 Chapter 19 covers basic sorting algorithms: <abbr title="A simple O(n²) sorting algorithm using adjacent swaps.">Bubble Sort</abbr>, <abbr title="An O(n²) sorting algorithm selecting the minimum repeatedly.">Selection Sort</abbr>, and <abbr title="An O(n²) sorting algorithm inserting each element into correct position.">Insertion Sort</abbr>. Understand their mechanics, complexity, and when they remain relevant in modern Go.
 {{% /alert %}}
 
-## 19.1. Bubble Sort
+## 19.1. <abbr title="A simple sorting algorithm repeatedly swapping adjacent elements">Bubble Sort</abbr>
 
-**Definition:** Bubble Sort repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. Each pass places the next largest element in its correct position.
+**Definition:** <abbr title="A simple sorting algorithm repeatedly swapping adjacent elements">Bubble Sort</abbr> repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. Each pass places the next largest element in its correct position.
 
 **Background & Philosophy:**
 The philosophy is naive local optimization: by repeatedly fixing adjacent inversions, the largest elements naturally "bubble" to the top. It represents the simplest possible translation of the concept of sorting into code.
@@ -29,7 +29,7 @@ The philosophy is naive local optimization: by repeatedly fixing adjacent invers
 Almost exclusively educational. Occasionally used to detect if an array is already sorted (with an early exit optimization) or in computer graphics to sort nearly-sorted polygons in frame rendering.
 
 **Memory Mechanics:**
-Bubble sort operates entirely in-place (<code>O(1)</code> auxiliary space). Because it only swaps adjacent elements, it perfectly exploits <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> prefetcher can load the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array block into L1 cache, meaning that while algorithmically slow (<code>O(n^2)</code>), the actual CPU cycles spent on memory fetches are minimal.
+<abbr title="A simple sorting algorithm repeatedly swapping adjacent elements">Bubble sort</abbr> operates entirely in-place (<code>O(1)</code> auxiliary space). Because it only swaps adjacent elements, it perfectly exploits <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> prefetcher can load the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array block into L1 cache, meaning that while algorithmically slow (<code>O(n^2)</code>), the actual CPU cycles spent on memory fetches are minimal.
 
 ### Operations & Complexity
 
@@ -40,7 +40,7 @@ Bubble sort operates entirely in-place (<code>O(1)</code> auxiliary space). Beca
 | Best case | <code>O(n)</code> | Already sorted (with optimization) |
 | Space | <code>O(1)</code> | In-place |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main
@@ -183,17 +183,17 @@ func main() {
 
 | Algorithm | Time | Space | Stable | Best For |
 |-----------|------|-------|--------|----------|
-| Bubble Sort | <code>O(n^2)</code> | <code>O(1)</code> | Yes | Educational only |
-| Selection Sort | <code>O(n^2)</code> | <code>O(1)</code> | No | Minimizing writes |
-| Insertion Sort | <code>O(n^2)</code> avg | <code>O(1)</code> | Yes | Small/nearly sorted |
+| <abbr title="A simple sorting algorithm repeatedly swapping adjacent elements">Bubble Sort</abbr> | <code>O(n^2)</code> | <code>O(1)</code> | Yes | Educational only |
+| <abbr title="A sorting algorithm repeatedly finding the minimum element">Selection Sort</abbr> | <code>O(n^2)</code> | <code>O(1)</code> | No | Minimizing writes |
+| <abbr title="A sorting algorithm building the final array one element at a time">Insertion Sort</abbr> | <code>O(n^2)</code> avg | <code>O(1)</code> | Yes | Small/nearly sorted |
 | Go sort.Ints | <code>O(n log n)</code> | <code>O(log n)</code> | No | Production |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 19:</strong> Basic sorting algorithms have <code>O(n^2)</code> complexity and are primarily of educational value. Insertion Sort remains practically relevant for small or nearly sorted datasets and serves as the base case in optimized quicksort implementations. In Go, always prefer the standard library's <code>sort</code> package for production code.
+<strong>Summary Chapter 19:</strong> Basic sorting algorithms have <code>O(n^2)</code> complexity and are primarily of educational value. <abbr title="A sorting algorithm building the final array one element at a time">Insertion Sort</abbr> remains practically relevant for small or nearly sorted datasets and serves as the base case in optimized quicksort implementations. In Go, always prefer the standard library's <code>sort</code> package for production code.
 {{% /alert %}}
 
 ## See Also
 
 - [Chapter 20: Advanced Sorting Algorithms](/docs/Part-V/Chapter-20/)
 - [Chapter 21: Searching Algorithms](/docs/Part-V/Chapter-21/)
-- [Chapter 55: Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+- [Chapter 55: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-55/)

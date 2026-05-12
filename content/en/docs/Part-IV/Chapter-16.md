@@ -320,7 +320,7 @@ func main() {
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
 | Kruskal | `[]Edge` + Union-Find | <code>O(E log E)</code> | <code>O(V)</code> | Edge list, sparse graph |
-| Prim | `[]Edge` + PQ | <code>O((V + E) log V)</code> | <code>O(V)</code> | Dense graph, adjacency list |
+| Prim | `[]Edge` + PQ | <code>O((V + E) log V)</code> | <code>O(V)</code> | <abbr title="A graph with edges close to the maximum possible">Dense graph</abbr>, adjacency list |
 | Borůvka | Union-Find | <code>O(E log V)</code> | <code>O(V)</code> | Parallel, distributed |
 
 {{% alert icon="🎯" context="success" %}}

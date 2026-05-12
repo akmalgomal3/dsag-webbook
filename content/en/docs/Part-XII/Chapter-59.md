@@ -45,7 +45,7 @@ Mo's Algorithm drastically minimizes <code>O(N)</code> memory sweeps. By groupin
 3. Maintain a "current window" [L, R] and its answer
 4. Expand/shrink L and R to match each query
 
-### Idiomatic Go: Mo's Algorithm
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: Mo's Algorithm
 
 ```go
 package main
@@ -171,11 +171,11 @@ func main() {
 | `sort` | Query sorting |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 59:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> brute force into <code>O((N+Q)√N)</code>. It is a niche but powerful technique for competitive programming and offline batch processing.
+<strong>Summary Chapter 59:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. It is a niche but powerful technique for competitive programming and offline batch processing.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 55: Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+- [Chapter 55: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-55/)
 - [Chapter 57: Kadane's Algorithm](/docs/Part-XI/Chapter-57/)
 - [Chapter 58: Minimax and Game Trees](/docs/Part-XII/Chapter-58/)

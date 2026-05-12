@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The convex hull is to computational geometry what sorting is to algorithms.</em>" : Unknown</strong>
+<strong>"<em>The convex hull is to <abbr title="Algorithms for solving geometric problems">computational geometry</abbr> what sorting is to algorithms.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -20,7 +20,7 @@ Chapter 60 covers the convex hull: the smallest convex shape containing a set of
 
 ## 60.1. What Is a Convex Hull?
 
-**Definition:** The <abbr title="The smallest convex set that contains a given set of points, analogous to stretching a rubber band around the points.">convex hull</abbr> of a set of points is the smallest convex polygon containing them all. Imagine stretching a rubber band around nails on a board.
+**Definition:** The <abbr title="The smallest convex set that contains a given set of points, analogous to stretching a rubber band around the points.">convex hull</abbr> of a set of points is the smallest convex <abbr title="A plane figure bounded by straight line segments">polygon</abbr> containing them all. Imagine stretching a rubber band around nails on a board.
 
 **Background & Philosophy:**
 The philosophy is exterior boundary isolation. When given thousands of chaotic, scattered points, the overwhelming majority are useless interior noise. The convex hull acts as a mathematical shrink-wrap, relentlessly isolating the extremely small subset of points that actually define the geometric perimeter.
@@ -148,7 +148,7 @@ func main() {
 | `image` | Point representations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 60:</strong> The convex hull is computational geometry's gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time with elegant simplicity — sort, then sweep. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr>, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
+<strong>Summary Chapter 60:</strong> The convex hull is <abbr title="Algorithms for solving geometric problems">computational geometry</abbr>'s gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time with elegant simplicity — sort, then sweep. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr>, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
 {{% /alert %}}
 
 ## See Also

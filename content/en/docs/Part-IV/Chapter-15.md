@@ -20,16 +20,16 @@ Chapter 15 covers all-pairs shortest path algorithms: Floyd-Warshall and Johnson
 
 ## 15.1. Floyd-Warshall Algorithm
 
-**Definition:** Floyd-Warshall computes shortest paths between all pairs of vertices using dynamic programming. It works with negative edges (but no negative cycles) and handles dense graphs efficiently.
+**Definition:** Floyd-Warshall computes shortest paths between all pairs of vertices using <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr>. It works with negative edges (but no negative cycles) and handles dense graphs efficiently.
 
 **Background & Philosophy:**
-Instead of computing paths from a single starting point, Floyd-Warshall calculates the shortest path between *every* pair of nodes simultaneously. The philosophy is grounded in Dynamic Programming: solving subproblems incrementally. It asks, "Is the path from A to B shorter if we route it through intermediate node K?" by slowly expanding the set of allowed intermediate nodes.
+Instead of computing paths from a single starting point, Floyd-Warshall calculates the shortest path between *every* pair of nodes simultaneously. The philosophy is grounded in <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>: solving subproblems incrementally. It asks, "Is the path from A to B shorter if we route it through intermediate node K?" by slowly expanding the set of allowed intermediate nodes.
 
 **Use Cases:**
 Used in analyzing transportation networks (e.g., calculating transit distances between all major cities), computing routing tables in complex network topologies, and analyzing social network connections to determine the "degrees of separation" between all users.
 
 **Memory Mechanics:**
-Floyd-Warshall requires a 2D matrix (in Go, typically a `[][]float64` or `[][]int`). This creates a memory footprint of <code>O(V^2)</code>. While an array of slice headers in Go causes slight memory fragmentation, processing rows sequentially leverages <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The three tight nested loops (`k, i, j`) fit perfectly into modern branch predictors. However, for a graph with 10,000 nodes, the distance matrix requires allocating 100 million integers, consuming hundreds of megabytes of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
+Floyd-Warshall requires a 2D matrix (in Go, typically a `[][]float64` or `[][]int`). This creates a memory footprint of <code>O(V^2)</code>. While an array of slice headers in Go causes slight <abbr title="Inefficient RAM usage creating small unusable blocks">memory fragmentation</abbr>, processing rows sequentially leverages <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The three tight nested loops (`k, i, j`) fit perfectly into modern branch predictors. However, for a graph with 10,000 nodes, the distance matrix requires allocating 100 million integers, consuming hundreds of megabytes of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
 
 ### Operations & Complexity
 
@@ -39,7 +39,7 @@ Floyd-Warshall requires a 2D matrix (in Go, typically a `[][]float64` or `[][]in
 | Memory | <code>O(V^2)</code> | Distance matrix |
 | <abbr title="A path that starts and ends at the same vertex.">Cycle</abbr> detect | <code>O(V)</code> | Check negative diagonal |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main

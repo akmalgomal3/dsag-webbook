@@ -29,7 +29,7 @@ The philosophy of a BST is to embed binary search directly into a dynamic data s
 Used when maintaining a dynamically changing dataset that must be frequently queried in order, such as a real-time leaderboard, database indexing, or implementing an in-memory Set or Map where iterating keys in sorted order is required.
 
 **Memory Mechanics:**
-Every `Node` is a distinct allocation on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. Because these nodes are not <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, traversing down the tree (following the `Left` or `Right` pointers) causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> at almost every step. In Go, an empty interface `interface{}` used to hold arbitrary values adds an extra 16 bytes of overhead per node. Go 1.18 Generics remove this boxing overhead, allowing the compiler to pack the exact data type directly into the node struct, slightly improving <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>.
+Every `Node` is a distinct allocation on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. Because these nodes are not <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, traversing down the tree (following the `Left` or `Right` pointers) causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> at almost every step. In Go, an <abbr title="An interface with no methods that can hold any type">empty interface</abbr> `interface{}` used to hold arbitrary values adds an extra 16 bytes of overhead per node. Go 1.18 Generics remove this boxing overhead, allowing the compiler to pack the exact data type directly into the node struct, slightly improving <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>.
 
 ### Operations & Complexity
 
@@ -39,7 +39,7 @@ Every `Node` is a distinct allocation on the <abbr title="Memory used for dynami
 | Insert | <code>O(h)</code> | Traverses downward to find a valid <abbr title="A node with no children in a tree.">leaf</abbr> |
 | Delete | <code>O(h)</code> | Handles three distinct cases: <abbr title="A node with no children in a tree.">leaf</abbr>, one <abbr title="A node directly connected to another node when moving away from the root.">child</abbr>, two children |
 
-### Idiomatic Go 1.18+ Generic Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> 1.18+ Generic Implementation
 
 A classic Go anti-pattern is creating trees using `interface{}` to hold arbitrary values, destroying type-safety and hurting performance. Utilizing Go 1.18 Generics (`[K cmp.Ordered, V any]`) creates a reusable, strongly-typed BST.
 

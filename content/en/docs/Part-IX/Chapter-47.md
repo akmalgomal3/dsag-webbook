@@ -35,7 +35,7 @@ A Bloom Filter relies on a single, massive bit array (often represented in Go as
 
 ### Space Efficiency
 
-| Structure | Bits per Element | False Positive Rate |
+| Structure | Bits per Element | <abbr title="An error indicating a condition is present when it is not">False Positive</abbr> Rate |
 |-----------|-----------------|---------------------|
 | Hash table | 64+ | 0% |
 | Bloom filter | 10 | 1% |
@@ -46,7 +46,7 @@ Storing 1 billion URLs: hash table ≈ 8 GB, Bloom filter ≈ 1 GB.
 
 A Bloom filter is a bit array of m bits, initially all 0, with k independent hash functions.
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main

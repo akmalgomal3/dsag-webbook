@@ -31,7 +31,7 @@ Jump to chapters based on what you need to solve.
 | Graph problems | Part III, Part IV, Part X |
 | Sorting data | Part V, Part XI |
 | Optimization | Part VI (DP, Greedy), Part XII (Advanced) |
-| String processing | Part VII (String Matching, Trie), Part IX (Suffix Arrays) |
+| String processing | Part VII (<abbr title="Finding occurrences of a pattern within a text">String Matching</abbr>, Trie), Part IX (Suffix Arrays) |
 | System design | Part II, Part VII, Part IX |
 
 ### Strategy 3: Interview Prep Path
@@ -57,7 +57,7 @@ Focus on high-frequency topics.
 
 ## Using Code Examples
 
-All code is written in **idiomatic Go 1.21+**. To run examples:
+All code is written in **<abbr title="Code style considered standard and natural for Go">idiomatic Go</abbr> 1.21+**. To run examples:
 
 ```bash
 # Create a module
@@ -87,7 +87,7 @@ Use the **search bar** at the top of every page to find:
 - Algorithm names
 - Data structure types
 - Go standard library references
-- Specific concepts (e.g., "cache locality", "<abbr title="Average cost over worst-case sequence">amortized analysis</abbr>")
+- Specific concepts (e.g., "<abbr title="The tendency to reuse nearby or recent memory addresses">cache locality</abbr>", "<abbr title="Average cost over worst-case sequence">amortized analysis</abbr>")
 
 ## Additional Resources
 

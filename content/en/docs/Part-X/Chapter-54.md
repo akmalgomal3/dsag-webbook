@@ -108,7 +108,7 @@ Similar logic: vertex u is an articulation point if:
 
 - **Multiple edges:** Parallel edges between two vertices mean neither is a bridge.
 - **Self-loops:** Ignore for bridge finding.
-- **Disconnected graph:** Run DFS from each component.
+- **<abbr title="A graph with vertices not connected by any path">Disconnected graph</abbr>:** Run DFS from each component.
 
 ## 54.6. Quick Reference
 

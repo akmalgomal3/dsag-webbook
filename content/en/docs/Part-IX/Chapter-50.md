@@ -67,7 +67,7 @@ func main() {
 }
 ```
 
-## 50.3. Persistent Binary Tree
+## 50.3. Persistent <abbr title="A tree where each node has at most two children">Binary Tree</abbr>
 
 Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchanged siblings are shared.
 
@@ -106,7 +106,7 @@ Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchan
 | Structure | Persistent Variant | Overhead |
 |-----------|-------------------|----------|
 | Linked list | Fully persistent | <code>O(1)</code> per update |
-| Binary tree | Path copying | <code>O(log n)</code> per update |
+| <abbr title="A tree where each node has at most two children">Binary tree</abbr> | Path copying | <code>O(log n)</code> per update |
 | Array | Fat nodes / copy-on-write | <code>O(1)</code>–<code>O(n)</code> |
 | Queue | Banker's method | <code>O(1)</code> amortized |
 

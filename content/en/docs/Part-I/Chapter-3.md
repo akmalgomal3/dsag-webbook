@@ -29,7 +29,7 @@ Go was designed at Google to solve problems of scale: large codebases, large tea
 Go is widely used for building highly concurrent backend services (like microservices or API gateways), robust command-line tools (CLIs), and distributed systems infrastructure (such as Kubernetes or Docker).
 
 **Memory Mechanics:**
-Go utilizes a concurrent, mark-and-sweep <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector (GC)</abbr>. Unlike C or C++, where developers manually invoke `malloc` and `free`, Go's runtime tracks object references. The compiler performs <abbr title="The process of determining whether a variable can be safely allocated on the stack or if it must escape to the heap.">escape analysis</abbr> to decide if a variable can safely reside on the fast <abbr title="Memory used to execute functions and store local variables.">stack</abbr> or if it must "escape" to the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> to be managed by the GC. Writing algorithms that keep data on the stack drastically reduces GC pressure and improves CPU cache locality.
+Go utilizes a concurrent, mark-and-sweep <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector (GC)</abbr>. Unlike C or C++, where developers manually invoke `malloc` and `free`, Go's runtime tracks object references. The compiler performs <abbr title="The process of determining whether a variable can be safely allocated on the stack or if it must escape to the heap.">escape analysis</abbr> to decide if a variable can safely reside on the fast <abbr title="Memory used to execute functions and store local variables.">stack</abbr> or if it must "escape" to the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> to be managed by the GC. Writing algorithms that keep data on the stack drastically reduces GC pressure and improves CPU <abbr title="The tendency to reuse nearby or recent memory addresses">cache locality</abbr>.
 
 ### Operations & Complexity
 
@@ -38,7 +38,7 @@ Go utilizes a concurrent, mark-and-sweep <abbr title="Automatic memory managemen
 | <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> | Automatic, no use-after-free | Pause time (typically <1ms) |
 | Slice | Dynamic array, amortized <code>O(1)</code> append | Reallocates when capacity is full |
 | Map | Hash table, <code>O(1)</code> avg | Unordered, not concurrent-safe |
-| Goroutine | Lightweight concurrency | Scheduling overhead |
+| <abbr title="A lightweight concurrent execution thread managed by the Go runtime">Goroutine</abbr> | Lightweight concurrency | Scheduling overhead |
 
 ### Decision Matrix
 
@@ -64,7 +64,7 @@ The Go standard library provides only the absolute essentials natively: arrays, 
 Slices are the default choice for almost all list-like data. Maps are used for rapid caching and lookups. Custom-built trees are used for hierarchical data (like DOM parsers or file systems), while graphs model networks (like dependency resolution in package managers).
 
 **Memory Mechanics:**
-A slice in Go is a 24-byte struct (on 64-bit systems) containing a pointer to the backing array, the current length, and the capacity. Because the slice header is small, passing it to functions is extremely cheap. However, if multiple slices point to the same backing array, modifying the elements in one slice modifies them for all others sharing that memory space.
+A slice in Go is a 24-byte struct (on 64-bit systems) containing a pointer to the backing array, the current length, and the capacity. Because the <abbr title="A small struct describing a slice: pointer, length, capacity">slice header</abbr> is small, passing it to functions is extremely cheap. However, if multiple slices point to the same backing array, modifying the elements in one slice modifies them for all others sharing that memory space.
 
 ### Operations & Complexity
 
@@ -74,7 +74,7 @@ A slice in Go is a 24-byte struct (on 64-bit systems) containing a pointer to th
 | Slice | `[]T` | <code>O(1)</code> | <code>O(n)</code>* | <code>O(n)</code>* | <code>O(n)</code> |
 | Linked List | `list.List` | <code>O(n)</code> | <code>O(1)</code> | <code>O(n)</code> | <code>O(n)</code> |
 | Map | `map[K]V` | <code>O(1)</code> avg | <code>O(1)</code> avg | <code>O(1)</code> avg | <code>O(1)</code> avg |
-| Binary Tree | custom struct | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> |
+| <abbr title="A tree where each node has at most two children">Binary Tree</abbr> | custom struct | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> |
 | Graph | `[][]int` adj | <code>O(1)</code> adj | <code>O(1)</code> edge | <code>O(1)</code> edge | <code>O(V+E)</code> |
 
 *amortized

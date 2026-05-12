@@ -23,7 +23,7 @@ Chapter 20 covers advanced sorting algorithms: <abbr title="An <code>O(n log n)<
 **Definition:** Merge Sort is a <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> algorithm that divides the array into halves, recursively sorts each half, and merges the sorted halves.
 
 **Background & Philosophy:**
-The philosophy is Divide and Conquer. John von Neumann invented it in 1945, recognizing that sorting two smaller arrays and merging them is mathematically far faster than comparing every element to every other element. It guarantees <code>O(n log n)</code> execution time regardless of the input data structure.
+The philosophy is <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>. John von Neumann invented it in 1945, recognizing that sorting two smaller arrays and merging them is mathematically far faster than comparing every element to every other element. It guarantees <code>O(n log n)</code> execution time regardless of the input data structure.
 
 **Use Cases:**
 Essential for "external sorting" where the dataset is too large to fit into <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and must be sorted in chunks on a disk. It is also the algorithm of choice for sorting Linked Lists, as it doesn't require random access.
@@ -40,7 +40,7 @@ Merge Sort's major weakness is memory. It requires an auxiliary array of size <c
 | Total | <code>O(n log n)</code> | Guaranteed |
 | Space | <code>O(n)</code> | Auxiliary array |
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main
@@ -218,7 +218,7 @@ func main() {
 
 - **Pivot selection:** Randomized pivot or median-of-three prevents <code>O(n^2)</code> worst case in Quick Sort.
 - **Stability:** Neither Quick Sort nor Heap Sort is stable. Use Merge Sort if stability matters.
-- **Go's sort:** Go uses a hybrid of Quick Sort, Heap Sort, and Insertion Sort (pdqsort in Go 1.19+).
+- **Go's sort:** Go uses a hybrid of Quick Sort, Heap Sort, and <abbr title="A sorting algorithm building the final array one element at a time">Insertion Sort</abbr> (pdqsort in Go 1.19+).
 
 ## 20.5. Quick Reference
 
@@ -237,4 +237,4 @@ func main() {
 
 - [Chapter 19: Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
 - [Chapter 21: Searching Algorithms](/docs/Part-V/Chapter-21/)
-- [Chapter 55: Counting, Radix, and Bucket Sort](/docs/Part-XI/Chapter-55/)
+- [Chapter 55: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-55/)

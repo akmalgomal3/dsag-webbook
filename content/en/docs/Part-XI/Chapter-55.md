@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 55 explores linear-time sorting algorithms — counting sort, radix sort, and bucket sort — that beat the <code>O(n log n)</code> comparison bound by exploiting data structure.
+Chapter 55 explores linear-time sorting algorithms — <abbr title="An integer sorting algorithm using frequency counting">counting sort</abbr>, <abbr title="A sorting algorithm processing digits individually">radix sort</abbr>, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> — that beat the <code>O(n log n)</code> comparison bound by exploiting data structure.
 {{% /alert %}}
 
 ## 55.1. Beyond Comparison Sorting
@@ -29,19 +29,19 @@ The philosophy is breaking the comparison barrier. Mathematical proofs guarantee
 Rendering engines sorting 3D polygons by depth, network routers organizing packets by priority flags, and sorting massive arrays of dates/timestamps.
 
 **Memory Mechanics:**
-Non-comparison sorts are notoriously memory-hungry. Counting Sort allocates an auxiliary array of size `k`. If `k` is 1 billion, it allocates a massive chunk of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> just to count. Radix Sort performs multiple passes, often allocating and copying data into 10 or 256 distinct "buckets" during each pass. While algorithmically <code>O(n)</code>, the constant <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> and heavy <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> tracing caused by these bucket arrays in Go can make them ironically slower than a highly-optimized in-place Quick Sort for datasets that easily fit within the L1/L2 caches.
+Non-comparison sorts are notoriously memory-hungry. <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr> allocates an auxiliary array of size `k`. If `k` is 1 billion, it allocates a massive chunk of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> just to count. <abbr title="A sorting algorithm processing digits individually">Radix Sort</abbr> performs multiple passes, often allocating and copying data into 10 or 256 distinct "buckets" during each pass. While algorithmically <code>O(n)</code>, the constant <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> and heavy <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> tracing caused by these bucket arrays in Go can make them ironically slower than a highly-optimized in-place Quick Sort for datasets that easily fit within the L1/L2 caches.
 
 | Algorithm | Assumption | Time | Space |
 |-----------|-----------|------|-------|
-| Counting sort | Integers in range [0, k] | <code>O(n + k)</code> | <code>O(k)</code> |
-| Radix sort | d-digit integers | <code>O(d(n + k))</code> | <code>O(n + k)</code> |
-| Bucket sort | Uniform distribution | <code>O(n)</code> avg | <code>O(n)</code> |
+| <abbr title="An integer sorting algorithm using frequency counting">Counting sort</abbr> | Integers in range [0, k] | <code>O(n + k)</code> | <code>O(k)</code> |
+| <abbr title="A sorting algorithm processing digits individually">Radix sort</abbr> | d-digit integers | <code>O(d(n + k))</code> | <code>O(n + k)</code> |
+| <abbr title="A sorting algorithm distributing elements into buckets">Bucket sort</abbr> | Uniform distribution | <code>O(n)</code> avg | <code>O(n)</code> |
 
-## 55.2. Counting Sort
+## 55.2. <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr>
 
 Count occurrences, then compute <abbr title="An array where each element is the sum of all preceding elements, enabling O(1) range sum queries.">prefix sums</abbr> for exact array positions.
 
-### Idiomatic Go Implementation
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
 ```go
 package main
@@ -177,11 +177,11 @@ Distribute elements into distinct physical buckets based entirely on range, sort
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `sort.Ints` | Standard comparison sort (quicksort/heap sort hybrid) |
-| No native non-comparison sort | Implement manually for specialized, integer-bound cases |
+| `sort.Ints` | Standard <abbr title="A sorting algorithm that only compares elements">comparison sort</abbr> (quicksort/heap sort hybrid) |
+| No native non-<abbr title="A sorting algorithm that only compares elements">comparison sort</abbr> | Implement manually for specialized, integer-bound cases |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 55:</strong> Linear-time sorting algorithms prove that the <code>O(n log n)</code> comparison lower bound applies only when you know nothing about your data. By deliberately exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and bucket sort achieve <code>O(n)</code> — a powerful reminder that algorithmic efficiency consistently emerges from deeply understanding your specific problem domain.
+<strong>Summary Chapter 55:</strong> Linear-time sorting algorithms prove that the <code>O(n log n)</code> comparison <abbr title="A function that grows no faster than the given function">lower bound</abbr> applies only when you know nothing about your data. By deliberately exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> achieve <code>O(n)</code> — a powerful reminder that algorithmic efficiency consistently emerges from deeply understanding your specific problem domain.
 {{% /alert %}}
 
 ## See Also

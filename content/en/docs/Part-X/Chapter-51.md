@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 51 covers topological sorting: ordering the vertices of a directed acyclic graph so that every edge goes from earlier to later in the ordering.
+Chapter 51 covers topological sorting: ordering the vertices of a directed <abbr title="A graph containing no cycles">acyclic graph</abbr> so that every edge goes from earlier to later in the ordering.
 {{% /alert %}}
 
 ## 51.1. The Problem
@@ -23,7 +23,7 @@ Chapter 51 covers topological sorting: ordering the vertices of a directed acycl
 **Definition:** A <abbr title="A linear ordering of vertices in a directed acyclic graph such that for every directed edge uv, vertex u comes before v in the ordering.">topological sort</abbr> of a <abbr title="A directed graph with no directed cycles.">DAG</abbr> produces a linear ordering where all edges point forward. Essential for scheduling, dependency resolution, and compilation.
 
 **Background & Philosophy:**
-The philosophy is dependency resolution. In any complex system (compiling code, baking a cake), certain tasks are strictly blocked until prerequisites finish. Topological sort abstracts this real-world constraint into a mathematical Directed Acyclic Graph (DAG), proving whether a viable linear sequence exists or if a paradox (cycle) prevents execution.
+The philosophy is dependency resolution. In any complex system (compiling code, baking a cake), certain tasks are strictly blocked until prerequisites finish. Topological sort abstracts this real-world constraint into a mathematical Directed <abbr title="A graph containing no cycles">Acyclic Graph</abbr> (DAG), proving whether a viable linear sequence exists or if a paradox (cycle) prevents execution.
 
 **Use Cases:**
 Go's module compiler resolving package imports, npm `package.json` dependency graphs, and task orchestration engines like Apache Airflow.

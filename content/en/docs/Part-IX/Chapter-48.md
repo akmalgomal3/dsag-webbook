@@ -23,7 +23,7 @@ Chapter 48 covers the LRU (Least Recently Used) cache — the most common cachin
 **Definition:** A <abbr title="A cache eviction policy that discards the least recently used items first when the cache is full.">Least Recently Used (LRU)</abbr> cache maintains a fixed-size collection where the least recently accessed item is evicted when space is needed.
 
 **Background & Philosophy:**
-The philosophy is temporal locality. If a piece of data was requested recently, it is statistically highly probable it will be requested again very soon. By explicitly keeping the "freshest" data readily available and discarding the stale data, an LRU cache creates a buffer that shields the slow backing store (database or disk) from repeated identical requests.
+The philosophy is <abbr title="The tendency to reuse recently accessed memory addresses">temporal locality</abbr>. If a piece of data was requested recently, it is statistically highly probable it will be requested again very soon. By explicitly keeping the "freshest" data readily available and discarding the stale data, an LRU cache creates a buffer that shields the slow backing store (database or disk) from repeated identical requests.
 
 **Use Cases:**
 Database query caching, CDN edge nodes, and CPU hardware caching (L1/L2 caches physically implement LRU logic).
@@ -45,7 +45,7 @@ LRU cache requires:
 - **O(1) lookup:** <abbr title="A data structure that implements an associative array using a hash function.">Hash table</abbr> maps key to node
 - **O(1) eviction:** <abbr title="A linked list where each node points to both the next and previous nodes.">Doubly linked list</abbr> maintains usage order
 
-### Idiomatic Go: LRU Cache
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: LRU Cache
 
 ```go
 package main

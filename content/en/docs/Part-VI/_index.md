@@ -14,7 +14,7 @@ toc: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Part VI groups the core algorithmic design paradigms: Divide and Conquer, Dynamic Programming, Greedy Algorithms, and Backtracking. It contrasts these philosophies and explores their practical applications in Go.
+Part VI groups the core algorithmic design paradigms: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>, <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>, Greedy Algorithms, and <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>. It contrasts these philosophies and explores their practical applications in Go.
 {{% /alert %}}
 
 <center>
