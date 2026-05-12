@@ -3,8 +3,8 @@ weight: 30000
 title: "Part III - Trees, Graphs & Representations"
 description: "Trees, Graphs & Representations"
 icon: "device_hub"
-date: "2024-08-24T23:41:01+07:00"
-lastmod: "2024-08-24T23:41:01+07:00"
+date: "2026-05-12T00:00:00+07:00"
+lastmod: "2026-05-12T00:00:00+07:00"
 draft: false
 toc: true
 ---

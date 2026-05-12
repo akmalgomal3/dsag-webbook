@@ -3,8 +3,8 @@ weight: 60600
 title: "Chapter 27: Probabilistic and Randomized Algorithms"
 description: "Probabilistic and Randomized Algorithms"
 icon: "article"
-date: "2024-08-24T23:42:52+07:00"
-lastmod: "2024-08-24T23:42:52+07:00"
+date: "2026-05-12T00:00:00+07:00"
+lastmod: "2026-05-12T00:00:00+07:00"
 draft: false
 toc: true
 katex: true

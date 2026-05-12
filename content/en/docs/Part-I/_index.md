@@ -3,8 +3,8 @@ weight: 10000
 title: "Part I - Foundations & Go Mechanics"
 description: "Foundations & Go Mechanics"
 icon: "build"
-date: "2024-08-24T23:37:35+07:00"
-lastmod: "2024-08-24T23:37:35+07:00"
+date: "2026-05-12T00:00:00+07:00"
+lastmod: "2026-05-12T00:00:00+07:00"
 draft: false
 toc: true
 ---

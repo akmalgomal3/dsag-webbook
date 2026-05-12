@@ -3,8 +3,8 @@ weight: 300
 title: "Preface"
 description: "How to use this book"
 icon: "Contact_mail"
-date: "2024-08-24T23:23:20+07:00"
-lastmod: "2024-08-24T23:23:20+07:00"
+date: "2026-05-12T00:00:00+07:00"
+lastmod: "2026-05-12T00:00:00+07:00"
 draft: false
 toc: true
 ---

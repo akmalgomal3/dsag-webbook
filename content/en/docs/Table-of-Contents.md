@@ -3,8 +3,8 @@ weight: 200
 title: "Table of Contents"
 description: "Complete table of contents for Modern Data Structures and Algorithms in Go"
 icon: "toc"
-date: "2024-08-24T23:24:06+07:00"
-lastmod: "2024-08-24T23:24:06+07:00"
+date: "2026-05-12T00:00:00+07:00"
+lastmod: "2026-05-12T00:00:00+07:00"
 draft: false
 toc: true
 ---

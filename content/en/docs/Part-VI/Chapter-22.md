@@ -3,8 +3,8 @@ weight: 60100
 title: "Chapter 22: Divide and Conquer"
 description: "Divide and Conquer"
 icon: "article"
-date: "2024-08-24T23:41:51+07:00"
-lastmod: "2024-08-24T23:41:51+07:00"
+date: "2026-05-12T00:00:00+07:00"
+lastmod: "2026-05-12T00:00:00+07:00"
 draft: false
 katex: true
 toc: true

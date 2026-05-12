@@ -3,8 +3,8 @@ weight: 70600
 title: "Chapter 33: Polynomial and FFT"
 description: "Polynomial and FFT"
 icon: "article"
-date: "2024-08-24T23:42:49+07:00"
-lastmod: "2024-08-24T23:42:49+07:00"
+date: "2026-05-12T00:00:00+07:00"
+lastmod: "2026-05-12T00:00:00+07:00"
 draft: false
 toc: true
 katex: true

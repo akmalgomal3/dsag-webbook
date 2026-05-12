@@ -3,8 +3,8 @@ weight: 600
 title: "How to Use DSAG"
 description: "Reading strategies and learning paths"
 icon: "article"
-date: "2024-08-24T23:46:41+07:00"
-lastmod: "2024-08-24T23:46:41+07:00"
+date: "2026-05-12T00:00:00+07:00"
+lastmod: "2026-05-12T00:00:00+07:00"
 draft: false
 toc: true
 ---
