@@ -196,5 +196,5 @@ func main() {
 
 ## See Also
 
-- [Chapter 7: Hashing and Hash Tables](/docs/part-ii/Chapter-7/)
-- [Chapter 19: Basic Sorting Algorithms](/docs/part-v/Chapter-19/)
+- [Chapter 7: Hashing and Hash Tables](/docs/part-ii/chapter-7/)
+- [Chapter 19: Basic Sorting Algorithms](/docs/part-v/chapter-19/)

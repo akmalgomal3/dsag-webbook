@@ -164,6 +164,6 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 
 ## See Also
 
-- [Chapter 50: Topological Sort](/docs/part-x/Chapter-50/)
-- [Chapter 52: A* Search](/docs/part-x/Chapter-52/)
-- [Chapter 53: Tarjan's Bridge-Finding Algorithm](/docs/part-x/Chapter-53/)
+- [Chapter 50: Topological Sort](/docs/part-x/chapter-50/)
+- [Chapter 52: A* Search](/docs/part-x/chapter-52/)
+- [Chapter 53: Tarjan's Bridge-Finding Algorithm](/docs/part-x/chapter-53/)

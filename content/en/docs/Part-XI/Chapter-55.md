@@ -169,6 +169,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/part-xi/Chapter-54/)
-- [Chapter 56: Kadane's Algorithm](/docs/part-xi/Chapter-56/)
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/Chapter-23/)
+- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/part-xi/chapter-54/)
+- [Chapter 56: Kadane's Algorithm](/docs/part-xi/chapter-56/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/chapter-23/)

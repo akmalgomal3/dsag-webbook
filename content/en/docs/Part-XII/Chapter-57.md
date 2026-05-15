@@ -264,6 +264,6 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 
 ## See Also
 
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/Chapter-23/)
-- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/Chapter-25/)
-- [Chapter 58: Mo's Algorithm](/docs/part-xii/Chapter-58/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/chapter-23/)
+- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/chapter-25/)
+- [Chapter 58: Mo's Algorithm](/docs/part-xii/chapter-58/)

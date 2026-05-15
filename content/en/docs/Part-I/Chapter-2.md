@@ -388,6 +388,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/part-i/Chapter-3/)
-- [Chapter 4: Fundamentals of Go Programming for Algorithms](/docs/part-i/Chapter-4/)
-- [Chapter 32: Linear Programming](/docs/part-vii/Chapter-32/)
+- [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/part-i/chapter-3/)
+- [Chapter 4: Fundamentals of Go Programming for Algorithms](/docs/part-i/chapter-4/)
+- [Chapter 32: Linear Programming](/docs/part-vii/chapter-32/)

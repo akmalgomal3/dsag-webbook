@@ -120,6 +120,6 @@ Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchan
 
 ## See Also
 
-- [Chapter 36: Trie Data Structures](/docs/part-vii/Chapter-36/)
-- [Chapter 48: Suffix Arrays](/docs/part-ix/Chapter-48/)
-- [Chapter 41: Evolution of Data Structures](/docs/part-viii/Chapter-41/)
+- [Chapter 36: Trie Data Structures](/docs/part-vii/chapter-36/)
+- [Chapter 48: Suffix Arrays](/docs/part-ix/chapter-48/)
+- [Chapter 41: Evolution of Data Structures](/docs/part-viii/chapter-41/)

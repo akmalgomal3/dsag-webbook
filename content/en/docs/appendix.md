@@ -76,6 +76,6 @@ This cheat sheet covers the most common data structures and algorithms. Refer to
 
 ## See Also
 
-- [Chapter 1: The Role of Algorithms in Modern Software](/docs/part-i/Chapter-1/)
-- [Chapter 6: Elementary Data Structures](/docs/part-ii/Chapter-6/)
+- [Chapter 1: The Role of Algorithms in Modern Software](/docs/part-i/chapter-1/)
+- [Chapter 6: Elementary Data Structures](/docs/part-ii/chapter-6/)
 - [Table of Contents](/docs/table-of-contents/)

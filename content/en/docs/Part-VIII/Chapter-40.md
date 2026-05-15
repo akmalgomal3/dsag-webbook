@@ -117,6 +117,6 @@ The most important open problem in computer science: If a solution can be verifi
 
 ## See Also
 
-- [Chapter 39: Origins of Algorithms](/docs/part-viii/Chapter-39/)
-- [Chapter 41: Evolution of Data Structures](/docs/part-viii/Chapter-41/)
-- [Chapter 42: Modern Algorithmic Thinking](/docs/part-viii/Chapter-42/)
+- [Chapter 39: Origins of Algorithms](/docs/part-viii/chapter-39/)
+- [Chapter 41: Evolution of Data Structures](/docs/part-viii/chapter-41/)
+- [Chapter 42: Modern Algorithmic Thinking](/docs/part-viii/chapter-42/)

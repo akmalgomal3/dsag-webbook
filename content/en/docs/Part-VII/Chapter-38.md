@@ -187,6 +187,6 @@ func isBitSet(n, i int) bool {
 
 ## See Also
 
-- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/part-vii/Chapter-28/)
-- [Chapter 33: Polynomial and FFT](/docs/part-vii/Chapter-33/)
-- [Chapter 42: Modern Algorithmic Thinking](/docs/part-viii/Chapter-42/)
+- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/part-vii/chapter-28/)
+- [Chapter 33: Polynomial and FFT](/docs/part-vii/chapter-33/)
+- [Chapter 42: Modern Algorithmic Thinking](/docs/part-viii/chapter-42/)

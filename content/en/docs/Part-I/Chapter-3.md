@@ -307,6 +307,6 @@ func BenchmarkLinearSum(b *testing.B) {
 
 ## See Also
 
-- [Chapter 1: The Role of Algorithms in Modern Software](/docs/part-i/Chapter-1/)
-- [Chapter 2: Complexity Analysis](/docs/part-i/Chapter-2/)
-- [Chapter 4: Fundamentals of Go Programming for Algorithms](/docs/part-i/Chapter-4/)
+- [Chapter 1: The Role of Algorithms in Modern Software](/docs/part-i/chapter-1/)
+- [Chapter 2: Complexity Analysis](/docs/part-i/chapter-2/)
+- [Chapter 4: Fundamentals of Go Programming for Algorithms](/docs/part-i/chapter-4/)

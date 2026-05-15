@@ -313,6 +313,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 5: Fundamental Data Structures in Go](/docs/part-ii/Chapter-5/)
-- [Chapter 7: Hashing and Hash Tables](/docs/part-ii/Chapter-7/)
-- [Chapter 47: LRU Cache](/docs/part-ix/Chapter-47/)
+- [Chapter 5: Fundamental Data Structures in Go](/docs/part-ii/chapter-5/)
+- [Chapter 7: Hashing and Hash Tables](/docs/part-ii/chapter-7/)
+- [Chapter 47: LRU Cache](/docs/part-ix/chapter-47/)

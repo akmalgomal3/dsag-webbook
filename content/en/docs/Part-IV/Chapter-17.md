@@ -403,6 +403,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 16: Minimum Spanning Trees](/docs/part-iv/Chapter-16/)
-- [Chapter 18: Matchings in Bipartite Graphs](/docs/part-iv/Chapter-18/)
-- [Chapter 32: Linear Programming](/docs/part-vii/Chapter-32/)
+- [Chapter 16: Minimum Spanning Trees](/docs/part-iv/chapter-16/)
+- [Chapter 18: Matchings in Bipartite Graphs](/docs/part-iv/chapter-18/)
+- [Chapter 32: Linear Programming](/docs/part-vii/chapter-32/)

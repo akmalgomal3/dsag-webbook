@@ -302,6 +302,6 @@ The Dual LP proves highly beneficial for intensive sensitivity analysis and driv
 
 ## See Also
 
-- [Chapter 2: Complexity Analysis](/docs/part-i/Chapter-2/)
-- [Chapter 15: All-Pairs Shortest Paths](/docs/part-iv/Chapter-15/)
-- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/part-vii/Chapter-28/)
+- [Chapter 2: Complexity Analysis](/docs/part-i/chapter-2/)
+- [Chapter 15: All-Pairs Shortest Paths](/docs/part-iv/chapter-15/)
+- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/part-vii/chapter-28/)

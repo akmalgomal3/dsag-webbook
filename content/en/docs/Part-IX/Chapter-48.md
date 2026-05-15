@@ -136,6 +136,6 @@ The <abbr title="An array storing the length of the longest common prefix betwee
 
 ## See Also
 
-- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/part-vii/Chapter-34/)
-- [Chapter 36: Trie Data Structures](/docs/part-vii/Chapter-36/)
-- [Chapter 49: Persistent Data Structures](/docs/part-ix/Chapter-49/)
+- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/part-vii/chapter-34/)
+- [Chapter 36: Trie Data Structures](/docs/part-vii/chapter-36/)
+- [Chapter 49: Persistent Data Structures](/docs/part-ix/chapter-49/)

@@ -186,6 +186,6 @@ Distribute elements into distinct physical buckets based entirely on range, sort
 
 ## See Also
 
-- [Chapter 19: Basic Sorting Algorithms](/docs/part-v/Chapter-19/)
-- [Chapter 20: Advanced Sorting Algorithms](/docs/part-v/Chapter-20/)
-- [Chapter 56: Kadane's Algorithm](/docs/part-xi/Chapter-56/)
+- [Chapter 19: Basic Sorting Algorithms](/docs/part-v/chapter-19/)
+- [Chapter 20: Advanced Sorting Algorithms](/docs/part-v/chapter-20/)
+- [Chapter 56: Kadane's Algorithm](/docs/part-xi/chapter-56/)

@@ -483,6 +483,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 33: Polynomial and FFT](/docs/part-vii/Chapter-33/)
-- [Chapter 36: Trie Data Structures](/docs/part-vii/Chapter-36/)
-- [Chapter 48: Suffix Arrays](/docs/part-ix/Chapter-48/)
+- [Chapter 33: Polynomial and FFT](/docs/part-vii/chapter-33/)
+- [Chapter 36: Trie Data Structures](/docs/part-vii/chapter-36/)
+- [Chapter 48: Suffix Arrays](/docs/part-ix/chapter-48/)

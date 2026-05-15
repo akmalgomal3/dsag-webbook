@@ -341,6 +341,6 @@ The PoW example provided acts purely as a demonstration. A rigorous production P
 
 ## See Also
 
-- [Chapter 29: Parallel and Distributed Algorithms](/docs/part-vii/Chapter-29/)
-- [Chapter 30: Cryptographic Foundations Algorithms](/docs/part-vii/Chapter-30/)
-- [Chapter 36: Trie Data Structures](/docs/part-vii/Chapter-36/)
+- [Chapter 29: Parallel and Distributed Algorithms](/docs/part-vii/chapter-29/)
+- [Chapter 30: Cryptographic Foundations Algorithms](/docs/part-vii/chapter-30/)
+- [Chapter 36: Trie Data Structures](/docs/part-vii/chapter-36/)

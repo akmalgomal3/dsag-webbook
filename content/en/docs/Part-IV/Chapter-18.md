@@ -299,6 +299,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 16: Minimum Spanning Trees](/docs/part-iv/Chapter-16/)
-- [Chapter 17: Network Flow Algorithms](/docs/part-iv/Chapter-17/)
-- [Chapter 51: Strongly Connected Components](/docs/part-x/Chapter-51/)
+- [Chapter 16: Minimum Spanning Trees](/docs/part-iv/chapter-16/)
+- [Chapter 17: Network Flow Algorithms](/docs/part-iv/chapter-17/)
+- [Chapter 51: Strongly Connected Components](/docs/part-x/chapter-51/)

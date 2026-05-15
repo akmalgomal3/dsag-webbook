@@ -177,6 +177,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 22: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/part-vi/Chapter-22/)
-- [Chapter 24: Greedy Algorithms](/docs/part-vi/Chapter-24/)
-- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/Chapter-25/)
+- [Chapter 22: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/part-vi/chapter-22/)
+- [Chapter 24: Greedy Algorithms](/docs/part-vi/chapter-24/)
+- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/chapter-25/)

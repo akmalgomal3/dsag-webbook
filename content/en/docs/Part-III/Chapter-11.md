@@ -273,6 +273,6 @@ func (n *AugNode[K]) Rank(key K) int {
 
 ## See Also
 
-- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/Chapter-9/)
-- [Chapter 12: Graphs and Graph Representations](/docs/part-iii/Chapter-12/)
-- [Chapter 44: B-Trees](/docs/part-ix/Chapter-44/)
+- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/chapter-9/)
+- [Chapter 12: Graphs and Graph Representations](/docs/part-iii/chapter-12/)
+- [Chapter 44: B-Trees](/docs/part-ix/chapter-44/)

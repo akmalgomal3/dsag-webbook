@@ -340,6 +340,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 11: Disjoint Sets](/docs/part-iii/Chapter-11/)
-- [Chapter 13: Graph Traversal Algorithms](/docs/part-iv/Chapter-13/)
-- [Chapter 14: Single-Source Shortest Paths](/docs/part-iv/Chapter-14/)
+- [Chapter 11: Disjoint Sets](/docs/part-iii/chapter-11/)
+- [Chapter 13: Graph Traversal Algorithms](/docs/part-iv/chapter-13/)
+- [Chapter 14: Single-Source Shortest Paths](/docs/part-iv/chapter-14/)

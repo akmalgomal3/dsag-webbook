@@ -253,6 +253,6 @@ Lagrange interpolation holds remarkable stability solely for a sparse number of 
 
 ## See Also
 
-- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/part-vii/Chapter-28/)
-- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/part-vii/Chapter-34/)
-- [Chapter 38: Bit Manipulation](/docs/part-vii/Chapter-38/)
+- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/part-vii/chapter-28/)
+- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/part-vii/chapter-34/)
+- [Chapter 38: Bit Manipulation](/docs/part-vii/chapter-38/)

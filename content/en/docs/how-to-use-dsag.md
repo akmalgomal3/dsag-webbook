@@ -96,4 +96,4 @@ Use the **search bar** at the top of every page to find:
 
 ---
 
-**Start learning:** [Chapter 1: Complexity Analysis](/docs/part-i/Chapter-1/)
+**Start learning:** [Chapter 1: Complexity Analysis](/docs/part-i/chapter-1/)

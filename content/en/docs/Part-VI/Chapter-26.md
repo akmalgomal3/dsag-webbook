@@ -690,6 +690,6 @@ Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub
 
 ## See Also
 
-- [Chapter 22: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/part-vi/Chapter-22/)
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/Chapter-23/)
-- [Chapter 27: Probabilistic and Randomized Algorithms](/docs/part-vi/Chapter-27/)
+- [Chapter 22: <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>](/docs/part-vi/chapter-22/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/chapter-23/)
+- [Chapter 27: Probabilistic and Randomized Algorithms](/docs/part-vi/chapter-27/)

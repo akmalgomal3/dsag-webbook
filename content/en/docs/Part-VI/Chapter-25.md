@@ -210,6 +210,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/Chapter-23/)
-- [Chapter 24: Greedy Algorithms](/docs/part-vi/Chapter-24/)
-- [Chapter 57: Minimax and Game Trees](/docs/part-xii/Chapter-57/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/chapter-23/)
+- [Chapter 24: Greedy Algorithms](/docs/part-vi/chapter-24/)
+- [Chapter 57: Minimax and Game Trees](/docs/part-xii/chapter-57/)

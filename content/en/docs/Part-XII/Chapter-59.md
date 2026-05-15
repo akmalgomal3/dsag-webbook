@@ -153,6 +153,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 32: Linear Programming](/docs/part-vii/Chapter-32/)
-- [Chapter 52: A* Search](/docs/part-x/Chapter-52/)
-- [Chapter 58: Mo's Algorithm](/docs/part-xii/Chapter-58/)
+- [Chapter 32: Linear Programming](/docs/part-vii/chapter-32/)
+- [Chapter 52: A* Search](/docs/part-x/chapter-52/)
+- [Chapter 58: Mo's Algorithm](/docs/part-xii/chapter-58/)

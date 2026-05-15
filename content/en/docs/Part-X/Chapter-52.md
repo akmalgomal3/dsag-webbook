@@ -214,6 +214,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 14: Single-Source Shortest Paths](/docs/part-iv/Chapter-14/)
-- [Chapter 50: Topological Sort](/docs/part-x/Chapter-50/)
-- [Chapter 51: Strongly Connected Components](/docs/part-x/Chapter-51/)
+- [Chapter 14: Single-Source Shortest Paths](/docs/part-iv/chapter-14/)
+- [Chapter 50: Topological Sort](/docs/part-x/chapter-50/)
+- [Chapter 51: Strongly Connected Components](/docs/part-x/chapter-51/)

@@ -134,6 +134,6 @@ Push vertices onto a stack after exploring all descendants, then reverse.
 
 ## See Also
 
-- [Chapter 12: Graphs and Graph Representations](/docs/part-iii/Chapter-12/)
-- [Chapter 51: Strongly Connected Components](/docs/part-x/Chapter-51/)
-- [Chapter 53: Tarjan's Bridge-Finding Algorithm](/docs/part-x/Chapter-53/)
+- [Chapter 12: Graphs and Graph Representations](/docs/part-iii/chapter-12/)
+- [Chapter 51: Strongly Connected Components](/docs/part-x/chapter-51/)
+- [Chapter 53: Tarjan's Bridge-Finding Algorithm](/docs/part-x/chapter-53/)

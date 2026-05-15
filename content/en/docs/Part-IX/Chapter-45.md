@@ -179,6 +179,6 @@ With incredibly high probability, skip lists maintain <code>O(log n)</code> heig
 
 ## See Also
 
-- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/Chapter-9/)
-- [Chapter 27: Probabilistic and Randomized Algorithms](/docs/part-vi/Chapter-27/)
-- [Chapter 44: B-Trees](/docs/part-ix/Chapter-44/)
+- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/chapter-9/)
+- [Chapter 27: Probabilistic and Randomized Algorithms](/docs/part-vi/chapter-27/)
+- [Chapter 44: B-Trees](/docs/part-ix/chapter-44/)

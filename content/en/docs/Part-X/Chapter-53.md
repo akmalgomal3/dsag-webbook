@@ -128,7 +128,7 @@ Similar logic: vertex u is an articulation point if:
 
 ## See Also
 
-- [Chapter 51 — Topological Sort](/docs/part-x/Chapter-50/)
-- [Chapter 52 — Strongly Connected Components](/docs/part-x/Chapter-51/)
-- [Chapter 12 — Graphs and Graph Representations](/docs/part-iii/Chapter-12/)
+- [Chapter 51 — Topological Sort](/docs/part-x/chapter-50/)
+- [Chapter 52 — Strongly Connected Components](/docs/part-x/chapter-51/)
+- [Chapter 12 — Graphs and Graph Representations](/docs/part-iii/chapter-12/)
 

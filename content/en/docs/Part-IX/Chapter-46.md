@@ -158,6 +158,6 @@ p ≈ (1 - e^(-kn/m))^k
 
 ## See Also
 
-- [Chapter 7: Hashing and Hash Tables](/docs/part-ii/Chapter-7/)
-- [Chapter 44: B-Trees](/docs/part-ix/Chapter-44/)
-- [Chapter 47: LRU Cache](/docs/part-ix/Chapter-47/)
+- [Chapter 7: Hashing and Hash Tables](/docs/part-ii/chapter-7/)
+- [Chapter 44: B-Trees](/docs/part-ix/chapter-44/)
+- [Chapter 47: LRU Cache](/docs/part-ix/chapter-47/)

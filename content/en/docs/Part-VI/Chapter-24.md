@@ -216,6 +216,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/Chapter-23/)
-- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/Chapter-25/)
-- [Chapter 35: Approximate Algorithms](/docs/part-vii/Chapter-35/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/chapter-23/)
+- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/chapter-25/)
+- [Chapter 35: Approximate Algorithms](/docs/part-vii/chapter-35/)

@@ -124,5 +124,5 @@ func main() {
 
 ## See Also
 
-- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/Chapter-9/)
-- [Chapter 16: Minimum Spanning Trees](/docs/part-iv/Chapter-16/)
+- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/chapter-9/)
+- [Chapter 16: Minimum Spanning Trees](/docs/part-iv/chapter-16/)

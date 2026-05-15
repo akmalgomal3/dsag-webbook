@@ -368,6 +368,6 @@ Reservoir sampling guarantees that every single item possesses an exact mathemat
 
 ## See Also
 
-- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/Chapter-25/)
-- [Chapter 26: Advanced Recursive Algorithms](/docs/part-vi/Chapter-26/)
-- [Chapter 45: Skip Lists](/docs/part-ix/Chapter-45/)
+- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/chapter-25/)
+- [Chapter 26: Advanced Recursive Algorithms](/docs/part-vi/chapter-26/)
+- [Chapter 45: Skip Lists](/docs/part-ix/chapter-45/)

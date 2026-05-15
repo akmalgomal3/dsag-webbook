@@ -150,6 +150,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 12: Graphs and Graph Representations](/docs/part-iii/Chapter-12/)
-- [Chapter 14: Single-Source Shortest Paths](/docs/part-iv/Chapter-14/)
-- [Chapter 15: All-Pairs Shortest Paths](/docs/part-iv/Chapter-15/)
+- [Chapter 12: Graphs and Graph Representations](/docs/part-iii/chapter-12/)
+- [Chapter 14: Single-Source Shortest Paths](/docs/part-iv/chapter-14/)
+- [Chapter 15: All-Pairs Shortest Paths](/docs/part-iv/chapter-15/)
