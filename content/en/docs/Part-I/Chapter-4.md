@@ -335,6 +335,15 @@ func main() {
 - **Case WaitGroup reuse:** Reusing a `WaitGroup` without ensuring `Wait` has completed can cause a <abbr title="Unpredictable behavior from unsynchronized concurrent access">race condition</abbr>.
 - **Case unbounded goroutines:** The `pSort` example spawns 2 goroutines per recursive call, leading to O(n) goroutines for large inputs. Production code should use a threshold (e.g., `len(a) < 4096`) below which it falls back to sequential `sort.Slice`, or use a bounded worker pool with `semaphore.Weighted`.
 
+### Anti-Patterns
+
+- **Ignoring Escape Analysis:** Returning a pointer to a local variable forces heap allocation in Go. Use `go build -gcflags="-m"` to inspect escapes and keep hot-path data on the stack.
+- **Slice Header Value Copy:** Assigning a slice to another variable (`b := a`) copies only the 24-byte header; both share the same backing array. Mutating via `b` affects `a`. Copy explicitly with `copy()` when independence is needed.
+- **Nil Interface != Nil Concrete:** A `*MyStruct` that is `nil` wrapped in an interface is NOT `nil`. Always check `if err != nil` on the interface, not the concrete type.
+- **Type Assertion Without Comma-Ok:** Writing `x.(int)` without the `v, ok := x.(int)` pattern causes a panic on mismatch. Always use the two-value form unless a panic is intentional.
+- **Unbounded Goroutine Spawns:** Launching `go func()` in a loop without a bounding mechanism. Use `semaphore.Weighted` or a buffered channel as a worker pool to limit concurrency.
+- **Map Concurrency Without Sync:** Reading and writing a `map` from multiple goroutines without `sync.Mutex` or `sync.Map` causes a fatal panic in Go. The race detector catches this, but only if you run it.
+
 ## 4.5. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

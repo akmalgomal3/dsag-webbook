@@ -220,6 +220,12 @@ func main() {
 - **Stability:** Neither Quick Sort nor Heap Sort is stable. Use Merge Sort if stability matters.
 - **Go's sort:** Go uses a hybrid of Quick Sort, Heap Sort, and <abbr title="A sorting algorithm building the final array one element at a time">Insertion Sort</abbr> (pdqsort in Go 1.19+).
 
+### Anti-Patterns
+
+- **Allocating a temp slice on every Merge Sort merge step:** Allocate one auxiliary slice of length n once, then pass it through recursion. Per-step allocation turns O(n log n) into O(n log n) allocations.
+- **Using Quick Sort on nearly-sorted data without randomized pivot:** Deterministic pivot choice on sorted input triggers O(n²). Use `rand.Intn` for pivot selection or rely on `slices.Sort` which handles this.
+- **Ignoring stability when it matters:** Merge Sort is stable; Quick Sort and Heap Sort are not. If relative order of equal keys matters, use `slices.SortStableFunc` or Merge Sort.
+
 ## 20.5. Quick Reference
 
 | Name | Go Type | Time | Space | Stable | Use Case |

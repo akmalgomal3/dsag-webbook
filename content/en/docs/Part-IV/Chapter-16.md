@@ -315,6 +315,12 @@ func main() {
 | Parallel processing environment | A simpler implementation suffices (Kruskal) |
 | Distributed systems | Single-threaded environments |
 
+### Anti-Patterns
+
+- **Skipping Union-Find path compression:** Without path compression + union-by-rank, `Find` degrades to O(log V) or worse, making Kruskal's O(E log V) turn into O(E · V). Always compress paths.
+- **Using Prim's on edge-list input:** Prim's requires adjacency-list/O(V²) matrix access. If your input is already an edge list, Kruskal's avoids the O(V²) conversion cost.
+- **Computing MST on a disconnected graph without checking:** An MST is only defined for a connected component. Run a BFS/DFS reachability check first, or verify `len(mst) == V-1` afterward.
+
 ## 16.4. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

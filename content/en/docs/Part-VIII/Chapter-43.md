@@ -98,6 +98,12 @@ Go's design mirrors algorithmic virtues:
 - **Optimization obsession:** "The best is the enemy of the good."
 - **Ignoring context:** An algorithm optimal for one culture may fail in another.
 
+### Anti-Patterns
+
+- **Techno-Solutionism:** Believing every human problem has an algorithmic fix — sometimes the right solution is organizational, social, or none at all. Credit scoring algorithms didn't eliminate bias; they automated it at scale. Adding an algorithm to a sociotechnical problem can amplify harm rather than reduce it.
+- **Optimization Without Purpose:** Measuring efficiency without asking "efficient at what?" — maximizing speed, throughput, or accuracy for a metric that doesn't matter. An O(1) lookup is meaningless if the data being looked up is stale, irrelevant, or misinterpreted.
+- **Complexity Worship:** Equating algorithmic sophistication with quality. Simpler algorithms with worse asymptotic bounds often outperform in practice and are far easier to reason about, debug, and maintain. Fibonacci heaps are theoretically superior to binary heaps; in practice, the constant-factor overhead and implementation complexity make them almost never worth it.
+
 ## 44.5. Quick Reference
 
 | Principle | Source | Application |

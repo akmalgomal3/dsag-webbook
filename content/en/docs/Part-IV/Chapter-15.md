@@ -226,6 +226,12 @@ func main() {
 - **Overflow:** Use `math.Inf(1)` to represent infinity without wrap-around.
 - **Dense graphs:** <code>O(V^3)</code> is prohibitively expensive for V > 10^4.
 
+### Anti-Patterns
+
+- **Running Floyd-Warshall on sparse graphs:** When E ≈ V, Johnson's algorithm (O(V² log V + VE)) is far faster than O(V³). Prefer Johnson's for sparse or moderately dense graphs.
+- **Using `int` max value as infinity:** Integer addition on `math.MaxInt` overflows silently. Use `math.MaxInt/2` so that `inf + weight` stays within bounds, or use `math.Inf(1)` with `float64`.
+- **Allocating a new dist matrix per iteration:** The three nested loops should update in-place. Creating `[][]float64` copies inside the k-loop turns O(V³) time into O(V⁴) memory traffic.
+
 ## 15.3. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Algorithm | Time | Space | <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">Graph</abbr> Type | Negative Edges |

@@ -222,6 +222,13 @@ func main() {
 - **Go generics:** Go 1.21+ enables type-safe generic trees using `cmp.Ordered` (the modern replacement for the deprecated `constraints.Ordered`).
 - **GC overhead:** Tree nodes are individually allocated; large trees create <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
 
+### Anti-Patterns
+
+- **Reimplementing trees when `map` suffices:** Go's built-in `map[K]V` is a hash table, not a BST. If you need ordered iteration, range-over-func (Go 1.23+) or a sorted slice is simpler than hand-rolling a red-black tree.
+- **Storing `interface{}` values:** Use `cmp.Ordered` or custom generic constraints — don't fall back to `any`; it erases type safety and forces runtime assertions.
+- **Recursive traversals on unbounded depth:** A tree built from sorted input degenerates to a linked list. Use iterative traversal with an explicit `[]Node` stack to avoid `runtime: goroutine stack exceeds 1000000000-byte limit` panics.
+- **Ignoring node pooling:** Hot-path allocations that create millions of `*Node` objects put heavy pressure on the GC. Use `sync.Pool` or flat-slice layouts (`[]Node` with index-based children) for high-throughput scenarios.
+
 ## 9.4. Quick Reference
 
 | Tree | Height | Search | Insert | Delete | Balance |

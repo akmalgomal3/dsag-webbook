@@ -98,6 +98,12 @@ func approximateSolution(data []Item) Solution {
 - **Worst-case obsession:** Average-case analysis often perfectly predicts real-world server loads.
 - **Quantum hype:** Shor's algorithm threatens RSA, but functional quantum computers capable of threatening 2048-bit keys are not yet deployed.
 
+### Anti-Patterns
+
+- **Big-O Tunnel Vision:** Optimizing asymptotic complexity while ignoring constant factors, cache behavior, and real-world data distributions. An O(n) algorithm with a 100 MB lookup table can be orders of magnitude slower than an O(n log n) algorithm that fits entirely in L1 cache for realistic input sizes.
+- **Approximation Apathy:** Dismissing approximate solutions as "impure" when they meet practical correctness requirements. The enemy of "good enough" is "perfect but impossible" — a 2-approximation delivered in milliseconds beats an optimal solution that runs until the heat death of the universe.
+- **Randomization Skepticism:** Avoiding randomized algorithms out of fear of non-determinism, even when Las Vegas guarantees (always correct, fast in expectation) make them strictly superior to deterministic alternatives. Randomized quicksort's worst case is provably vanishingly unlikely; deterministic quicksort's worst case is triggered by sorted input — a common real-world pattern.
+
 ## 43.6. Quick Reference
 
 | Paradigm | When to Use | Go Example |

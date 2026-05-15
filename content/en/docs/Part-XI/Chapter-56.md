@@ -110,6 +110,13 @@ The recurrence captures the unyielding essence of <abbr title="A method for solv
 - **Empty subarray allowed:** If a totally empty subarray (summing to 0) is permitted by business logic, initialize the trackers rigidly to 0.
 - **Integer overflow:** Utilize wider 64-bit integer tracking types (`int64`) for handling exceptionally huge sums safely.
 
+### Anti-Patterns
+
+- **Returning 0 for all-negative arrays without clarification:** Standard Kadane's returns the maximum (least negative) element; if an empty subarray (sum = 0) is valid, initialize trackers to 0 — but document the choice explicitly.
+- **Applying Kadane's to non-contiguous problems:** Kadane's solves maximum *contiguous* subarray; for maximum *subsequence* (non-contiguous), just sum all positive numbers instead.
+- **Confusing subarray with subsequence:** A subarray is contiguous; a subsequence need not be. Kadane's solves the former — using it for the latter yields incorrect results.
+- **Integer overflow on large financial datasets:** The running sum can exceed `int` bounds; use `int64` or `math/big` when processing price or transaction arrays with large values.
+
 ## 57.6. Quick Reference
 
 | Aspect | Value |

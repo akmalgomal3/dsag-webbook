@@ -196,6 +196,13 @@ func main() {
 - **Memory:** A* keeps all nodes in memory. For large graphs, deploy IDA* (Iterative Deepening A*).
 - **Dynamic obstacles:** Requires full replanning (deploy D* Lite for shifting environments).
 
+### Anti-Patterns
+
+- **Using an inadmissible heuristic:** A heuristic that overestimates real cost breaks A*'s optimality guarantee; the algorithm will find paths but they may not be shortest.
+- **A* for single-source all-destinations:** When you need paths to every node, A*'s heuristic overhead is wasted — Dijkstra explores the same nodes without the `h(n)` computation.
+- **Unsorted open list instead of priority queue:** Without a proper min-heap, extracting the lowest-f node degrades A* to BFS-like exploration, negating all heuristic gains.
+- **Ignoring tie-breaking on f-scores:** When many nodes share the same f-value, A* explores them all; adding a secondary key (e.g., preferring higher g) dramatically reduces node expansion.
+
 ## 53.5. Quick Reference
 
 | Heuristic | Formula | Best For |

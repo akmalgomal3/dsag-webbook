@@ -426,6 +426,12 @@ Never use SHA-256 for password hashing. SHA-256 is designed for speed and can be
 
 For production, prefer `golang.org/x/crypto/argon2` over bcrypt for its memory-hard properties.
 
+### Anti-Patterns
+
+- **Using MD5 or SHA-1 for security:** Both are broken with known collision attacks. Use SHA-256 for integrity and bcrypt/Argon2 for password hashing.
+- **Reusing nonces in AES-GCM:** Reusing a nonce with the same key destroys AEAD security entirely. Always generate a fresh 12-byte nonce from `crypto/rand` for each encryption.
+- **Comparing hashes or MACs with `==`:** The `==` operator short-circuits on mismatched bytes, enabling timing attacks. Use `hmac.Equal` or `subtle.ConstantTimeCompare` instead.
+
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

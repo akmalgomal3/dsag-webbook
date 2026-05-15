@@ -323,6 +323,12 @@ func main() {
 - **Disconnected nodes:** Distance remains `MaxInt32`.
 - **Integer overflow:** Always check before adding weights to prevent overflow.
 
+### Anti-Patterns
+
+- **Using `map[int]map[int]bool` for adjacency:** Nested maps create heap allocations per edge and poor cache locality. Prefer `[][]int` (adjacency list) or `[][]Edge` with `make` of known capacity.
+- **Allocating `visited` as `map[int]bool` for dense integer-keyed graphs:** A `[]bool` or `[]byte` bitmap indexed by vertex ID is 5–10x faster and allocation-free.
+- **Ignoring disconnected components:** Running a single-source traversal from vertex 0 misses unreachable vertices. Always wrap in a loop over all vertices.
+
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

@@ -115,6 +115,13 @@ Push vertices onto a stack after exploring all descendants, then reverse.
 - **Multiple valid orders:** Topological sorts are rarely unique; do not assume determinism.
 - **Disconnected graphs:** Works perfectly fine; meticulously process each disconnected component.
 
+### Anti-Patterns
+
+- **Assuming a unique ordering:** Topological sorts are rarely unique; never hard-code a specific order or rely on determinism unless the algorithm deliberately breaks ties.
+- **DFS-based sort on deep chains:** Recursive DFS risks stack overflow on graphs with long dependency chains; prefer Kahn's iterative queue-based approach for production systems.
+- **Ignoring cycle detection:** Topological sort is undefined on cyclic graphs — always verify that the result length equals V (Kahn's) or detect back edges (DFS).
+- **Skipping disconnected components:** A DAG may have isolated subgraphs; both algorithms naturally handle this, but manually seeding only one start node will silently miss vertices.
+
 ## 51.4. Quick Reference
 
 | Concept | Detail |

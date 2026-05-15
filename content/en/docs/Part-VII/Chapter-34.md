@@ -466,6 +466,12 @@ func main() {
 }
 ```
 
+### Anti-Patterns
+
+- **Indexing Unicode strings by byte position:** Go's `string` is UTF-8 encoded; `s[i]` gives a byte, not a rune. Convert to `[]rune` for Unicode-aware matching or stay in byte domain for ASCII-only patterns.
+- **Rabin-Karp without collision verification:** A rolling hash match is not a guaranteed match. Always verify the substring equals the pattern after a hash hit, or produce false positives.
+- **Rebuilding Aho-Corasick per query:** Preprocessing is O(Σm); construct the automaton once and reuse it across multiple texts to amortize the cost.
+
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

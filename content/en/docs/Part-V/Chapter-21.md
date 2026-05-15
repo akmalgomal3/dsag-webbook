@@ -182,6 +182,12 @@ func main() {
 }
 ```
 
+### Anti-Patterns
+
+- **Binary searching an unsorted slice:** Results are undefined — the algorithm assumes sorted input. Always verify with `slices.IsSorted` or sort first with `slices.Sort`.
+- **Using `(left+right)/2` for midpoint:** This overflows for large `left+right`. Use `left + (right-left)/2` to stay within `int` bounds.
+- **Binary search when a hash map suffices:** If you need O(1) lookups and don't require ordered iteration, `map[K]V` beats binary search's O(log n). Only use binary search when you also need predecessor/successor queries or range scans.
+
 ## 21.4. Quick Reference
 
 | Algorithm | Go Type | Time | Space | Precondition |

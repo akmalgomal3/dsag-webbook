@@ -108,6 +108,12 @@ The Sieve fundamentally trades time for space. It requires an <abbr title="A col
 - **Attribution:** Many algorithms are misattributed; Euclid probably didn't invent "his" algorithm.
 - **Cultural bias:** Algorithmic thinking developed independently in China, India, and the Islamic world.
 
+### Anti-Patterns
+
+- **Historical Presentism:** Judging ancient algorithms by modern Big-O standards, ignoring the constraints (human working memory, clay tablets, abacus) that shaped their design. Babylonian square-root iteration is not "slow" — it was optimal for a computation medium with O(1) variable capacity.
+- **Reinvention Illusion:** Assuming a "new" algorithm is novel without studying historical precedents. Many "modern" techniques — iterative approximation, divide-and-conquer, memoization — have deep roots spanning millennia. Al-Khwarizmi's algebraic methods solved what we now call linear and quadratic equations algorithmically.
+- **Whig History Fallacy:** Viewing algorithmic history as a smooth linear progression from primitive to sophisticated. Progress was cyclical: Greek mechanical computation was lost for a thousand years, and Islamic scholars preserved algorithms that Europe later "rediscovered."
+
 ## 40.5. Quick Reference
 
 | Era | Key Development | Modern Equivalent |

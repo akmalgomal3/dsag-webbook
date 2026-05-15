@@ -114,6 +114,12 @@ Modern CPUs have immense performance gaps between Registers and main <abbr title
 - **Pointer chasing:** Modern CPUs stall on pointer indirection — prefer arrays.
 - **One-size-fits-all:** No structure dominates all workloads.
 
+### Anti-Patterns
+
+- **Cache-Blind Selection:** Choosing a data structure based purely on theoretical Big-O complexity while ignoring cache behavior, allocation patterns, and hardware realities. A B-tree's O(log n) lookups with cache-line-aligned nodes routinely crush a binary search tree's O(log n) lookups with pointer-chasing nodes — same asymptotic class, radically different wall-clock speed.
+- **Abstraction Blindness:** Treating all data structures as interchangeable black boxes — using a hash table when ordering matters, or a linked list when cache locality is critical. Every structure embodies a trade-off; ignoring which trade-off it made is a recipe for silent performance collapse.
+- **Legacy Lock-in:** Sticking with a data structure "because it's always worked" even as workload characteristics have fundamentally changed. A linked list that served well for 100-element inserts becomes a pathological choice when the system scales to 10 million elements on modern hardware.
+
 ## 42.6. Quick Reference
 
 | Era | Dominant Structure | Driving Factor |

@@ -389,6 +389,12 @@ func main() {
 | Need to minimize transportation or assignment cost | You only need max flow without caring about cost |
 | All edge costs are positive | There is a negative cost cycle |
 
+### Anti-Patterns
+
+- **DFS-based Ford-Fulkerson on large-capacity graphs:** The O(E · maxFlow) bound can be catastrophic when capacities are large. Always prefer Edmonds-Karp (BFS) or Dinic for polynomial guarantees.
+- **Omitting reverse edges in the residual graph:** Without reverse edges, flow cannot be "undone," preventing the algorithm from finding augmenting paths that redirect existing flow. Always add `cap = 0` reverse edges.
+- **Storing capacities in `int8` or `int16`:** Flow values quickly overflow narrow integer types. Use `int` (64-bit on most platforms) or `int64` for realistic network problems.
+
 ## 17.5. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

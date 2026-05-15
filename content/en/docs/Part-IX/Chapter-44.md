@@ -117,6 +117,13 @@ When a node overflows (exceeds m-1 keys), it splits into two nodes and promotes 
 - **Concurrency:** Locking a node vs. the entire tree requires careful latching protocols (e.g., crabbing).
 - **Write amplification:** Each single insert may cascade splits entirely up the tree.
 
+### Anti-Patterns
+
+- **Using B-Trees for data that fits entirely in RAM.** When all data resides in memory, B-trees lose their primary advantage — minimizing disk seeks. A hash table or in-memory balanced BST (AVL, red-black) is faster because they avoid the overhead of wide nodes designed for block-sized I/O.
+- **Choosing an order (m) that doesn't match the disk block size.** A B-tree node should fill exactly one disk block (typically 4 KB or 8 KB). An order that produces nodes smaller than a block wastes I/O bandwidth; nodes larger than a block trigger multiple reads per access.
+- **Ignoring the fill factor after heavy deletions.** Delete-heavy workloads fragment B-trees, leaving nodes significantly underfull. This wastes disk reads on sparse nodes. Production databases schedule periodic rebalancing or bulk-rebuild indices to restore density.
+- **Using a B+ Tree for point lookups only.** B+ trees shine on range scans because leaves are linked. If your workload is purely single-key lookups with no sequential access, a hash table provides <code>O(1)</code> average lookups without the navigation overhead of internal nodes.
+
 ## 45.6. Quick Reference
 
 | Concept | Value | Rationale |

@@ -279,6 +279,15 @@ func main() {
 - **Skew:** Use virtual nodes to ensure even distribution.
 - **Clockwise wrap:** Ensure logic correctly handles wrapping around from the last ring <abbr title="A data structure that improves the speed of data retrieval operations.">index</abbr> to the first.
 
+### Anti-Patterns
+
+- **Unsynced Map Access:** Concurrent reads and writes to a `map` without `sync.Mutex` or `sync.Map` causes a runtime fatal error in Go. Always synchronize map access in concurrent code.
+- **Using Slices/Maps as Map Keys:** Attempting to use a slice or another map as a key type causes a compile error. Convert slices to strings or use a struct key with comparable fields.
+- **SHA-256 for Passwords:** Using a fast cryptographic hash like SHA-256 for password storage. Passwords need slow, salted key derivation functions (`bcrypt`, `argon2`) to resist brute-force attacks.
+- **Modulo Hashing for Distributed Systems:** Using `hash(key) % N` for load distribution. Adding or removing a node re-maps nearly all keys. Use consistent hashing with virtual nodes instead.
+- **Ignoring Map Delete Memory:** Deleting keys from a Go map does not shrink its bucket array. If a map holds many temporary keys, replace it with a fresh `make(map[K]V)` to reclaim memory.
+- **Comparing Digests with `==`:** Using `==` to compare cryptographic hashes exposes your system to timing attacks. Use `hmac.Equal()` or `subtle.ConstantTimeCompare()` instead.
+
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

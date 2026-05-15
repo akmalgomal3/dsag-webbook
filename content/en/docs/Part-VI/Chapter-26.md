@@ -668,6 +668,12 @@ Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub
 - **Data race:** Goroutines must not write to the identical slice without explicit synchronization.
 - **Too many goroutines:** Restrict the count via thresholding or a bounded worker pool.
 
+### Anti-Patterns
+
+- **Stack overflow from deep recursion:** Go goroutines start with a small stack that grows dynamically, but very deep recursion (>O(10^6) depth) still risks stack overflow. Convert to iterative when depth is unbounded.
+- **Capturing loop variables by reference:** Closures in goroutines that capture loop variable `i` by reference all see the final value. Pass `i` as a parameter to the goroutine function.
+- **Redundant recomputation without memoization:** Naive Fibonacci or recursive tree counting recalculates identical subproblems exponentially. Always add memoization when overlapping subproblems exist.
+
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

@@ -117,6 +117,13 @@ The <abbr title="An array storing the length of the longest common prefix betwee
 - **Memory:** For large texts (genomes), use compressed suffix arrays.
 - **Construction time:** <code>O(n² log n)</code> naive sort is too slow for n > 10⁵ — use doubling or SA-IS algorithm.
 
+### Anti-Patterns
+
+- **Building suffix arrays with naive <code>O(n² log n)</code> sort on large texts.** The naive approach compares full suffixes on every sort comparison, making it catastrophically slow for strings over 10⁵ characters. Always use the <code>O(n log n)</code> doubling algorithm or the <code>O(n)</code> SA-IS algorithm for production workloads.
+- **Using suffix arrays on frequently mutated text.** Any insertion or deletion invalidates the entire suffix array, requiring a full rebuild. For dynamic text, a suffix automaton or incremental index is far more appropriate.
+- **Omitting the sentinel character.** Without a unique terminator (`$`), one suffix can be a prefix of another, breaking lexicographic ordering and producing incorrect binary search results. Always append a sentinel that is lexicographically smaller than every character in the alphabet.
+- **Using suffix arrays for prefix-based dictionary lookups.** A suffix array organizes suffixes, not prefixes. If your queries are "find all strings starting with X," a trie (Chapter 36) answers in <code>O(|X|)</code> without the <code>O(log n)</code> binary search overhead.
+
 ## 49.6. Quick Reference
 
 | Algorithm | Time | Space |

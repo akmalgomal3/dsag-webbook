@@ -370,6 +370,15 @@ func main() {
 - **Randomized seed:** Since Go 1.20, the global `math/rand` generator is auto-seeded. For concurrent code, use `rand.New(rand.NewSource(...))` per goroutine for isolation and thread-safety.
 - **<abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr>:** Don't waste time looking for a polynomial algorithm for <abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr> problems; focus on approximation or heuristics.
 
+### Anti-Patterns
+
+- **Over-Relying on Big-O:** Ignoring constant factors and cache effects. An O(n log n) sort with poor cache behavior can lose to an O(n²) insertion sort for n < 100 in practice.
+- **Quadratic Everything:** Defaulting to nested loops without considering whether a map, sort, or heap could reduce complexity. Always ask: "Can I pre-process to avoid the inner loop?"
+- **Amortized Confusion:** Treating amortized O(1) append as guaranteed O(1) per operation. In Go, `append` can trigger a reallocation costing O(n); for hard real-time constraints, pre-allocate capacity.
+- **Mislabeling Best Case as Typical:** Claiming "O(n log n)" for QuickSort without acknowledging its O(n²) worst case. Always state which case the bound covers.
+- **Ignoring Space Complexity:** Optimizing for time while consuming O(n²) auxiliary memory. An in-place QuickSort is preferable when memory is constrained.
+- **Seeding Blindness:** Using `math/rand` global functions in concurrent code without per-goroutine seeds. Since Go 1.20 the global generator is auto-seeded, but for concurrent isolation use `rand.New(rand.NewSource(...))`.
+
 ### Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

@@ -180,6 +180,12 @@ func main() {
 - **Empty string:** Decide whether empty string is a valid word in your Trie.
 - **Case sensitivity:** Normalize to lowercase before insertion unless case matters.
 
+### Anti-Patterns
+
+- **`map[rune]*TrieNode` for large alphabets:** Each map allocates a hash table, causing massive memory and GC overhead for Unicode or large character sets. Use fixed-size `[256]*TrieNode` arrays for byte-level tries or compressed/radix tries for production.
+- **Not handling empty string input:** Failing to define behavior for empty string insertion/search creates ambiguity. Decide explicitly and document whether `""` is a valid word.
+- **Unbounded autocomplete results:** DFS traversal can return every word in the trie for a short prefix. Limit results with a counter or use a priority-based top-k collection.
+
 ## 37.5. Quick Reference
 
 | Operation | Go Type | Time | Space | Use Case |

@@ -149,6 +149,13 @@ func main() {
 - **Monotonicity:** The sliding window concept relies completely on the fact that expanding/shrinking scales monotonically.
 - **Duplicate elements:** Use a map to track heavy frequency counts for "at most K distinct" variants.
 
+### Anti-Patterns
+
+- **Two pointers on unsorted data for pair-sum:** The two-pointer pair-sum technique requires a sorted array; running it on unsorted input silently misses valid pairs.
+- **Off-by-one window bounds:** Expanding `right` before checking the window constraint or shrinking `left` too aggressively are the most common sliding-window bugs — always verify index boundaries with a dry run.
+- **Forgetting to handle duplicates in "longest substring" variants:** When tracking character frequency in a hash map, stale entries from earlier positions must be invalidated; skipping this produces overcounted window lengths.
+- **Applying sliding window to non-monotonic constraints:** Sliding window relies on the property that expanding/shrinking monotonically satisfies/violates the constraint; if the constraint is not monotonic, the technique collapses.
+
 ## 56.4. Quick Reference
 
 | Problem Type | Technique | Time |

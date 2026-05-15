@@ -159,6 +159,13 @@ func main() {
 - **Memory overhead:** Each entry has ~48 bytes of <abbr title="A variable that stores a memory address.">pointer</abbr> overhead plus the map overhead.
 - **Scan resistance:** LRU fails under sequential scans (all items become "recent" and flush the cache).
 
+### Anti-Patterns
+
+- **Using LRU under sequential scan workloads.** A full-table scan touches every item once, making all entries "recent" and evicting the actually useful hot data. This is the classic cache-pollution problem — consider LRU-2, ARC, or LFU to resist scan thrashing.
+- **Deploying a single global LRU cache without thread-safety.** An unprotected `map` + doubly-linked list is not safe under concurrent access. Either wrap in `sync.RWMutex` (which creates lock contention), shard the cache, or use `sync.Map` for read-heavy patterns.
+- **Setting capacity without profiling.** A cache that's too small has an abysmal hit rate; one that's too large wastes memory and may cause GC pressure. Always profile the working set size and tune capacity to hit the target hit-rate threshold (typically > 80%).
+- **Using LRU when access frequency matters more than recency.** If a few items are accessed hundreds of times and others only once, LRU treats them identically. LFU or ARC better exploit frequency skew to keep genuinely hot items resident.
+
 ## 48.6. Quick Reference
 
 | Parameter | Typical Value |

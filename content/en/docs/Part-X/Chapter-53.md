@@ -110,6 +110,13 @@ Similar logic: vertex u is an articulation point if:
 - **Self-loops:** Ignore for bridge finding.
 - **<abbr title="A graph with vertices not connected by any path">Disconnected graph</abbr>:** Run DFS from each component.
 
+### Anti-Patterns
+
+- **Treating the parent edge as a back edge:** Forgetting to skip `v == parent` in DFS causes false-positive bridges; the tree edge to a parent is never a back edge.
+- **Confusing bridge and articulation-point conditions:** Bridges require `low[v] > disc[u]` (strictly greater), while articulation points require `low[v] ≥ disc[u]` (greater-or-equal) — swapping them produces wrong results.
+- **Ignoring multi-edges:** Parallel edges between two vertices mean neither edge is a bridge; algorithms must count edge multiplicity or merge parallel edges before analysis.
+- **Running from a single source on disconnected graphs:** Bridge-finding must DFS from every unvisited vertex; a single start misses entire components.
+
 ## 54.6. Quick Reference
 
 | Condition | Meaning |

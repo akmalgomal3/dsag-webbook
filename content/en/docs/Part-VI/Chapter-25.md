@@ -195,6 +195,12 @@ func main() {
 - **Pruning:** Aggressive pruning is essential; without it, backtracking degrades to brute force.
 - **Duplicate handling:** For inputs with duplicates, sort and skip repeated elements.
 
+### Anti-Patterns
+
+- **Omitting state restoration:** Forgetting to undo changes (e.g., not removing a value from a path slice) after recursive calls corrupts all subsequent branches. Always `defer` or explicitly restore state.
+- **No pruning (brute-force degradation):** Without constraint checking at each recursion depth, backtracking degenerates into O(2^n) brute force. Prune early and aggressively.
+- **Mutating shared slices in-place:** Appending to a shared `[]int` and not popping after recursion causes cross-branch contamination. Copy the slice or use index-based swaps.
+
 ## 26.6. Quick Reference
 
 | Problem | Go Type | Time | Space | Key Insight |

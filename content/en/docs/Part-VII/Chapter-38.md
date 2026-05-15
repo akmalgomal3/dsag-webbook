@@ -170,6 +170,12 @@ func isBitSet(n, i int) bool {
 - **Precedence:** Bitwise operators have lower precedence than arithmetic; use parentheses.
 - **Go's `int` size:** `int` is 32 or 64 bits depending on architecture; use explicit sizes when needed.
 
+### Anti-Patterns
+
+- **Using signed `int` for bit operations:** Go's `int` is signed; right-shifting a negative number performs arithmetic shift (sign extension). Use `uint` or `uint64` for all bitwise algorithms to avoid surprise sign fills.
+- **Operator precedence confusion:** Bitwise operators `&`, `|`, `^` have lower precedence than `+`, `-`, `==`. Always use parentheses: `(a & mask) == target`, not `a & mask == target`.
+- **Left-shifting by ≥64 on uint64:** In Go, shifting by an amount ≥ the word size on a `uint64` causes a runtime panic for `uint64` or produces 0 for variable shifts. Validate shift amounts or mask the count with `& 63`.
+
 ## 39.5. Quick Reference
 
 | Operation | Expression | Use Case |

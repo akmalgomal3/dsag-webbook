@@ -101,6 +101,12 @@ The most important open problem in computer science: If a solution can be verifi
 - **Formalism trap:** Turing machines are models, not prescriptions for implementation.
 - **Underestimating constants:** An <code>O(n)</code> algorithm with huge constants can lose to <code>O(n log n)</code> in practice.
 
+### Anti-Patterns
+
+- **Turing Completeness Worship:** Believing that because a model is Turing-complete it is therefore a good model for real computation — ignoring physical constraints like finite memory, cache hierarchies, and energy budgets. A Turing machine with infinite tape tells you nothing about how your code behaves when RAM fills up.
+- **NP-Hardness Defeatism:** Treating NP-hardness as a reason to give up entirely, rather than a signal to seek good approximations or exploit problem-specific structure. Most real-world TSP instances are solvable to within 1% of optimal — the theoretical worst case and the practical average case are entirely different beasts.
+- **Formalism-Reality Confusion:** Confusing mathematical models with engineering reality. Theoretical complexity classes are prescriptive guides, not implementation blueprints. An O(n log n) algorithm with abysmal cache behavior can lose to an O(n²) algorithm that is hardware-friendly for all practical dataset sizes.
+
 ## 41.6. Quick Reference
 
 | Figure | Contribution | Modern Relevance |

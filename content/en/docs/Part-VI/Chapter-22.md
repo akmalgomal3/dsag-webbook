@@ -229,6 +229,12 @@ func main() {
 - **Case false sharing:** Goroutines accessing adjacent data in a <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> line causes invalidation.
 - **Case WaitGroup misuse:** `wg.Add` must be called before the `go` statement; `wg.Done` must be called (defer is recommended).
 
+### Anti-Patterns
+
+- **Unbounded goroutine spawning:** Launching a goroutine per subproblem without a size threshold causes O(n) goroutines for merge sort, exhausting the scheduler and memory. Set a minimum threshold and fall back to sequential sort below it.
+- **Shared-slice writes from goroutines:** Multiple goroutines writing to overlapping slice ranges causes data races. Use `sync.WaitGroup` with partitioned output slices or collect results via channels.
+- **Ignoring uneven partitioning:** Parallel quicksort with a poor pivot strategy makes one goroutine do nearly all work. Randomize pivots or use median-of-three to balance the workload.
+
 ## 23.5. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

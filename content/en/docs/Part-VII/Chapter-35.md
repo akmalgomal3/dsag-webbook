@@ -272,6 +272,12 @@ func main() {
 Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amplification tactic: execute the algorithm <code>k</code> times, selecting the best result to reduce the probability of failure exponentially.
 {{% /alert %}}
 
+### Anti-Patterns
+
+- **Applying greedy to 0/1 Knapsack:** The greedy value/weight ratio strategy is optimal only for fractional knapsack. For 0/1 Knapsack, use DP or an FPTAS — greedy produces arbitrarily bad results.
+- **Assuming TSP nearest neighbor gives a constant-factor guarantee:** Nearest neighbor can produce results O(log n) times optimal. For a proven 1.5-approximation on metric TSP, use Christofides' algorithm.
+- **Running randomized Max-Cut only once:** A single random partition gives expected E/2 but high variance. Run k independent trials and keep the best to reduce failure probability exponentially.
+
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

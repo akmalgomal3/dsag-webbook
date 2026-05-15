@@ -291,6 +291,15 @@ func main() {
 - **Nil receiver:** Methods can be called on nil pointers if handled properly inside the method.
 - **Zero value:** Structs have zero values; ensure initialization is handled if required.
 
+### Anti-Patterns
+
+- **Slice Reslicing Memory Leak:** Slicing a large array or slice `big[:2]` retains a reference to the entire backing array. Copy to a new slice to release the old data: `copy(make([]T, 2), big[:2])`.
+- **Append to Nil Map:** Writing to an uninitialized `nil` map panics at runtime. Always use `make(map[K]V)` or a map literal before insertion.
+- **Slice Append Overwrite:** Two slices sharing a backing array where `append` on one overwrites data visible through the other. Use full-slice expressions `s[low:high:max]` to control capacity and prevent aliasing.
+- **Linked List for Sequential Access:** Using `container/list` when a slice traverses faster due to cache locality. In Go, a slice-based stack or ring buffer almost always outperforms a linked list.
+- **Value Receiver Mutation:** Defining methods with a value receiver `(s Stack)` when the method modifies the struct. Mutations are lost; use a pointer receiver `(s *Stack)` instead.
+- **Not Pre-allocating Maps:** Growing a map incrementally triggers repeated rehashing. Hint the capacity with `make(map[K]V, n)` when the approximate size is known.
+
 ## 5.5. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

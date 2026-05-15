@@ -280,6 +280,12 @@ The Dual LP proves highly beneficial for intensive sensitivity analysis and driv
 - **Weak duality:** Any feasible dual <abbr title="The data associated with a key in a key-value pair.">value</abbr> definitively bounds the primal. The gap fails to reach zero solely if the system is infeasible or unbounded.
 - **Complementary slackness:** Strictly utilize this to verify the ultimate optimality.
 
+### Anti-Patterns
+
+- **Hand-rolling Simplex in production:** Go has no native LP solver; a manual Simplex is verbose and prone to numerical instability. Use external solvers (GLPK, lp_solve) or Go bindings for production workloads.
+- **Floating-point DP for integer knapsack:** Using `float64` in DP tables for 0/1 Knapsack introduces rounding errors that yield non-optimal selections. Use `int` DP tables for integer-valued problems.
+- **Skipping LP relaxation feasibility checks:** Branch and Bound on infeasible regions wastes exponential time. Always solve the LP relaxation first and prune branches whose bound is worse than the current best integer solution.
+
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

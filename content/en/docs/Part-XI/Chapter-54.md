@@ -167,6 +167,13 @@ Distribute elements into distinct physical buckets based entirely on range, sort
 - **Bucket sort:** A highly skewed distribution rapidly degenerates performance to <code>O(n^2)</code>.
 - **Stability:** Absolutely mandatory for radix sort to function; counting sort natively provides this stability.
 
+### Anti-Patterns
+
+- **Counting sort when k >> n:** Allocating an array of size k for a few elements is catastrophic memory waste; if `k` dwarfs `n`, falling back to comparison sort is essential.
+- **Radix sort on floating-point numbers:** LSD radix sort operates on integer digit positions; naive application to IEEE 754 floats produces garbage without bit-level manipulation.
+- **Bucket sort with non-uniform data:** Bucket sort's O(n) average assumes uniform distribution; skewed input concentrates all elements in one bucket, degenerating to O(n²).
+- **Assuming linear-time sorts are always faster:** Constant factors and cache behavior mean comparison sorts often outperform counting/radix on small-to-medium datasets within L1/L2 cache.
+
 ## 55.6. Quick Reference
 
 | Algorithm | Best Case | Worst Case | Stable? |

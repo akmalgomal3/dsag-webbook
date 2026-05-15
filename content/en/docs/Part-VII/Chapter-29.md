@@ -279,6 +279,12 @@ Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, lar
 - **Channel deadlock:** Guarantee that there is always an active goroutine reading from every channel.
 - **Panic propagation:** Proactively use `defer/recover()` within worker goroutines or utilize dedicated error channels.
 
+### Anti-Patterns
+
+- **Spawning one goroutine per item:** Creating N goroutines for N elements overwhelms the scheduler. Use a bounded worker pool (`N = runtime.NumCPU()`) or `errgroup.Group` with `SetLimit()`.
+- **Sharing memory without synchronization:** Concurrent goroutines writing to the same map or slice without a mutex or channel produces data races. Always run `go test -race` to detect them.
+- **Unbuffered channels with single producer/consumer:** Deadlock occurs if the producer blocks on a send while the consumer hasn't started. Size channel buffers appropriately or use `sync.WaitGroup` for coordination.
+
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

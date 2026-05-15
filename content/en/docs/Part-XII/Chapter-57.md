@@ -245,6 +245,13 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 - **Transpositions:** Same position via different paths — use transposition tables.
 - **Memory:** Deep searches exhaust memory — iterative deepening helps.
 
+### Anti-Patterns
+
+- **Running minimax without alpha-beta pruning:** Without pruning, the full game tree expands at O(b^d); alpha-beta cuts this by roughly half per level — omitting it makes even moderate games intractable.
+- **Using minimax for non-zero-sum or stochastic games:** Minimax assumes a deterministic, perfect-information, zero-sum game; applying it to poker, backgammon, or cooperative games produces strategically flawed decisions.
+- **Poor evaluation function:** Minimax's output is only as good as its heuristic; a bad evaluation function causes systematic blunders that no amount of search depth can fix.
+- **Ignoring transpositions:** The same board position reached by different move sequences should be evaluated once and cached; recomputing it every time multiplies work exponentially.
+
 ## 58.5. Quick Reference
 
 | Enhancement | Benefit |

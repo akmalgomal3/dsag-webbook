@@ -220,6 +220,12 @@ A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically
 - **Load imbalance:** Rely upon a dynamic task queue for heavily non-uniform matrix structures.
 - **Numerical stability:** Aggressive parallel summation can potentially aggravate floating-point inaccuracies.
 
+### Anti-Patterns
+
+- **`[][]float64` for performance-critical matrices:** Jagged slices create pointer-chasing overhead and break cache locality. Use a flat `[]float64` with `stride*row+col` indexing for hot paths.
+- **Comparing floats with `==`:** Floating-point arithmetic accumulates error; never compare two `float64` values with `==`. Use an epsilon threshold like `math.Abs(a-b) < 1e-9`.
+- **Ignoring gonum for production:** Hand-rolling matrix multiply, determinant, or inversion in Go is error-prone and slow. Use `gonum.org/v1/gonum/mat` unless the goal is purely educational.
+
 ## Quick Reference
 
 | Name | Go Type | Complexity | Access | Use Case |

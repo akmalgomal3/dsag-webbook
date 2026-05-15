@@ -137,6 +137,12 @@ func main() {
 - **Disconnected graphs:** Run DFS/BFS from every unvisited vertex.
 - **Visited tracking:** Always mark visited when enqueueing in BFS, not when dequeuing.
 
+### Anti-Patterns
+
+- **Marking visited on dequeue instead of enqueue in BFS:** This duplicates work because the same vertex enters the queue from multiple neighbours. Always mark visited at enqueue time.
+- **Recursive DFS on deep/degenerate graphs:** Go stacks are ~1 KB per frame; a chain of 100k vertices panics. Use an explicit `[]int` stack for iterative DFS.
+- **Re-allocating visited per top-level call:** Allocate `visited []byte` once with `make([]byte, n)` and `clear(visited)` between calls — avoids per-traversal GC pressure.
+
 ## 13.4. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Algorithm | Go Type | Time | Space | Path | Use Case |

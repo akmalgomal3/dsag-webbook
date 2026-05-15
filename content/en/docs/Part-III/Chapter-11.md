@@ -305,6 +305,12 @@ func (n *AugNode[K]) Rank(key K) int {
 - **GC pressure:** Millions of tree nodes = heavy GC tracing; prefer sorted slices for static data.
 - **Nil pointer dereference:** Always check node != nil before accessing fields.
 
+### Anti-Patterns
+
+- **Building a BST from sorted input without balancing:** This degenerates to a linked list, turning every operation into O(n). Always shuffle input or use self-balancing trees for dynamic data.
+- **Deep recursive deletions:** AVL/Red-Black `Delete` triggers up to O(log n) rotations via recursion. Use iterative approaches or increase `GODEBUG=runtime.martinsize` for deep call chains in Go.
+- **Ignoring GC pressure from pointer-heavy nodes:** Each `*Node[K,V]` is a separate heap allocation. For static or batch workloads, a sorted `[]Pair[K,V]` slice with binary search has far better cache locality and zero GC overhead.
+
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type Implementation | Time | Memory / GC Pressure | Use Case |

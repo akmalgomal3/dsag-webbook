@@ -201,6 +201,12 @@ func main() {
 - **Fractional vs 0/1:** Greedy works for fractional knapsack but fails for 0/1 knapsack.
 - **Tie-breaking:** When multiple choices have equal value, the tie-breaking strategy matters.
 
+### Anti-Patterns
+
+- **Applying greedy to 0/1 Knapsack:** Greedy by value/weight ratio is optimal only for fractional knapsack. For 0/1 Knapsack, it produces arbitrarily bad results — use DP or FPTAS instead.
+- **Skipping the exchange argument proof:** Implementing a greedy algorithm without proving the exchange argument leads to incorrect results on edge cases. Write a proof or find a counterexample before coding.
+- **Unstable sort with equal weights:** `sort.Slice` is not stable; equal-weight items may reorder unpredictably. Use `sort.SliceStable` or include a secondary tie-breaker in the comparison.
+
 ## 25.6. Quick Reference
 
 | Problem | Greedy Choice | Time | Space | Optimal? |

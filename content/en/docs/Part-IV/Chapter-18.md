@@ -285,6 +285,12 @@ func main() {
 - **Left-right partition:** Double-check that left and right partition sizes accurately match your inputs.
 - **Multiple edges:** Hopcroft-Karp handles duplicate edges gracefully without breaking.
 
+### Anti-Patterns
+
+- **Greedy matching without augmenting paths:** Greedily picking edges does not guarantee maximum matching. Always use Hungarian augmenting paths or Hopcroft-Karp for optimality.
+- **Forgetting to reset `visited` per augmenting-BFS iteration:** In Hopcroft-Karp, the distance layering (`dist []int`) is rebuilt each phase, but the per-DFS `seen` set must be cleared per vertex, not globally.
+- **Using `map[int][]int` for adjacency on small integer vertex IDs:** A `[][]int` adjacency list with pre-allocated capacity is faster and produces less GC pressure than map-based adjacency.
+
 ## 18.4. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

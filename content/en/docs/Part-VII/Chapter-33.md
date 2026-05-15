@@ -235,6 +235,12 @@ Lagrange interpolation holds remarkable stability solely for a sparse number of 
 - **Runge phenomenon:** Interpolation over many equidistant nodes causes oscillation. Switch to Chebyshev nodes.
 - **Identical x coordinates:** Evaluating two distinct points sharing an identical x coordinate forces an undefined mathematical outcome (division by zero).
 
+### Anti-Patterns
+
+- **Input size not a power of two:** Cooley-Tukey FFT requires power-of-two input lengths. Always zero-pad the coefficient array to the next power of two before calling FFT.
+- **Forgetting inverse FFT scaling:** The inverse FFT must divide all output values by n. Omitting this produces results that are n times too large.
+- **Using float64 for exact integer convolution:** FFT-based polynomial multiplication introduces floating-point rounding errors. Round results to the nearest integer and verify; for exact results, use NTT (Number Theoretic Transform) instead.
+
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

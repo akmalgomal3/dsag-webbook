@@ -110,6 +110,12 @@ func main() {
 - **Update priority:** Decreasing a key requires bubble-up; not directly supported by `container/heap`.
 - **Memory layout:** Heap as array has excellent cache locality compared to tree pointers.
 
+### Anti-Patterns
+
+- **Sorted slice as a priority queue:** Calling `sort.Sort` on every insert or extract is O(n log n) instead of O(log n) per heap operation. Always implement `heap.Interface`.
+- **Forgetting `heap.Init` after bulk mutations:** Directly appending elements to the underlying slice and calling `Push`/`Pop` without `heap.Init` leaves the heap invariant broken. After batch changes, call `heap.Init`.
+- **Stale priority updates:** Decreasing a key requires a bubble-up, but `container/heap` has no `DecreaseKey`. The idiomatic workaround is lazy deletion: push a new entry and skip stale ones on `Pop`.
+
 ## 10.4. Quick Reference
 
 | Structure | Go Type | Insert | Extract | Peek | Use Case |

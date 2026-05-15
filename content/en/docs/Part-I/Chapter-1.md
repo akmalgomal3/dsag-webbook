@@ -366,6 +366,14 @@ func main() {
 - **Case explainability vs accuracy:** Complex models are more accurate but harder to explain; seek a balance.
 - **Case data retention:** Retaining data longer than necessary increases breach risks.
 
+### Anti-Patterns
+
+- **Premature Optimization:** Choosing a complex O(log n) algorithm for datasets that fit in cache when a simple O(n) scan would be faster due to memory locality. Always benchmark before optimizing.
+- **Ignoring Big-O for "Small N":** Assuming n will stay small forever. Requirements change; an O(n²) loop that is "fine today" becomes a production outage tomorrow.
+- **Blind Reuse of Stdlib:** Using `sort.Ints` without understanding it is not stable, or relying on `map` iteration order for business logic.
+- **Ethics as Afterthought:** Treating bias, fairness, and privacy as post-launch concerns rather than design constraints.
+- **Algorithm without Data Structure:** Selecting an algorithm without matching it to an appropriate data structure (e.g., binary searching an unsorted slice).
+
 ## 1.5. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

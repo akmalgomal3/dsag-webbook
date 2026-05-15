@@ -172,6 +172,12 @@ func main() {
 - **Disconnected <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>:** Distance remains infinity for unreachable vertices.
 - **<abbr title="A specialized tree-based data structure that satisfies the heap property.">Heap</abbr> stale entries:** Lazy deletion in <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr> is common in implementations.
 
+### Anti-Patterns
+
+- **Using Dijkstra with negative edge weights:** Dijkstra assumes non-negative weights; negative edges produce wrong answers. Use Bellman-Ford or SPFA instead.
+- **Re-creating the distance map each iteration:** Allocate `dist []int` once with `make`, then `copy(dist, inf)` between runs — avoids O(V) allocations per call.
+- **Storing the full path slice per vertex:** Use a `parent []int` predecessor array and reconstruct on demand. Storing `[]int` paths per vertex wastes O(V²) memory.
+
 ## 14.4. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Algorithm | Time | Space | Negative Weights | <abbr title="A path that starts and ends at the same vertex.">Cycle</abbr> Detect |

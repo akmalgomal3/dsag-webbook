@@ -159,6 +159,12 @@ func main() {
 - **Integer overflow:** Knapsack and similar problems may overflow; use `int64` for large values.
 - **Base cases:** Incorrect initialization of DP table leads to wrong answers.
 
+### Anti-Patterns
+
+- **Top-down memoization with maps:** Using `map[int]int` for DP memoization in Go is 5-10x slower than slice-based tabulation due to hash overhead and allocations. Prefer bottom-up tabulation with pre-allocated slices when the state space is dense.
+- **Over-allocated DP tables:** If `dp[i]` only depends on `dp[i-1]` or `dp[i-2]`, a full 2D table wastes memory and cache. Use a rolling array of constant size for 1D recurrences.
+- **Missing base case initialization:** Omitting `dp[0]` or relying on Go's zero-value produces silent wrong answers. Always explicitly initialize base cases.
+
 ## 24.6. Quick Reference
 
 | Problem | Go Type | Time | Space | Approach |

@@ -325,6 +325,12 @@ The PoW example provided acts purely as a demonstration. A rigorous production P
 - **Nothing-at-stake:** A PoS validator may seamlessly vote on multiple forks simultaneously. Severe slashing rigorously punishes this behavior.
 - **Long-range attack:** An attacker possessing archaic private keys can surreptitiously construct an alternative chain.
 
+### Anti-Patterns
+
+- **Using `time.Now()` for block timestamps:** System time is manipulable by miners and subject to clock skew. Use monotonic clocks or consensus-based timestamps for production blockchains.
+- **Ignoring longest-chain rule:** In PoW, always follow the chain with highest cumulative difficulty. A shorter chain with more blocks may have less total work.
+- **Odd leaf count in Merkle trees:** Forgetting to duplicate the last hash when leaf count is odd produces a different root than verification expects, breaking consistency.
+
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

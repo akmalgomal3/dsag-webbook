@@ -179,6 +179,12 @@ func main() {
 - **Adaptive:** Insertion Sort performs well on nearly sorted data (e.g., <code>O(n)</code> for sorted input).
 - **Go's built-in:** For production, always use `sort.Ints()` or `slices.Sort()` (Go 1.21+).
 
+### Anti-Patterns
+
+- **Writing custom Bubble/Selection Sort for production:** These O(n²) algorithms are never the right choice in Go. Use `slices.Sort` (pdqsort hybrid) for any real workload.
+- **Implementing `sort.Interface` when `cmp.Ordered` suffices:** Since Go 1.21, `slices.SortFunc` with `cmp.Compare` is cleaner than defining a three-method `sort.Interface` struct.
+- **Sorting a slice already in order:** Go's pdqsort detects nearly-sorted input and runs in O(n), but a hand-written Quick Sort without pivot randomization degrades to O(n²).
+
 ## 19.4. Quick Reference
 
 | Algorithm | Time | Space | Stable | Best For |

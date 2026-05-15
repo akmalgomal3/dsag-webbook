@@ -134,6 +134,13 @@ func main() {
 - **All points collinear:** Hull is a line segment.
 - **Integer overflow:** Use 64-bit integers for <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross products</abbr>.
 
+### Anti-Patterns
+
+- **Not removing duplicate points before computing:** Duplicate points produce zero-length cross products and can silently corrupt collinear detection — always deduplicate first.
+- **Using floating-point cross products:** Integer cross products are exact; floating-point arithmetic introduces rounding errors that flip orientation signs and produce wrong hulls.
+- **Forgetting to handle degenerate input:** All-collinear points or fewer than three distinct points produce degenerate hulls (line segments or single points); algorithms must handle these edge cases without crashing.
+- **Assuming hull alone solves distance queries:** The convex hull gives the boundary, but finding the farthest pair of hull points requires rotating calipers, not a second hull computation.
+
 ## 60.6. Quick Reference
 
 | Concept | Value |

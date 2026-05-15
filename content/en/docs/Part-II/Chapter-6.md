@@ -365,6 +365,15 @@ func main() {
 - **Zero-capacity:** Operations on zero-cap structures panic if not handled.
 - **Type constraints:** Generics `[T any]` fine for stacks; ordered constraints needed for priority queues.
 
+### Anti-Patterns
+
+- **Naive Slice Queue (`s = s[1:]`):** Slicing off the front of a slice never releases the beginning of the backing array, causing a memory leak. Use a circular ring buffer instead.
+- **Pointer Leaks on Pop:** Removing an element from a slice of pointers/interfaces without zeroing the old slot keeps the reference alive, preventing garbage collection. Always set `s[lastIdx] = zero` before truncating.
+- **Unbounded Stack Growth:** Using `append`-based stacks without capacity limits. A stack that grows unbounded can exhaust memory. Consider pre-sizing with `make([]T, 0, cap)`.
+- **container/list for Production Queues:** Using `container/list` for queues deques causes O(n) allocation overhead per element and massive GC pressure. A slice-based circular buffer is idiomatic and far faster.
+- **Ignoring Generic Type Constraints:** Using `[T any]` when your algorithm requires ordering (e.g., a min-heap or priority queue). Use `[T constraints.Ordered]` or a custom `Less` method to guarantee correctness at compile time.
+- **Zero-Size Circular Buffer:** Operating on a ring buffer with `capacity == 0` causes division-by-zero panics in the modulo operation. Always validate `capacity > 0` in the constructor.
+
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Structure | Go Implementation | Time (Push/Pop) | Memory Allocations | Verdict |

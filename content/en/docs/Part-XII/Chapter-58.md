@@ -158,6 +158,13 @@ func main() {
 - **Update operations:** Standard Mo's doesn't handle point updates (use Mo's with modifications).
 - **Block size tuning:** √N is theoretical; experiment with N^0.5 to N^0.7.
 
+### Anti-Patterns
+
+- **Using Mo's for online queries:** Mo's algorithm requires all queries upfront for sorting; if queries arrive dynamically, a segment tree or Fenwick tree is the correct choice.
+- **Forgetting to reset state between test cases:** The global frequency map and answer accumulator persist between runs; failing to reset them silently corrupts subsequent test cases.
+- **O(n) add/remove operations:** Mo's speedup requires O(1) or O(log n) add/remove; if maintaining your query answer costs O(n) per pointer move, total complexity balloons to O(Q × N × √N).
+- **Using naive block order instead of Hilbert curves:** Standard block sorting alternates left-to-right and right-to-left sweeps, causing poor cache behavior; Hilbert curve ordering preserves spatial locality better.
+
 ## 59.5. Quick Reference
 
 | Parameter | Formula |

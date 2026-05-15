@@ -161,6 +161,13 @@ With incredibly high probability, skip lists maintain <code>O(log n)</code> heig
 - **Max level:** Always securely set the max level to `log₂(max_elements) + 1`.
 - **Worst case:** Extremely unlikely but theoretically possible: all elements settle at level 1.
 
+### Anti-Patterns
+
+- **Using skip lists where deterministic worst-case guarantees are required.** Skip lists provide <code>O(log n)</code> <em>expected</em> performance, but worst case is <code>O(n)</code>. Mission-critical systems with strict SLAs (e.g., real-time trading, avionics) need balanced trees with provable bounds.
+- **Setting maxLevel too low (or too high).** A maxLevel below <code>log₂(n) + 1</code> degrades search to linear scanning as express lanes saturate. A maxLevel far above needed depth wastes memory on unused pointer slots in every node.
+- **Ignoring memory fragmentation.** Each skip list node allocates a variable-length slice of forward pointers (`make([]*Node, level)`). This scatters nodes across the heap, destroying cache locality. For read-heavy, latency-sensitive workloads, a sorted array or B-tree often outperforms despite worse asymptotic complexity.
+- **Using a weak random number generator.** Coin flips that aren't sufficiently random (e.g., a predictable PRNG) can bias level assignments, creating disproportionately tall or flat structures that void the probabilistic guarantees.
+
 ## 46.6. Quick Reference
 
 | Parameter | Typical Value |

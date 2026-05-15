@@ -289,6 +289,15 @@ func BenchmarkLinearSum(b *testing.B) {
 - **Case modifying input:** In-place sorting on benchmark data causes subsequent iterations to differ; copy the data first.
 - **Case ignoring races:** Always run `go test -race` for concurrent code.
 
+### Anti-Patterns
+
+- **Reinventing the Wheel:** Writing custom sorting, searching, or set logic when `sort`, `slices`, or `map[T]bool` already solve the problem idiomatically in Go.
+- **Using container/list for Performance:** Reaching for `container/list` instead of a slice-based structure without measuring. Linked lists cause cache misses and GC pressure; slices are almost always faster in Go.
+- **Ignoring Benchmarks:** Choosing a data structure based on Big-O alone without running `go test -bench`. As shown in Chapter 6, O(n) slice scans can outperform O(1) map lookups for small n due to cache locality.
+- **Benchmarking Without Reset:** Including setup time in benchmark measurements. Always call `b.ResetTimer()` after initialization.
+- **Race Condition Blindness:** Deploying concurrent code without running `go test -race`. The race detector is free and catches bugs that are nearly impossible to reproduce manually.
+- **Generic Overuse:** Using generics `[T any]` for a single data type. Generics increase binary size via monomorphization; use concrete types when only one type is needed.
+
 ## 3.5. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |

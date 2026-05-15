@@ -248,6 +248,15 @@ func main() {
 }
 ```
 
+### Anti-Patterns
+
+- **Using Linked Lists for Cache-Friendly Data:** Choosing a linked list for sequential iteration when a slice provides 10-50x better throughput due to CPU cache prefetching. Reach for `[]T` first; use linked lists only for frequent arbitrary insertions/deletions.
+- **Head-Only Pointer in Doubly Linked List:** Maintaining only a `Head` pointer forces O(n) tail insertions. Always store both `Head` and `Tail` pointers for O(1) operations at both ends.
+- **Forgetting Nil Checks:** Dereferencing `node.Next` or `node.Prev` without checking for `nil` first causes panics. Guard every pointer traversal.
+- **Circular List Infinite Loops:** Iterating a circular list without detecting the cycle point (comparing back to `head`). Always use a `do-while` pattern: start at `head`, advance, and stop when `cur == head` again.
+- **Retaining Dropped Node References:** After deleting a node, remaining references to it prevent the garbage collector from reclaiming its memory. Zero out `Prev` and `Next` pointers explicitly if the node may be long-lived.
+- **container/list with Type Assertions:** Using `container/list` requires `any` and runtime type assertions (`elem.Value.(MyType)`), sacrificing type safety and adding overhead. Prefer generic structs with `[T any]`.
+
 ## 8.4. Quick Reference
 
 | Structure | Go Type | Access | Insert Head | Delete Head | Memory |

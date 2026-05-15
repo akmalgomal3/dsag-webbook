@@ -146,6 +146,13 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 - **Self-loops:** Immediately create SCCs of size 1.
 - **Large graphs:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr> may overflow; strictly use an iterative DFS or explicitly increase the stack size.
 
+### Anti-Patterns
+
+- **Confusing finish order with topological order:** Kosaraju's first-pass finish stack is a reverse topological order of the original graph, not the SCCs themselves — mixing these up yields wrong condensations.
+- **Doubling memory blindly with Kosaraju:** Allocating the full transposed graph doubles heap usage; on memory-constrained systems, Tarjan's single-pass approach is the safer choice.
+- **Ignoring single-node SCCs:** Every isolated vertex forms its own SCC of size 1; filtering these out skews the condensation DAG and hides legitimate self-loops.
+- **Assuming Tarjan is always better:** Tarjan's single pass is elegant but subtle to implement correctly; Kosaraju's two-pass approach is easier to debug and sufficient when memory is not critical.
+
 ## 52.6. Quick Reference
 
 | Concept | Value |

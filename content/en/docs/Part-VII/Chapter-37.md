@@ -175,6 +175,12 @@ func main() {
 - **Overflow:** Range sums can overflow `int`; use `int64` for large values.
 - **Lazy propagation:** For range updates, segment trees require lazy propagation, which adds complexity.
 
+### Anti-Patterns
+
+- **Mixing 0-based and 1-based indexing:** Fenwick trees internally use 1-based indexing, but Go arrays are 0-based. Always convert by adding 1 on input and subtracting 1 on output — mixing them causes silent off-by-one errors.
+- **Using segment trees for sum-only queries:** If you only need prefix sums and point updates, Fenwick trees are simpler, faster, and use less memory (O(n) vs O(4n)). Don't over-engineer with segment trees.
+- **Forgetting lazy propagation for range updates:** Standard segment trees handle one-element updates in O(log n). Applying a range update (e.g., "add 5 to [l,r]") without lazy propagation degrades to O(n) per update.
+
 ## 38.5. Quick Reference
 
 | Structure | Go Type | Query | Update | Space |

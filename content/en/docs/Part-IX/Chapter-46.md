@@ -140,6 +140,13 @@ p ≈ (1 - e^(-kn/m))^k
 - **No deletion:** Standard Bloom filters cannot effectively remove items.
 - **Counting overflow:** Counting Bloom filters can violently overflow with too many insertions.
 
+### Anti-Patterns
+
+- **Using a Bloom filter when false positives are unacceptable.** Membership checks in security, authentication, or financial systems cannot tolerate "maybe." A Bloom filter's probabilistic nature makes it wrong for any domain where a false positive has serious consequences — use a hash set instead.
+- **Inserting more elements than the filter was sized for.** The false positive rate grows exponentially as the load factor exceeds the design target. A filter sized for 1 million items that receives 5 million becomes nearly useless — nearly every query returns "maybe."
+- **Attempting deletion from a standard Bloom filter.** Clearing a bit could silently remove other elements that hash to the same position, creating false negatives and breaking the zero-false-negative guarantee. Use a counting Bloom filter or cuckoo filter if deletions are required.
+- **Using correlated or low-quality hash functions.** Hash functions that share structure or produce similar distributions effectively behave like fewer hashes, increasing collision rates. Always use independent, well-distributed hash functions (e.g., double hashing or MurmurHash variants).
+
 ## 47.6. Quick Reference
 
 | Setting | Bits/Element | Hashes | False Positive |

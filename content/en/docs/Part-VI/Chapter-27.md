@@ -349,6 +349,12 @@ Reservoir sampling guarantees that every single item possesses an exact mathemat
 - **k > n:** Always reliably handle the scenario where the raw stream is ultimately shorter than k.
 - **Biased RNG:** Strictly utilize `crypto/rand` if cryptographic-level randomness is vitally critical.
 
+### Anti-Patterns
+
+- **Using `math/rand` for security:** `math/rand` is deterministic and predictable. Never use it for cryptographic operations, token generation, or anything requiring true unpredictability — use `crypto/rand`.
+- **Ignoring seed initialization:** Forgetting to seed `math/rand` in benchmarks produces identical results across runs, hiding bugs. Use `rand.New(rand.NewSource(...))` for reproducible tests.
+- **Relying on probabilistic guarantees for safety:** A Monte Carlo algorithm with 99% correctness still fails 1% of the time. Do not use probabilistic algorithms where correctness must be absolute (e.g., authentication, financial settlement).
+
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |

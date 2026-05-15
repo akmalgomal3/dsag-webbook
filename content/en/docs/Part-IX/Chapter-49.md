@@ -101,6 +101,13 @@ Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchan
 - **Node sharing:** Modifying a "shared" node corrupts all versions — immutability must be stringently enforced.
 - **Amortization:** Some persistent structures (queues) use lazy evaluation for efficiency.
 
+### Anti-Patterns
+
+- **Using persistence when only the latest version matters.** Path copying creates <code>O(log n)</code> new nodes per update. If you never read past versions, this is pure overhead — a mutable structure with copy-on-write snapshots is more appropriate.
+- **Mutating shared nodes.** Persistent data structures rely on structural sharing: multiple versions point to the same subtrees. Modifying a "shared" node in-place silently corrupts every version that references it. Immutability must be enforced — no exceptions.
+- **Applying path copying to flat arrays.** Updating a single element in an unbalanced persistent array copies <code>O(n)</code> nodes. Use fat nodes (store deltas in a version map) or switch to a persistent tree-based array (<code>O(log n)</code>) to avoid linear blowup.
+- **Ignoring garbage collection pressure.** Each update to a persistent tree creates <code>O(log n)</code> stale nodes. Over a million updates, that's millions of unreachable nodes the GC must reclaim. Profile GC pauses and consider version pruning or arena allocation for long-running processes.
+
 ## 50.6. Quick Reference
 
 | Structure | Persistent Variant | Overhead |
