@@ -60,8 +60,8 @@ type PQ []Item
 func (p PQ) Len() int           { return len(p) }
 func (p PQ) Less(i, j int) bool { return p[i].d < p[j].d }
 func (p PQ) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-func (p *PQ) Push(x interface{}) { *p = append(*p, x.(Item)) }
-func (p *PQ) Pop() interface{} {
+func (p *PQ) Push(x any) { *p = append(*p, x.(Item)) }
+func (p *PQ) Pop() any {
 	old := *p
 	n := len(old)
 	*p = old[:n-1]

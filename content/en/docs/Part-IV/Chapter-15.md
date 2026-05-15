@@ -100,7 +100,116 @@ Johnson's algorithm avoids allocating massive <code>O(V^2)</code> matrices upfro
 |-----------|------------|-------------|
 | Bellman-Ford | <code>O(VE)</code> | Reweight edges |
 | V × Dijkstra | <code>O(VE log V)</code> | Sparse <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> advantage |
-| Total | <code>O(VE log V)</code> | Better than Floyd-Warshall for sparse graphs |
+|| Total | <code>O(VE log V)</code> | Better than Floyd-Warshall for sparse graphs |
+
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+
+```go
+package main
+
+import (
+	"container/heap"
+	"fmt"
+	"math"
+)
+
+type Edge struct{ to, w int }
+type Item struct{ v, d int }
+type PQ []Item
+
+func (p PQ) Len() int           { return len(p) }
+func (p PQ) Less(i, j int) bool { return p[i].d < p[j].d }
+func (p PQ) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+func (p *PQ) Push(x any)        { *p = append(*p, x.(Item)) }
+func (p *PQ) Pop() any {
+	old := *p
+	n := len(old)
+	*p = old[:n-1]
+	return old[n-1]
+}
+
+// bellmanFord computes shortest distances from a virtual source
+// connected to all vertices with weight-0 edges.
+func bellmanFord(adj [][]Edge) ([]int, bool) {
+	n := len(adj)
+	h := make([]int, n)
+	for i := range h { h[i] = 0 } // virtual source edges are 0-weight
+	for i := 0; i < n-1; i++ {
+		for u := 0; u < n; u++ {
+			for _, e := range adj[u] {
+				if h[u]+e.w < h[e.to] {
+					h[e.to] = h[u] + e.w
+				}
+			}
+		}
+	}
+	// Check for negative cycles
+	for u := 0; u < n; u++ {
+		for _, e := range adj[u] {
+			if h[u]+e.w < h[e.to] {
+				return nil, false // negative cycle detected
+			}
+		}
+	}
+	return h, true
+}
+
+func dijkstra(adj [][]Edge, src int, h []int) []int {
+	n := len(adj)
+	dist := make([]int, n)
+	for i := range dist { dist[i] = math.MaxInt32 }
+	dist[src] = 0
+	pq := &PQ{{src, 0}}
+	heap.Init(pq)
+	for pq.Len() > 0 {
+		cur := heap.Pop(pq).(Item)
+		if cur.d > dist[cur.v] { continue }
+		for _, e := range adj[cur.v] {
+			// Reweighted edge ensures non-negative weights
+			if dist[cur.v]+e.w < dist[e.to] {
+				dist[e.to] = dist[cur.v] + e.w
+				heap.Push(pq, Item{e.to, dist[e.to] + h[src] - h[e.to]})
+			}
+		}
+	}
+	// Restore original distances
+	for i := range dist {
+		if dist[i] < math.MaxInt32 {
+			dist[i] = dist[i] - h[src] + h[i]
+		}
+	}
+	return dist
+}
+
+func johnson(adj [][]Edge) ([][]int, bool) {
+	h, ok := bellmanFord(adj)
+	if !ok { return nil, false }
+	n := len(adj)
+	allPairs := make([][]int, n)
+	for u := 0; u < n; u++ {
+		allPairs[u] = dijkstra(adj, u, h)
+	}
+	return allPairs, true
+}
+
+func main() {
+	// Graph with negative edges (no negative cycles)
+	adj := [][]Edge{
+		{{1, -2}, {2, 4}},
+		{{2, 3}, {3, 2}},
+		{},
+		{{0, -1}},
+	}
+	result, ok := johnson(adj)
+	if !ok {
+		fmt.Println("Negative cycle detected")
+		return
+	}
+	for i, row := range result {
+		fmt.Printf("From %d: %v\n", i, row)
+	}
+}
+```
 
 ### Decision Matrix
 

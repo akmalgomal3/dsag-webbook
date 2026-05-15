@@ -116,6 +116,98 @@ An AVL tree node requires an additional memory field to store the `Height` or `B
 | Left-Right | Left-heavy, left child right-heavy | Left rotate child, right rotate node |
 | Right-Left | Right-heavy, right child left-heavy | Right rotate child, left rotate node |
 
+### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+
+```go
+package main
+
+import (
+	"fmt"
+	"cmp"
+)
+
+type AVLNode[K cmp.Ordered] struct {
+	Key    K
+	Height int
+	Left   *AVLNode[K]
+	Right  *AVLNode[K]
+}
+
+func height[K cmp.Ordered](n *AVLNode[K]) int {
+	if n == nil { return 0 }
+	return n.Height
+}
+
+func balanceFactor[K cmp.Ordered](n *AVLNode[K]) int {
+	if n == nil { return 0 }
+	return height(n.Left) - height(n.Right)
+}
+
+func rotateRight[K cmp.Ordered](y *AVLNode[K]) *AVLNode[K] {
+	x := y.Left
+	T2 := x.Right
+	x.Right = y
+	y.Left = T2
+	y.Height = max(height(y.Left), height(y.Right)) + 1
+	x.Height = max(height(x.Left), height(x.Right)) + 1
+	return x
+}
+
+func rotateLeft[K cmp.Ordered](x *AVLNode[K]) *AVLNode[K] {
+	y := x.Right
+	T2 := y.Left
+	y.Left = x
+	x.Right = T2
+	x.Height = max(height(x.Left), height(x.Right)) + 1
+	y.Height = max(height(y.Left), height(y.Right)) + 1
+	return y
+}
+
+func avlInsert[K cmp.Ordered](root *AVLNode[K], key K) *AVLNode[K] {
+	if root == nil { return &AVLNode[K]{Key: key, Height: 1} }
+	if key < root.Key {
+		root.Left = avlInsert(root.Left, key)
+	} else if key > root.Key {
+		root.Right = avlInsert(root.Right, key)
+	} else {
+		return root // duplicate keys not allowed
+	}
+	root.Height = 1 + max(height(root.Left), height(root.Right))
+
+	bf := balanceFactor(root)
+	// Left Heavy
+	if bf > 1 && key < root.Left.Key { return rotateRight(root) }
+	// Right Heavy
+	if bf < -1 && key > root.Right.Key { return rotateLeft(root) }
+	// Left-Right
+	if bf > 1 && key > root.Left.Key {
+		root.Left = rotateLeft(root.Left)
+		return rotateRight(root)
+	}
+	// Right-Left
+	if bf < -1 && key < root.Right.Key {
+		root.Right = rotateRight(root.Right)
+		return rotateLeft(root)
+	}
+	return root
+}
+
+func inorder[K cmp.Ordered](root *AVLNode[K]) {
+	if root == nil { return }
+	inorder(root.Left)
+	fmt.Printf("%v(h=%d) ", root.Key, root.Height)
+	inorder(root.Right)
+}
+
+func main() {
+	var root *AVLNode[int]
+	for _, v := range []int{10, 20, 30, 40, 50, 25} {
+		root = avlInsert(root, v)
+	}
+	inorder(root) // 10 20 25 30 40 50 (balanced)
+}
+```
+
 ## 9.3. Decision Matrix
 
 | Use BST When... | Use Balanced Tree When... |
@@ -127,7 +219,7 @@ An AVL tree node requires an additional memory field to store the `Height` or `B
 ### Edge Cases & Pitfalls
 
 - **Degenerate tree:** Sorted input creates a linked list; always use balanced trees for dynamic data.
-- **Go generics:** Go 1.18+ enables type-safe generic trees using `constraints.Ordered`.
+- **Go generics:** Go 1.21+ enables type-safe generic trees using `cmp.Ordered` (the modern replacement for the deprecated `constraints.Ordered`).
 - **GC overhead:** Tree nodes are individually allocated; large trees create <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
 
 ## 9.4. Quick Reference
@@ -140,7 +232,7 @@ An AVL tree node requires an additional memory field to store the `Height` or `B
 | Red-Black | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | Relaxed |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 9:</strong> Binary search trees provide efficient ordered storage but require balancing for guaranteed performance. AVL trees offer strict balance with more rotations; Red-Black trees trade slightly less balance for simpler insertion/deletion. In Go, prefer the standard library's <code>container/rbtree</code> (if available) or implement generics-based trees for type safety.
+ <strong>Summary Chapter 9:</strong> Binary search trees provide efficient ordered storage but require balancing for guaranteed performance. AVL trees offer strict balance with more rotations; Red-Black trees trade slightly less balance for simpler insertion/deletion. Go has no Red-Black tree in the standard library — use generics-based trees for type safety or third-party packages.
 {{% /alert %}}
 
 ## See Also

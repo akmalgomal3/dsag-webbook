@@ -135,8 +135,63 @@ import (
 )
 
 func main() {
-	// AVL tree demonstration
-	fmt.Println("AVL tree operations")
+	// AVL tree demonstration: inserting keys
+	var root *AVLNode[int, string]
+	for _, kv := range []struct {
+		k int
+		v string
+	}{ {10, "Ten"}, {20, "Twenty"}, {30, "Thirty"}, {40, "Forty"}, {50, "Fifty"}, {25, "Twenty-Five"} } {
+		root = avlInsert(root, kv.k, kv.v)
+	}
+	// In-order traversal prints keys in sorted order
+	avlInorder(root) // 10 20 25 30 40 50
+}
+
+func avlInsert[K cmp.Ordered, V any](root *AVLNode[K, V], key K, val V) *AVLNode[K, V] {
+	if root == nil { return &AVLNode[K, V]{Key: key, Value: val, Height: 1} }
+	if key < root.Key {
+		root.Left = avlInsert(root.Left, key, val)
+	} else if key > root.Key {
+		root.Right = avlInsert(root.Right, key, val)
+	} else {
+		root.Value = val
+		return root
+	}
+	root.Height = 1 + avlMax(avlHeight(root.Left), avlHeight(root.Right))
+	bf := avlBalance(root)
+	if bf > 1 && key < root.Left.Key { return avlRotateRight(root) }
+	if bf < -1 && key > root.Right.Key { return avlRotateLeft(root) }
+	if bf > 1 && key > root.Left.Key {
+		root.Left = avlRotateLeft(root.Left)
+		return avlRotateRight(root)
+	}
+	if bf < -1 && key < root.Right.Key {
+		root.Right = avlRotateRight(root.Right)
+		return avlRotateLeft(root)
+	}
+	return root
+}
+
+func avlHeight[K cmp.Ordered, V any](n *AVLNode[K, V]) int {
+	if n == nil { return 0 }
+	return n.Height
+}
+
+func avlMax(a, b int) int {
+	if a > b { return a }
+	return b
+}
+
+func avlBalance[K cmp.Ordered, V any](n *AVLNode[K, V]) int {
+	if n == nil { return 0 }
+	return avlHeight(n.Left) - avlHeight(n.Right)
+}
+
+func avlInorder[K cmp.Ordered, V any](n *AVLNode[K, V]) {
+	if n == nil { return }
+	avlInorder(n.Left)
+	fmt.Printf("%d ", n.Key)
+	avlInorder(n.Right)
 }
 
 type AVLNode[K cmp.Ordered, V any] struct {
@@ -147,34 +202,6 @@ type AVLNode[K cmp.Ordered, V any] struct {
 	Right  *AVLNode[K, V]
 }
 
-func height[K cmp.Ordered, V any](n *AVLNode[K, V]) int {
-	if n == nil {
-		return 0
-	}
-	return n.Height
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func rotateRight[K cmp.Ordered, V any](y *AVLNode[K, V]) *AVLNode[K, V] {
-	x := y.Left
-	T2 := x.Right
-
-	// Perform rotation
-	x.Right = y
-	y.Left = T2
-
-	// Update heights
-	y.Height = max(height(y.Left), height(y.Right)) + 1
-	x.Height = max(height(x.Left), height(x.Right)) + 1
-
-	return x
-}
 ```
 
 ### Decision Matrix
@@ -215,7 +242,26 @@ import (
 )
 
 func main() {
-	fmt.Println("Augmented BST rank operations")
+	var root *AugNode[int]
+	vals := []int{50, 30, 70, 20, 40, 60, 80}
+	for _, v := range vals {
+		root = augInsert(root, v)
+	}
+	// Rank of 50 in the tree (0-indexed: should be 3)
+	if n := root.Rank(50); n != -1 {
+		fmt.Println("Rank of 50:", n) // Rank of 50: 3
+	}
+}
+
+func augInsert[K cmp.Ordered](n *AugNode[K], key K) *AugNode[K] {
+	if n == nil { return &AugNode[K]{Key: key, SubtreeSize: 1} }
+	if key < n.Key {
+		n.Left = augInsert(n.Left, key)
+	} else if key > n.Key {
+		n.Right = augInsert(n.Right, key)
+	}
+	n.SubtreeSize = 1 + size(n.Left) + size(n.Right)
+	return n
 }
 
 type AugNode[K cmp.Ordered] struct {

@@ -169,8 +169,8 @@ type PQ []PE
 func (q PQ) Len() int           { return len(q) }
 func (q PQ) Less(i, j int) bool { return q[i].w < q[j].w }
 func (q PQ) Swap(i, j int)      { q[i], q[j] = q[j], q[i] }
-func (q *PQ) Push(x interface{}) { *q = append(*q, x.(PE)) }
-func (q *PQ) Pop() interface{} {
+func (q *PQ) Push(x any) { *q = append(*q, x.(PE)) }
+func (q *PQ) Pop() any {
 	old := *q
 	n := len(old)
 	*q = old[:n-1]

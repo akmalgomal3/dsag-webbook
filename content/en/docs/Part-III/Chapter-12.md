@@ -143,10 +143,7 @@ BFS(g, start):
 ```go
 package main
 
-import (
-    "container/list"
-    "fmt"
-)
+import "fmt"
 
 type Graph struct {
     adj [][]int
@@ -175,17 +172,18 @@ func (g *Graph) DFS(start int, visit func(int)) {
 
 func (g *Graph) BFS(start int, visit func(int)) {
     seen := make([]bool, len(g.adj))
-    q := list.New()
-    q.PushBack(start)
+    q := []int{start}
     seen[start] = true
+    front := 0
 
-    for q.Len() > 0 {
-        v := q.Remove(q.Front()).(int)
+    for front < len(q) {
+        v := q[front]
+        front++
         visit(v)
         for _, n := range g.adj[v] {
             if !seen[n] {
                 seen[n] = true
-                q.PushBack(n)
+                q = append(q, n)
             }
         }
     }

@@ -201,7 +201,7 @@ func main() {
 
 ## 17.3. Dinic’s Algorithm
 
-**Definition:** Dinic's algorithm utilizes a level graph (built via BFS) and blocking flows (found via DFS) to dramatically accelerate maximum flow computations, achieving <code>O(E √V)</code> complexity.
+**Definition:** Dinic's algorithm utilizes a level graph (built via BFS) and blocking flows (found via DFS) to dramatically accelerate maximum flow computations, achieving <code>O(V²E)</code> complexity in the general case and <code>O(E√V)</code> for bipartite matching.
 
 **Background & Philosophy:**
 Dinic's philosophy is "batch processing". Instead of finding one path at a time (like Edmonds-Karp), it builds a "Level Graph" mapping distance from the source. Then, it pushes multiple flows simultaneously through this graph until the entire level structure is blocked. It combines the rigorous pathing of BFS with the aggressive exploration of DFS.
@@ -216,9 +216,10 @@ Dinic’s introduces a `level` slice alongside the `flow` and `capacity` matrice
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Build level graph | <code>O(E)</code> | Using BFS |
-| Blocking flow | <code>O(VE)</code> | Using DFS |
-| Total | <code>O(E √V)</code> | Extremely fast for dense graphs |
+|| Build level graph | <code>O(E)</code> | Using BFS |
+|| Blocking flow | <code>O(VE)</code> | Using DFS |
+|| Total (general) | <code>O(V²E)</code> | General graphs |
+|| Total (bipartite) | <code>O(E√V)</code> | Bipartite matching |
 
 ### Idiomatic Go Implementation
 
@@ -321,8 +322,8 @@ type MPQ []MI
 func (q MPQ) Len() int           { return len(q) }
 func (q MPQ) Less(i, j int) bool { return q[i].d < q[j].d }
 func (q MPQ) Swap(i, j int)      { q[i], q[j] = q[j], q[i] }
-func (q *MPQ) Push(x interface{}) { *q = append(*q, x.(MI)) }
-func (q *MPQ) Pop() interface{} {
+func (q *MPQ) Push(x any) { *q = append(*q, x.(MI)) }
+func (q *MPQ) Pop() any {
 	old := *q
 	n := len(old)
 	*q = old[:n-1]
@@ -394,7 +395,7 @@ func main() {
 |------|---------|------|-------|----------|
 | Ford-Fulkerson | Recursive DFS | <code>O(E · maxFlow)</code> | <code>O(V²)</code> | Educational / Conceptual |
 | Edmonds-Karp | BFS + Queue | <code>O(V E²)</code> | <code>O(V²)</code> | General purpose max flow |
-| Dinic | BFS level + DFS | <code>O(E √V)</code> | <code>O(V²)</code> | Dense networks |
+| Dinic | BFS level + DFS | <code>O(V²E)</code> general / <code>O(E√V)</code> bipartite | <code>O(V²)</code> | Dense networks / bipartite matching |
 | Min-Cost Flow | Dijkstra + PQ | <code>O(F · E log V)</code> | <code>O(V²)</code> | Logistics, optimal assignment |
 
 {{% alert icon="🎯" context="success" %}}
