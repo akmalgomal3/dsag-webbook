@@ -440,7 +440,7 @@ For production, prefer `golang.org/x/crypto/argon2` over bcrypt for its memory-h
 | TLS | `crypto/tls` | . | . | Secure transport layers |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 29:</strong> This chapter dissects cryptographic primitives in Go: hashing (SHA-256), symmetric encryption (AES-GCM), asymmetric encryption (ECDSA/Ed25519), HMACs, digital signatures, and password hashing (bcrypt/Argon2). Rely exclusively on the standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> `crypto/` package for cryptographic operations and rigorously avoid MD5/SHA-1 for anything security-related.
+<strong>Summary Chapter 30:</strong> This chapter dissects cryptographic primitives in Go: hashing (SHA-256), symmetric encryption (AES-GCM), asymmetric encryption (ECDSA/Ed25519), HMACs, digital signatures, and password hashing (bcrypt/Argon2). Rely exclusively on the standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> `crypto/` package for cryptographic operations and rigorously avoid MD5/SHA-1 for anything security-related.
 {{% /alert %}}
 
 ## See Also

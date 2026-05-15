@@ -333,6 +333,7 @@ func main() {
 - **Case <abbr title="Lightweight thread managed by Go runtime">goroutine</abbr> leak:** A goroutine blocked on a <abbr title="Go mechanism for goroutine communication">channel</abbr> without a receiver causes a leak.
 - **Case closing <abbr title="Go mechanism for goroutine communication">channel</abbr>:** Only the sender should close a channel; a receiver closing it will cause a panic.
 - **Case WaitGroup reuse:** Reusing a `WaitGroup` without ensuring `Wait` has completed can cause a <abbr title="Unpredictable behavior from unsynchronized concurrent access">race condition</abbr>.
+- **Case unbounded goroutines:** The `pSort` example spawns 2 goroutines per recursive call, leading to O(n) goroutines for large inputs. Production code should use a threshold (e.g., `len(a) < 4096`) below which it falls back to sequential `sort.Slice`, or use a bounded worker pool with `semaphore.Weighted`.
 
 ## 4.5. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 

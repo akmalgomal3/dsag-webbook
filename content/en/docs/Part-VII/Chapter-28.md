@@ -231,7 +231,7 @@ A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically
 | Sparse | `map[int]map[int]float64` | <code>O(1)</code> access avg | varies | Graphs, NLP sparse arrays |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 27:</strong> This chapter covers vector, matrix, and tensor operations with idiomatic Go implementations. Utilize standard slices for vectors, the `gonum` package for large-scale linear algebra, nested slices for small-scale tensors, and manually indexed flat slices for large tensors. Parallelizing code with goroutines becomes highly effective when matrix dimensions exceed 256×256.
+<strong>Summary Chapter 28:</strong> This chapter covers vector, matrix, and tensor operations with idiomatic Go implementations. Utilize standard slices for vectors, the `gonum` package for large-scale linear algebra, nested slices for small-scale tensors, and manually indexed flat slices for large tensors. Parallelizing code with goroutines becomes highly effective when matrix dimensions exceed 256×256.
 {{% /alert %}}
 
 ## See Also

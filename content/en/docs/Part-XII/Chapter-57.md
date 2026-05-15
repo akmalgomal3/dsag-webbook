@@ -259,7 +259,7 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 | No direct stdlib | Implement natively for game AI |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 56:</strong> <abbr title="A decision rule used in two-player zero-sum games that minimizes possible loss for a worst-case scenario.">Minimax</abbr> is the algorithmic embodiment of strategic thinking: assume your opponent is as smart as you, and plan accordingly. Alpha-beta pruning proves that even in exhaustive search, clever ordering can eliminate the impossible. From chess engines to checkers bots, minimax remains the conceptual foundation of competitive game AI.
+<strong>Summary Chapter 57:</strong> <abbr title="A decision rule used in two-player zero-sum games that minimizes possible loss for a worst-case scenario.">Minimax</abbr> is the algorithmic embodiment of strategic thinking: assume your opponent is as smart as you, and plan accordingly. Alpha-beta pruning proves that even in exhaustive search, clever ordering can eliminate the impossible. From chess engines to checkers bots, minimax remains the conceptual foundation of competitive game AI.
 {{% /alert %}}
 
 ## See Also

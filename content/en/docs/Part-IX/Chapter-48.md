@@ -131,7 +131,7 @@ The <abbr title="An array storing the length of the longest common prefix betwee
 | `index/suffixarray` | Go's production-ready suffix array implementation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 47:</strong> Suffix arrays prove that sorting can solve complex string problems. By lexicographically sorting all suffixes, they transform <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> into binary search — a direct <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr> from string complexity to array simplicity. For static text search, they offer the best balance of speed, space, and implementation clarity.
+<strong>Summary Chapter 48:</strong> Suffix arrays prove that sorting can solve complex string problems. By lexicographically sorting all suffixes, they transform <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> into binary search — a direct <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr> from string complexity to array simplicity. For static text search, they offer the best balance of speed, space, and implementation clarity.
 {{% /alert %}}
 
 ## See Also

@@ -153,7 +153,7 @@ p ≈ (1 - e^(-kn/m))^k
 | `github.com/bits-and-blooms` | Production-grade Bloom filters |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 45:</strong> Bloom filters sacrifice absolute certainty for massive space savings. They answer membership queries with no false negatives and tunable <abbr title="An error where a test incorrectly indicates the presence of a condition when it is not present.">false positives</abbr> — ideal when memory is scarce and a small error rate is acceptable. Every large-scale system from databases to CDNs uses Bloom filters to avoid expensive lookups.
+<strong>Summary Chapter 46:</strong> Bloom filters sacrifice absolute certainty for massive space savings. They answer membership queries with no false negatives and tunable <abbr title="An error where a test incorrectly indicates the presence of a condition when it is not present.">false positives</abbr> — ideal when memory is scarce and a small error rate is acceptable. Every large-scale system from databases to CDNs uses Bloom filters to avoid expensive lookups.
 {{% /alert %}}
 
 ## See Also

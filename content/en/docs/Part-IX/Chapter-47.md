@@ -173,7 +173,7 @@ func main() {
 | `github.com/hashicorp/golang-lru` | Production LRU implementation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 46:</strong> The LRU cache is a masterclass in combining data structures: hash tables for <code>O(1)</code> lookup and doubly linked lists for <code>O(1)</code> reordering. It powers databases, operating systems, and web servers. Understanding LRU means understanding that the best eviction strategy depends on your access patterns, not abstract perfection.
+<strong>Summary Chapter 47:</strong> The LRU cache is a masterclass in combining data structures: hash tables for <code>O(1)</code> lookup and doubly linked lists for <code>O(1)</code> reordering. It powers databases, operating systems, and web servers. Understanding LRU means understanding that the best eviction strategy depends on your access patterns, not abstract perfection.
 {{% /alert %}}
 
 ## See Also

@@ -190,7 +190,7 @@ func main() {
 | Compressed Trie | Edge labels | <code>O(m)</code> | Reduced | Memory optimization |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 35:</strong> Tries excel at prefix-based string operations with <code>O(m)</code> time complexity. In Go, use `map[rune]*TrieNode` for flexibility or fixed-size arrays for performance. Apply tries to autocomplete, spell checking, and any problem involving shared string prefixes.
+<strong>Summary Chapter 36:</strong> Tries excel at prefix-based string operations with <code>O(m)</code> time complexity. In Go, use `map[rune]*TrieNode` for flexibility or fixed-size arrays for performance. Apply tries to autocomplete, spell checking, and any problem involving shared string prefixes.
 {{% /alert %}}
 
 ## See Also

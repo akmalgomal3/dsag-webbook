@@ -270,13 +270,81 @@ func (d *Deque[T]) PushBack(v T) bool {
 	return true
 }
 
+// PopFront removes and returns the head element
+func (d *Deque[T]) PopFront() (T, bool) {
+	var zero T
+	if d.size == 0 {
+		return zero, false
+	}
+	v := d.data[d.head]
+	d.data[d.head] = zero // clear reference for GC
+	d.head = (d.head + 1) % len(d.data)
+	d.size--
+	return v, true
+}
+
+// PopBack removes and returns the tail element
+func (d *Deque[T]) PopBack() (T, bool) {
+	var zero T
+	if d.size == 0 {
+		return zero, false
+	}
+	d.tail = (d.tail - 1 + len(d.data)) % len(d.data)
+	v := d.data[d.tail]
+	d.data[d.tail] = zero // clear reference for GC
+	d.size--
+	return v, true
+}
+
+// PeekFront returns the head element without removing it
+func (d *Deque[T]) PeekFront() (T, bool) {
+	var zero T
+	if d.size == 0 {
+		return zero, false
+	}
+	return d.data[d.head], true
+}
+
+// PeekBack returns the tail element without removing it
+func (d *Deque[T]) PeekBack() (T, bool) {
+	var zero T
+	if d.size == 0 {
+		return zero, false
+	}
+	idx := (d.tail - 1 + len(d.data)) % len(d.data)
+	return d.data[idx], true
+}
+
+// Len returns the number of elements in the deque
+func (d *Deque[T]) Len() int { return d.size }
+
+// IsEmpty reports whether the deque is empty
+func (d *Deque[T]) IsEmpty() bool { return d.size == 0 }
+
 func main() {
 	d := NewDeque[string](5)
 	d.PushBack("Backend")
 	d.PushFront("Go")
 	
-	// Buffer visually looks like: [ "Go", "Backend", nil, nil, nil ]
-	fmt.Println("Deque operational.")
+	// Demonstrate all Deque operations
+	if v, ok := d.PeekFront(); ok {
+		fmt.Println("Front:", v) // Go
+	}
+	if v, ok := d.PopBack(); ok {
+		fmt.Println("PopBack:", v) // Backend
+	}
+	d.PushBack("Rust")
+	d.PushBack("Python")
+	
+	fmt.Println("Len:", d.Len())          // 3
+	fmt.Println("IsEmpty:", d.IsEmpty())   // false
+	
+	// Drain the deque
+	for !d.IsEmpty() {
+		if v, ok := d.PopFront(); ok {
+			fmt.Println("Popped:", v)
+		}
+	}
 }
 ```
 

@@ -148,7 +148,7 @@ func main() {
 | `image` | Point representations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 58:</strong> The convex hull is <abbr title="Algorithms for solving geometric problems">computational geometry</abbr>'s gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time — sort, then sweep. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr>, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
+<strong>Summary Chapter 59:</strong> The convex hull is <abbr title="Algorithms for solving geometric problems">computational geometry</abbr>'s gateway problem. Andrew's monotone chain algorithm achieves optimal <code>O(n log n)</code> time — sort, then sweep. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr>, testing whether three points make a left or right turn, is the fundamental primitive. From collision detection to geographic information systems, the convex hull reduces complex point sets to their essential boundary.
 {{% /alert %}}
 
 ## See Also

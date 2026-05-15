@@ -194,12 +194,6 @@ func knapsackILP(weights, values []int, capacity int) int {
     return dp[n][capacity]
 }
 
-func max(a, b int) int {
-    if a > b {
-        return a
-    }
-    return b
-}
 
 func main() {
     weights := []int{2, 3, 4, 5}
@@ -297,7 +291,7 @@ The Dual LP proves highly beneficial for intensive sensitivity analysis and driv
 | Dual | Formulation | <code>O(mn)</code> | varies | Executing sensitivity analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 31:</strong> This chapter discusses linear programming: grasping standard formulations, applying the Simplex algorithm conceptually for 2 variables, tackling integer linear programming through <abbr title="Finding optimal solutions by pruning search trees">branch and bound</abbr> (and DP for knapsack variants), and examining duality for sensitivity analysis. Strongly prefer external solvers for production environments; reserve manual implementations purely for deep educational exercises.
+<strong>Summary Chapter 32:</strong> This chapter discusses linear programming: grasping standard formulations, applying the Simplex algorithm conceptually for 2 variables, tackling integer linear programming through <abbr title="Finding optimal solutions by pruning search trees">branch and bound</abbr> (and DP for knapsack variants), and examining duality for sensitivity analysis. Strongly prefer external solvers for production environments; reserve manual implementations purely for deep educational exercises.
 {{% /alert %}}
 
 ## See Also

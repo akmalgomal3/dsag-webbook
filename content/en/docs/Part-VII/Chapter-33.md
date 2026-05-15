@@ -248,7 +248,7 @@ Lagrange interpolation holds remarkable stability solely for a sparse number of 
 | FFT | custom/3rd party | <code>O(n log n)</code> | <code>O(n)</code> | Extreme high-speed transformation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 32:</strong> This chapter dissects polynomial representation employing coefficient slices, hyper-fast Horner evaluation occurring in <code>O(n)</code>, and both naive <code>O(n^2)</code> and advanced FFT <code>O(n log n)</code> multiplications, alongside Lagrange interpolation. Rely on FFT strictly for massive <abbr title="The number of edges incident to a vertex.">degree</abbr> polynomial multiplications and Horner for rapid evaluations.
+<strong>Summary Chapter 33:</strong> This chapter dissects polynomial representation employing coefficient slices, hyper-fast Horner evaluation occurring in <code>O(n)</code>, and both naive <code>O(n^2)</code> and advanced FFT <code>O(n log n)</code> multiplications, alongside Lagrange interpolation. Rely on FFT strictly for massive <abbr title="The number of edges incident to a vertex.">degree</abbr> polynomial multiplications and Horner for rapid evaluations.
 {{% /alert %}}
 
 ## See Also

@@ -367,7 +367,7 @@ func main() {
 ### Edge Cases & Pitfalls
 
 - **Amortized vs average:** Amortized is the <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> average over a sequence, not the expected <abbr title="The data associated with a key in a key-value pair.">value</abbr> over random inputs.
-- **Randomized seed:** In Go, the global `rand.Seed` is not thread-safe; use `rand.NewSource` per <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> if needed.
+- **Randomized seed:** Since Go 1.20, the global `math/rand` generator is auto-seeded. For concurrent code, use `rand.New(rand.NewSource(...))` per goroutine for isolation and thread-safety.
 - **<abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr>:** Don't waste time looking for a polynomial algorithm for <abbr title="A class of problems that are at least as hard as the hardest problems in NP.">NP-Complete</abbr> problems; focus on approximation or heuristics.
 
 ### Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>

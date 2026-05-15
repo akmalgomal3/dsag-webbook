@@ -124,7 +124,7 @@ The recurrence captures the unyielding essence of <abbr title="A method for solv
 | No direct equivalent | Requires manual implementation specifically tailored for financial or stock tracking |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 55:</strong> Kadane's algorithm is a clean demonstration of <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> principles. In a single pass with <code>O(1)</code> auxiliary space, it solves a problem that intuitively seems to require examining all <code>O(n^2)</code> possible subarrays. The core lesson: whenever tackling "best subarray" questions, ask if the optimal state ending at position i can be derived from position i-1. If it can, Kadane's insight applies.
+<strong>Summary Chapter 56:</strong> Kadane's algorithm is a clean demonstration of <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> principles. In a single pass with <code>O(1)</code> auxiliary space, it solves a problem that intuitively seems to require examining all <code>O(n^2)</code> possible subarrays. The core lesson: whenever tackling "best subarray" questions, ask if the optimal state ending at position i can be derived from position i-1. If it can, Kadane's insight applies.
 {{% /alert %}}
 
 ## See Also

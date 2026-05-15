@@ -108,7 +108,7 @@ Go's design mirrors algorithmic virtues:
 | Gall's Law | John Gall | Complex systems evolve from simple ones |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 42:</strong> Algorithms are philosophy executed in code. They teach us that efficiency is about choosing the right trade-offs, that simplicity outlives complexity, and that understanding limitations is as important as achieving optimality. The best algorithm designers are not just engineers — they are thinkers who understand the human and ethical dimensions of their creations.
+<strong>Summary Chapter 43:</strong> Algorithms are philosophy executed in code. They teach us that efficiency is about choosing the right trade-offs, that simplicity outlives complexity, and that understanding limitations is as important as achieving optimality. The best algorithm designers are not just engineers — they are thinkers who understand the human and ethical dimensions of their creations.
 {{% /alert %}}
 
 ## See Also

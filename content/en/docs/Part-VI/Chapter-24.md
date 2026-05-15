@@ -158,8 +158,8 @@ type NodeHeap []*Node
 func (h NodeHeap) Len() int           { return len(h) }
 func (h NodeHeap) Less(i, j int) bool { return h[i].Freq < h[j].Freq }
 func (h NodeHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
-func (h *NodeHeap) Push(x interface{}) { *h = append(*h, x.(*Node)) }
-func (h *NodeHeap) Pop() interface{} {
+func (h *NodeHeap) Push(x any) { *h = append(*h, x.(*Node)) }
+func (h *NodeHeap) Pop() any {
 	old := *h
 	n := len(old)
 	*h = old[:n-1]
@@ -211,7 +211,7 @@ func main() {
 | 0/1 Knapsack | . | . | . | No (use DP) |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 23:</strong> Greedy algorithms provide fast, straightforward solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
+<strong>Summary Chapter 24:</strong> Greedy algorithms provide fast, straightforward solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
 {{% /alert %}}
 
 ## See Also

@@ -292,7 +292,7 @@ Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, lar
 | Context | `context.Context` | . | . | Cancellations and timeouts |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 28:</strong> This chapter discusses parallelism in Go using goroutines, synchronization primitives (Mutex, RWMutex, atomic, WaitGroup), channels, as well as worker pool and pipeline patterns. Utilize goroutines for independent CPU-bound tasks, channels for coordination, and worker pools to strictly bound concurrency when resources are limited.
+<strong>Summary Chapter 29:</strong> This chapter discusses parallelism in Go using goroutines, synchronization primitives (Mutex, RWMutex, atomic, WaitGroup), channels, as well as worker pool and pipeline patterns. Utilize goroutines for independent CPU-bound tasks, channels for coordination, and worker pools to strictly bound concurrency when resources are limited.
 {{% /alert %}}
 
 ## See Also

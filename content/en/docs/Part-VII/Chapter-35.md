@@ -264,7 +264,7 @@ Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amp
 | Knapsack 0/1 | DP | 1 | <code>O(nW)</code> | `[][]int` matrix |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 34:</strong> This chapter discusses approximation algorithms designed for NP-hard problems: greedy fractional knapsack (provably optimal), a 2-approximation for <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover, nearest neighbor and Christofides methods for metric TSP, alongside a randomized Max-Cut approach. Leverage greedy techniques for lightning-fast solutions, randomized algorithms for consistent expected ratios, and Christofides for a rigorous 1.5 guarantee on metric TSPs.
+<strong>Summary Chapter 35:</strong> This chapter discusses approximation algorithms designed for NP-hard problems: greedy fractional knapsack (provably optimal), a 2-approximation for <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover, nearest neighbor and Christofides methods for metric TSP, alongside a randomized Max-Cut approach. Leverage greedy techniques for lightning-fast solutions, randomized algorithms for consistent expected ratios, and Christofides for a rigorous 1.5 guarantee on metric TSPs.
 {{% /alert %}}
 
 ## See Also

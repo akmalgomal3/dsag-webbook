@@ -127,7 +127,7 @@ Modern CPUs have immense performance gaps between Registers and main <abbr title
 | 2010s | Concurrent, persistent | Multi-core, functional |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 40:</strong> Data structures evolved in response to hardware limitations and application needs — from arrays for physical memory to hash tables for speed to cache-aware structures for modern CPUs. Understanding this evolution prevents choosing obsolete structures and reveals that the "best" structure is always relative to the hardware and workload.
+<strong>Summary Chapter 41:</strong> Data structures evolved in response to hardware limitations and application needs — from arrays for physical memory to hash tables for speed to cache-aware structures for modern CPUs. Understanding this evolution prevents choosing obsolete structures and reveals that the "best" structure is always relative to the hardware and workload.
 {{% /alert %}}
 
 ## See Also

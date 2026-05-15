@@ -119,7 +119,7 @@ The Sieve fundamentally trades time for space. It requires an <abbr title="A col
 | 1830s | Babbage/Lovelace | Modern computer programs |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 38:</strong> Algorithms are not a modern invention — they are the crystallization of thousands of years of human problem-solving. From Babylonian clay tablets to Babbage's gears, the essential insight remains: break complex problems into simple, repeatable steps. Understanding this history prevents reinventing wheels and reveals the timeless nature of good algorithmic design.
+<strong>Summary Chapter 39:</strong> Algorithms are not a modern invention — they are the crystallization of thousands of years of human problem-solving. From Babylonian clay tablets to Babbage's gears, the essential insight remains: break complex problems into simple, repeatable steps. Understanding this history prevents reinventing wheels and reveals the timeless nature of good algorithmic design.
 {{% /alert %}}
 
 ## See Also

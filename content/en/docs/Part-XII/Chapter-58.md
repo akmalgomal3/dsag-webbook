@@ -171,7 +171,7 @@ func main() {
 | `sort` | Query sorting |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 57:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. It is a niche but effective technique for competitive programming and offline batch processing.
+<strong>Summary Chapter 58:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. It is a niche but effective technique for competitive programming and offline batch processing.
 {{% /alert %}}
 
 ## See Also

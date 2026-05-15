@@ -149,11 +149,15 @@ sortInts(arr):
     return arr
 
 binarySearch(arr, target):
-    i = 0
-    while i < len(arr) and arr[i] < target:
-        i = i + 1
-    if i < len(arr) and arr[i] == target:
-        return i
+    lo = 0, hi = len(arr) - 1
+    while lo <= hi:
+        mid = (lo + hi) / 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
     return -1
 ```
 

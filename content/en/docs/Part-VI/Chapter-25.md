@@ -205,7 +205,7 @@ func main() {
 | Sudoku | `[][]int` | <code>O(9^m)</code> | <code>O(81)</code> | Constraint propagation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 24:</strong> <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> systematically explores the solution space using depth-first search with pruning. Master the template: build candidates incrementally, validate constraints, recurse, and undo changes. In Go, use slices for state tracking and ensure proper cleanup after each recursive call.
+<strong>Summary Chapter 25:</strong> <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> systematically explores the solution space using depth-first search with pruning. Master the template: build candidates incrementally, validate constraints, recurse, and undo changes. In Go, use slices for state tracking and ensure proper cleanup after each recursive call.
 {{% /alert %}}
 
 ## See Also

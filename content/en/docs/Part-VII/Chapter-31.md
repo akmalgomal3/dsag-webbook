@@ -336,7 +336,7 @@ The PoW example provided acts purely as a demonstration. A rigorous production P
 | Hash | `crypto/sha256` | <code>O(n)</code> | 32 bytes | Rigid data integrity |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 30:</strong> This chapter dissects foundational blockchain data structures: linked blocks utilizing SHA-256 hashes, Merkle trees engineered for transaction subset verification, Proof of Work (PoW), and foundational Proof of Stake (PoS) consensus strategies. Leverage Merkle trees for light clients, PoW for uncompromising decentralization, and PoS when maximizing energy efficiency.
+<strong>Summary Chapter 31:</strong> This chapter dissects foundational blockchain data structures: linked blocks utilizing SHA-256 hashes, Merkle trees engineered for transaction subset verification, Proof of Work (PoW), and foundational Proof of Stake (PoS) consensus strategies. Leverage Merkle trees for light clients, PoW for uncompromising decentralization, and PoS when maximizing energy efficiency.
 {{% /alert %}}
 
 ## See Also

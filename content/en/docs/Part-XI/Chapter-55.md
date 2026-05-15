@@ -164,7 +164,7 @@ func main() {
 | `strings` | Use `Contains` and `Index` for simplistic, pre-packaged substring operations |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 54:</strong> Two pointers and sliding window are fundamental patterns for linear-time array and string processing. They replace nested loops with single passes, exploiting ordering or contiguous structure. Mastering these patterns means recognizing when a problem asks for "pairs," "subarrays," or "substrings" and choosing the right traversal strategy.
+<strong>Summary Chapter 55:</strong> Two pointers and sliding window are fundamental patterns for linear-time array and string processing. They replace nested loops with single passes, exploiting ordering or contiguous structure. Mastering these patterns means recognizing when a problem asks for "pairs," "subarrays," or "substrings" and choosing the right traversal strategy.
 {{% /alert %}}
 
 ## See Also

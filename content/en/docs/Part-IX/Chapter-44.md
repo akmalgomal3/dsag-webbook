@@ -131,7 +131,7 @@ When a node overflows (exceeds m-1 keys), it splits into two nodes and promotes 
 | `go.etcd.io/bbolt` | Pure Go B+ tree implementation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 43:</strong> B-trees bridge the gap between algorithmic theory and physical reality by optimizing not for CPU cycles but for massive disk seeks. By matching node size to disk blocks and keeping all leaves at the identical depth, B-trees transformed database performance. The B+ tree variant, with its linked leaves, ensures range queries execute as fast as sequential scans.
+<strong>Summary Chapter 44:</strong> B-trees bridge the gap between algorithmic theory and physical reality by optimizing not for CPU cycles but for massive disk seeks. By matching node size to disk blocks and keeping all leaves at the identical depth, B-trees transformed database performance. The B+ tree variant, with its linked leaves, ensures range queries execute as fast as sequential scans.
 {{% /alert %}}
 
 ## See Also

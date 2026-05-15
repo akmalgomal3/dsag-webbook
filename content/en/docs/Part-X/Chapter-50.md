@@ -129,7 +129,7 @@ Push vertices onto a stack after exploring all descendants, then reverse.
 | `go/build` | Uses topo sort for package imports |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 49:</strong> Topological sort transforms a web of dependencies into a linear execution plan. Whether building software, scheduling courses, or orchestrating data pipelines, it answers the fundamental question: "What comes first?" The elegance of Kahn's algorithm lies in its simplicity: repeatedly doing what has no prerequisites until everything is done.
+<strong>Summary Chapter 50:</strong> Topological sort transforms a web of dependencies into a linear execution plan. Whether building software, scheduling courses, or orchestrating data pipelines, it answers the fundamental question: "What comes first?" The elegance of Kahn's algorithm lies in its simplicity: repeatedly doing what has no prerequisites until everything is done.
 {{% /alert %}}
 
 ## See Also

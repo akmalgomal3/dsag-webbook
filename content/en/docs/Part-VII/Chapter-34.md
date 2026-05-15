@@ -478,7 +478,7 @@ func main() {
 | `strings.Index` | builtin | hyper-optimized | <code>O(1)</code> | Primary production single <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 33:</strong> This chapter dissects <abbr title="A field or set of fields used to identify a record.">key</abbr> <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: the Naive approach achieving <code>O(nm)</code>, KMP reliably offering <code>O(n+m)</code>, Boyer-Moore's rapid <code>O(n/m)</code> average, Rabin-Karp utilizing efficient rolling hashes, and the multi-pattern Aho-Corasick for dense multiple-pattern environments. Leverage KMP to lock down a strict <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantee, Boyer-Moore to handle wide alphabets, and Aho-Corasick for sweeping dictionary matches.
+<strong>Summary Chapter 34:</strong> This chapter dissects <abbr title="A field or set of fields used to identify a record.">key</abbr> <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: the Naive approach achieving <code>O(nm)</code>, KMP reliably offering <code>O(n+m)</code>, Boyer-Moore's rapid <code>O(n/m)</code> average, Rabin-Karp utilizing efficient rolling hashes, and the multi-pattern Aho-Corasick for dense multiple-pattern environments. Leverage KMP to lock down a strict <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantee, Boyer-Moore to handle wide alphabets, and Aho-Corasick for sweeping dictionary matches.
 {{% /alert %}}
 
 ## See Also

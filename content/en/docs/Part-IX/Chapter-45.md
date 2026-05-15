@@ -174,7 +174,7 @@ With incredibly high probability, skip lists maintain <code>O(log n)</code> heig
 | `sync.Map` | Heavily inspired by skip list principles |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 44:</strong> Skip lists prove that randomization can replace deterministic complexity. By flipping coins to build express lanes through a linked list, they achieve balanced-tree performance with code simple enough to write in minutes. When you need <code>O(log n)</code> with minimal implementation risk, skip lists are often the right choice.
+<strong>Summary Chapter 45:</strong> Skip lists prove that randomization can replace deterministic complexity. By flipping coins to build express lanes through a linked list, they achieve balanced-tree performance with code simple enough to write in minutes. When you need <code>O(log n)</code> with minimal implementation risk, skip lists are often the right choice.
 {{% /alert %}}
 
 ## See Also

@@ -181,7 +181,7 @@ Distribute elements into distinct physical buckets based entirely on range, sort
 | No native non-<abbr title="A sorting algorithm that only compares elements">comparison sort</abbr> | Implement manually for specialized, integer-bound cases |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 53:</strong> Linear-time sorting algorithms prove that the <code>O(n log n)</code> comparison <abbr title="A function that grows no faster than the given function">lower bound</abbr> applies only when you know nothing about your data. By exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> achieve <code>O(n)</code> — a reminder that algorithmic efficiency emerges from understanding your specific problem domain.
+<strong>Summary Chapter 54:</strong> Linear-time sorting algorithms prove that the <code>O(n log n)</code> comparison <abbr title="A function that grows no faster than the given function">lower bound</abbr> applies only when you know nothing about your data. By exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> achieve <code>O(n)</code> — a reminder that algorithmic efficiency emerges from understanding your specific problem domain.
 {{% /alert %}}
 
 ## See Also

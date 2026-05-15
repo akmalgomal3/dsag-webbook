@@ -75,8 +75,8 @@ type PriorityQueue []*Node
 func (pq PriorityQueue) Len() int            { return len(pq) }
 func (pq PriorityQueue) Less(i, j int) bool  { return pq[i].f < pq[j].f }
 func (pq PriorityQueue) Swap(i, j int)       { pq[i], pq[j] = pq[j], pq[i] }
-func (pq *PriorityQueue) Push(x interface{}) { *pq = append(*pq, x.(*Node)) }
-func (pq *PriorityQueue) Pop() interface{} {
+func (pq *PriorityQueue) Push(x any) { *pq = append(*pq, x.(*Node)) }
+func (pq *PriorityQueue) Pop() any {
 	old := *pq
 	n := len(old)
 	item := old[n-1]
@@ -209,7 +209,7 @@ func main() {
 | `container/heap` | Priority queue for managing the open set |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 51:</strong> A* is the gold standard for informed pathfinding, combining the optimality of Dijkstra with the efficiency of <abbr title="A technique that employs practical methods to find solutions that are sufficient for the immediate goals.">heuristic</abbr> guidance. The quality of the heuristic entirely determines its performance: a perfect heuristic makes A* instant, while a zero heuristic collapses it to Dijkstra. In game development, robotics, and mapping, A* dominates because it powerfully respects both mathematical correctness and physical speed.
+<strong>Summary Chapter 52:</strong> A* is the gold standard for informed pathfinding, combining the optimality of Dijkstra with the efficiency of <abbr title="A technique that employs practical methods to find solutions that are sufficient for the immediate goals.">heuristic</abbr> guidance. The quality of the heuristic entirely determines its performance: a perfect heuristic makes A* instant, while a zero heuristic collapses it to Dijkstra. In game development, robotics, and mapping, A* dominates because it powerfully respects both mathematical correctness and physical speed.
 {{% /alert %}}
 
 ## See Also

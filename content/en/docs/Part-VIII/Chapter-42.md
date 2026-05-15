@@ -109,7 +109,7 @@ func approximateSolution(data []Item) Solution {
 | Online | Input arrives streaming | Sliding window |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 41:</strong> Modern algorithmic thinking transcends Big-O, embracing cache efficiency, parallelism, approximation, and randomization. The 21st-century algorithm designer must balance theoretical guarantees with hardware realities — knowing when exact solutions are necessary and when "good enough" wins.
+<strong>Summary Chapter 42:</strong> Modern algorithmic thinking transcends Big-O, embracing cache efficiency, parallelism, approximation, and randomization. The 21st-century algorithm designer must balance theoretical guarantees with hardware realities — knowing when exact solutions are necessary and when "good enough" wins.
 {{% /alert %}}
 
 ## See Also

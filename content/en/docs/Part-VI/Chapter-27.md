@@ -363,7 +363,7 @@ Reservoir sampling guarantees that every single item possesses an exact mathemat
 | Treap | Las Vegas | <code>O(log n)</code> | <code>O(n)</code> | Fused BST + <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr> |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 26:</strong> This chapter dissects probabilistic algorithms: randomized quicksort yielding <code>O(n log n)</code> expected, skip lists hitting <code>O(log n)</code> expected, the Miller-Rabin primality test (a Monte Carlo approach), and reservoir sampling for boundless streams. Leverage skip lists for creating a straightforward ordered set, Miller-Rabin for evaluating large primes, and reservoir sampling to manage streaming data.
+<strong>Summary Chapter 27:</strong> This chapter dissects probabilistic algorithms: randomized quicksort yielding <code>O(n log n)</code> expected, skip lists hitting <code>O(log n)</code> expected, the Miller-Rabin primality test (a Monte Carlo approach), and reservoir sampling for boundless streams. Leverage skip lists for creating a straightforward ordered set, Miller-Rabin for evaluating large primes, and reservoir sampling to manage streaming data.
 {{% /alert %}}
 
 ## See Also

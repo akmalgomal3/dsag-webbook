@@ -112,7 +112,7 @@ The most important open problem in computer science: If a solution can be verifi
 | Knuth | Algorithm analysis | Standardized Big-O notation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 39:</strong> The 20th-century algorithmic revolution transformed <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> from abstract mathematics into engineering reality. Turing machines defined what is computable; complexity theory defined what is efficiently computable. The P vs NP question remains unsolved, but its implications guide every algorithmic decision we make — from choosing <abbr title="Practical methods used to find solutions that are sufficient for immediate goals.">heuristics</abbr> to accepting approximations.
+<strong>Summary Chapter 40:</strong> The 20th-century algorithmic revolution transformed <abbr title="The act of performing mathematical or logical operations by a computer or abstract machine.">computation</abbr> from abstract mathematics into engineering reality. Turing machines defined what is computable; complexity theory defined what is efficiently computable. The P vs NP question remains unsolved, but its implications guide every algorithmic decision we make — from choosing <abbr title="Practical methods used to find solutions that are sufficient for immediate goals.">heuristics</abbr> to accepting approximations.
 {{% /alert %}}
 
 ## See Also

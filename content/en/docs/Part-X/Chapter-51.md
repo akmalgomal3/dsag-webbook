@@ -159,7 +159,7 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 | No direct stdlib | Implement manually for deep graph analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 50:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> two-pass approach and <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> single-pass efficiency both achieve <code>O(V + E)</code>, proving that deep structural insights often come from simple traversals.
+<strong>Summary Chapter 51:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> two-pass approach and <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> single-pass efficiency both achieve <code>O(V + E)</code>, proving that deep structural insights often come from simple traversals.
 {{% /alert %}}
 
 ## See Also
