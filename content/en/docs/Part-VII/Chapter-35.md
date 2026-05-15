@@ -145,6 +145,27 @@ func main() {
 }
 ```
 
+### Decision Matrix
+
+| Scenario | Best Algorithm | Approx Ratio | Notes |
+|----------|---------------|-------------|-------|
+| Small vertex cover | ILP exact | 1 (exact) | Only for V < ~30 |
+| Large vertex cover | Greedy both-endpoints | 2 | Simple, fast |
+| Sparse graphs | Greedy vertex cover | 2 | O(V+E) |
+| Metric TSP (fast) | Nearest Neighbor | O(log n) | Fast but no constant guarantee |
+| Metric TSP (provable) | Christofides | 1.5 | MST + min-weight matching |
+| Max-Cut (simple) | Random partition | E/2 expected | Run k times for amplification |
+| Fractional Knapsack | Greedy by ratio | 1 (exact) | Optimal for fractional variant |
+| 0/1 Knapsack | DP or FPTAS | 1 (exact) or (1−ε) | Use FPTAS for large n |
+
+### Edge Cases & Pitfalls
+
+- **Fractional vs 0/1:** Greedy is optimal only for fractional knapsack. Applying it to 0/1 knapsack produces arbitrarily bad results.
+- **Triangle inequality:** Christofides' 1.5-approximation only works on metric TSP (distances satisfy triangle inequality). If distances violate it, the guarantee evaporates.
+- **Random amplification:** One run of randomized Max-Cut gives expected E/2. Run it k times and keep the best cut to drive the failure probability down to 2^{-k}.
+- **Vertex cover tie-breaking:** The greedy 2-approximation picks both endpoints of an uncovered edge. The result depends on edge iteration order — different orders produce different covers of the same approximation quality.
+- **TSP nearest neighbor trap:** Nearest neighbor can produce tours up to O(log n) times optimal, and its output depends heavily on the starting city.
+
 ## 36.3. Metric TSP Heuristic (Nearest Neighbor)
 
 **Definition:** A Metric TSP explicitly fulfills the triangle inequality. The Nearest Neighbor heuristic constructs a tour by repeatedly visiting the closest unvisited city. This is a practical heuristic (not a constant-factor approximation) — in the worst case, nearest neighbor can produce tours up to O(log n) times the optimal. For a provable 2-approximation, use the MST double-tree approach: compute an MST, double its edges, form an Euler tour, and shortcut repeated vertices.

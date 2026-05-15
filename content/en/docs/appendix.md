@@ -56,7 +56,7 @@ Quick reference for time and space complexity of common data structures and algo
 | Kruskal | <code>O(E log E)</code> | <code>O(V)</code> | MST |
 | Prim | <code>O((V + E) log V)</code> | <code>O(V)</code> | MST |
 | Topological Sort | <code>O(V + E)</code> | <code>O(V)</code> | Dependency ordering |
-| A* | <code>O(E)</code> typical (heuristic-dependent), <code>O(b^d)</code> worst | <code>O(V)</code> | Pathfinding with heuristic |
+| A* | <code>O(E log V)</code> typical, <code>O(b^d)</code> worst | <code>O(V)</code> | Pathfinding with heuristic |
 
 ### Array/String Techniques
 

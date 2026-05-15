@@ -10,6 +10,10 @@ toc: true
 katex: true
 ---
 
+{{% alert icon="💡" context="info" %}}
+<strong>"<em>The art of programming is the art of organizing complexity.</em>" : Niklaus Wirth</strong>
+{{% /alert %}}
+
 {{% alert icon="📘" context="success" %}}
 Chapter 7 focuses on <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables, covering Go's built-in map, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and <abbr title="Hashing that minimizes rehashing when the table resizes">consistent hashing</abbr> architectures for distributed systems.
 {{% /alert %}}

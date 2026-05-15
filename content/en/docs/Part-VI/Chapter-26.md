@@ -148,6 +148,7 @@ package main
 import (
     "fmt"
     "math/rand"
+    "time"
 )
 
 func mergeSort(arr []int) []int {
@@ -199,6 +200,7 @@ func quickSort(arr []int) []int {
 }
 
 func main() {
+    rand.Seed(time.Now().UnixNano()) // removed in Go 1.20+: auto-seeded
     arr := []int{3, 1, 4, 1, 5, 9, 2, 6}
     fmt.Println("Merge:", mergeSort(arr))
     fmt.Println("Quick:", quickSort(arr))

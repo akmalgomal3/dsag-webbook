@@ -10,6 +10,10 @@ toc: true
 katex: true
 ---
 
+{{% alert icon="💡" context="info" %}}
+<strong>"<em>Simplicity is prerequisite for reliability.</em>" : Edsger Dijkstra</strong>
+{{% /alert %}}
+
 {{% alert icon="📘" context="success" %}}
 Chapter 5 focuses on fundamental data structures in Go (arrays, slices, maps, linked lists). It contrasts their memory layouts and explains how slices leverage <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality for superior performance.
 {{% /alert %}}
