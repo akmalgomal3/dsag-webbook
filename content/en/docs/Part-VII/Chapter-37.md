@@ -189,6 +189,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
-- [Chapter 32: Linear Programming](/docs/Part-VII/Chapter-32/)
-- [Chapter 36: Trie Data Structures](/docs/Part-VII/Chapter-36/)
+- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/Chapter-9/)
+- [Chapter 32: Linear Programming](/docs/part-vii/Chapter-32/)
+- [Chapter 36: Trie Data Structures](/docs/part-vii/Chapter-36/)

@@ -176,6 +176,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-54/)
-- [Chapter 56: Kadane's Algorithm](/docs/Part-XI/Chapter-56/)
-- [Chapter 57: Minimax and Game Trees](/docs/Part-XII/Chapter-57/)
+- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/part-xi/Chapter-54/)
+- [Chapter 56: Kadane's Algorithm](/docs/part-xi/Chapter-56/)
+- [Chapter 57: Minimax and Game Trees](/docs/part-xii/Chapter-57/)

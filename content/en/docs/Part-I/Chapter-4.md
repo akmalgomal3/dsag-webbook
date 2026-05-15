@@ -353,6 +353,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 2: Complexity Analysis](/docs/Part-I/Chapter-2/)
-- [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/Part-I/Chapter-3/)
-- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
+- [Chapter 2: Complexity Analysis](/docs/part-i/Chapter-2/)
+- [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/part-i/Chapter-3/)
+- [Chapter 6: Elementary Data Structures](/docs/part-ii/Chapter-6/)

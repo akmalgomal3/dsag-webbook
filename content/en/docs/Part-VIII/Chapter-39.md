@@ -124,6 +124,6 @@ The Sieve fundamentally trades time for space. It requires an <abbr title="A col
 
 ## See Also
 
-- [Chapter 40: The Algorithmic Revolution](/docs/Part-VIII/Chapter-40/)
-- [Chapter 41: Evolution of Data Structures](/docs/Part-VIII/Chapter-41/)
-- [Chapter 43: Philosophy of Computation](/docs/Part-VIII/Chapter-43/)
+- [Chapter 40: The Algorithmic Revolution](/docs/part-viii/Chapter-40/)
+- [Chapter 41: Evolution of Data Structures](/docs/part-viii/Chapter-41/)
+- [Chapter 43: Philosophy of Computation](/docs/part-viii/Chapter-43/)

@@ -445,6 +445,6 @@ For production, prefer `golang.org/x/crypto/argon2` over bcrypt for its memory-h
 
 ## See Also
 
-- [Chapter 29: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-29/)
-- [Chapter 31: Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-31/)
-- [Chapter 46: Bloom Filters](/docs/Part-IX/Chapter-46/)
+- [Chapter 29: Parallel and Distributed Algorithms](/docs/part-vii/Chapter-29/)
+- [Chapter 31: Blockchain Data Structures and Algorithms](/docs/part-vii/Chapter-31/)
+- [Chapter 46: Bloom Filters](/docs/part-ix/Chapter-46/)

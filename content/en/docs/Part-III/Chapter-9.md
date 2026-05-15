@@ -145,6 +145,6 @@ An AVL tree node requires an additional memory field to store the `Height` or `B
 
 ## See Also
 
-- [Chapter 10: Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
-- [Chapter 11: Disjoint Sets](/docs/Part-III/Chapter-11/)
-- [Chapter 36: Trie Data Structures](/docs/Part-VII/Chapter-36/)
+- [Chapter 10: Heaps and Priority Queues](/docs/part-iii/Chapter-10/)
+- [Chapter 11: Disjoint Sets](/docs/part-iii/Chapter-11/)
+- [Chapter 36: Trie Data Structures](/docs/part-vii/Chapter-36/)

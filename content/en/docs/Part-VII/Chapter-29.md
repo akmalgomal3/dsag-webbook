@@ -297,6 +297,6 @@ Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, lar
 
 ## See Also
 
-- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/Part-VII/Chapter-28/)
-- [Chapter 30: Cryptographic Foundations Algorithms](/docs/Part-VII/Chapter-30/)
-- [Chapter 31: Blockchain Data Structures and Algorithms](/docs/Part-VII/Chapter-31/)
+- [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/part-vii/Chapter-28/)
+- [Chapter 30: Cryptographic Foundations Algorithms](/docs/part-vii/Chapter-30/)
+- [Chapter 31: Blockchain Data Structures and Algorithms](/docs/part-vii/Chapter-31/)

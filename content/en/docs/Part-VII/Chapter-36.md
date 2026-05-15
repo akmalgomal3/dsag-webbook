@@ -195,6 +195,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
-- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/Part-VII/Chapter-34/)
-- [Chapter 48: Suffix Arrays](/docs/Part-IX/Chapter-48/)
+- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/Chapter-9/)
+- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/part-vii/Chapter-34/)
+- [Chapter 48: Suffix Arrays](/docs/part-ix/Chapter-48/)

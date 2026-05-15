@@ -269,6 +269,6 @@ Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amp
 
 ## See Also
 
-- [Chapter 24: Greedy Algorithms](/docs/Part-VI/Chapter-24/)
-- [Chapter 27: Probabilistic and Randomized Algorithms](/docs/Part-VI/Chapter-27/)
-- [Chapter 42: Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-42/)
+- [Chapter 24: Greedy Algorithms](/docs/part-vi/Chapter-24/)
+- [Chapter 27: Probabilistic and Randomized Algorithms](/docs/part-vi/Chapter-27/)
+- [Chapter 42: Modern Algorithmic Thinking](/docs/part-viii/Chapter-42/)

@@ -136,6 +136,6 @@ When a node overflows (exceeds m-1 keys), it splits into two nodes and promotes 
 
 ## See Also
 
-- [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
-- [Chapter 11: Disjoint Sets](/docs/Part-III/Chapter-11/)
-- [Chapter 46: Bloom Filters](/docs/Part-IX/Chapter-46/)
+- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/Chapter-9/)
+- [Chapter 11: Disjoint Sets](/docs/part-iii/Chapter-11/)
+- [Chapter 46: Bloom Filters](/docs/part-ix/Chapter-46/)

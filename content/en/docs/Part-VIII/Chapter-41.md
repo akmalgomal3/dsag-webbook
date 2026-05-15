@@ -132,6 +132,6 @@ Modern CPUs have immense performance gaps between Registers and main <abbr title
 
 ## See Also
 
-- [Chapter 39: Origins of Algorithms](/docs/Part-VIII/Chapter-39/)
-- [Chapter 40: The Algorithmic Revolution](/docs/Part-VIII/Chapter-40/)
-- [Chapter 42: Modern Algorithmic Thinking](/docs/Part-VIII/Chapter-42/)
+- [Chapter 39: Origins of Algorithms](/docs/part-viii/Chapter-39/)
+- [Chapter 40: The Algorithmic Revolution](/docs/part-viii/Chapter-40/)
+- [Chapter 42: Modern Algorithmic Thinking](/docs/part-viii/Chapter-42/)

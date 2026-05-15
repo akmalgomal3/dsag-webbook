@@ -235,6 +235,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 19: Basic Sorting Algorithms](/docs/Part-V/Chapter-19/)
-- [Chapter 21: Searching Algorithms](/docs/Part-V/Chapter-21/)
-- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-54/)
+- [Chapter 19: Basic Sorting Algorithms](/docs/part-v/Chapter-19/)
+- [Chapter 21: Searching Algorithms](/docs/part-v/Chapter-21/)
+- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/part-xi/Chapter-54/)

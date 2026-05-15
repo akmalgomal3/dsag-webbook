@@ -178,6 +178,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
-- [Chapter 7: Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
-- [Chapter 46: Bloom Filters](/docs/Part-IX/Chapter-46/)
+- [Chapter 6: Elementary Data Structures](/docs/part-ii/Chapter-6/)
+- [Chapter 7: Hashing and Hash Tables](/docs/part-ii/Chapter-7/)
+- [Chapter 46: Bloom Filters](/docs/part-ix/Chapter-46/)

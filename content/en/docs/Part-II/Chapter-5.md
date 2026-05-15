@@ -303,6 +303,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
-- [Chapter 7: Hashing and Hash Tables](/docs/Part-II/Chapter-7/)
-- [Chapter 8: Linked Lists](/docs/Part-II/Chapter-8/)
+- [Chapter 6: Elementary Data Structures](/docs/part-ii/Chapter-6/)
+- [Chapter 7: Hashing and Hash Tables](/docs/part-ii/Chapter-7/)
+- [Chapter 8: Linked Lists](/docs/part-ii/Chapter-8/)

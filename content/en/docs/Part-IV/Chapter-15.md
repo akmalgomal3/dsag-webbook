@@ -131,6 +131,6 @@ Johnson's algorithm avoids allocating massive <code>O(V^2)</code> matrices upfro
 
 ## See Also
 
-- [Chapter 13: Graph Traversal Algorithms](/docs/Part-IV/Chapter-13/)
-- [Chapter 14: Single-Source Shortest Paths](/docs/Part-IV/Chapter-14/)
-- [Chapter 32: Linear Programming](/docs/Part-VII/Chapter-32/)
+- [Chapter 13: Graph Traversal Algorithms](/docs/part-iv/Chapter-13/)
+- [Chapter 14: Single-Source Shortest Paths](/docs/part-iv/Chapter-14/)
+- [Chapter 32: Linear Programming](/docs/part-vii/Chapter-32/)

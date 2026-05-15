@@ -49,4 +49,4 @@ Use search bar (top of page) to find algorithms, data structures, or Go stdlib r
 
 ---
 
-**Ready?** [Chapter 1](/docs/Part-I/Chapter-1/) or any topic.
+**Ready?** [Chapter 1](/docs/part-i/Chapter-1/) or any topic.

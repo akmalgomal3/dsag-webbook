@@ -56,7 +56,7 @@ Quick reference for time and space complexity of common data structures and algo
 | Kruskal | <code>O(E log E)</code> | <code>O(V)</code> | MST |
 | Prim | <code>O((V + E) log V)</code> | <code>O(V)</code> | MST |
 | Topological Sort | <code>O(V + E)</code> | <code>O(V)</code> | Dependency ordering |
-| A* | <code>O(E log V)</code> typical, <code>O(b^d)</code> worst | <code>O(V)</code> | Pathfinding with heuristic |
+| A* | <code>O(E)</code> typical (heuristic-dependent), <code>O(b^d)</code> worst | <code>O(V)</code> | Pathfinding with heuristic |
 
 ### Array/String Techniques
 
@@ -76,6 +76,6 @@ This cheat sheet covers the most common data structures and algorithms. Refer to
 
 ## See Also
 
-- [Chapter 1: The Role of Algorithms in Modern Software](/docs/Part-I/Chapter-1/)
-- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
-- [Table of Contents](/docs/Table-of-Contents/)
+- [Chapter 1: The Role of Algorithms in Modern Software](/docs/part-i/Chapter-1/)
+- [Chapter 6: Elementary Data Structures](/docs/part-ii/Chapter-6/)
+- [Table of Contents](/docs/table-of-contents/)

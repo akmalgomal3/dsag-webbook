@@ -263,6 +263,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 5: Fundamental Data Structures in Go](/docs/Part-II/Chapter-5/)
-- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
-- [Chapter 9: Trees and Balanced Trees](/docs/Part-III/Chapter-9/)
+- [Chapter 5: Fundamental Data Structures in Go](/docs/part-ii/Chapter-5/)
+- [Chapter 6: Elementary Data Structures](/docs/part-ii/Chapter-6/)
+- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/Chapter-9/)

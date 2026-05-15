@@ -329,6 +329,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 10: Heaps and Priority Queues](/docs/Part-III/Chapter-10/)
-- [Chapter 17: Network Flow Algorithms](/docs/Part-IV/Chapter-17/)
-- [Chapter 18: Matchings in Bipartite Graphs](/docs/Part-IV/Chapter-18/)
+- [Chapter 10: Heaps and Priority Queues](/docs/part-iii/Chapter-10/)
+- [Chapter 17: Network Flow Algorithms](/docs/part-iv/Chapter-17/)
+- [Chapter 18: Matchings in Bipartite Graphs](/docs/part-iv/Chapter-18/)

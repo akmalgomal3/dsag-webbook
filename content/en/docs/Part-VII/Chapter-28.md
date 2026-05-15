@@ -236,6 +236,6 @@ A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically
 
 ## See Also
 
-- [Chapter 29: Parallel and Distributed Algorithms](/docs/Part-VII/Chapter-29/)
-- [Chapter 33: Polynomial and FFT](/docs/Part-VII/Chapter-33/)
-- [Chapter 38: Bit Manipulation](/docs/Part-VII/Chapter-38/)
+- [Chapter 29: Parallel and Distributed Algorithms](/docs/part-vii/Chapter-29/)
+- [Chapter 33: Polynomial and FFT](/docs/part-vii/Chapter-33/)
+- [Chapter 38: Bit Manipulation](/docs/part-vii/Chapter-38/)

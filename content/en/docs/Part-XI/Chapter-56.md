@@ -129,6 +129,6 @@ The recurrence captures the unyielding essence of <abbr title="A method for solv
 
 ## See Also
 
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/Part-VI/Chapter-23/)
-- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/Part-XI/Chapter-54/)
-- [Chapter 55: Sliding Window and Two Pointers](/docs/Part-XI/Chapter-55/)
+- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/Chapter-23/)
+- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/part-xi/Chapter-54/)
+- [Chapter 55: Sliding Window and Two Pointers](/docs/part-xi/Chapter-55/)

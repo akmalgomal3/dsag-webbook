@@ -290,6 +290,6 @@ func main() {
 
 ## See Also
 
-- [Chapter 5: Fundamental Data Structures in Go](/docs/Part-II/Chapter-5/)
-- [Chapter 6: Elementary Data Structures](/docs/Part-II/Chapter-6/)
-- [Chapter 46: Bloom Filters](/docs/Part-IX/Chapter-46/)
+- [Chapter 5: Fundamental Data Structures in Go](/docs/part-ii/Chapter-5/)
+- [Chapter 6: Elementary Data Structures](/docs/part-ii/Chapter-6/)
+- [Chapter 46: Bloom Filters](/docs/part-ix/Chapter-46/)
