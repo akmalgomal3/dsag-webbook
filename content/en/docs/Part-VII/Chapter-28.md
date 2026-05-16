@@ -35,10 +35,10 @@ Vectors map to 1D Go slices. `[]float64` uses contiguous RAM. Dot product has pe
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Addition | <code>O(n)</code><code>vec</code> | Element-wise operation |
-| Dot Product | <code>O(n)</code><code>vec</code> | <code>vec</code>\sum(a_i \times b_i)<code>vec</code> |
-| Norm (L2) | <code>O(n)</code><code>vec</code> | <code>vec</code>\sqrt{\sum a_i^2}<code>vec</code> |
-| Cross Product | <code>O(1)</code><code>vec</code> | 3D specific operation |
+| Addition | <code>O(n)</code> | Element-wise operation |
+| Dot Product | <code>O(n)</code> | \sum(a_i \times b_i) |
+| Norm (L2) | <code>O(n)</code> | <code>sqrt(Σ a_i^2)</code> |
+| Cross Product | <code>O(1)</code> | 3D specific operation |
 
 ### Pseudocode
 
@@ -123,7 +123,7 @@ Go lacks operator overloading. Define explicit functions. Use `gonum.org/v1/gonu
 
 | Use Slices When... | Avoid If... |
 |----------------------|------------------|
-| Small to medium dimensions (<code>vec</code>< 10^6<code>vec</code>) | Matrix operations are complex: use gonum |
+| Small to medium dimensions (<code>< 10^6</code>) | Matrix operations are complex: use gonum |
 | Custom logic or sparse data needed | BLAS/LAPACK optimization required |
 
 ### Edge Cases & Pitfalls
@@ -143,10 +143,10 @@ Nested slices `[][]float64` scatter headers across heap. `gonum` uses flat `[]fl
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Transpose | <code>O(n^2)</code><code>vec</code> | Rows ↔ Columns |
-| Matrix Multiply | <code>O(n^3)</code><code>vec</code> | Standard multiplication |
-| Determinant | <code>O(n^3)</code><code>vec</code> | LU decomposition |
-| Inverse | <code>O(n^3)</code><code>vec</code> | Gauss-Jordan elimination |
+| Transpose | <code>O(n^2)</code> | Rows ↔ Columns |
+| Matrix Multiply | <code>O(n^3)</code> | Standard multiplication |
+| Determinant | <code>O(n^3)</code> | LU decomposition |
+| Inverse | <code>O(n^3)</code> | Gauss-Jordan elimination |
 
 ### Idiomatic Go Implementation
 
@@ -173,9 +173,9 @@ Use `gonum.org/v1/gonum/mat`. It is the de-facto external library for linear alg
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Tensor Add | <code>O(n)</code><code>vec</code> | Element-wise addition |
-| Tensor Contraction | <code>O(n^k)</code><code>vec</code> | Sum over specific indices |
-| Reshape | <code>O(1)</code><code>vec</code> | View memory without copy |
+| Tensor Add | <code>O(n)</code> | Element-wise addition |
+| Tensor Contraction | <code>O(n^k)</code> | Sum over specific indices |
+| Reshape | <code>O(1)</code> | View memory without copy |
 
 Nested slices cause pointer overhead. Large tensors should use flat 1D slice. Indexing: `flat[i*H*W + j*W + k]`.
 
@@ -202,7 +202,7 @@ Nested slices cause pointer overhead. Large tensors should use flat 1D slice. In
 |--------|---------|------------|
 | Loop reordering | 2-10x | Enhances cache locality |
 | Block matrix | 2-5x | Fits operations in L1/L2 |
-| Parallelization | <code>vec</code>p \times<code>vec</code> cores | Row-wise decomposition |
+| Parallelization | p \times cores | Row-wise decomposition |
 | Strassen | 0.8-2x | Rare practical utility |
 
 Loop order `i-k-j` is faster than `i-j-k`. Optimizes cache locality on second matrix rows. Profile before final optimization.
@@ -230,11 +230,11 @@ Loop order `i-k-j` is faster than `i-j-k`. Optimizes cache locality on second ma
 
 | Name | Go Type | Complexity | Access | Use Case |
 |------|---------|------------|--------|----------|
-| Vector | `[]float64` | <code>O(1)</code><code>vec</code> | . | 1D Data |
-| Matrix | `[][]float64` | <code>O(1)</code><code>vec</code> | . | 2D Data |
-| Tensor | `[][][]float64` | <code>O(1)</code><code>vec</code> | . | ML batching |
-| Dense Matrix | `[]float64` flat | <code>O(1)</code><code>vec</code> | . | Linear algebra |
-| Sparse | `map[int]map[int]float64` | <code>O(1)</code><code>vec</code> avg | . | Graphs, NLP |
+| Vector | `[]float64` | <code>O(1)</code> | . | 1D Data |
+| Matrix | `[][]float64` | <code>O(1)</code> | . | 2D Data |
+| Tensor | `[][][]float64` | <code>O(1)</code> | . | ML batching |
+| Dense Matrix | `[]float64` flat | <code>O(1)</code> | . | Linear algebra |
+| Sparse | `map[int]map[int]float64` | <code>O(1)</code> avg | . | Graphs, NLP |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 28:</strong> Vectors use standard slices. Matrices use `gonum` for scale. Tensors use flat slices for performance. Parallelize with goroutines for dimensions above 256×256.

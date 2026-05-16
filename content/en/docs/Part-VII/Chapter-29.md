@@ -35,10 +35,10 @@ Exposes hardware cache coherence issues. Adjacent array writes cause "False Shar
 
 | Model | Time | Overhead | Description |
 |-------|------|----------|------------|
-| Sequential | <code>O(T)</code><code>vec</code> | 0 | Baseline execution |
-| Goroutine | <code>O(T/p)</code><code>vec</code> | ~2μs spawn | Lightweight thread |
-| Worker Pool | <code>O(T/p)</code><code>vec</code> | Fixed pool | Goroutine reuse |
-| SIMD (Go asm) | <code>O(T/vec)</code><code>vec</code> | Manual | AVX/SSE instructions |
+| Sequential | <code>O(T)</code> | 0 | Baseline execution |
+| Goroutine | <code>O(T/p)</code> | ~2μs spawn | Lightweight thread |
+| Worker Pool | <code>O(T/p)</code> | Fixed pool | Goroutine reuse |
+| SIMD (Go asm) | <code>O(T/vec)</code> | Manual | AVX/SSE instructions |
 
 ### Pseudocode
 
@@ -122,7 +122,7 @@ Go runtime uses M:N scheduling. Avoid goroutines for microscopic tasks. Tasks sh
 
 | Use Goroutines When... | Avoid If... |
 |--------------------------|------------------|
-| Task is CPU-bound: <code>vec</code>> 1<code>vec</code>ms | Task is too small: <code>vec</code>< 100<code>vec</code>μs |
+| Task is CPU-bound: <code>> 1</code>ms | Task is too small: <code>< 100</code>μs |
 | Independent sub-problems exist | Shared state lacks synchronization |
 | Building pipeline stages | Strict sequential dependency exists |
 
@@ -167,12 +167,12 @@ Preference: channels > `sync/atomic` > `sync.Mutex`. Use `sync.Map` for read-hea
 
 ### Operations & Complexity
 
-| Algorithm | Sequential | Parallel (<code>vec</code>p<code>vec</code> processors) |
+| Algorithm | Sequential | Parallel (<code>p</code> processors) |
 |-----------|------------|-----------------------|
-| Parallel Prefix Sum | <code>O(n)</code><code>vec</code> | <code>O(n/p + log p)</code><code>vec</code> |
-| Parallel Merge Sort | <code>O(n log n)</code><code>vec</code> | <code>O(n/p log(n/p)</code>)<code>vec</code> |
-| Parallel BFS | <code>O(V+E)</code><code>vec</code> | <code>O((V+E)</code>/p + d · log p)<code>vec</code> |
-| Map-Reduce | <code>O(n)</code><code>vec</code> | <code>O(n/p)</code><code>vec</code> |
+| Parallel Prefix Sum | <code>O(n)</code> | <code>O(n/p + log p)</code> |
+| Parallel Merge Sort | <code>O(n log n)</code> | <code>O(n/p log(n/p))</code> |
+| Parallel BFS | <code>O(V+E)</code> | <code>O((V+E)/p + d · log p)</code> |
+| Map-Reduce | <code>O(n)</code> | <code>O(n/p)</code> |
 
 ### Pseudocode
 
@@ -246,7 +246,7 @@ func main() {
 | Use Parallel Map When... | Avoid If... |
 |-----------------------------|------------------|
 | Pure function used: no side effects | Function performs I/O |
-| Array is massive: <code>vec</code>> 10<code>vec</code>K elements | Array is small: <code>vec</code>< 1<code>vec</code>K elements |
+| Array is massive: <code>> 10</code>K elements | Array is small: <code>< 1</code>K elements |
 
 ### Edge Cases & Pitfalls
 
@@ -292,7 +292,7 @@ Buffer sizes affect throughput. I/O-bound tasks need large buffers. CPU-bound ta
 | Mutex | `sync.Mutex` | . | 1 word | State protection |
 | RWMutex | `sync.RWMutex` | . | 1 word | Read-heavy caching |
 | WaitGroup | `sync.WaitGroup` | . | 1 word | Barrier sync |
-| Atomic | `sync/atomic` | <code>O(1)</code><code>vec</code> | . | Lock-free counters |
+| Atomic | `sync/atomic` | <code>O(1)</code> | . | Lock-free counters |
 | Channel | `chan T` | . | . | CSP communication |
 | sync.Map | `sync.Map` | . | . | Concurrent maps |
 | Context | `context.Context` | . | . | Timeouts |
