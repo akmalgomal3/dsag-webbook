@@ -35,10 +35,10 @@ Exposes hardware cache coherence issues. Adjacent array writes cause "False Shar
 
 | Model | Time | Overhead | Description |
 |-------|------|----------|------------|
-| Sequential | $O(T)$ | 0 | Baseline execution |
-| Goroutine | $O(T/p)$ | ~2μs spawn | Lightweight thread |
-| Worker Pool | $O(T/p)$ | Fixed pool | Goroutine reuse |
-| SIMD (Go asm) | $O(T/vec)$ | Manual | AVX/SSE instructions |
+| Sequential | <code>O(T)</code>$ | 0 | Baseline execution |
+| Goroutine | <code>O(T/p)</code>$ | ~2μs spawn | Lightweight thread |
+| Worker Pool | <code>O(T/p)</code>$ | Fixed pool | Goroutine reuse |
+| SIMD (Go asm) | <code>O(T/vec)</code>$ | Manual | AVX/SSE instructions |
 
 ### Pseudocode
 
@@ -169,10 +169,10 @@ Preference: channels > `sync/atomic` > `sync.Mutex`. Use `sync.Map` for read-hea
 
 | Algorithm | Sequential | Parallel ($p$ processors) |
 |-----------|------------|-----------------------|
-| Parallel Prefix Sum | $O(n)$ | $O(n/p + \log p)$ |
-| Parallel Merge Sort | $O(n \log n)$ | $O(n/p \log(n/p))$ |
-| Parallel BFS | $O(V+E)$ | $O((V+E)/p + d \cdot \log p)$ |
-| Map-Reduce | $O(n)$ | $O(n/p)$ |
+| Parallel Prefix Sum | <code>O(n)</code>$ | <code>O(n/p + \log p)</code>$ |
+| Parallel Merge Sort | <code>O(n \log n)</code>$ | <code>O(n/p \log(n/p)</code>)$ |
+| Parallel BFS | <code>O(V+E)</code>$ | <code>O((V+E)</code>/p + d \cdot \log p)$ |
+| Map-Reduce | <code>O(n)</code>$ | <code>O(n/p)</code>$ |
 
 ### Pseudocode
 
@@ -292,7 +292,7 @@ Buffer sizes affect throughput. I/O-bound tasks need large buffers. CPU-bound ta
 | Mutex | `sync.Mutex` | . | 1 word | State protection |
 | RWMutex | `sync.RWMutex` | . | 1 word | Read-heavy caching |
 | WaitGroup | `sync.WaitGroup` | . | 1 word | Barrier sync |
-| Atomic | `sync/atomic` | $O(1)$ | . | Lock-free counters |
+| Atomic | `sync/atomic` | <code>O(1)</code>$ | . | Lock-free counters |
 | Channel | `chan T` | . | . | CSP communication |
 | sync.Map | `sync.Map` | . | . | Concurrent maps |
 | Context | `context.Context` | . | . | Timeouts |

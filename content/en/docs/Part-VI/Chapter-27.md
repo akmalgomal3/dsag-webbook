@@ -20,10 +20,10 @@ Chapter 27 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized q
 
 ## 27.1. Randomized QuickSort
 
-**Definition:** QuickSort using random pivot selection. Prevents $O(n^2)$ worst-case on sorted inputs.
+**Definition:** QuickSort using random pivot selection. Prevents <code>O(n^2)</code> worst-case on sorted inputs.
 
 **Background & Philosophy:**
-Randomness trades absolute certainty for high probability. Deterministic algorithms fail on specific inputs. Las Vegas method breaks deterministic worst-cases. $O(n \log n)$ execution is expected regardless of input.
+Randomness trades absolute certainty for high probability. Deterministic algorithms fail on specific inputs. Las Vegas method breaks deterministic worst-cases. <code>O(n log n)</code> execution is expected regardless of input.
 
 **Use Cases:**
 Default sorting in modern libraries. Prevents CPU burn attacks from malicious sorted data.
@@ -35,10 +35,10 @@ Randomization uses Pseudo-Random Number Generators (PRNGs). Shared PRNG state ca
 
 | Case | Deterministic QS | Randomized QS |
 |-------|-----------------|---------------|
-| Best | $O(n \log n)$ | $O(n \log n)$ |
-| Average | $O(n \log n)$ | $O(n \log n)$ expected |
-| Worst | $O(n^2)$ | $O(n^2)$ with prob $1/n!$ |
-| Space | $O(\log n)$ | $O(\log n)$ expected |
+| Best | <code>O(n log n)</code> | <code>O(n log n)</code> |
+| Average | <code>O(n log n)</code> | <code>O(n log n)</code> expected |
+| Worst | <code>O(n^2)</code> | <code>O(n^2)</code> with prob $1/n!$ |
+| Space | <code>O(log n)</code> | <code>O(log n)</code> expected |
 
 ### Pseudocode
 
@@ -99,7 +99,7 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Randomized QuickSort gives $O(n \log n)$ expected time. Go stdlib `sort.Ints` uses introsort: a hybrid of quicksort, heapsort, and insertion sort. Introsort is preferred for production.
+Randomized QuickSort gives <code>O(n log n)</code> expected time. Go stdlib `sort.Ints` uses introsort: a hybrid of quicksort, heapsort, and insertion sort. Introsort is preferred for production.
 {{% /alert %}}
 
 ### Decision Matrix
@@ -131,10 +131,10 @@ Nodes store array of `next` pointers. Go uses `make([]*SkipNode, lvl)`. Higher m
 
 | Operation | Expected | Worst | Description |
 |---------|----------|-------|------------|
-| Search | $O(\log n)$ | $O(n)$ | High probability success |
-| Insert | $O(\log n)$ | $O(n)$ | Depends on randomized height |
-| Delete | $O(\log n)$ | $O(n)$ | Updates linking pointers |
-| Space | $O(n)$ | $O(n \log n)$ | Expected memory layout |
+| Search | <code>O(log n)</code> | <code>O(n)</code> | High probability success |
+| Insert | <code>O(log n)</code> | <code>O(n)</code> | Depends on randomized height |
+| Delete | <code>O(log n)</code> | <code>O(n)</code> | Updates linking pointers |
+| Space | <code>O(n)</code> | <code>O(n log n)</code> | Expected memory layout |
 
 ### Pseudocode
 
@@ -261,7 +261,7 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Skip list space is $O(n)$ expected. Average height is 2 for $p=0.5$. Large $p$ consumes memory. Small $p$ slows search.
+Skip list space is <code>O(n)</code> expected. Average height is 2 for $p=0.5$. Large $p$ consumes memory. Small $p$ slows search.
 {{% /alert %}}
 
 ### Decision Matrix
@@ -278,7 +278,7 @@ Skip list space is $O(n)$ expected. Average height is 2 for $p=0.5$. Large $p$ c
 
 ## 27.3. Miller-Rabin Primality Test
 
-**Definition:** Monte Carlo algorithm. Tests primality. Error probability $\le 4^{-k}$ after $k$ rounds.
+**Definition:** Monte Carlo algorithm. Tests primality. Error probability <code><= 4^-k</code> after $k$ rounds.
 
 **Background & Philosophy:**
 True primality testing for large numbers is slow. Miller-Rabin uses random witnesses. Witness found: 100% composite. No witness found: probably prime. Mathematical certainty increases with trials.
@@ -293,10 +293,10 @@ Modular exponentiation required. Large numbers exceed 64-bit registers. Go uses 
 
 | Parameter | Time | Error Probability |
 |-----------|------|-------------------|
-| $k$ rounds | $O(k \log^3 n)$ | $\le 4^{-k}$ |
-| $k=5$ | $O(\log^3 n)$ | $< 0.1\%$ |
-| $k=20$ | $O(\log^3 n)$ | $< 10^{-12}$ |
-| $k=40$ | $O(\log^3 n)$ | $< 10^{-24}$ |
+| $k$ rounds | <code>O(k log^3 n)</code> | <code><= 4^-k</code> |
+| $k=5$ | <code>O(log^3 n)</code> | $< 0.1\%$ |
+| $k=20$ | <code>O(log^3 n)</code> | $< 10^{-12}$ |
+| $k=40$ | <code>O(log^3 n)</code> | $< 10^{-24}$ |
 
 ### Idiomatic Go Implementation
 
@@ -326,14 +326,14 @@ Stream intelligence. Large data cannot fit in memory. Processes items once. Main
 Analytics on live streams (Kafka). Sampling massive logs.
 
 **Memory Mechanics:**
-Strictly $O(k)$ memory. Single slice allocated in RAM. Sequential data read. Minimal RAM usage. Zero cache misses during ingestion.
+Strictly <code>O(k)</code> memory. Single slice allocated in RAM. Sequential data read. Minimal RAM usage. Zero cache misses during ingestion.
 
 ### Operations & Complexity
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Reservoir $k$ | $O(1)$ per item | $O(k)$ | Infinite stream handling |
-| Weighted | $O(\log k)$ per item | $O(k)$ | Priority-based sampling |
+| Reservoir $k$ | <code>O(1)</code> per item | <code>O(k)</code> | Infinite stream handling |
+| Weighted | <code>O(log k)</code> per item | <code>O(k)</code> | Priority-based sampling |
 
 Guarantees $k/n$ selection probability for all items. Weighted streams use exponential random variates.
 
@@ -359,17 +359,17 @@ Guarantees $k/n$ selection probability for all items. Weighted streams use expon
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Randomized QuickSort | Las Vegas | $O(n \log n)$ | $O(\log n)$ | General Sorting |
-| Skip List | Las Vegas | $O(\log n)$ | $O(n)$ | Ordered data set |
-| Miller-Rabin | Monte Carlo | $O(k \log^3 n)$ | $O(1)$ | Primality testing |
-| Reservoir Sampling | . | $O(n)$ | $O(k)$ | Infinite Stream sampling |
-| Randomized Select | Las Vegas | $O(n)$ | $O(1)$ | k-th order statistic |
-| Hash Table | Las Vegas | $O(1)$ avg | $O(n)$ | High-speed Dictionary |
-| Bloom Filter | Monte Carlo | $O(k)$ | $O(m)$ | Rapid Membership test |
-| Treap | Las Vegas | $O(\log n)$ | $O(n)$ | Fused BST + heap |
+| Randomized QuickSort | Las Vegas | <code>O(n log n)</code> | <code>O(log n)</code> | General Sorting |
+| Skip List | Las Vegas | <code>O(log n)</code> | <code>O(n)</code> | Ordered data set |
+| Miller-Rabin | Monte Carlo | <code>O(k log^3 n)</code> | <code>O(1)</code> | Primality testing |
+| Reservoir Sampling | . | <code>O(n)</code> | <code>O(k)</code> | Infinite Stream sampling |
+| Randomized Select | Las Vegas | <code>O(n)</code> | <code>O(1)</code> | k-th order statistic |
+| Hash Table | Las Vegas | <code>O(1)</code> avg | <code>O(n)</code> | High-speed Dictionary |
+| Bloom Filter | Monte Carlo | <code>O(k)</code> | <code>O(m)</code> | Rapid Membership test |
+| Treap | Las Vegas | <code>O(log n)</code> | <code>O(n)</code> | Fused BST + heap |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 27:</strong> Probabilistic algorithms use randomness for efficiency. Randomized quicksort avoids $O(n^2)$. Skip lists provide $O(\log n)$ search. Miller-Rabin tests large primes. Reservoir sampling handles infinite streams.
+<strong>Summary Chapter 27:</strong> Probabilistic algorithms use randomness for efficiency. Randomized quicksort avoids <code>O(n^2)</code>. Skip lists provide <code>O(log n)</code> search. Miller-Rabin tests large primes. Reservoir sampling handles infinite streams.
 {{% /alert %}}
 
 ## See Also
