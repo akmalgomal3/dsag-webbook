@@ -214,10 +214,10 @@ Nonce must be unique per encryption. Standard GCM nonce is 12 bytes. Nonce reuse
 
 | Algorithm | Key Size | Sign | Verify | Description |
 |-----------|----------|------|--------|------------|
-| RSA-2048 | 2048 bits | <code>O(n^3)</code>$ | <code>O(n^2)</code>$ | Aging standard |
-| RSA-4096 | 4096 bits | <code>O(n^3)</code>$ | <code>O(n^2)</code>$ | Secure: slow |
-| ECDSA P-256 | 256 bits | <code>O(n^2)</code>$ | <code>O(n^2)</code>$ | Fast: short |
-| Ed25519 | 256 bits | <code>O(n^2)</code>$ | <code>O(n^2)</code>$ | Modern: recommended |
+| RSA-2048 | 2048 bits | <code>O(n^3)</code><code>vec</code> | <code>O(n^2)</code><code>vec</code> | Aging standard |
+| RSA-4096 | 4096 bits | <code>O(n^3)</code><code>vec</code> | <code>O(n^2)</code><code>vec</code> | Secure: slow |
+| ECDSA P-256 | 256 bits | <code>O(n^2)</code><code>vec</code> | <code>O(n^2)</code><code>vec</code> | Fast: short |
+| Ed25519 | 256 bits | <code>O(n^2)</code><code>vec</code> | <code>O(n^2)</code><code>vec</code> | Modern: recommended |
 
 ### Pseudocode
 
@@ -439,12 +439,12 @@ Prefer `golang.org/x/crypto/argon2` for production.
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| SHA-256 | `crypto/sha256` | <code>O(n)</code>$ | 32 bytes | Data integrity |
-| AES-GCM | `crypto/aes` | <code>O(n)</code>$ | . | Symmetric encryption |
-| HMAC | `crypto/hmac` | <code>O(n)</code>$ | . | Message authentication |
-| ECDSA | `crypto/ecdsa` | <code>O(n)</code>$ | . | Digital signatures |
-| Ed25519 | `crypto/ed25519` | <code>O(n)</code>$ | . | Modern signatures |
-| bcrypt | `bcrypt` | <code>O(cost)</code>$ | . | Password hashing |
+| SHA-256 | `crypto/sha256` | <code>O(n)</code><code>vec</code> | 32 bytes | Data integrity |
+| AES-GCM | `crypto/aes` | <code>O(n)</code><code>vec</code> | . | Symmetric encryption |
+| HMAC | `crypto/hmac` | <code>O(n)</code><code>vec</code> | . | Message authentication |
+| ECDSA | `crypto/ecdsa` | <code>O(n)</code><code>vec</code> | . | Digital signatures |
+| Ed25519 | `crypto/ed25519` | <code>O(n)</code><code>vec</code> | . | Modern signatures |
+| bcrypt | `bcrypt` | <code>O(cost)</code><code>vec</code> | . | Password hashing |
 | Argon2 | `argon2` | . | . | Advanced password hashing |
 | TLS | `crypto/tls` | . | . | Secure transport |
 

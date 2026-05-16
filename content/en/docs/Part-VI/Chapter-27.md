@@ -37,7 +37,7 @@ Randomization uses Pseudo-Random Number Generators (PRNGs). Shared PRNG state ca
 |-------|-----------------|---------------|
 | Best | <code>O(n log n)</code> | <code>O(n log n)</code> |
 | Average | <code>O(n log n)</code> | <code>O(n log n)</code> expected |
-| Worst | <code>O(n^2)</code> | <code>O(n^2)</code> with prob $1/n!$ |
+| Worst | <code>O(n^2)</code> | <code>O(n^2)</code> with prob <code>vec</code>1<code>1/n!</code> |
 | Space | <code>O(log n)</code> | <code>O(log n)</code> expected |
 
 ### Pseudocode
@@ -112,7 +112,7 @@ Randomized QuickSort gives <code>O(n log n)</code> expected time. Go stdlib `sor
 ### Edge Cases & Pitfalls
 
 - **Equal elements:** Lomuto partition fails. Use 3-way partition (Dutch National Flag).
-- **Recursion depth:** Large $n$ causes stack overflow. Use introsort or iterative methods.
+- **Recursion depth:** Large <code>vec</code>n<code>vec</code> causes stack overflow. Use introsort or iterative methods.
 
 ## 27.2. <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr>
 
@@ -261,7 +261,7 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Skip list space is <code>O(n)</code> expected. Average height is 2 for $p=0.5$. Large $p$ consumes memory. Small $p$ slows search.
+Skip list space is <code>O(n)</code> expected. Average height is 2 for <code>vec</code>p=0.5<code>vec</code>. Large <code>vec</code>p<code>vec</code> consumes memory. Small <code>vec</code>p<code>vec</code> slows search.
 {{% /alert %}}
 
 ### Decision Matrix
@@ -274,11 +274,11 @@ Skip list space is <code>O(n)</code> expected. Average height is 2 for $p=0.5$. 
 ### Edge Cases & Pitfalls
 
 - **Weak RNG:** Probability logic fails without good randomness. Use robust seeds.
-- **Max Level:** $p=0.5$ and maxLevel=16 supports $n \approx 65536$. Increase limit for larger data.
+- **Max Level:** <code>vec</code>p=0.5<code>vec</code> and maxLevel=16 supports <code>vec</code>n \approx 65536<code>vec</code>. Increase limit for larger data.
 
 ## 27.3. Miller-Rabin Primality Test
 
-**Definition:** Monte Carlo algorithm. Tests primality. Error probability <code><= 4^-k</code> after $k$ rounds.
+**Definition:** Monte Carlo algorithm. Tests primality. Error probability <code><= 4^-k</code> after <code>vec</code>k<code>vec</code> rounds.
 
 **Background & Philosophy:**
 True primality testing for large numbers is slow. Miller-Rabin uses random witnesses. Witness found: 100% composite. No witness found: probably prime. Mathematical certainty increases with trials.
@@ -293,10 +293,10 @@ Modular exponentiation required. Large numbers exceed 64-bit registers. Go uses 
 
 | Parameter | Time | Error Probability |
 |-----------|------|-------------------|
-| $k$ rounds | <code>O(k log^3 n)</code> | <code><= 4^-k</code> |
-| $k=5$ | <code>O(log^3 n)</code> | $< 0.1\%$ |
-| $k=20$ | <code>O(log^3 n)</code> | $< 10^{-12}$ |
-| $k=40$ | <code>O(log^3 n)</code> | $< 10^{-24}$ |
+| <code>vec</code>k<code>vec</code> rounds | <code>O(k log^3 n)</code> | <code><= 4^-k</code> |
+| <code>vec</code>k=5<code>vec</code> | <code>O(log^3 n)</code> | <code>vec</code>< 0.1\%<code>vec</code> |
+| <code>vec</code>k=20<code>vec</code> | <code>O(log^3 n)</code> | <code>< 10^-12</code> |
+| <code>vec</code>k=40<code>vec</code> | <code>O(log^3 n)</code> | <code>< 10^-24</code> |
 
 ### Idiomatic Go Implementation
 
@@ -307,20 +307,20 @@ Use `math/big.Int.ProbablePrime()` for production.
 | Use Miller-Rabin When... | Avoid If... |
 |-----------------------------|------------------|
 | Testing large primes | Deterministic guarantee required: use a deterministic primality algorithm for bounded input ranges |
-| Cryptographic key generation | $n < 2^{64}$: use optimized deterministic test |
+| Cryptographic key generation | <code>vec</code>n<code>n < 2^64</code>: use optimized deterministic test |
 
 ### Edge Cases & Pitfalls
 
 - **Carmichael numbers:** Miller-Rabin identifies these correctly.
 - **Modular overflow:** Use `math/big.Int` arithmetic (`Mul` + `Mod` or `Exp`) for large values.
-- **Deterministic variant:** Testing against base {2, 3, 5, 7, 11, 13, 17} is deterministic for $n < 2^{64}$.
+- **Deterministic variant:** Testing against base {2, 3, 5, 7, 11, 13, 17} is deterministic for <code>vec</code>n<code>n < 2^64</code>.
 
 ## 27.4. Reservoir Sampling
 
-**Definition:** Selects $k$ random items from infinite stream. No total size knowledge required.
+**Definition:** Selects <code>vec</code>k<code>vec</code> random items from infinite stream. No total size knowledge required.
 
 **Background & Philosophy:**
-Stream intelligence. Large data cannot fit in memory. Processes items once. Maintains reservoir of size $k$. Probability of replacement ensures fairness.
+Stream intelligence. Large data cannot fit in memory. Processes items once. Maintains reservoir of size <code>vec</code>k<code>vec</code>. Probability of replacement ensures fairness.
 
 **Use Cases:**
 Analytics on live streams (Kafka). Sampling massive logs.
@@ -332,21 +332,21 @@ Strictly <code>O(k)</code> memory. Single slice allocated in RAM. Sequential dat
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Reservoir $k$ | <code>O(1)</code> per item | <code>O(k)</code> | Infinite stream handling |
+| Reservoir <code>vec</code>k<code>vec</code> | <code>O(1)</code> per item | <code>O(k)</code> | Infinite stream handling |
 | Weighted | <code>O(log k)</code> per item | <code>O(k)</code> | Priority-based sampling |
 
-Guarantees $k/n$ selection probability for all items. Weighted streams use exponential random variates.
+Guarantees <code>vec</code>k/n<code>vec</code> selection probability for all items. Weighted streams use exponential random variates.
 
 ### Decision Matrix
 
 | Use Reservoir When... | Avoid If... |
 |--------------------------|------------------|
-| Stream exceeds memory | $N$ is known: use random shuffle |
+| Stream exceeds memory | <code>vec</code>N<code>vec</code> is known: use random shuffle |
 | Real-time sampling needed | Complex stratified sampling required |
 
 ### Edge Cases & Pitfalls
 
-- **$k > n$:** Handle streams shorter than $k$.
+- **<code>vec</code>k<code>k > n</code>:** Handle streams shorter than <code>vec</code>k<code>vec</code>.
 - **Biased RNG:** Use `crypto/rand` for high-stakes randomness.
 
 ### Anti-Patterns

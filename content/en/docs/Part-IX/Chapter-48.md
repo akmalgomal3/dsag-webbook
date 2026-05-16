@@ -113,7 +113,7 @@ Binary search finds pattern P in <code>O(\|P\| log n)</code>.
 
 ### Edge Cases & Pitfalls
 
-- **Sentinels:** Append `$` to prevent one suffix being a prefix of another.
+- **Sentinels:** Append `<code>vec</code>` to prevent one suffix being a prefix of another.
 - **Scaling:** Use compressed suffix arrays for massive genomes.
 - **Efficiency:** Naive <code>O(n² log n)</code> sort fails for n > 10⁵. Use SA-IS algorithm.
 
