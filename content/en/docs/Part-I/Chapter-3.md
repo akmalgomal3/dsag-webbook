@@ -41,6 +41,24 @@ Go uses concurrent Garbage Collector (GC). Tracks object references. Compiler es
 | Goroutine | Cheap concurrency | Scheduling overhead |
 
 
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import (
+	"fmt"
+	"runtime"
+)
+
+func main() {
+	// Go provides native access to hardware info
+	fmt.Printf("OS: %s\n", runtime.GOOS)
+	fmt.Printf("Arch: %s\n", runtime.GOARCH)
+	fmt.Printf("CPUs: %d\n", runtime.NumCPU())
+}
+```
+
 ### Decision Matrix
 
 | Prefer This Approach When... | Prefer Alternatives When... |
@@ -224,15 +242,6 @@ func BenchmarkSum(b *testing.B) {
 | Slice | `[]T` | `O(1)` access | `O(n)` | Dynamic collection |
 | Map | `map[K]V` | `O(1)` avg | `O(n)` | Key-value lookup |
 | Benchmark | `go test` | N/A | N/A | Measure speed |
-
-
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 3:</strong> Go offers simplicity, fast execution, strong tooling. Leverage slices. Understand memory allocation. Measure with benchmarks.

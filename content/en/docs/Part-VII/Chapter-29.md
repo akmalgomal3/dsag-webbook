@@ -15,7 +15,7 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 30 discusses parallel and distributed algorithms. Uses goroutines, channels, and worker pools in Go.
+Chapter 29 discusses parallel and distributed algorithms. Uses goroutines, channels, and worker pools in Go.
 {{% /alert %}}
 
 ## 29.1. Parallelism in Go
@@ -38,7 +38,7 @@ Exposes hardware cache coherence issues. Adjacent array writes cause "False Shar
 | Sequential | <code>O(T)</code> | 0 | Baseline execution |
 | Goroutine | <code>O(T/p)</code> | ~2μs spawn | Lightweight thread |
 | Worker Pool | <code>O(T/p)</code> | Fixed pool | Goroutine reuse |
-| SIMD (Go asm) | <code>O(T/vec)</code> | Manual | AVX/SSE instructions |
+| SIMD (Go asm) | <code>O(T/v)</code> | Manual | AVX/SSE instructions |
 
 ### Pseudocode
 

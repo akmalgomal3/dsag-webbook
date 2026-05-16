@@ -1,7 +1,7 @@
 ---
 weight: 200
 title: "Table of Contents"
-description: "Complete table of contents for Modern Data Structures and Algorithms in Go"
+description: "Detailed roadmap of Modern Data Structures and Algorithms in Go. Navigate through 12 parts and 60 chapters covering foundations, advanced structures, and real-world optimizations."
 icon: "toc"
 date: "2026-05-12T00:00:00+07:00"
 lastmod: "2026-05-12T00:00:00+07:00"
