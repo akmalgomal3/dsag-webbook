@@ -116,14 +116,6 @@ To find √A:
 | 1830s | Babbage/Lovelace | Modern programs |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 39:</strong> Algorithms are ancient problem-solving tools. Break complex problems into simple, repeatable steps. History reveals timeless nature of good design.
 {{% /alert %}}

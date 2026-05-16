@@ -131,14 +131,6 @@ Recurrence defines <abbr title="A method for solving complex problems by breakin
 | No direct equivalent | Requires manual implementation |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 56:</strong> Kadane's algorithm demonstrates <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> principles. Single pass with <code>O(1)</code> space solves <code>O(n^2)</code> problem. Core lesson: derive optimal state at position i from position i-1.
 {{% /alert %}}

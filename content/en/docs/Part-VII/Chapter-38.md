@@ -188,14 +188,6 @@ func isBitSet(n, i int) bool {
 | Subset enumeration | `for mask := 0; mask < (1<<n); mask++` | Combinatorics |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 38:</strong> Bit manipulation enables efficient solutions. Tricks include power-of-two checks, bit counting, and subset enumeration. Use `uint` in Go to avoid sign extension. Prioritize clarity unless performance is critical.
 {{% /alert %}}

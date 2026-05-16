@@ -323,14 +323,6 @@ func main() {
 | Mutex | `sync.Mutex` | Contention | . | Shared state lock |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 4:</strong> Go provides safe pointers, dynamic slices, Generics, Iterators, and CSP concurrency. Avoid hidden allocations. Respect hardware limits.
 {{% /alert %}}

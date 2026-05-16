@@ -199,14 +199,6 @@ func main() {
 | BFS | Queue | `O(V+E)` | `O(V)` | Shortest | Shortest path |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 13:</strong> DFS explores deeply. BFS maps radially. Modern Go leverages Generics and Iterators for clean traversal.
 {{% /alert %}}

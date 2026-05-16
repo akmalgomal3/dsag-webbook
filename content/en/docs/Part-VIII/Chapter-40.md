@@ -109,14 +109,6 @@ Verifiable in <abbr title="An algorithm whose running time is bounded by a polyn
 | Knuth | Algorithm analysis | Standardized Big-O |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 40:</strong> 20th-century revolution turned math into engineering. Turing machines defined computability. Complexity theory defined efficiency. P vs NP guides heuristic choices.
 {{% /alert %}}

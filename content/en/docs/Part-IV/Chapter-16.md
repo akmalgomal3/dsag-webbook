@@ -330,14 +330,6 @@ func main() {
 | Borůvka | Union-Find | <code>O(E log V)</code> | <code>O(V)</code> | Parallel, distributed |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 16:</strong> Kruskal uses edge lists. Prim uses adjacency lists for dense graphs. Borůvka supports parallel processing.
 {{% /alert %}}

@@ -234,14 +234,6 @@ func main() {
 | V×Dijkstra | <code>O(VE log V)</code> | <code>O(V^2)</code> | Non-negative | No |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 15:</strong> Floyd-Warshall for dense graphs. Johnson's for sparse graphs with negatives. Density determines algorithm choice.
 {{% /alert %}}

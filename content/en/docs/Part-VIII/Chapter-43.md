@@ -111,14 +111,6 @@ Go design reflects algorithmic virtues:
 | Gall's Law | John Gall | Complex systems evolve from simple ones |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 43:</strong> Algorithms are philosophy in code. Efficiency is about trade-offs. Simplicity outlives complexity. Limitations reveal when judgment is needed.
 {{% /alert %}}

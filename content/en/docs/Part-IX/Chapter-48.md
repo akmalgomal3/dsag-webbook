@@ -138,14 +138,6 @@ Binary search finds pattern P in <code>O(\|P\| log n)</code>.
 | `index/suffixarray` | Production implementation. |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 Suffix arrays transform string matching into binary search. Space efficient. sorting all suffixes solves complex string problems.
 {{% /alert %}}

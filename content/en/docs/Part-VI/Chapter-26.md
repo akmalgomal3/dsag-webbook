@@ -150,7 +150,6 @@ package main
 import (
     "fmt"
     "math/rand"
-    "time"
 )
 
 func mergeSort(arr []int) []int {
@@ -687,14 +686,6 @@ Thresholding limits <abbr title="A lightweight concurrent execution thread manag
 | N-Queens | <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> | <code>O(n!)</code> | <code>O(n)</code> | Constraint |
 | Binary Search | []int | <code>O(log n)</code> | <code>O(1)</code> | Sorted search |
 
-
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Advanced <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> implements <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>, and parallelism. Caching stops redundancy. Thresholds stop overhead.

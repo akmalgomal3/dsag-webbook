@@ -213,14 +213,6 @@ func main() {
 | 0/1 Knapsack | N/A | N/A | N/A | No |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Greedy algorithms trade reconsideration for speed. Verify with exchange argument. Use `sort.Slice` and `container/heap` in Go.
 {{% /alert %}}

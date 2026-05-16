@@ -121,14 +121,6 @@ Leaf update triggers copying leaf and all ancestors to root. Non-modified siblin
 | Slice sharing | Array sharing without full persistence. |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 Persistence trades space for history. Structural sharing minimizes overhead. Immutability prevents mutation-based bugs.
 {{% /alert %}}

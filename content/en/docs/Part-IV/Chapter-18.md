@@ -293,14 +293,6 @@ func main() {
 | Hopcroft-Karp | `[][]int` adj | <code>O(E √V)</code> | <code>O(V)</code> | Max cardinality matching |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 18:</strong> Bipartite matching optimization. Use Hungarian for weighted costs. Use Hopcroft-Karp for large-scale unweighted matching.
 {{% /alert %}}

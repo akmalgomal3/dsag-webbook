@@ -174,14 +174,6 @@ func main() {
 | Coin Change | `[]int` | <code>O(nk)</code> | <code>O(n)</code> | 1D DP |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> DP solves exponential recursive problems in polynomial time. Identify states. Define recurrence. Initialize base cases. Fill table. Use slices for speed.
 {{% /alert %}}

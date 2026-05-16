@@ -221,14 +221,6 @@ func main() {
 | Sudoku | `[][]int` | <code>O(9^m)</code> | <code>O(81)</code> | Constraint propagation |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Backtracking explores solution space systematically. Build candidates. Validate. Recurse. Undo. Go slices require proper cleanup.
 {{% /alert %}}

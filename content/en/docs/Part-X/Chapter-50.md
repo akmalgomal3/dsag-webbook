@@ -133,14 +133,6 @@ Explore descendants first. Push vertices to stack. Reverse result.
 | `go/build` | Uses topo sort for package imports |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 50:</strong> Topological sort linearizes dependencies. Method provides execution plans. Kahn's algorithm processes prerequisites sequentially.
 {{% /alert %}}

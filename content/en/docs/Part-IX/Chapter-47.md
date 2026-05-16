@@ -179,14 +179,6 @@ func main() {
 | `github.com/hashicorp/golang-lru` | Production-ready implementation. |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 LRU caches combine hash tables for speed and linked lists for order. Powers database query layers and web servers.
 {{% /alert %}}

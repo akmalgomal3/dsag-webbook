@@ -253,14 +253,6 @@ func main() {
 | Slice | `[]T` | <code>O(1)</code> | <code>O(n)</code> | <code>O(n)</code> | Contiguous |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Linked lists provide O(1) edits at known positions. Random access is slow. Slices are better for most Go code due to cache performance.
 {{% /alert %}}

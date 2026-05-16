@@ -240,14 +240,6 @@ func main() {
 | Stack | `[]T` + Generics | `O(1)` pop | . | LIFO |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 5:</strong> Slices remain primary Go collection. Maps provide fast `O(1)` lookup. Modern `slices` and `maps` packages simplify usage. Structs maintain hardware sympathy via contiguous memory layout.
 {{% /alert %}}

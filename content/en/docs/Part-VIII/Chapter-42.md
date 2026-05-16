@@ -111,14 +111,6 @@ func approximateSolution(data []Item) Solution {
 | Online | Streaming input | Sliding window |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 42:</strong> Modern design transcends Big-O. Emphasizes cache, parallelism, approximation. Balances theory with hardware reality.
 {{% /alert %}}

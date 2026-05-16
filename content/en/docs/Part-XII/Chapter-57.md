@@ -266,14 +266,6 @@ Maximizer finds move worth 5. Minimizer finds response worth 3. Minimizer avoids
 | No direct stdlib | Implement natively for game AI |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 57:</strong> <abbr title="A decision rule used in two-player zero-sum games that minimizes possible loss for a worst-case scenario.">Minimax</abbr> embodies strategic thinking. Algorithm assumes opponent intelligence and plans accordingly. Alpha-beta pruning eliminates impossible branches. Minimax remains foundation of competitive game AI.
 {{% /alert %}}

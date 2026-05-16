@@ -188,14 +188,6 @@ func main() {
 | Sparse Table | `[][]int` | <code>O(1)</code> | . | <code>O(n log n)</code> |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 37:</strong> Segment and Fenwick trees handle range queries efficiently. Use Fenwick for sum queries. Use Segment trees for min/max or range updates. Implement Fenwick with 1-based indexing in Go.
 {{% /alert %}}

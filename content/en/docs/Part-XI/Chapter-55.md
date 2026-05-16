@@ -171,14 +171,6 @@ func main() {
 | <code>strings</code> | <code>Contains</code> and <code>Index</code> provide basic substring operations. |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 55:</strong> Two pointers and sliding window yield linear-time processing. Single passes replace nested loops. Patterns apply to pairs, subarrays, and substrings.
 {{% /alert %}}

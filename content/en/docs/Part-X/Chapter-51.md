@@ -163,14 +163,6 @@ Single-pass DFS identifies SCC roots. Discovery times and low-link values enable
 | No direct stdlib | Implement manually for deep graph analysis |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 51:</strong> SCCs reveal cyclic structures. Contraction enables graph analysis. Algorithms achieve linear time complexity.
 {{% /alert %}}

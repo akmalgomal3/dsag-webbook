@@ -125,14 +125,6 @@ Modern CPUs bridge performance gap between Registers and <abbr title="Random Acc
 | 2010s | Concurrent | Multi-core |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 41:</strong> Data structures evolved with hardware. Arrays for physical memory. Hash tables for speed. Cache-aware structures for modern CPUs. Best structure depends on hardware and workload.
 {{% /alert %}}

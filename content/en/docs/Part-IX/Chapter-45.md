@@ -181,14 +181,6 @@ Skip lists maintain <code>O(log n)</code> height with high probability. Expected
 | `sync.Map` | Inspired by skip list principles. |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 Randomization replaces deterministic complexity. Coin flips build express lanes. <code>O(log n)</code> performance with minimal implementation risk.
 {{% /alert %}}

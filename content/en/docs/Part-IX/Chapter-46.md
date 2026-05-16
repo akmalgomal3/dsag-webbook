@@ -158,14 +158,6 @@ p ≈ (1 - e^(-kn/m))^k
 | `github.com/bits-and-blooms` | Production implementation. |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 Bloom filters save space by accepting tunable error. Zero false negatives. Ideal for high-scale avoidance of expensive disk lookups.
 {{% /alert %}}

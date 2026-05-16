@@ -206,14 +206,6 @@ func main() {
 | Go slices.Sort | `O(n log n)` | `O(log n)` | No | Production |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 19:</strong> Basic sorts run `O(n^2)`. Mostly educational. Insertion Sort remains relevant for small datasets as hybrid base case. Always prefer `slices` package for production.
 {{% /alert %}}

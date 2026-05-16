@@ -200,14 +200,6 @@ func interpolationSearch(arr []int, target int) int {
 | Binary Search | `slices.BinarySearch` | Sorted | `O(log n)` |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 21:</strong> Prefer `slices` package. Linear search for unstructured data. Binary search for sorted data. Interpolation search minimizes cache misses on uniform numerical data.
 {{% /alert %}}

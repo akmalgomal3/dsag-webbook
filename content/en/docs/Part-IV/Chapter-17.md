@@ -404,14 +404,6 @@ func main() {
 | Min-Cost Flow | Dijkstra + PQ | <code>O(F · E log V)</code> | <code>O(V²)</code> | Logistics optimization |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 17:</strong> Network flow optimization. Use Edmonds-Karp for stability, Dinic for performance, and Min-Cost Flow for logistics.
 {{% /alert %}}

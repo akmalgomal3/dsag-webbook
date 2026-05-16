@@ -155,14 +155,6 @@ func main() {
 | `image` | Point representations |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 **Summary Chapter 59:** The convex hull is the gateway to <abbr title="Algorithms for solving geometric problems">computational geometry</abbr>. Andrew's monotone chain achieves <code>O(n log n)</code> time. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr> is the fundamental primitive.
 {{% /alert %}}

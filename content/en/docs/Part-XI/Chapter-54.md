@@ -188,14 +188,6 @@ Bucket Sort distributes elements to ranges. Individual buckets sort separately. 
 | No native non-comparison sort | Implement manually for specialized, integer-bound cases. |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 54:</strong> Linear-time sorting proves <code>O(n log n)</code> limit is conditional. Exploiting range or structure yields <code>O(n)</code> efficiency. Performance comes from domain knowledge.
 {{% /alert %}}

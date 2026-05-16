@@ -227,14 +227,6 @@ func main() {
 | Red-Black | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(log n)</code> | Relaxed |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> BST provides ordered storage. AVL keeps strict balance. Red-Black trade balance for insertion speed.
 {{% /alert %}}

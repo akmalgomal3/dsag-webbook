@@ -184,14 +184,6 @@ func main() {
 | Bellman-Ford | <code>O(VE)</code> | <code>O(V)</code> | Yes | Yes |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 14:</strong> Dijkstra is optimal for positive weights. Bellman-Ford handles negatives and cycles. Use <code>container/heap</code> for Dijkstra in Go.
 {{% /alert %}}

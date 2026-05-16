@@ -138,14 +138,6 @@ Nodes overflow at m keys. Node splits in two. Median key promotes to parent. Tre
 | `go.etcd.io/bbolt` | B+ tree implementation. |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 B-trees optimize for massive disk seeks. Nodes match disk blocks. B+ trees enable fast range queries via linked leaves.
 {{% /alert %}}

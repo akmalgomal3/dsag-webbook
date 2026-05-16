@@ -213,14 +213,6 @@ func main() {
 | `container/heap` | Priority queue for managing the open set |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 52:</strong> A* provides informed pathfinding. Heuristics guide Dijkstra's logic. Heuristic quality determines search speed.
 {{% /alert %}}

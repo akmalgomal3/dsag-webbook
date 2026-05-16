@@ -254,14 +254,6 @@ func heapify[T cmp.Ordered](arr []T, n, i int) {
 | Go slices.Sort | Generic | `O(n log n)` | `O(log n)` | No | Standard library default |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 20:</strong> Advanced sorting achieves `O(n log n)` via Divide and Conquer, Partitioning, or Priority Management. Modern Go utilizes Generics for safety and Context for robust parallelization.
 {{% /alert %}}

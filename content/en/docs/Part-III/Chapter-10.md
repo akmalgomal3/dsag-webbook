@@ -115,14 +115,6 @@ func main() {
 | Priority Queue | `heap.Interface` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Task queue |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Heaps allow fast extreme-value access. Use for priority queues and graph algorithms. Not for general searching.
 {{% /alert %}}

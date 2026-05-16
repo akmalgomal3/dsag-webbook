@@ -130,14 +130,6 @@ Logic: Vertex u is articulation point if:
 | No direct stdlib | Implement for network analysis |
 
 
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
-
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 53:</strong> Tarjan's algorithm identifies network vulnerabilities. Linear traversal finds every bridge. Algorithm enables reliability planning.
 {{% /alert %}}
