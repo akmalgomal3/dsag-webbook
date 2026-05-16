@@ -27,3 +27,4 @@ node_modules/
 
 # Subagent artifacts — never commit review JSON or temp outputs
 review-*.json
+RINGKASAN-*.md
