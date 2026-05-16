@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The best way to predict the future is to invent it.</em>" : Alan Kay</strong>
+<strong>"<em>The best way to predict the future is to invent it.</em>" — Alan Kay</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -38,6 +38,15 @@ Mathematical abstraction maps to physical RAM. `O(n)` space means linear memory 
 | Time Complexity | `T(n)` | Execution time vs input size |
 | Space Complexity | `S(n)` | Memory used |
 | Auxiliary Space | `O(1)`, `O(n)` | Extra memory beyond input |
+
+
+### Decision Matrix
+
+| Prefer This Approach When... | Prefer Alternatives When... |
+|-----------------------------|------------------------------|
+| Input constraints are known and stable. | Constraints change frequently or are unknown. |
+| You need predictable complexity bounds. | You prioritize implementation speed over guarantees. |
+| The trade-off is clear for production usage. | Benchmark evidence is insufficient. |
 
 ### Edge Cases & Pitfalls
 - **Constant factors:** Big-O ignores constants. `O(n)` with massive constant runs slower than `O(n log n)`.
@@ -69,7 +78,6 @@ Use Generics for reusable, type-safe algorithms.
 package main
 
 import (
-	"cmp"
 	"fmt"
 	"slices"
 )

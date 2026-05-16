@@ -18,7 +18,7 @@ Mo's algorithm sorts range queries cleverly. Reordering minimizes recalculation.
 Mo's algorithm uses <abbr title="A technique that divides a problem into blocks of size sqrt(N) to optimize query processing.">sqrt-decomposition</abbr> for offline range queries. Reordering queries minimizes pointer movement.
 {{% /alert %}}
 
-## 59.1. The Offline Query Problem
+## 58.1. The Offline Query Problem
 
 **Definition:** <abbr title="An algorithm that answers range queries by sorting them in a specific order to minimize pointer movement.">Mo's algorithm</abbr> reorders queries. It derives answers from previous states via minimal adjustment.
 
@@ -38,7 +38,7 @@ Batching queries into `√N` blocks reduces memory sweeps. Incremental pointer m
 | <code>O(Q × range)</code> | <code>O((N + Q) × √N)</code> |
 | Process queries in given order | Sort queries by block, then endpoint |
 
-## 59.2. Algorithm Steps
+## 58.2. Algorithm Steps
 
 1. Divide array into blocks of size ≈ √N.
 2. Sort queries by block index, then right endpoint.
@@ -136,7 +136,7 @@ func main() {
 }
 ```
 
-## 59.3. Functionality
+## 58.3. Functionality
 
 | Problem | Add/Remove | Complexity |
 |---------|-----------|------------|
@@ -144,7 +144,7 @@ func main() {
 | Mode in range | Update frequency counts | <code>O((N+Q)√N)</code> |
 | Sum of frequencies | Simple arithmetic | <code>O((N+Q)√N)</code> |
 
-## 59.4. Decision Matrix
+## 58.4. Decision Matrix
 
 | Use Mo's When... | Use Segment Tree When... |
 |-----------------|---------------------------|
@@ -165,7 +165,7 @@ func main() {
 - **Expensive updates:** Slow add or remove operations balloon complexity to O(Q × N × √N).
 - **Suboptimal sorting:** Simple block sorting causes cache misses. Hilbert curves preserve spatial locality.
 
-## 59.5. Quick Reference
+## 58.5. Quick Reference
 
 | Parameter | Formula |
 |-----------|---------|
@@ -176,6 +176,15 @@ func main() {
 | Go stdlib | Usage |
 |-----------|-------|
 | `sort` | Query sorting |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 **Summary Chapter 58:** Mo's algorithm reorders queries to minimize boundary movement. It transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. 

@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The B-tree is the data structure that made modern databases possible.</em>" : Rudolf Bayer</strong>
+<strong>"<em>The B-tree is the data structure that made modern databases possible.</em>" — Rudolf Bayer</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -111,7 +111,7 @@ Nodes overflow at m keys. Node splits in two. Median key promotes to parent. Tre
 | Range queries needed | Point lookups only |
 | Sequential access matters | Random access only |
 
-### Constraints & Risks
+### Edge Cases & Pitfalls
 
 - **Small m:** Nodes smaller than blocks waste I/O bandwidth.
 - **Concurrency:** Requires latching protocols (crabbing).
@@ -136,6 +136,15 @@ Nodes overflow at m keys. Node splits in two. Median key promotes to parent. Tre
 |-----------|-------|
 | `database/sql` | Uses B-trees internally. |
 | `go.etcd.io/bbolt` | B+ tree implementation. |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 B-trees optimize for massive disk seeks. Nodes match disk blocks. B+ trees enable fast range queries via linked leaves.

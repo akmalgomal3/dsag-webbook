@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>Difficulty holds opportunity. : Albert Einstein</strong>
+<strong>"<em>Difficulty holds opportunity.</em>" — Albert Einstein</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -190,7 +190,16 @@ func main() {
 | Constraints prune search | Problem size > 20 |
 | Exact solution required | Approximation suffices |
 
-### Pitfalls & Errors
+
+### Decision Matrix
+
+| Prefer This Approach When... | Prefer Alternatives When... |
+|-----------------------------|------------------------------|
+| Input constraints are known and stable. | Constraints change frequently or are unknown. |
+| You need predictable complexity bounds. | You prioritize implementation speed over guarantees. |
+| The trade-off is clear for production usage. | Benchmark evidence is insufficient. |
+
+### Edge Cases & Pitfalls
 
 - **State Management:** Restore state after recursion.
 - **Pruning:** Missing pruning causes brute-force degradation.
@@ -210,6 +219,15 @@ func main() {
 | Subset Sum | Recursion | <code>O(2^n)</code> | <code>O(n)</code> | Include/exclude element |
 | Permutations | Recursion | <code>O(n!)</code> | <code>O(n)</code> | Track used elements |
 | Sudoku | `[][]int` | <code>O(9^m)</code> | <code>O(81)</code> | Constraint propagation |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Backtracking explores solution space systematically. Build candidates. Validate. Recurse. Undo. Go slices require proper cleanup.

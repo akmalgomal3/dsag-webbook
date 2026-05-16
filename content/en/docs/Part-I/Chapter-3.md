@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Programs must be written for people to read, and only incidentally for machines to execute.</em>" : Harold Abelson</strong>
+<strong>"<em>Programs must be written for people to read, and only incidentally for machines to execute.</em>" — Harold Abelson</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -39,6 +39,15 @@ Go uses concurrent Garbage Collector (GC). Tracks object references. Compiler es
 | Slice | Amortized `O(1)` append | Triggers reallocation |
 | Map | `O(1)` avg lookup | Unordered, non-concurrent |
 | Goroutine | Cheap concurrency | Scheduling overhead |
+
+
+### Decision Matrix
+
+| Prefer This Approach When... | Prefer Alternatives When... |
+|-----------------------------|------------------------------|
+| Input constraints are known and stable. | Constraints change frequently or are unknown. |
+| You need predictable complexity bounds. | You prioritize implementation speed over guarantees. |
+| The trade-off is clear for production usage. | Benchmark evidence is insufficient. |
 
 ### Edge Cases & Pitfalls
 - **Array vs slice:** Arrays copy by value. Slices copy by reference (header only).
@@ -122,7 +131,7 @@ Paradigms rely on call stack. Recursion adds stack frames. Go goroutine stack st
 ### Idiomatic Go Implementation
 
 ```go
-package main
+package benchmark
 
 import "fmt"
 
@@ -215,6 +224,15 @@ func BenchmarkSum(b *testing.B) {
 | Slice | `[]T` | `O(1)` access | `O(n)` | Dynamic collection |
 | Map | `map[K]V` | `O(1)` avg | `O(n)` | Key-value lookup |
 | Benchmark | `go test` | N/A | N/A | Measure speed |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 3:</strong> Go offers simplicity, fast execution, strong tooling. Leverage slices. Understand memory allocation. Measure with benchmarks.

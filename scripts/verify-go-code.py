@@ -7,7 +7,7 @@ import tempfile
 import glob
 
 BASE = "content/en/docs"
-results = {"ok": 0, "skip": 0, "fail": 0, "errors": []}
+results = {"ok": 0, "skip": 0, "fail": 0, "errors": [], "skip_reasons": {}}
 
 for md_file in glob.glob(f"{BASE}/**/Chapter-*.md", recursive=True):
     with open(md_file, "r", encoding="utf-8") as f:
@@ -25,10 +25,18 @@ for md_file in glob.glob(f"{BASE}/**/Chapter-*.md", recursive=True):
         # or has obvious placeholder text
         if "package main" not in code and "package " not in code:
             results["skip"] += 1
+            results["skip_reasons"]["no_package_decl"] = results["skip_reasons"].get("no_package_decl", 0) + 1
             continue
-        if "placeholder" in code.lower() or "..." in code:
+        if "placeholder" in code.lower():
             results["skip"] += 1
+            results["skip_reasons"]["placeholder"] = results["skip_reasons"].get("placeholder", 0) + 1
             continue
+        if "golang.org/x/" in code:
+            results["skip"] += 1
+            results["skip_reasons"]["external_module"] = results["skip_reasons"].get("external_module", 0) + 1
+            continue
+        if "package main" in code and "func main(" not in code:
+            code += "\n\nfunc main() {}\n"
         
         # Try to compile
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -52,6 +60,10 @@ for md_file in glob.glob(f"{BASE}/**/Chapter-*.md", recursive=True):
 print(f"Compile OK:   {results['ok']}")
 print(f"Skipped:      {results['skip']}")
 print(f"Failed:       {results['fail']}")
+if results["skip_reasons"]:
+    print("\nSkip reasons:")
+    for reason, count in sorted(results["skip_reasons"].items()):
+        print(f"  - {reason}: {count}")
 if results["errors"]:
     print("\nErrors:")
     for err in results["errors"][:10]:

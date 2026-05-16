@@ -18,7 +18,7 @@ The convex hull is the fundamental operation of <abbr title="Algorithms for solv
 The <abbr title="The smallest convex set that contains a given set of points, analogous to stretching a rubber band around the points.">convex hull</abbr> is the smallest convex shape containing all points. Andrew's Monotone Chain is the standard algorithm.
 {{% /alert %}}
 
-## 60.1. What Is a Convex Hull?
+## 59.1. What Is a Convex Hull?
 
 **Definition:** The hull is the smallest convex <abbr title="A plane figure bounded by straight line segments">polygon</abbr> containing all points. It resembles a rubber band stretched around nails.
 
@@ -40,7 +40,7 @@ Andrew's Monotone Chain sorts points in `O(n log n)`. <abbr title="Memory blocks
 | Image processing | Shape analysis |
 | Machine learning | Cluster boundaries |
 
-## 60.2. Andrew's Monotone Chain
+## 59.2. Andrew's Monotone Chain
 
 Sort points by x-coordinate. Build lower and upper hulls separately.
 
@@ -101,7 +101,7 @@ func main() {
 }
 ```
 
-## 60.3. Algorithm Comparison
+## 59.3. Algorithm Comparison
 
 | Algorithm | Time | Space | Simplicity |
 |-----------|------|-------|------------|
@@ -110,7 +110,7 @@ func main() {
 | Jarvis march | <code>O(nh)</code> | <code>O(1)</code> | Simple |
 | QuickHull | <code>O(n log n)</code> avg | <code>O(n)</code> | Moderate |
 
-## 60.4. Geometric Primitives
+## 59.4. Geometric Primitives
 
 | Primitive | Meaning |
 |-----------|---------|
@@ -119,7 +119,7 @@ func main() {
 | Cross < 0 | Clockwise turn |
 | Cross = 0 | Collinear |
 
-## 60.5. Decision Matrix
+## 59.5. Decision Matrix
 
 | Use Andrew's When... | Use Jarvis When... |
 |---------------------|-------------------|
@@ -141,7 +141,7 @@ func main() {
 - **Ignoring degenerates:** Collinear points or N < 3 produce line segments. Algorithms must handle these.
 - **Overextending output:** Hull provides boundaries only. Distance queries require rotating calipers.
 
-## 60.6. Quick Reference
+## 59.6. Quick Reference
 
 | Concept | Value |
 |---------|-------|
@@ -153,6 +153,15 @@ func main() {
 |-----------|-------|
 | `sort` | Point sorting |
 | `image` | Point representations |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 **Summary Chapter 59:** The convex hull is the gateway to <abbr title="Algorithms for solving geometric problems">computational geometry</abbr>. Andrew's monotone chain achieves <code>O(n log n)</code> time. The <abbr title="An operation on two vectors that produces a third vector perpendicular to both, used to determine turn orientation.">cross product</abbr> is the fundamental primitive.

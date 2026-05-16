@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>There are 10 types of people in the world: those who understand binary and those who don't.</em>" : Unknown</strong>
+<strong>"<em>There are 10 types of people in the world: those who understand binary and those who don't.</em>"</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
 Chapter 38 covers <abbr title="Operations performed directly on individual bits of integers.">bit manipulation</abbr> techniques in Go. Includes bitwise operators and binary efficiency algorithms.
 {{% /alert %}}
 
-## 39.1. Bitwise Operators
+## 38.1. Bitwise Operators
 
 **Definition:** Operators manipulate individual integer bits. Fundamental for optimization, flags, and data compression.
 
@@ -42,7 +42,7 @@ Operations occur in CPU registers. RAM bypassed during execution. `uint64` uses 
 | `<<` | Left Shift | `1 << 3` | `8` |
 | `>>` | Right Shift | `8 >> 2` | `2` |
 
-## 39.2. Common Bit Tricks
+## 38.2. Common Bit Tricks
 
 ### Check if Power of Two
 
@@ -103,7 +103,7 @@ func swap(a, b int) (int, int) {
 }
 ```
 
-## 39.3. Bit Masking Applications
+## 38.3. Bit Masking Applications
 
 ### Subset Enumeration
 
@@ -154,7 +154,7 @@ func isBitSet(n, i int) bool {
 }
 ```
 
-## 39.4. Decision Matrix
+## 38.4. Decision Matrix
 
 | Use Bit Manipulation When... | Avoid If... |
 |------------------------------|-------------|
@@ -176,7 +176,7 @@ func isBitSet(n, i int) bool {
 - **Operator precedence errors:** `&`, `|`, `^` rank below `+`, `-`, `==`. Always wrap in parentheses.
 - **Shifting beyond word size:** Shifting `uint64` by 64+ causes panics or zeroed results. Mask shift counts.
 
-## 39.5. Quick Reference
+## 38.5. Quick Reference
 
 | Operation | Expression | Use Case |
 |-----------|-----------|----------|
@@ -186,6 +186,15 @@ func isBitSet(n, i int) bool {
 | Clear lowest bit | `n & (n-1)` | Bit counting |
 | Toggle bit | `n ^ (1 << i)` | Flag flipping |
 | Subset enumeration | `for mask := 0; mask < (1<<n); mask++` | Combinatorics |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 38:</strong> Bit manipulation enables efficient solutions. Tricks include power-of-two checks, bit counting, and subset enumeration. Use `uint` in Go to avoid sign extension. Prioritize clarity unless performance is critical.

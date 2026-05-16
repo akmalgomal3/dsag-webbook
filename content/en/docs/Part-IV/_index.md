@@ -9,7 +9,7 @@ draft: false
 toc: true
 ---
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Intelligence is the ability to adapt to change.</em>" : Stephen Hawking</strong>
+<strong>"<em>Intelligence is the ability to adapt to change.</em>" — Stephen Hawking</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}

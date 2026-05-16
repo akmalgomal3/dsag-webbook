@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>We may say most aptly that the <abbr title="Babbage's design for a general-purpose mechanical computer">Analytical Engine</abbr> weaves algebraic patterns just as the Jacquard loom weaves flowers and leaves.</em>" : Ada Lovelace</strong>
+<strong>"<em>We may say most aptly that the <abbr title="Babbage's design for a general-purpose mechanical computer">Analytical Engine</abbr> weaves algebraic patterns just as the Jacquard loom weaves flowers and leaves.</em>" — Ada Lovelace</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -86,7 +86,7 @@ Verifiable in <abbr title="An algorithm whose running time is bounded by a polyn
 | Proving correctness | Rapid prototyping |
 | Finding limits | Small datasets |
 
-### Common Traps
+### Edge Cases & Pitfalls
 
 - **P vs NP obsession:** Good approximations exist for most hard problems.
 - **Formalism trap:** Turing machines are models: not implementation blueprints.
@@ -107,6 +107,15 @@ Verifiable in <abbr title="An algorithm whose running time is bounded by a polyn
 | Church | Lambda calculus | Functional programming basis |
 | Cook | <abbr title="The property of being NP and as hard as any NP problem">NP-Completeness</abbr> | Strategy for algorithm design |
 | Knuth | Algorithm analysis | Standardized Big-O |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 40:</strong> 20th-century revolution turned math into engineering. Turing machines defined computability. Complexity theory defined efficiency. P vs NP guides heuristic choices.

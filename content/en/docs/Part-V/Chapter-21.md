@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The art of programming is the art of organizing complexity.</em>" : Edsger Dijkstra</strong>
+<strong>"<em>The art of programming is the art of organizing complexity.</em>" — Edsger Dijkstra</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -157,8 +157,6 @@ Uses complex arithmetic for index guessing. ALUs perform math instantly. Accurat
 ```go
 package main
 
-import "fmt"
-
 func interpolationSearch(arr []int, target int) int {
 	low, high := 0, len(arr)-1
 	for low <= high && target >= arr[low] && target <= arr[high] {
@@ -200,6 +198,15 @@ func interpolationSearch(arr []int, target int) int {
 | Linear Search | `slices.Index` | None | `O(n)` |
 | Existence Check | `slices.Contains` | None | `O(n)` |
 | Binary Search | `slices.BinarySearch` | Sorted | `O(log n)` |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 21:</strong> Prefer `slices` package. Linear search for unstructured data. Binary search for sorted data. Interpolation search minimizes cache misses on uniform numerical data.

@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The purpose of computing is insight, not numbers.</em>" : Richard Hamming</strong>
+<strong>"<em>The purpose of computing is insight, not numbers.</em>" — Richard Hamming</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -89,7 +89,7 @@ Go design reflects algorithmic virtues:
 | Teaching algorithms | Debugging production |
 | Choosing equivalent paths | Optimizing hot paths |
 
-### Common Traps
+### Edge Cases & Pitfalls
 
 - **Techno-solutionism:** Not every problem needs an algorithm.
 - **Optimization obsession:** Perfection is the enemy of the good.
@@ -109,6 +109,15 @@ Go design reflects algorithmic virtues:
 | Work, Right, Fast | Kent Beck | Priority order |
 | No silver bullet | Fred Brooks | No single solution for all |
 | Gall's Law | John Gall | Complex systems evolve from simple ones |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 43:</strong> Algorithms are philosophy in code. Efficiency is about trade-offs. Simplicity outlives complexity. Limitations reveal when judgment is needed.

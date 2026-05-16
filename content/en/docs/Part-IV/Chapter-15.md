@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The whole is greater than the sum of its parts.</em>" : Aristotle</strong>
+<strong>"<em>The whole is greater than the sum of its parts.</em>" — Aristotle</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -232,6 +232,15 @@ func main() {
 | Floyd-Warshall | <code>O(V^3)</code> | <code>O(V^2)</code> | Dense | Yes |
 | Johnson | <code>O(VE log V)</code> | <code>O(V^2)</code> | Sparse | Yes |
 | V×Dijkstra | <code>O(VE log V)</code> | <code>O(V^2)</code> | Non-negative | No |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 15:</strong> Floyd-Warshall for dense graphs. Johnson's for sparse graphs with negatives. Density determines algorithm choice.

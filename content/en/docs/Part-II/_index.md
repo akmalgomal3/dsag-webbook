@@ -10,7 +10,7 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The whole of science is nothing more than a refinement of everyday thinking.</em>" : Albert Einstein</strong>
+<strong>"<em>The whole of science is nothing more than a refinement of everyday thinking.</em>" — Albert Einstein</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}

@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>To keep a system secure, we need to be always on our toes. If we wait for the attackers to find vulnerabilities, it's already too late.</em>" : Whitfield Diffie</strong>
+<strong>"<em>To keep a system secure, we need to be always on our toes. If we wait for the attackers to find vulnerabilities, it's already too late.</em>" — Whitfield Diffie</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 31 explores cryptographic primitives. Covers hash functions, symmetric encryption, asymmetric encryption, and digital signatures. Uses Go standard library.
+Chapter 30 explores cryptographic primitives. Covers hash functions, symmetric encryption, asymmetric encryption, and digital signatures. Uses Go standard library.
 {{% /alert %}}
 
-## 31.1. Hash Functions
+## 30.1. Hash Functions
 
 **Definition:** Hash function maps arbitrary input to fixed-size output. Cryptographic hashes must resist preimages and collisions.
 
@@ -29,7 +29,7 @@ Cryptography uses one-way functions. Trivial to compute forward. Computationally
 HTTPS encryption. Password security via bcrypt. Blockchain transaction verification.
 
 **Memory Mechanics:**
-Cryptographic hashing needs constant-time execution. Prevents timing attacks. Naive comparison exits early on mismatch. Reveals byte information to attackers. `subtle.ConstantTimeCompare` forces full slice iteration. Neutralizes timing side-channel.
+Hash computation itself is deterministic and CPU-bound. Timing-sensitive paths usually arise during secret comparisons. Naive comparison exits early on mismatch and leaks byte position. `subtle.ConstantTimeCompare` forces full slice iteration and neutralizes this side-channel.
 
 ### Operations & Complexity
 
@@ -86,7 +86,7 @@ Use `crypto/sha256` or `crypto/sha512`. MD5 and SHA-1 are broken. Use `bcrypt` o
 - **Length extension:** SHA-256 is vulnerable. Use HMACs for protection.
 - **Timing attacks:** Avoid `==` for hash comparison. Use `hmac.Equal` or `subtle.ConstantTimeCompare`.
 
-## 31.2. Symmetric Encryption
+## 30.2. Symmetric Encryption
 
 **Definition:** Symmetric encryption uses same key for encryption and decryption. AES-GCM is the standard mode.
 
@@ -113,6 +113,7 @@ DecryptAESGCM(ciphertextHex, key):
     block = AES(key)
     gcm = GCM(block)
     nonceSize = gcm.NonceSize
+    if length(ciphertext) < nonceSize: return error "ciphertext too short"
     nonce = ciphertext[0:nonceSize]
     ciphertext = ciphertext[nonceSize:]
     return gcm.Open(nil, nonce, ciphertext, nil)
@@ -163,6 +164,9 @@ func decryptAESGCM(ciphertextHex string, key []byte) ([]byte, error) {
         return nil, err
     }
     nonceSize := gcm.NonceSize()
+    if len(ciphertext) < nonceSize {
+        return nil, fmt.Errorf("ciphertext too short")
+    }
     nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
     return gcm.Open(nil, nonce, ciphertext, nil)
 }
@@ -202,7 +206,7 @@ Nonce must be unique per encryption. Standard GCM nonce is 12 bytes. Nonce reuse
 - **Unauthenticated encryption:** ECB and CBC (without HMAC) allow tampering.
 - **IV reuse:** Destroys security in CTR mode.
 
-## 31.3. Asymmetric Encryption
+## 30.3. Asymmetric Encryption
 
 **Definition:** Asymmetric encryption uses public/private key pairs. RSA and ECDSA are standards.
 
@@ -227,7 +231,7 @@ GenerateECDSAKey():
 SignECDSA(privateKey, message):
     hash = SHA256(message)
     r, s = ECDSA sign(privateKey, hash)
-    signature = concat(r bytes, s bytes)
+    signature = DER encode (r, s)
     return signature, hash
 ```
 
@@ -237,6 +241,7 @@ SignECDSA(privateKey, message):
 package main
 
 import (
+    "encoding/asn1"
     "crypto/ecdsa"
     "crypto/elliptic"
     "crypto/rand"
@@ -246,6 +251,10 @@ import (
     "fmt"
     "math/big"
 )
+
+type ecdsaSignature struct {
+    R, S *big.Int
+}
 
 func generateECDSAKey() (*ecdsa.PrivateKey, []byte, error) {
     priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
@@ -266,7 +275,10 @@ func signECDSA(priv *ecdsa.PrivateKey, msg []byte) ([]byte, []byte, error) {
     if err != nil {
         return nil, nil, err
     }
-    sig := append(r.Bytes(), s.Bytes()...)
+    sig, err := asn1.Marshal(ecdsaSignature{R: r, S: s})
+    if err != nil {
+        return nil, nil, err
+    }
     return sig, hash[:], nil
 }
 
@@ -280,9 +292,11 @@ func main() {
     if err != nil {
         panic(err)
     }
-    r := new(big.Int).SetBytes(sig[:len(sig)/2])
-    s := new(big.Int).SetBytes(sig[len(sig)/2:])
-    valid := ecdsa.Verify(&priv.PublicKey, hash, r, s)
+    var parsed ecdsaSignature
+    if _, err := asn1.Unmarshal(sig, &parsed); err != nil {
+        panic(err)
+    }
+    valid := ecdsa.Verify(&priv.PublicKey, hash, parsed.R, parsed.S)
     fmt.Println("Signature valid:", valid)
 }
 ```
@@ -303,7 +317,7 @@ func main() {
 - **Randomness quality:** Keys depend on `crypto/rand`. Avoid `math/rand`.
 - **Timing attacks:** Verification must be constant-time. Go stdlib handles this.
 
-## 31.4. Digital Signatures and HMAC
+## 30.4. Digital Signatures and HMAC
 
 **Definition:** HMAC uses secret key to authenticate data. Digital signatures use asymmetric keys for non-repudiation.
 
@@ -376,7 +390,7 @@ Use `hmac.Equal` for constant-time comparison. Avoid `==` for MACs.
 - **Short keys:** HMAC hashes keys shorter than block size automatically.
 - **Truncated MAC:** Avoid truncation without security analysis.
 
-## 31.5. Password Hashing
+## 30.5. Password Hashing
 
 **Definition:** Slow one-way function. Designed to thwart brute-force attacks.
 

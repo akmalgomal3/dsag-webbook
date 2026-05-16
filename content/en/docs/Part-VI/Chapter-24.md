@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>Local optimization wins. : Gordon Gekko</strong>
+<strong>"<em>Local optimization wins.</em>" — Gordon Gekko</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -183,7 +183,7 @@ func main() {
 }
 ```
 
-## 24.5. Selection Matrix
+## 24.5. Decision Matrix
 
 | Use Greedy If... | Avoid If... |
 |------------------|-------------|
@@ -191,7 +191,7 @@ func main() {
 | Speed is required | Exact solution needed |
 | Exchange argument holds | Counterexamples exist |
 
-### Pitfalls & Errors
+### Edge Cases & Pitfalls
 
 - **Verification:** Prove greedy choice before coding.
 - **Knapsack:** Greedy fails for 0/1 knapsack. Use DP.
@@ -211,6 +211,15 @@ func main() {
 | Activity Selection | Earliest finish | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
 | Huffman Coding | Min frequency pair | <code>O(n log n)</code> | <code>O(n)</code> | Yes |
 | 0/1 Knapsack | N/A | N/A | N/A | No |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Greedy algorithms trade reconsideration for speed. Verify with exchange argument. Use `sort.Slice` and `container/heap` in Go.

@@ -10,7 +10,7 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-"Graphs are the mathematical structures used to model pairwise relations between objects. Master them, and you master networks." : Leonhard Euler
+"Graphs are the mathematical structures used to model pairwise relations between objects. Master them, and you master networks." — Leonhard Euler
 {{% /alert %}}
 {{% alert icon="📘" context="success" %}}
 Part X explores advanced graph algorithms. Text explains topological sort, strongly connected components, A* search, and bridge-finding. Algorithms discover network structures.

@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.</em>" : Edsger Dijkstra</strong>
+<strong>"<em>The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.</em>" — Edsger Dijkstra</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -93,7 +93,7 @@ To find √A:
 | Teaching foundations | Solving immediate bugs |
 | Designing novel logic | Implementing known solutions |
 
-### Common Traps
+### Edge Cases & Pitfalls
 
 - **Anachronism:** Do not judge ancient speed by modern standards.
 - **Attribution:** Many algorithms misattributed. Euclid likely compiled existing methods.
@@ -114,6 +114,15 @@ To find √A:
 | 200 BCE | Sieve of Eratosthenes | Segmented sieve variants |
 | 820 CE | al-Khwarizmi's algebra | <abbr title="Computer manipulation of mathematical expressions symbolically">Symbolic computation</abbr> |
 | 1830s | Babbage/Lovelace | Modern programs |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 39:</strong> Algorithms are ancient problem-solving tools. Break complex problems into simple, repeatable steps. History reveals timeless nature of good design.

@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Skip lists are a probabilistic alternative to balanced trees.</em>" : William Pugh</strong>
+<strong>"<em>Skip lists are a probabilistic alternative to balanced trees.</em>" — William Pugh</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -155,7 +155,7 @@ Skip lists maintain <code>O(log n)</code> height with high probability. Expected
 | Concurrency is high | Peak cache efficiency required |
 | Teaching concepts | Production with strict SLAs |
 
-### Constraints & Risks
+### Edge Cases & Pitfalls
 
 - **Randomness:** Requires deterministic pseudo-random generator.
 - **Max Level:** Set to `log₂(max_elements) + 1`.
@@ -179,6 +179,15 @@ Skip lists maintain <code>O(log n)</code> height with high probability. Expected
 | Go stdlib | Usage |
 |-----------|-------|
 | `sync.Map` | Inspired by skip list principles. |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 Randomization replaces deterministic complexity. Coin flips build express lanes. <code>O(log n)</code> performance with minimal implementation risk.

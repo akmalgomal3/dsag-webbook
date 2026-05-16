@@ -10,7 +10,7 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The greatest danger in science is not being wrong, but being trivial.</em>" : Stephen Hawking</strong>
+<strong>"<em>The greatest danger in science is not being wrong, but being trivial.</em>" — Stephen Hawking</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}

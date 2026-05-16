@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithms are the intellectual property of computer science; they are the critical tools for understanding how to solve complex problems effectively.</em>" : Donald Knuth</strong>
+<strong>"<em>Algorithms are the intellectual property of computer science; they are the critical tools for understanding how to solve complex problems effectively.</em>" — Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -402,6 +402,15 @@ func main() {
 | Edmonds-Karp | BFS + Queue | <code>O(V E²)</code> | <code>O(V²)</code> | General purpose |
 | Dinic | BFS + DFS | <code>O(V²E)</code> | <code>O(V²)</code> | Dense graphs / Bipartite |
 | Min-Cost Flow | Dijkstra + PQ | <code>O(F · E log V)</code> | <code>O(V²)</code> | Logistics optimization |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 17:</strong> Network flow optimization. Use Edmonds-Karp for stability, Dinic for performance, and Min-Cost Flow for logistics.

@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Persistence is the path to immutability.</em>" : Chris Okasaki</strong>
+<strong>"<em>Persistence is the path to immutability.</em>" — Chris Okasaki</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -94,7 +94,7 @@ Leaf update triggers copying leaf and all ancestors to root. Non-modified siblin
 | Read-heavy concurrency. | Single-threaded speed. |
 | Undo logic needed. | Memory is constrained. |
 
-### Constraints & Risks
+### Edge Cases & Pitfalls
 
 - **Space Growth:** n updates produce <code>O(n log n)</code> nodes. GC required.
 - **Node Sharing:** Modifying shared nodes corrupts all versions.
@@ -119,6 +119,15 @@ Leaf update triggers copying leaf and all ancestors to root. Non-modified siblin
 | Go stdlib | Usage |
 |-----------|-------|
 | Slice sharing | Array sharing without full persistence. |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 Persistence trades space for history. Structural sharing minimizes overhead. Immutability prevents mutation-based bugs.

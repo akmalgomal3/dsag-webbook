@@ -9,7 +9,7 @@ draft: false
 toc: true
 ---
 
-{{% alert icon="💡" context="info" %}}<strong>"The Nobel Prize is the highest accolade that the world can offer a man, but no man is ever worthy of it." : Albert Einstein</strong>{{% /alert %}}
+{{% alert icon="💡" context="info" %}}<strong>"The Nobel Prize is the highest accolade that the world can offer a man, but no man is ever worthy of it." — Albert Einstein</strong>{{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
 Part I establishes Go foundations. Text explains algorithm evolution, memory models, and <abbr title="A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.">Big-O notation</abbr> complexity. Implementation uses Go 1.18+ Generics for type-safe data structures.

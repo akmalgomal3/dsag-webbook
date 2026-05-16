@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>String algorithms are the hidden engines of the modern world.</em>" : Unknown</strong>
+<strong>"<em>String algorithms are the hidden engines of the modern world.</em>"</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -111,7 +111,7 @@ Binary search finds pattern P in <code>O(\|P\| log n)</code>.
 | Memory is constrained. | Prefix queries dominate. |
 | Multiple pattern checks. | Single pattern, many texts. |
 
-### Constraints & Risks
+### Edge Cases & Pitfalls
 
 - **Sentinels:** Append `$` to prevent one suffix being a prefix of another.
 - **Scaling:** Use compressed suffix arrays for massive genomes.
@@ -136,6 +136,15 @@ Binary search finds pattern P in <code>O(\|P\| log n)</code>.
 |-----------|-------|
 | `strings` | `Index`, `Contains` for simple strings. |
 | `index/suffixarray` | Production implementation. |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 Suffix arrays transform string matching into binary search. Space efficient. sorting all suffixes solves complex string problems.

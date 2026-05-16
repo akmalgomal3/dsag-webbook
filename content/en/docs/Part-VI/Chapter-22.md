@@ -11,7 +11,7 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A recursive method is often the most natural way to solve a problem that can be broken down into smaller problems of the same type.</em>" : Donald Knuth</strong>
+<strong>"<em>A recursive method is often the most natural way to solve a problem that can be broken down into smaller problems of the same type.</em>" — Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -169,6 +169,15 @@ Use threshold for granularity (e.g., n > 1000). Small tasks should run sequentia
 | Quick sort | In-place partition | <code>O(n log n)</code> avg | <code>O(log n)</code> | Memory-efficient sorting |
 | Binary search | Iterative loop | <code>O(log n)</code> | <code>O(1)</code> | Fast lookup |
 | Strassen | Recursion | <code>O(n^{2.807})</code> | <code>O(n^{2.807})</code> | Matrix multiplication |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 22:</strong> Divide and Conquer breaks problems into independent sub-tasks. Optimal for recursive sorting and searching. Goroutines enable efficient multi-core parallelization.

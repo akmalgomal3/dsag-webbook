@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>Memory prevents repetition. : George Santayana</strong>
+<strong>"<em>Memory prevents repetition.</em>" — George Santayana</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -144,7 +144,7 @@ func main() {
 }
 ```
 
-## 23.5. Selection Criteria
+## 23.5. Decision Matrix
 
 | Use DP If... | Use Alternatives If... |
 |--------------|------------------------|
@@ -152,7 +152,7 @@ func main() {
 | Optimal substructure exists | Subproblems are independent |
 | Brute force is exponential | Simple algorithm exists |
 
-### Optimization & Errors
+### Edge Cases & Pitfalls
 
 - **Space:** Reduce <code>O(n^2)</code> to <code>O(n)</code> using rolling arrays.
 - **Overflow:** Large values exceed `int`. Use `int64`.
@@ -172,6 +172,15 @@ func main() {
 | Knapsack 0/1 | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | 2D DP |
 | LCS | `[][]int` | <code>O(mn)</code> | <code>O(mn)</code> | 2D DP |
 | Coin Change | `[]int` | <code>O(nk)</code> | <code>O(n)</code> | 1D DP |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> DP solves exponential recursive problems in polynomial time. Identify states. Define recurrence. Initialize base cases. Fill table. Use slices for speed.

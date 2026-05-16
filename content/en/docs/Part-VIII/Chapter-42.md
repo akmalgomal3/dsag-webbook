@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The most damaging phrase in the language is 'It's always been done this way.'</em>" : Grace Hopper</strong>
+<strong>"<em>The most damaging phrase in the language is 'It's always been done this way.'</em>" — Grace Hopper</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -88,7 +88,7 @@ func approximateSolution(data []Item) Solution {
 | Critical correctness | 99% accuracy suffices |
 | Simple structure | Heuristic structure exists |
 
-### Common Traps
+### Edge Cases & Pitfalls
 
 - **Theoretical vs practical:** Huge constants in <code>O(n)</code> lose to hardware-friendly <code>O(n log n)</code>.
 - **Worst-case obsession:** Average-case analysis often predicts real-world load better.
@@ -109,6 +109,15 @@ func approximateSolution(data []Item) Solution {
 | Randomized | Simpler code | Quicksort + `math/rand` |
 | Parallel | Independent tasks | Goroutines |
 | Online | Streaming input | Sliding window |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 42:</strong> Modern design transcends Big-O. Emphasizes cache, parallelism, approximation. Balances theory with hardware reality.

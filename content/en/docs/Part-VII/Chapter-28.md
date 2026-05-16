@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Linear algebra is the mathematics of data. Matrices and vectors are the language in which modern algorithms speak.</em>" : Gilbert Strang</strong>
+<strong>"<em>Linear algebra is the mathematics of data. Matrices and vectors are the language in which modern algorithms speak.</em>" — Gilbert Strang</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 29 covers vector, matrix, and tensor operations. Implementations use Go slices and `gonum`.
+Chapter 28 covers vector, matrix, and tensor operations. Implementations use Go slices and `gonum`.
 {{% /alert %}}
 
-## 29.1. Vector Operations
+## 28.1. Vector Operations
 
 **Definition:** Vector is 1D array. Represents directed magnitude. Operations: addition, scalar multiplication, dot product, cross product.
 
@@ -132,7 +132,7 @@ Go lacks operator overloading. Define explicit functions. Use `gonum.org/v1/gonu
 - **NaN propagation:** Undefined values break results.
 - **Precision loss:** Large vectors need Kahan summation. Prevents float drift.
 
-## 29.2. Matrix Operations
+## 28.2. Matrix Operations
 
 **Definition:** Matrix is 2D array. Operations: transposition, multiplication, determinant, inversion.
 
@@ -150,7 +150,7 @@ Nested slices `[][]float64` scatter headers across heap. `gonum` uses flat `[]fl
 
 ### Idiomatic Go Implementation
 
-Use `gonum.org/v1/gonum/mat`. Standard library for linear algebra in Go. Efficient and tested.
+Use `gonum.org/v1/gonum/mat`. It is the de-facto external library for linear algebra in Go and is production-tested.
 
 ### Decision Matrix
 
@@ -165,7 +165,7 @@ Use `gonum.org/v1/gonum/mat`. Standard library for linear algebra in Go. Efficie
 - **Floating-point error:** Avoid `==`. Use epsilon delta.
 - **Memory layout:** Go slices are row-major. Maintain cache locality.
 
-## 29.3. Tensors and Multidimensional Data
+## 28.3. Tensors and Multidimensional Data
 
 **Definition:** Tensor generalizes matrix to arbitrary dimensions. Rank-3 tensor represents image batches (B × H × W × C).
 
@@ -192,7 +192,7 @@ Nested slices cause pointer overhead. Large tensors should use flat 1D slice. In
 - **Jagged arrays:** Slices of slices can be non-uniform. Tensors must be uniform.
 - **GC pressure:** Nested slices create many objects. Flat slices ease Garbage Collection.
 
-## 29.4. Matrix Computation Optimization
+## 28.4. Matrix Computation Optimization
 
 **Definition:** Strategies to accelerate matrix operations. Uses cache locality, blocking, and parallelization.
 

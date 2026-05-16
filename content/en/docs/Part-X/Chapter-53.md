@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Bridges are the weakest links in any network.</em>" : Unknown</strong>
+<strong>"<em>Bridges are the weakest links in any network.</em>"</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -128,6 +128,15 @@ Logic: Vertex u is articulation point if:
 | Go stdlib | Usage |
 |-----------|-------|
 | No direct stdlib | Implement for network analysis |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 53:</strong> Tarjan's algorithm identifies network vulnerabilities. Linear traversal finds every bridge. Algorithm enables reliability planning.

@@ -10,7 +10,7 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-"Algorithms: a common theme in the study of data structures and sorting and searching as elegant solutions to problems that are pervasive in computing." : Donald Knuth
+"Algorithms: a common theme in the study of data structures and sorting and searching as elegant solutions to problems that are pervasive in computing." — Donald Knuth
 {{% /alert %}}
 {{% alert icon="📘" context="success" %}}
 Part V explains sorting and searching algorithms. Text covers Basic Sorting, Advanced Sorting, and Search Algorithms. Analysis contrasts performance, stability, and memory requirements in Go.

@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>There are only two hard things in Computer Science: cache invalidation and naming things.</em>" : Phil Karlton</strong>
+<strong>"<em>There are only two hard things in Computer Science: cache invalidation and naming things.</em>" — Phil Karlton</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -152,7 +152,7 @@ func main() {
 | Recency predicts future requests. | Frequency matters more than recency. |
 | Workload has temporal locality. | Some items stay consistently hot. |
 
-### Constraints & Risks
+### Edge Cases & Pitfalls
 
 - **Thread Safety:** Standard implementation requires `sync.RWMutex` or sharding.
 - **Overhead:** High pointer counts increase memory consumption (~48 bytes/node).
@@ -177,6 +177,15 @@ func main() {
 |-----------|-------|
 | `container/list` | Generic doubly linked list. |
 | `github.com/hashicorp/golang-lru` | Production-ready implementation. |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 LRU caches combine hash tables for speed and linked lists for order. Powers database query layers and web servers.

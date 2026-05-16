@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Chess wastes human intelligence. Equivalent to advertising agencies.</em>" : Raymond Chandler</strong>
+<strong>"<em>Chess wastes human intelligence. Equivalent to advertising agencies.</em>" — Raymond Chandler</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 58 explores minimax: foundational algorithm for two-player zero-sum games. Alpha-beta pruning makes it practical.
+Chapter 57 explores minimax: foundational algorithm for two-player zero-sum games. Alpha-beta pruning makes it practical.
 {{% /alert %}}
 
-## 58.1. Game Trees
+## 57.1. Game Trees
 
 **Definition:** <abbr title="A directed graph representing all possible game states and moves in a two-player game.">Game tree</abbr> represents all possible move sequences. Two-player zero-sum games: one player's gain equals other's loss.
 
@@ -38,7 +38,7 @@ Turn-based perfect-information games: Chess, Checkers, Tic-Tac-Toe. Game Theory 
 
 Algorithm assumes opponent plays optimally: pessimistic but safe.
 
-## 58.2. Minimax Algorithm
+## 57.2. Minimax Algorithm
 
 ```go
 package main
@@ -217,7 +217,7 @@ func main() {
 }
 ```
 
-## 58.3. Alpha-Beta Pruning
+## 57.3. Alpha-Beta Pruning
 
 **Definition:** <abbr title="An optimization technique for minimax that eliminates branches that cannot possibly influence the final decision.">Alpha-beta pruning</abbr> skips branches. Irrelevant branches do not affect final decision.
 
@@ -230,7 +230,7 @@ func main() {
 
 Maximizer finds move worth 5. Minimizer finds response worth 3. Minimizer avoids path allowing 5. Stop exploring branch.
 
-## 58.4. Decision Matrix
+## 57.4. Decision Matrix
 
 | Use Minimax When... | Use Heuristics When... |
 |---------------------|------------------------|
@@ -252,7 +252,7 @@ Maximizer finds move worth 5. Minimizer finds response worth 3. Minimizer avoids
 - **Poor evaluation function:** Output depends on heuristic quality. Bad heuristic causes systematic blunders. Search depth cannot fix poor evaluation.
 - **Ignoring transpositions:** Evaluate reached positions once and cache them. Recomputing multiplies work exponentially.
 
-## 58.5. Quick Reference
+## 57.5. Quick Reference
 
 | Enhancement | Benefit |
 |-------------|---------|
@@ -264,6 +264,15 @@ Maximizer finds move worth 5. Minimizer finds response worth 3. Minimizer avoids
 | Go stdlib | Usage |
 |-----------|-------|
 | No direct stdlib | Implement natively for game AI |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 57:</strong> <abbr title="A decision rule used in two-player zero-sum games that minimizes possible loss for a worst-case scenario.">Minimax</abbr> embodies strategic thinking. Algorithm assumes opponent intelligence and plans accordingly. Alpha-beta pruning eliminates impossible branches. Minimax remains foundation of competitive game AI.

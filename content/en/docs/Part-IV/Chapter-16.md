@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The most damaging phrase in the language is: 'We've always done it this way.'</em>" : Grace Hopper</strong>
+<strong>"<em>The most damaging phrase in the language is: 'We've always done it this way.'</em>" — Grace Hopper</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -328,6 +328,15 @@ func main() {
 | Kruskal | `[]Edge` + Union-Find | <code>O(E log E)</code> | <code>O(V)</code> | Edge list, sparse graph |
 | Prim | `[]Edge` + PQ | <code>O((V + E) log V)</code> | <code>O(V)</code> | <abbr title="A graph with edges close to the maximum possible">Dense graph</abbr>, adjacency list |
 | Borůvka | Union-Find | <code>O(E log V)</code> | <code>O(V)</code> | Parallel, distributed |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 16:</strong> Kruskal uses edge lists. Prim uses adjacency lists for dense graphs. Borůvka supports parallel processing.

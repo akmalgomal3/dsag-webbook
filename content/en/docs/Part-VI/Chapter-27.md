@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A good algorithm is a beautiful thing, but its beauty is often in its simplicity. The most complex algorithms are those that use randomization effectively.</em>" : Donald Knuth</strong>
+<strong>"<em>A good algorithm is a beautiful thing, but its beauty is often in its simplicity. The most complex algorithms are those that use randomization effectively.</em>" — Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 28 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized quicksort, skip lists, and primality testing.
+Chapter 27 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized quicksort, skip lists, and primality testing.
 {{% /alert %}}
 
-## 28.1. Randomized QuickSort
+## 27.1. Randomized QuickSort
 
 **Definition:** QuickSort using random pivot selection. Prevents $O(n^2)$ worst-case on sorted inputs.
 
@@ -114,7 +114,7 @@ Randomized QuickSort gives $O(n \log n)$ expected time. Go stdlib `sort.Ints` us
 - **Equal elements:** Lomuto partition fails. Use 3-way partition (Dutch National Flag).
 - **Recursion depth:** Large $n$ causes stack overflow. Use introsort or iterative methods.
 
-## 28.2. <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr>
+## 27.2. <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr>
 
 **Definition:** Probabilistic data structure. Simulates balanced tree using layered linked lists. Nodes have randomized heights.
 
@@ -276,7 +276,7 @@ Skip list space is $O(n)$ expected. Average height is 2 for $p=0.5$. Large $p$ c
 - **Weak RNG:** Probability logic fails without good randomness. Use robust seeds.
 - **Max Level:** $p=0.5$ and maxLevel=16 supports $n \approx 65536$. Increase limit for larger data.
 
-## 28.3. Miller-Rabin Primality Test
+## 27.3. Miller-Rabin Primality Test
 
 **Definition:** Monte Carlo algorithm. Tests primality. Error probability $\le 4^{-k}$ after $k$ rounds.
 
@@ -306,16 +306,16 @@ Use `math/big.Int.ProbablePrime()` for production.
 
 | Use Miller-Rabin When... | Avoid If... |
 |-----------------------------|------------------|
-| Testing large primes | Deterministic guarantee required: use AKS (slow) |
+| Testing large primes | Deterministic guarantee required: use a deterministic primality algorithm for bounded input ranges |
 | Cryptographic key generation | $n < 2^{64}$: use optimized deterministic test |
 
 ### Edge Cases & Pitfalls
 
 - **Carmichael numbers:** Miller-Rabin identifies these correctly.
-- **Modular overflow:** Use `math/big.Int.ModMul` for $n > 2^{32}$.
+- **Modular overflow:** Use `math/big.Int` arithmetic (`Mul` + `Mod` or `Exp`) for large values.
 - **Deterministic variant:** Testing against base {2, 3, 5, 7, 11, 13, 17} is deterministic for $n < 2^{64}$.
 
-## 28.4. Reservoir Sampling
+## 27.4. Reservoir Sampling
 
 **Definition:** Selects $k$ random items from infinite stream. No total size knowledge required.
 
@@ -355,7 +355,7 @@ Guarantees $k/n$ selection probability for all items. Weighted streams use expon
 - **Static seeds:** Identical results hide bugs. Use dynamic source.
 - **Misplaced trust:** 99% correctness is not 100%. Avoid in financial settlements.
 
-## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|

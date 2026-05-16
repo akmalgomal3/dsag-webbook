@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The best way to predict the future is to invent it.</em>" : Alan Kay</strong>
+<strong>"<em>The best way to predict the future is to invent it.</em>" — Alan Kay</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -113,6 +113,15 @@ func main() {
 | Min Heap | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Dijkstra |
 | Max Heap | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Median |
 | Priority Queue | `heap.Interface` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Task queue |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Heaps allow fast extreme-value access. Use for priority queues and graph algorithms. Not for general searching.

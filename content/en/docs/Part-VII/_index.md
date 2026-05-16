@@ -10,7 +10,7 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The greatest ideas are the simplest.</em>" : William Golding</strong>
+<strong>"<em>The greatest ideas are the simplest.</em>" — William Golding</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}

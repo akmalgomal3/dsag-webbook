@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Parallel programming is not about making programs faster, but about creating solutions that can solve larger problems.</em>" : Jeff Dean</strong>
+<strong>"<em>Parallel programming is not about making programs faster, but about creating solutions that can solve larger problems.</em>" — Jeff Dean</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
 Chapter 30 discusses parallel and distributed algorithms. Uses goroutines, channels, and worker pools in Go.
 {{% /alert %}}
 
-## 30.1. Parallelism in Go
+## 29.1. Parallelism in Go
 
 **Definition:** Simultaneous computation across multiple CPU cores. Go provides goroutines and channels for coordination.
 
@@ -132,7 +132,7 @@ Go runtime uses M:N scheduling. Avoid goroutines for microscopic tasks. Tasks sh
 - **Data race:** Use `go test -race`. Protect with `sync.Mutex` or channels.
 - **Excessive goroutines:** Millions are allowed. Stack starts at 2KB. Memory exhaustion possible.
 
-## 30.2. Synchronization and Concurrency
+## 29.2. Synchronization and Concurrency
 
 **Definition:** Coordination of access to shared state. Go provides Mutex, RWMutex, WaitGroup, and channels.
 
@@ -161,7 +161,7 @@ Preference: channels > `sync/atomic` > `sync.Mutex`. Use `sync.Map` for read-hea
 - **Priority inversion:** RWMutex writers can starve if readers persist.
 - **Primitive copying:** Never copy `sync.Mutex` by value. Pass by pointer.
 
-## 30.3. Parallel Algorithms
+## 29.3. Parallel Algorithms
 
 **Definition:** Algorithms for multi-processor efficiency. Use task or data decomposition.
 
@@ -253,7 +253,7 @@ func main() {
 - **False sharing:** Adjacent array writes force cache updates. Degrades performance.
 - **Uneven workload:** Use dynamic work stealing for load imbalance.
 
-## 30.4. Worker Pools and Pipelines
+## 29.4. Worker Pools and Pipelines
 
 **Definition:** Worker pool bounds running goroutines. Pipeline connects stages via channels.
 

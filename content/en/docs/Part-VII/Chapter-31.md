@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Blockchain is the tech. Bitcoin is merely the first mainstream manifestation of its potential.</em>" : Marc Kenigsberg</strong>
+<strong>"<em>Blockchain is the tech. Bitcoin is merely the first mainstream manifestation of its potential.</em>" — Marc Kenigsberg</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}

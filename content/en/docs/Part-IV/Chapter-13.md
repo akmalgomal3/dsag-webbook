@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The journey of a thousand miles begins with one step.</em>" : Lao Tzu</strong>
+<strong>"<em>The journey of a thousand miles begins with one step.</em>" — Lao Tzu</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -179,6 +179,13 @@ func main() {
 | Finding connected components | Finding shortest path |
 | Backtracking problems | Web crawling breadth-first |
 
+
+### Edge Cases & Pitfalls
+
+- **Boundary input:** Validate empty, singleton, and extreme-size inputs.
+- **Assumption mismatch:** Ensure preconditions are enforced before algorithm execution.
+- **Resource pressure:** Re-check memory and recursion behavior on large inputs.
+
 ### Anti-Patterns
 - **Marking visited on dequeue:** Duplicates work. Same vertex enters queue multiple times. Mark visited at enqueue time.
 - **Recursive DFS on deep graphs:** Go stacks limit ~2 KB. Deep chain panics. Use explicit stack.
@@ -190,6 +197,15 @@ func main() {
 |-----------|---------|------|-------|------|----------|
 | DFS | Recursion/Stack | `O(V+E)` | `O(V)` | Any | Cycle detection |
 | BFS | Queue | `O(V+E)` | `O(V)` | Shortest | Shortest path |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 13:</strong> DFS explores deeply. BFS maps radially. Modern Go leverages Generics and Iterators for clean traversal.

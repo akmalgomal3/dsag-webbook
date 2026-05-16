@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Programs must be written for people to read, and only incidentally for machines to execute.</em>" : Harold Abelson</strong>
+<strong>"<em>Programs must be written for people to read, and only incidentally for machines to execute.</em>" — Harold Abelson</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -62,6 +62,15 @@ func main() {
 	fmt.Println(x) // 20
 }
 ```
+
+
+### Decision Matrix
+
+| Prefer This Approach When... | Prefer Alternatives When... |
+|-----------------------------|------------------------------|
+| Input constraints are known and stable. | Constraints change frequently or are unknown. |
+| You need predictable complexity bounds. | You prioritize implementation speed over guarantees. |
+| The trade-off is clear for production usage. | Benchmark evidence is insufficient. |
 
 ### Edge Cases & Pitfalls
 - **Slice alias:** `s2 := s1[:]` shares backing array. Modifying `s2` alters `s1`.
@@ -312,6 +321,15 @@ func main() {
 | Goroutine | `go func()` | `O(1)` start | ~2KB | Concurrent execution |
 | Channel | `chan T` | Blocking | varies | CSP communication |
 | Mutex | `sync.Mutex` | Contention | . | Shared state lock |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 4:</strong> Go provides safe pointers, dynamic slices, Generics, Iterators, and CSP concurrency. Avoid hidden allocations. Respect hardware limits.

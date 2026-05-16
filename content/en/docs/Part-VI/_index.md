@@ -10,7 +10,7 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Success is not final, failure is not fatal: it is the courage to continue that counts.</em>" : Winston Churchill</strong>
+<strong>"<em>Success is not final, failure is not fatal: it is the courage to continue that counts.</em>" — Winston Churchill</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}

@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Linear-time sorting requires data assumptions: reward of strong constraints.</em>" : Unknown</strong>
+<strong>"<em>Linear-time sorting requires data assumptions: reward of strong constraints.</em>"</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
 Linear-time sorting beats <code>O(n log n)</code> bound: counting sort, radix sort, and bucket sort exploit data structure.
 {{% /alert %}}
 
-## 55.1. Beyond Comparison Sorting
+## 54.1. Beyond Comparison Sorting
 
 **Definition:** <abbr title="Sorting algorithms that do not rely on comparing elements, instead using assumptions about the data distribution.">Non-comparison sorts</abbr> achieve <code>O(n)</code> time. Assumptions trade generality for speed.
 
@@ -37,7 +37,7 @@ Non-comparison sorts consume high memory. Counting Sort needs <code>O(k)</code> 
 | <abbr title="A sorting algorithm processing digits individually">Radix sort</abbr> | d-digit integers | <code>O(d(n + k))</code> | <code>O(n + k)</code> |
 | <abbr title="A sorting algorithm distributing elements into buckets">Bucket sort</abbr> | Uniform distribution | <code>O(n)</code> avg | <code>O(n)</code> |
 
-## 55.2. <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr>
+## 54.2. <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr>
 
 Counting Sort tracks occurrences. Prefix sums determine indices.
 
@@ -75,7 +75,7 @@ func main() {
 }
 ```
 
-## 55.3. Radix Sort
+## 54.3. Radix Sort
 
 Radix Sort sorts digit by digit. Least significant first: uses stable counting sort subroutine.
 
@@ -143,7 +143,7 @@ func main() {
 }
 ```
 
-## 55.4. Bucket Sort
+## 54.4. Bucket Sort
 
 Bucket Sort distributes elements to ranges. Individual buckets sort separately. Concat results in linear time.
 
@@ -153,7 +153,7 @@ Bucket Sort distributes elements to ranges. Individual buckets sort separately. 
 | Sort each bucket | <code>O(n)</code> avg (if uniformly distributed) |
 | Concatenate | <code>O(n)</code> |
 
-## 55.5. Decision Matrix
+## 54.5. Decision Matrix
 
 | Use Counting Sort When... | Use Radix Sort When... | Use Bucket Sort When... |
 |---------------------------|------------------------|------------------------|
@@ -174,7 +174,7 @@ Bucket Sort distributes elements to ranges. Individual buckets sort separately. 
 - **Non-uniform data:** Skewed input breaks <code>O(n)</code> guarantee.
 - **Ignoring constants:** Comparison sorts often beat <code>O(n)</code> for small sets.
 
-## 55.6. Quick Reference
+## 54.6. Quick Reference
 
 | Algorithm | Best Case | Worst Case | Stable? |
 |-----------|-----------|------------|---------|
@@ -186,6 +186,15 @@ Bucket Sort distributes elements to ranges. Individual buckets sort separately. 
 |-----------|-------|
 | <code>sort.Ints</code> | Standard comparison sort: quicksort/heap sort hybrid. |
 | No native non-comparison sort | Implement manually for specialized, integer-bound cases. |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 54:</strong> Linear-time sorting proves <code>O(n log n)</code> limit is conditional. Exploiting range or structure yields <code>O(n)</code> efficiency. Performance comes from domain knowledge.

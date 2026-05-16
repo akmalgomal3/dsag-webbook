@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>Recursion reflects problems into simpler versions. : Brian Kernighan</strong>
+<strong>"<em>Recursion reflects problems into simpler versions.</em>" — Brian Kernighan</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -95,7 +95,7 @@ func main() {
 Go lacks tail call optimization. Deep <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> risks overflow. Use <abbr title="The repetition of a process, typically using loops.">iteration</abbr> for extreme depth.
 {{% /alert %}}
 
-### Selection Matrix
+### Decision Matrix
 
 | Use <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> If... | Avoid If... |
 |------------------------|------------------|
@@ -103,7 +103,7 @@ Go lacks tail call optimization. Deep <abbr title="A method where the solution t
 | <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> is required | Sub-problems overlap without <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> |
 | <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and conquer</abbr> | Performance requires zero overhead |
 
-### Pitfalls & Errors
+### Edge Cases & Pitfalls
 
 - **<abbr title="An error caused by using more stack memory than allocated.">Stack overflow</abbr>:** Excessive <abbr title="The length of the path from the root to a node.">depth</abbr> exceeds bounds.
 - **Missing base case:** Function loops infinitely.
@@ -213,14 +213,14 @@ func main() {
 <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> with deterministic pivot on sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> hits <code>O(n^2)</code>. Random pivot prevents this.
 {{% /alert %}}
 
-### Selection Matrix
+### Decision Matrix
 
 | Use D&C If... | Avoid If... |
 |--------------------|------------------|
 | Problem partitions independently | Sub-problems overlap |
 | Combining is simpler than direct solution | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> overhead kills performance |
 
-### Pitfalls & Errors
+### Edge Cases & Pitfalls
 
 - **Base cases:** Handle single-element arrays immediately.
 - **Overflow:** Compute mid using `low + (high-low)/2`.
@@ -323,14 +323,14 @@ func main() {
 Go relies on pointers (`*Tree`) and explicit nil checks for recursive structures.
 {{% /alert %}}
 
-### Selection Matrix
+### Decision Matrix
 
 | Use If... | Avoid If... |
 |----------------|------------------|
 | Hierarchical relationships exist | Random access dominates |
 | Dynamic sizing is required | <abbr title="A variable that stores a memory address.">Pointer</abbr> overhead kills memory |
 
-### Pitfalls & Errors
+### Edge Cases & Pitfalls
 
 - **Dangling <abbr title="A variable that stores a memory address.">pointers</abbr>:** Check `nil` before dereference.
 - **Cycles:** Avoid unnecessary cyclical designs.
@@ -439,7 +439,7 @@ func main() {
 Top-down <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> risks <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr> for n > 10^5. Bottom-up handles massive scales.
 {{% /alert %}}
 
-### Selection Matrix
+### Decision Matrix
 
 | Use Top-down If... | Use Bottom-up If... |
 |-------------------------|--------------------------|
@@ -447,7 +447,7 @@ Top-down <abbr title="A method where the solution to a problem depends on soluti
 | Logic remains natural | Space optimization matters |
 | n remains small | n grows large |
 
-### Pitfalls & Errors
+### Edge Cases & Pitfalls
 
 - **Overflow:** Fibonacci exceeds `int64` at n=93. Use `math/big`.
 - **Base cases:** Validate boundaries.
@@ -547,14 +547,14 @@ func main() {
 <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> explodes in time. Pruning stops invalid branches early.
 {{% /alert %}}
 
-### Selection Matrix
+### Decision Matrix
 
 | Use <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> If... | Avoid If... |
 |-----------------------------|------------------|
 | Enumeration is required | Solution space explodes |
 | Constraints evaluate fast | DP or greedy succeeds |
 
-### Pitfalls & Errors
+### Edge Cases & Pitfalls
 
 - **No solution:** Handle impossible cases.
 - **State mutation:** Restore state perfectly after <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>.
@@ -657,14 +657,14 @@ func main() {
 Thresholding limits <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> overhead. Execute small sub-problems sequentially.
 {{% /alert %}}
 
-### Selection Matrix
+### Decision Matrix
 
 | Use Parallel If... | Avoid If... |
 |------------------------|------------------|
 | Sub-problems divide independently | Sub-problems remain tiny |
 | Execution is CPU-bound | Execution is I/O-bound |
 
-### Pitfalls & Errors
+### Edge Cases & Pitfalls
 
 - **Goroutine leaks:** Synchronize with `sync.WaitGroup`.
 - **Data races:** Avoid concurrent slice writes.
@@ -687,6 +687,15 @@ Thresholding limits <abbr title="A lightweight concurrent execution thread manag
 | Knapsack 0/1 | [][]int | <code>O(nW)</code> | <code>O(nW)</code> | Combinatorial DP |
 | N-Queens | <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> | <code>O(n!)</code> | <code>O(n)</code> | Constraint |
 | Binary Search | []int | <code>O(log n)</code> | <code>O(1)</code> | Sorted search |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary:</strong> Advanced <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> implements <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>, and parallelism. Caching stops redundancy. Thresholds stop overhead.

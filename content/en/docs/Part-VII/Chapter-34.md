@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithmic thinking is a fundamental part of our toolbox, helping us solve problems with precision and elegance.</em>" : Donald Knuth</strong>
+<strong>"<em>Algorithmic thinking is a fundamental part of our toolbox, helping us solve problems with precision and elegance.</em>" — Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -444,6 +444,13 @@ func main() {
     fmt.Println("Matches:", matches)
 }
 ```
+
+
+### Edge Cases & Pitfalls
+
+- **Boundary input:** Validate empty, singleton, and extreme-size inputs.
+- **Assumption mismatch:** Ensure preconditions are enforced before algorithm execution.
+- **Resource pressure:** Re-check memory and recursion behavior on large inputs.
 
 ### Anti-Patterns
 

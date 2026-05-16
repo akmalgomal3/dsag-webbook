@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>To understand a <abbr title="A graph where edges have direction from one vertex to another">directed graph</abbr>, first find its strongly connected components.</em>" : Robert Tarjan</strong>
+<strong>"<em>To understand a <abbr title="A graph where edges have direction from one vertex to another">directed graph</abbr>, first find its strongly connected components.</em>" — Robert Tarjan</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -161,6 +161,15 @@ Single-pass DFS identifies SCC roots. Discovery times and low-link values enable
 | Go stdlib | Usage |
 |-----------|-------|
 | No direct stdlib | Implement manually for deep graph analysis |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 51:</strong> SCCs reveal cyclic structures. Contraction enables graph analysis. Algorithms achieve linear time complexity.

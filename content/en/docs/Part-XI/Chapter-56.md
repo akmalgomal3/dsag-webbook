@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Maximum subarray problem asks: extend previous subarray or start fresh?</em>" : Jay Kadane</strong>
+<strong>"<em>Maximum subarray problem asks: extend previous subarray or start fresh?</em>" — Jay Kadane</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
 Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr>: an <code>O(n)</code> solution for maximum subarray problem and foundation for <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr>.
 {{% /alert %}}
 
-## 57.1. The Maximum Subarray Problem
+## 56.1. The Maximum Subarray Problem
 
 **Definition:** Find contiguous subarray with largest sum in integer array. Solved in <code>O(n)</code> by Jay Kadane in 1984.
 
@@ -40,7 +40,7 @@ maxEndingHere = max(arr[i], maxEndingHere + arr[i])
 maxSoFar = max(maxSoFar, maxEndingHere)
 ```
 
-## 57.2. Algorithm
+## 56.2. Algorithm
 
 ### Idiomatic Go Implementation
 
@@ -78,7 +78,7 @@ func main() {
 }
 ```
 
-## 57.3. Why It Works
+## 56.3. Why It Works
 
 | State | Meaning |
 |-------|---------|
@@ -87,7 +87,7 @@ func main() {
 
 Recurrence defines <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>: optimal solution at position i depends solely on optimal solution at position i-1.
 
-## 57.4. Variations
+## 56.4. Variations
 
 | Variation | Modification |
 |-----------|-------------|
@@ -96,7 +96,7 @@ Recurrence defines <abbr title="A method for solving complex problems by breakin
 | **2D version** | Maximum submatrix typically requires <code>O(n^3)</code> or <code>O(n^4)</code> |
 | **Circular array** | Yields max of Kadane's against total sum minus min subarray |
 
-## 57.5. Decision Matrix
+## 56.5. Decision Matrix
 
 | Use Kadane's When... | Use Prefix Sum When... |
 |----------------------|------------------------|
@@ -117,7 +117,7 @@ Recurrence defines <abbr title="A method for solving complex problems by breakin
 - **Subarray vs subsequence:** Subarray is contiguous. Subsequence is not. Kadane's yields incorrect results for subsequences.
 - **Integer overflow:** Running sum exceeds int bounds. Use <code>int64</code> or <code>math/big</code> for large values.
 
-## 57.6. Quick Reference
+## 56.6. Quick Reference
 
 | Aspect | Value |
 |--------|-------|
@@ -129,6 +129,15 @@ Recurrence defines <abbr title="A method for solving complex problems by breakin
 | Go stdlib | Usage |
 |-----------|-------|
 | No direct equivalent | Requires manual implementation |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 56:</strong> Kadane's algorithm demonstrates <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> principles. Single pass with <code>O(1)</code> space solves <code>O(n^2)</code> problem. Core lesson: derive optimal state at position i from position i-1.

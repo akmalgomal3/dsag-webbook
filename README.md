@@ -1,6 +1,6 @@
 # DSAG: Data Structures and Algorithms in Go
 
-[![Chapters](https://img.shields.io/badge/Chapters-60-blue)](./)
+[![Chapters](https://img.shields.io/badge/Chapters-59-blue)](./)
 [![Parts](https://img.shields.io/badge/Parts-12-blue)](./)
 [![Hugo](https://img.shields.io/badge/Hugo-0.161%2B-ff4088)](https://gohugo.io/)
 [![Go](https://img.shields.io/badge/Go-1.21%2B-00ADD8)](https://golang.org/)
@@ -12,7 +12,7 @@ Technical book. Implement data structures. Use idiomatic Go. Hugo static site.
 
 ## Overview
 
-**DSAG**: 60-chapter technical book. Target software engineers. Goals:
+**DSAG**: 59-chapter technical book. Target software engineers. Goals:
 
 - Understand internals. Core mechanics.
 - Implement logic. Idiomatic Go.
@@ -25,7 +25,7 @@ Format: 7-10 minute read. Practical code. Decision matrices. Big-O tables.
 
 ## Book Structure
 
-12 parts. 60 chapters.
+12 parts. 59 chapters.
 
 | Part | Title | Chapters |
 |------|-------|----------|
@@ -33,14 +33,14 @@ Format: 7-10 minute read. Practical code. Decision matrices. Big-O tables.
 | **II** | Basic Data Structures | 5–8 |
 | **III** | Trees, Graphs & Representations | 9–12 |
 | **IV** | Graph Algorithms | 13–18 |
-| **V** | Sorting & Searching | 19–22 |
-| **VI** | Algorithmic Paradigms | 23–28 |
-| **VII** | Advanced Topics | 29–39 |
-| **VIII** | History & Philosophy of Algorithms | 40–44 |
-| **IX** | Advanced Data Structures | 45–50 |
-| **X** | Advanced Graph Algorithms | 51–54 |
-| **XI** | Specialized Sorting & Techniques | 55–57 |
-| **XII** | Advanced Topics | 58–60 |
+| **V** | Sorting & Searching | 19–21 |
+| **VI** | Algorithmic Paradigms | 22–27 |
+| **VII** | Advanced Topics | 28–38 |
+| **VIII** | History & Philosophy of Algorithms | 39–43 |
+| **IX** | Advanced Data Structures | 44–49 |
+| **X** | Advanced Graph Algorithms | 50–53 |
+| **XI** | Specialized Sorting & Techniques | 54–56 |
+| **XII** | Advanced Topics | 57–59 |
 
 ### Chapter Topics
 

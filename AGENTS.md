@@ -35,7 +35,7 @@ When using `delegate_task` to spawn subagents for parallel work:
 
 ## Project Context
 
-- Hugo static site, 60 chapters, 12 parts
+- Hugo static site, 59 chapters, 12 parts
 - Template compliance: Quick Reference, Decision Matrix, anti-patterns required per chapter
 - Go code must be idiomatic (not Rust/C++/Python disguised)
 - Python scripts exist for structural compliance scanning

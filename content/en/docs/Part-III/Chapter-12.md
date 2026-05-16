@@ -133,8 +133,6 @@ BFS(g, start):
 ```go
 package main
 
-import "fmt"
-
 type Graph struct {
     adj [][]int
 }
@@ -216,7 +214,7 @@ func (h *MinHeap) Pop() any {
     return x
 }
 
-func (g *Graph) Dijkstra(src int, adj [][][2]int) []int {
+func Dijkstra(src int, adj [][][2]int) []int {
     dist := make([]int, len(adj))
     for i := range dist { dist[i] = math.MaxInt32 }
     dist[src] = 0

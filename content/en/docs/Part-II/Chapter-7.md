@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The art of programming is the art of organizing complexity.</em>" : Niklaus Wirth</strong>
+<strong>"<em>The art of programming is the art of organizing complexity.</em>" — Niklaus Wirth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}

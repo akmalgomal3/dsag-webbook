@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A Bloom filter is a data structure that tells you an element is definitely not in a set, or maybe in a set.</em>" : Unknown</strong>
+<strong>"<em>A Bloom filter is a data structure that tells you an element is definitely not in a set, or maybe in a set.</em>"</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -131,7 +131,7 @@ p ≈ (1 - e^(-kn/m))^k
 | False positives acceptable | Errors unacceptable |
 | Deletions not needed | Deletions frequent |
 
-### Constraints & Risks
+### Edge Cases & Pitfalls
 
 - **Hash Quality:** Poor functions increase collision rates.
 - **Saturation:** Full filters return "maybe" for every query.
@@ -156,6 +156,15 @@ p ≈ (1 - e^(-kn/m))^k
 | Go stdlib | Usage |
 |-----------|-------|
 | `github.com/bits-and-blooms` | Production implementation. |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 Bloom filters save space by accepting tunable error. Zero false negatives. Ideal for high-scale avoidance of expensive disk lookups.

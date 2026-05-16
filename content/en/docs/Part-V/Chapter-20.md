@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Intelligence is the ability to adapt to change.</em>" : Stephen Hawking</strong>
+<strong>"<em>Intelligence is the ability to adapt to change.</em>" — Stephen Hawking</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -38,7 +38,6 @@ package main
 
 import (
 	"cmp"
-	"fmt"
 )
 
 func mergeSort[T cmp.Ordered](arr []T) []T {
@@ -78,7 +77,7 @@ package main
 import (
 	"cmp"
 	"context"
-	"fmt"
+	"slices"
 	"sync"
 )
 
@@ -90,7 +89,9 @@ func ParallelMergeSort[T cmp.Ordered](ctx context.Context, arr []T) ([]T, error)
 	}
 
 	if len(arr) < 1024 {
-		return mergeSort(arr), nil
+		out := slices.Clone(arr)
+		slices.Sort(out)
+		return out, nil
 	}
 
 	mid := len(arr) / 2
@@ -114,6 +115,23 @@ func ParallelMergeSort[T cmp.Ordered](ctx context.Context, arr []T) ([]T, error)
 
 	return merge(left, right), nil
 }
+
+func merge[T cmp.Ordered](left, right []T) []T {
+	result := make([]T, 0, len(left)+len(right))
+	i, j := 0, 0
+	for i < len(left) && j < len(right) {
+		if left[i] < right[j] {
+			result = append(result, left[i])
+			i++
+		} else {
+			result = append(result, right[j])
+			j++
+		}
+	}
+	result = append(result, left[i:]...)
+	result = append(result, right[j:]...)
+	return result
+}
 ```
 
 ## 20.2. Quick Sort
@@ -136,7 +154,6 @@ package main
 
 import (
 	"cmp"
-	"fmt"
 )
 
 func QuickSort[T cmp.Ordered](arr []T) {
@@ -182,7 +199,6 @@ package main
 
 import (
 	"cmp"
-	"fmt"
 )
 
 func HeapSort[T cmp.Ordered](arr []T) {
@@ -236,6 +252,15 @@ func heapify[T cmp.Ordered](arr []T, n, i int) {
 | Quick Sort | Generic | `O(n log n)` avg | `O(log n)` | No | General purpose |
 | Heap Sort | Generic | `O(n log n)` | `O(1)` | No | Embedded systems |
 | Go slices.Sort | Generic | `O(n log n)` | `O(log n)` | No | Standard library default |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 20:</strong> Advanced sorting achieves `O(n log n)` via Divide and Conquer, Partitioning, or Priority Management. Modern Go utilizes Generics for safety and Context for robust parallelization.

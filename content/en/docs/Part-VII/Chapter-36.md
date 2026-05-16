@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Words are, of course, the most powerful drug used by mankind.</em>" : Rudyard Kipling</strong>
+<strong>"<em>Words are, of course, the most powerful drug used by mankind.</em>" — Rudyard Kipling</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
 Chapter 36 covers <abbr title="A tree data structure for storing and searching strings with common prefixes.">Trie</abbr> (<abbr title="A tree storing strings where common prefixes are shared, also called a Trie.">prefix tree</abbr>) data structures. Efficient string storage and retrieval. Used for autocomplete, spell checking, and IP routing.
 {{% /alert %}}
 
-## 37.1. Trie Fundamentals
+## 36.1. Trie Fundamentals
 
 **Definition:** Trie is a tree. Each node represents one character. Paths form words. Descendants share prefixes.
 
@@ -40,7 +40,7 @@ Standard Trie consumes high memory. Each <abbr title="A basic unit of a data str
 | StartsWith | <code>O(m)</code> | <code>O(1)</code> | Prefix check |
 | Delete | <code>O(m)</code> | <code>O(1)</code> | Remove word |
 
-## 37.2. Basic Trie
+## 36.2. Basic Trie
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
@@ -102,7 +102,7 @@ func main() {
 }
 ```
 
-## 37.3. Autocomplete
+## 36.3. Autocomplete
 
 **Definition:** Returns all words sharing a specific prefix.
 
@@ -164,7 +164,7 @@ func main() {
 }
 ```
 
-## 37.4. Decision Matrix
+## 36.4. Decision Matrix
 
 | Use Trie When... | Avoid If... |
 |------------------|-------------|
@@ -184,7 +184,7 @@ func main() {
 - **Undefined empty string behavior:** Create explicit rules for `""`.
 - **Unbounded results:** Short prefixes yield large result sets. Use counters or top-k logic.
 
-## 37.5. Quick Reference
+## 36.5. Quick Reference
 
 | Operation | Go Type | Time | Space | Use Case |
 |-----------|---------|------|-------|----------|
@@ -192,6 +192,15 @@ func main() {
 | Search | `map[rune]*TrieNode` | <code>O(m)</code> | <code>O(1)</code> | Word validation |
 | Prefix | `map[rune]*TrieNode` | <code>O(m)</code> | <code>O(k)</code> | Autocomplete |
 | Compressed Trie | Edge labels | <code>O(m)</code> | Reduced | Memory optimization |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 36:</strong> Tries provide <code>O(m)</code> string operations. Use `map[rune]*TrieNode` for character sets. Use arrays for performance. Best for autocomplete and spell checking.

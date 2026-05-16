@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Trees are the lifeblood of computer science. Master them, and you master the flow of data.</em>" : Anonymous</strong>
+<strong>"<em>Trees are the lifeblood of computer science. Master them, and you master the flow of data.</em>"</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -118,6 +118,11 @@ import (
 	"cmp"
 )
 
+func main() {
+	// AVL tree demonstration
+	fmt.Println("AVL tree operations")
+}
+
 type AVLNode[K cmp.Ordered, V any] struct {
 	Key    K
 	Value  V
@@ -160,6 +165,26 @@ func avlBalance[K cmp.Ordered, V any](n *AVLNode[K, V]) int {
 	if n == nil { return 0 }
 	return avlHeight(n.Left) - avlHeight(n.Right)
 }
+
+func avlRotateRight[K cmp.Ordered, V any](y *AVLNode[K, V]) *AVLNode[K, V] {
+	x := y.Left
+	t2 := x.Right
+	x.Right = y
+	y.Left = t2
+	y.Height = 1 + max(avlHeight(y.Left), avlHeight(y.Right))
+	x.Height = 1 + max(avlHeight(x.Left), avlHeight(x.Right))
+	return x
+}
+
+func avlRotateLeft[K cmp.Ordered, V any](x *AVLNode[K, V]) *AVLNode[K, V] {
+	y := x.Right
+	t2 := y.Left
+	y.Left = x
+	x.Right = t2
+	x.Height = 1 + max(avlHeight(x.Left), avlHeight(x.Right))
+	y.Height = 1 + max(avlHeight(y.Left), avlHeight(y.Right))
+	return y
+}
 ```
 
 ### Decision Matrix
@@ -191,7 +216,6 @@ Adding fields increases node size. Updates happen during insertion or deletion b
 package main
 
 import (
-	"fmt"
 	"cmp"
 )
 

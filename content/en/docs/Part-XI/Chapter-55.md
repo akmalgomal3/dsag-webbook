@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Brute force is <code>O(n^2)</code>. Two pointers or sliding window yield <code>O(n)</code>.</em>" : Unknown</strong>
+<strong>"<em>Brute force is <code>O(n^2)</code>. Two pointers or sliding window yield <code>O(n)</code>.</em>"</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 56 covers sliding window and two pointers: fundamental techniques for solving subarray and substring problems in <code>O(n)</code> time.
+Chapter 55 covers sliding window and two pointers: fundamental techniques for solving subarray and substring problems in <code>O(n)</code> time.
 {{% /alert %}}
 
-## 56.1. The Two Pointers Technique
+## 55.1. The Two Pointers Technique
 
 **Definition:** <abbr title="A technique using two indices to traverse a data structure, typically one starting from each end or both from the start.">Two pointers</abbr> technique uses two indices. Sequence traversal isolates pairs, triplets, or partitions satisfying conditions.
 
@@ -67,7 +67,7 @@ func main() {
 | Same direction | Fast and slow tracking |
 | Partitioning | Segregation based on mathematical condition |
 
-## 56.2. Sliding Window
+## 55.2. Sliding Window
 
 **Definition:** <abbr title="A technique for finding a subarray or substring that satisfies a condition by maintaining a window of elements and adjusting its bounds.">Sliding window</abbr> maintains subarray/substring satisfying condition. Bounds expand and contract.
 
@@ -134,7 +134,7 @@ func main() {
 }
 ```
 
-## 56.3. Decision Matrix
+## 55.3. Decision Matrix
 
 | Use Two Pointers When... | Use Sliding Window When... |
 |--------------------------|---------------------------|
@@ -156,7 +156,7 @@ func main() {
 - **Stale map entries:** Invalidate old positions in frequency tracking.
 - **Non-monotonic constraints:** Techniques fail if property is lost.
 
-## 56.4. Quick Reference
+## 55.4. Quick Reference
 
 | Problem Type | Technique | Time |
 |--------------|-----------|------|
@@ -169,6 +169,15 @@ func main() {
 | Go stdlib | Usage |
 |-----------|-------|
 | <code>strings</code> | <code>Contains</code> and <code>Index</code> provide basic substring operations. |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 55:</strong> Two pointers and sliding window yield linear-time processing. Single passes replace nested loops. Patterns apply to pairs, subarrays, and substrings.

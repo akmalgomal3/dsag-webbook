@@ -1,482 +1,476 @@
 [
   {
-    "title": "Chapter 1 - The Role of Algorithms in Modern Software",
+    "title": "Chapter 1: The Role of Algorithms in Modern Software",
     "permalink": "/dsag-webbook/docs/part-i/chapter-1/",
     "summary": "The Role of Algorithms in Modern Software",
-    "content": "<strong>\"<em>An algorithm must be seen to be believed.</em>\" — Donald Knuth</strong> Chapter 1 focuses on the fundamental role of algorithms in modern software, explaining computational complexity using <abbr title=\"A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.\">Big-O notation</abbr> and discussing the ethical implications of algorithm design.  1.1. The Evolution of Algorithms Definition: Algorithmic complex"
+    "content": "<strong>\"<em>An algorithm must be seen to be believed.</em>\" — Donald Knuth</strong> Chapter 1 covers algorithm fundamentals. Topics: computational complexity, Big-O notation, ethical algorithm design.  1.1. The Evolution of Algorithms Definition: Algorithmic complexity measures resource growth (time/memory) vs input size. Uses Big-O notation. Background & Philosophy: Algorithms solve problems efficiently. Data scales, naive approaches fail. Big-O provides hardware-independent framework. Goal: p"
   },
   {
-    "title": "Chapter 2 - Complexity Analysis",
+    "title": "Chapter 2: Complexity Analysis",
     "permalink": "/dsag-webbook/docs/part-i/chapter-2/",
     "summary": "Complexity Analysis",
-    "content": "<strong>\"<em>The best way to predict the future is to invent it.</em>\" — Alan Kay</strong> Chapter 2 focuses on complexity analysis, exploring time and space boundaries, <abbr title=\"Relating to values or properties approached as a limit, used in algorithm analysis.\">asymptotic</abbr> notations (<abbr title=\"A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.\">Big-O</abbr>, <abbr title=\"A mathematical notation des"
+    "content": "<strong>\"<em>The best way to predict the future is to invent it.</em>\" — Alan Kay</strong> Chapter 2 covers complexity analysis. Topics: time/space bounds, asymptotic notations (Big-O, Big-Ω, Big-Θ), performance scaling. Explores hardware sympathy, CPU caches, Go Garbage Collection constraints.  2.1. Complexity Analysis Definition: Evaluates algorithm efficiency. Measures execution time and memory usage vs input size. Background & Philosophy: Abstracts hardware and compilers. Focuses on logical "
   },
   {
-    "title": "Chapter 3 - Introduction to Data Structures and Algorithms in Go",
+    "title": "Chapter 3: Introduction to Data Structures and Algorithms in Go",
     "permalink": "/dsag-webbook/docs/part-i/chapter-3/",
     "summary": "Introduction to Data Structures and Algorithms in Go",
-    "content": "<strong>\"<em>Programs must be written for people to read, and only incidentally for machines to execute.</em>\" — Harold Abelson</strong> Chapter 3 focuses on why Go is an exceptional language for data structures and algorithms, covering its core memory management, built-in collections, and development environment setup.  3.1. Why Go for Data Structures and Algorithms Definition: Go offers memory safety, near-C performance, simple concurrency primitives, and strong tooling for algorithm implement"
+    "content": "<strong>\"<em>Programs must be written for people to read, and only incidentally for machines to execute.</em>\" — Harold Abelson</strong> Chapter 3 covers Go as a tool for algorithms. Topics: memory management, built-in collections, developer environment setup.  3.1. Go for Data Structures and Algorithms Definition: Go provides memory safety, C-like speed, raw concurrency, strong tooling. Background & Philosophy: Built at Google for scale. Prioritizes simplicity over cleverness. Drops inheritance"
   },
   {
-    "title": "Chapter 4 - Fundamentals of Go Programming for Algorithms",
+    "title": "Chapter 4: Fundamentals of Go Programming for Algorithms",
     "permalink": "/dsag-webbook/docs/part-i/chapter-4/",
     "summary": "Fundamentals of Go Programming for Algorithms",
-    "content": "<strong>\"<em>Programs must be written for people to read, and only incidentally for machines to execute.</em>\" — Harold Abelson</strong> Chapter 4 focuses on the fundamentals of Go programming, discussing the memory model, type system, functional patterns, and concurrency primitives that form the foundation for safe algorithm implementation.  4.1. Understanding Go's Memory Model Definition: Go manages memory via <abbr title=\"Automatic memory management that attempts to reclaim memory occupied by"
+    "content": "<strong>\"<em>Programs must be written for people to read, and only incidentally for machines to execute.</em>\" — Harold Abelson</strong> Chapter 4 covers Go programming fundamentals. Topics: memory model, type system, Generics, Iterators (1.23+), concurrency primitives.  4.1. Go Memory Model Definition: Go manages memory via Garbage Collection (GC). Pointers pass memory addresses without pointer arithmetic. Slices reference backing arrays. Background & Philosophy: Balances C control with Java sa"
   },
   {
-    "title": "Chapter 5 - Fundamental Data Structures in Go",
+    "title": "Chapter 5: Fundamental Data Structures in Go",
     "permalink": "/dsag-webbook/docs/part-ii/chapter-5/",
     "summary": "Fundamental Data Structures in Go",
-    "content": "Chapter 5 focuses on fundamental data structures in Go (arrays, slices, maps, linked lists). It contrasts their memory layouts and explains how slices leverage CPU <abbr title=\"A hardware or software component that stores data so future requests can be served faster.\">cache</abbr> locality for superior performance.  5.1. Arrays and Slices Definition: An <abbr title=\"A collection of items stored at contiguous memory locations.\">array</abbr> is a collection of elements with the same type and a fix"
+    "content": "<strong>\"<em>Simplicity is prerequisite for reliability.</em>\" — Edsger Dijkstra</strong> Chapter 5 covers Go fundamental data structures. Topics: arrays, slices, maps, linked lists. Explores memory layouts. Demonstrates slice cache locality advantages. Integrates modern slices and maps packages.  5.1. Arrays and Slices Definition: Array is fixed-size collection. Slice is dynamic view into array. Background & Philosophy: C/C++ arrays lack bounds checking. Go introduces \"slice\" as safe, first-cla"
   },
   {
-    "title": "Chapter 6 - Elementary Data Structures",
+    "title": "Chapter 6: Elementary Data Structures",
     "permalink": "/dsag-webbook/docs/part-ii/chapter-6/",
     "summary": "Elementary Data Structures",
-    "content": "<strong>\"<em>Data dominates. If you've chosen the right data structures and organized things well, the algorithms will almost always be self-evident.</em>\" — Rob Pike</strong> Chapter 6 focuses on building elementary data structures (Stacks, Queues, Deques) utilizing Go 1.18+ Generics. Crucially, it explores hardware-level performance implications, demonstrating why contiguous memory drastically outperforms node-based memory.  6.1. Stacks (LIFO) Definition: A LIFO (Last-In-First-Out) data struct"
+    "content": "<strong>\"<em>Data dominates. If you've chosen the right data structures and organized things well, the algorithms will almost always be self-evident.</em>\" — Rob Pike</strong> Chapter 6 focuses on building elementary data structures (Stacks, Queues, Deques) utilizing Go 1.18+ Generics. Crucially, it explores hardware-level performance implications, demonstrating why <abbr title=\"Memory blocks allocated in a single unbroken sequence of addresses.\">contiguous memory</abbr> drastically outperforms "
   },
   {
-    "title": "Chapter 7 - Hashing and Hash Tables",
+    "title": "Chapter 7: Hashing and Hash Tables",
     "permalink": "/dsag-webbook/docs/part-ii/chapter-7/",
     "summary": "Hashing and Hash Tables",
-    "content": "Chapter 7 focuses on hashing and hash tables, covering Go's built-in map, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and consistent hashing architectures for distributed systems.  7.1. Hash Tables Definition: A <abbr title=\"A data structure that implements an associative array using a hash function.\">hash table</abbr> maps keys to values using a hash function. Go provides the built-in map[K]V which is backed by a <abbr title=\"A data structure that implements an assoc"
+    "content": "<strong>\"<em>The art of programming is the art of organizing complexity.</em>\" — Niklaus Wirth</strong> Chapter 7 covers Go maps, FNV hashes, SHA-256 digests, and consistent hashing for distributed systems.  7.1. Hash Tables Definition: Hash table maps keys to values using hash function. Go map[K]V uses hash table. Mechanics: Hash table trades space for time. Extra memory footprint buys constant-time access. Search problem becomes index computation. In Go, map is pointer to hmap struct. hmap sto"
   },
   {
-    "title": "Chapter 8 - Linked Lists",
+    "title": "Chapter 8: Linked Lists",
     "permalink": "/dsag-webbook/docs/part-ii/chapter-8/",
     "summary": "Linked Lists",
-    "content": "<strong>\"<em>Simplicity is the ultimate sophistication.</em>\" — Leonardo da Vinci</strong> Chapter 8 covers linked list data structures in Go: singly linked lists, doubly linked lists, and circular linked lists. Understand when linked lists outperform slices and when they fall short due to Go's garbage collector and cache locality.  8.1. Singly Linked List Definition: A singly linked list is a linear collection of nodes where each node contains data and a pointer to the next node. Unlike slices,"
+    "content": "<strong>\"<em>Simplicity is the ultimate sophistication.</em>\" — Leonardo da Vinci</strong> Chapter 8 covers singly, doubly, and circular linked lists. Learn to choose between linked lists and slices based on garbage collector pressure and cache locality.  8.1. Singly Linked List Definition: Singly linked list stores nodes in non-contiguous memory. Each node contains data and pointer to next node. Mechanics: Singly linked list optimizes dynamic growth. Element isolation allows insertion without c"
   },
   {
-    "title": "Chapter 9 - Trees and Balanced Trees",
+    "title": "Chapter 9: Trees and Balanced Trees",
     "permalink": "/dsag-webbook/docs/part-iii/chapter-9/",
     "summary": "Trees and Balanced Trees",
-    "content": "<strong>\"<em>The oak fought the wind and was broken, the willow bent when it must and survived.</em>\" — Robert Jordan</strong> Chapter 9 covers tree data structures: binary search trees, self-balancing trees (AVL, Red-Black), and their operations. Understand tree rotations and when balance matters.  9.1. Binary Search Tree (BST) Definition: A BST is a binary tree where each node's left subtree contains only values less than the node, and the right subtree contains only values greater.  Operation"
+    "content": "<strong>\"<em>The oak fought the wind and was broken, the willow bent when it must and survived.</em>\" — Robert Jordan</strong> Chapter 9 covers BST, AVL, and Red-Black trees. Understand rotations and height balance.  9.1. Binary Search Tree (BST) Definition: Binary Search Tree stores nodes where left child is smaller and right child is larger than parent. Mechanics: BST combines list flexibility with O(log n) search speed. Search follows left or right paths based on value comparison. Nodes resid"
   },
   {
-    "title": "Chapter 10 - Heaps and Priority Queues",
+    "title": "Chapter 10: Heaps and Priority Queues",
     "permalink": "/dsag-webbook/docs/part-iii/chapter-10/",
     "summary": "Heaps and Priority Queues",
-    "content": "<strong>\"<em>The best way to predict the future is to invent it.</em>\" — Alan Kay</strong> Chapter 10 covers heaps and priority queues: tree-based structures for efficient access to the maximum or minimum element. Essential for scheduling, graph algorithms, and top-k problems.  10.1. Binary Heap Definition: A binary heap is a complete binary tree where each parent is greater than (max-heap) or less than (min-heap) its children. It supports extract-max and insert in <code>O(log n)</code>.  Operat"
+    "content": "<strong>\"<em>The best way to predict the future is to invent it.</em>\" — Alan Kay</strong> Chapter 10 covers heaps and priority queues. Use these for scheduling, graph algorithms, and top-k problems.  10.1. Binary Heap Definition: Binary heap is a complete binary tree. Parent is always greater than (max-heap) or less than (min-heap) its children. Mechanics: Binary heap optimizes extreme element retrieval. Sacrifices full searchability for fast min/max access. Partial ordering reduces operations "
   },
   {
-    "title": "Chapter 11 - Disjoint Sets",
+    "title": "Chapter 11: Binary Search Trees and Self-Balancing Trees",
     "permalink": "/dsag-webbook/docs/part-iii/chapter-11/",
-    "summary": "Disjoint Sets",
-    "content": "<strong>\"<em>Trees are the lifeblood of computer science. Master them, and you master the flow of data.</em>\" — Anonymous</strong> Chapter 11 focuses on <abbr title=\"A search algorithm that finds the position of a target value within a sorted array.\">Binary Search</abbr> Trees (BST), Self-Balancing Trees (AVL/Red-Black), and <abbr title=\"A hierarchical data structure with a root node and child nodes.\">Tree</abbr> Augmentation. It explores implementing trees safely in Go using 1.18+ Generics whil"
+    "summary": "Binary Search Trees and Self-Balancing Trees",
+    "content": "<strong>\"<em>Trees are the lifeblood of computer science. Master them, and you master the flow of data.</em>\"</strong> Chapter 11 covers Generic BSTs, AVL trees, and augmentation techniques for rank queries.  11.1. Binary Search Tree (BST) Definition: BST stores ordered data where left subtree is smaller and right is larger than root. Mechanics: BST embeds binary search into dynamic structure. Hierarchical pointers allow O(log n) insertion without memory shifting. Maintains order through structu"
   },
   {
-    "title": "Chapter 12 - Graphs and Graph Representations",
+    "title": "Chapter 12: Graphs and Graph Representations",
     "permalink": "/dsag-webbook/docs/part-iii/chapter-12/",
     "summary": "Graphs and Graph Representations",
-    "content": "Chapter 12 focuses on advanced <abbr title=\"A non-linear data structure consisting of nodes (vertices) and edges.\">graph</abbr> representations and setups. It lays the groundwork for representing complex networks in Go using generic maps and slices to achieve optimal <abbr title=\"A hardware or software component that stores data so future requests can be served faster.\">cache</abbr> performance.  12.1. <abbr title=\"A non-linear data structure consisting of nodes (vertices) and edges.\">Graph</abb"
+    "content": "Chapter 12 covers graph representations and traversal. Learn to use slices and maps for optimal cache performance in network structures.  12.1. Graph Representations Definition: Graph models vertices and edges. Common forms include adjacency lists, adjacency matrices, and edge lists. Mechanics: Representation choice balances query speed against memory usage. Adjacency list records existing edges: saves memory in sparse networks. Adjacency matrix records all possible pairs: provides O(1) edge che"
   },
   {
-    "title": "Chapter 13 - Graph Traversal Algorithms",
+    "title": "Chapter 13: Graph Traversal Algorithms",
     "permalink": "/dsag-webbook/docs/part-iv/chapter-13/",
     "summary": "Graph Traversal Algorithms",
-    "content": "<strong>\"<em>The journey of a thousand miles begins with one step.</em>\" — Lao Tzu</strong> Chapter 13 covers graph traversal algorithms: Depth-First Search (DFS) and Breadth-First Search (BFS). Learn how to systematically explore graphs and their applications.  13.1. Depth-First Search (DFS) Definition: DFS explores as far as possible along each branch before backtracking. It uses a stack (explicit or recursive call stack).  Operations & Complexity | Operation | Complexity | Description | |----"
+    "content": "<strong>\"<em>The journey of a thousand miles begins with one step.</em>\" — Lao Tzu</strong> Chapter 13 covers graph traversal algorithms: depth-first search (DFS) and breadth-first search (BFS). Uses modern Go patterns (Generics, Iterators).  13.1. Depth-First Search (DFS) Definition: Explores branch deeply before backtracking. Uses stack (explicit or recursive). Background & Philosophy: Aggressive exploration. Dives into unknown. Chases single path to dead end. Mimics human puzzle-solving. Use "
   },
   {
-    "title": "Chapter 14 - Single-Source Shortest Paths",
+    "title": "Chapter 14: Single-Source Shortest Paths",
     "permalink": "/dsag-webbook/docs/part-iv/chapter-14/",
     "summary": "Single-Source Shortest Paths",
-    "content": "<strong>\"<em>The shortest path between two points is a straight line.</em>\" — Archimedes</strong> Chapter 14 covers single-source shortest path algorithms: Dijkstra's algorithm and Bellman-Ford. Learn when to use each and how to implement them in Go.  14.1. Dijkstra's Algorithm Definition: Dijkstra's algorithm finds the shortest paths from a source vertex to all other vertices in a weighted graph with non-negative edge weights.  Operations & Complexity | Operation | Complexity | Description | |-"
+    "content": "<strong>\"<em>The shortest path between two points is a straight line.</em>\" — Archimedes</strong> Chapter 14: Dijkstra and Bellman-Ford algorithms. Covers usage, logic, and Go implementation.  14.1. Dijkstra's Algorithm Definition: Dijkstra finds shortest paths from source to all vertices. Required: weighted graph, non-negative edge weights. Logic: Greedy expansion. Assumes cheapest frontier path is final. Logic holds if negative weights are absent. Use Cases: Network routing (OSPF). Mapping sof"
   },
   {
-    "title": "Chapter 15 - All-Pairs Shortest Paths",
+    "title": "Chapter 15: All-Pairs Shortest Paths",
     "permalink": "/dsag-webbook/docs/part-iv/chapter-15/",
     "summary": "All-Pairs Shortest Paths",
-    "content": "<strong>\"<em>The whole is greater than the sum of its parts.</em>\" — Aristotle</strong> Chapter 15 covers all-pairs shortest path algorithms: Floyd-Warshall and Johnson's algorithm. Learn when to use each based on graph density and edge weights.  15.1. Floyd-Warshall Algorithm Definition: Floyd-Warshall computes shortest paths between all pairs of vertices using dynamic programming. It works with negative edges (but no negative cycles) and handles dense graphs efficiently.  Operations & Complexi"
+    "content": "<strong>\"<em>The whole is greater than the sum of its parts.</em>\" — Aristotle</strong> Chapter 15: Floyd-Warshall and Johnson's algorithms. Compares usage for dense vs sparse graphs.  15.1. Floyd-Warshall Algorithm Definition: Computes shortest paths between all vertex pairs. Uses dynamic programming. Supports negative edges. Handles dense graphs efficiently. Logic: Simultaneous calculation of all paths. Incrementally expands set of intermediate nodes. Checks if node K improves path between A a"
   },
   {
-    "title": "Chapter 16 - Minimum Spanning Trees",
+    "title": "Chapter 16: Minimum Spanning Trees",
     "permalink": "/dsag-webbook/docs/part-iv/chapter-16/",
     "summary": "Minimum Spanning Trees",
-    "content": "<strong>\"<em>The most damaging phrase in the language is: 'We've always done it this way.'</em>\" — Grace Hopper</strong> Chapter 16 focuses on Minimum Spanning Trees (MST) utilizing Kruskal's, Prim's, and Borůvka's algorithms. It applies Generic Go <abbr title=\"An algorithm to perform union and find operations on disjoint sets.\">Union-Find</abbr> sets and priority queues to efficiently map optimal network topologies.  16.1. Kruskal’s Algorithm Definition: Kruskal builds an MST by greedily select"
+    "content": "<strong>\"<em>The most damaging phrase in the language is: 'We've always done it this way.'</em>\" — Grace Hopper</strong> Chapter 16: Minimum Spanning Trees (MST). Covers Kruskal's, Prim's, and Borůvka's algorithms. Compares usage and implementations.  16.1. Kruskal’s Algorithm Definition: Builds MST by selecting minimum weight edges. Uses <abbr title=\"An algorithm to perform union and find operations on disjoint sets.\">Union-Find</abbr> to prevent cycles. Logic: Global greed. Evaluates all edges"
   },
   {
-    "title": "Chapter 17 - Network Flow Algorithms",
+    "title": "Chapter 17: Network Flow Algorithms",
     "permalink": "/dsag-webbook/docs/part-iv/chapter-17/",
     "summary": "Network Flow Algorithms",
-    "content": "<strong>\"<em>Algorithms are the intellectual property of computer science; they are the critical tools for understanding how to solve complex problems effectively.</em>\" — Donald Knuth</strong> Chapter 17 focuses on Network Flow Algorithms (Ford-Fulkerson, Edmonds-Karp, Dinic's). It demonstrates how to maximize network <abbr title=\"The amount of data processed in a given amount of time.\">throughput</abbr> and minimize transportation costs effectively within dense graphs.  17.1. Ford-Fulkerson Me"
+    "content": "<strong>\"<em>Algorithms are the intellectual property of computer science; they are the critical tools for understanding how to solve complex problems effectively.</em>\" — Donald Knuth</strong> Chapter 17: Network Flow Algorithms. Covers Ford-Fulkerson, Edmonds-Karp, and Dinic's algorithms. Focuses on throughput optimization.  17.1. Ford-Fulkerson Method Definition: Increases flow by finding augmenting paths via DFS. Stops when no paths exist between source and sink. Logic: Greedy incrementation"
   },
   {
-    "title": "Chapter 18 - Matchings in Bipartite Graphs",
+    "title": "Chapter 18: Matchings in Bipartite Graphs",
     "permalink": "/dsag-webbook/docs/part-iv/chapter-18/",
     "summary": "Matchings in Bipartite Graphs",
-    "content": "<strong>\"<em>Algorithms are the most direct way to make our ideas into action.</em>\" — Donald Knuth</strong> Chapter 18 focuses on Matchings in Bipartite Graphs, detailing the Hungarian Algorithm for optimal weighted assignments and Hopcroft-Karp for executing maximum cardinality matching efficiently.  18.1. Bipartite Graphs and Matching Definition: A bipartite <abbr title=\"A non-linear data structure consisting of nodes (vertices) and edges.\">graph</abbr> is a <abbr title=\"A non-linear data str"
+    "content": "<strong>\"<em>Algorithms are the most direct way to make our ideas into action.</em>\" — Donald Knuth</strong> Chapter 18: Bipartite Matching. Covers Hungarian Algorithm for weighted assignments and Hopcroft-Karp for maximum cardinality matching.  18.1. Bipartite Graphs and Matching Definition: Bipartite graphs partition vertices into disjoint sets U and V. Edges only connect U to V. Matching creates vertex-disjoint edge sets. Logic: Conflict resolution. Pairs resources (U) with consumers (V). Pro"
   },
   {
-    "title": "Chapter 19 - Basic Sorting Algorithms",
+    "title": "Chapter 19: Basic Sorting Algorithms",
     "permalink": "/dsag-webbook/docs/part-v/chapter-19/",
     "summary": "Basic Sorting Algorithms",
-    "content": "<strong>\"<em>Sorting is the process of arranging elements in a specific order, typically ascending or descending.</em>\"</strong> Chapter 19 covers basic sorting algorithms: Bubble Sort, Selection Sort, and Insertion Sort. Understand their mechanics, complexity, and when they remain relevant in modern Go.  19.1. Bubble Sort Definition: Bubble Sort repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. Each pass places the next largest element"
+    "content": "<strong>\"<em>Sorting is the process of arranging elements in a specific order, typically ascending or descending.</em>\"</strong> Chapter 19 covers basic sorting. Topics: Bubble, Selection, Insertion Sort. Explores mechanics, complexity. Uses Go cmp.Ordered Generics.  19.1. Bubble Sort Definition: Steps through list. Compares adjacent elements. Swaps if wrong order. Places largest element at end per pass. Background & Philosophy: Naive local optimization. Repeatedly fixes adjacent inversions. Lar"
   },
   {
-    "title": "Chapter 20 - Advanced Sorting Algorithms",
+    "title": "Chapter 20: Advanced Sorting Algorithms",
     "permalink": "/dsag-webbook/docs/part-v/chapter-20/",
     "summary": "Advanced Sorting Algorithms",
-    "content": "<strong>\"<em>Intelligence is the ability to adapt to change.</em>\" — Stephen Hawking</strong> Chapter 20 covers advanced sorting algorithms: Merge Sort, Quick Sort, and Heap Sort. These achieve <code>O(n log n)</code> complexity and form the backbone of real-world sorting systems.  20.1. Merge Sort Definition: Merge Sort is a divide-and-conquer algorithm that divides the array into halves, recursively sorts each half, and merges the sorted halves.  Operations & Complexity | Operation | Complexit"
+    "content": "<strong>\"<em>Intelligence is the ability to adapt to change.</em>\" — Stephen Hawking</strong> Chapter 20 covers advanced sorting. Topics: Merge, Quick, Heap Sort. Achieves O(n log n). Forms real-world backbone. Uses Generics. Adds context parallelization.  20.1. Merge Sort Definition: Divide and conquer algorithm. Divides array, recursively sorts halves, merges halves. Background & Philosophy: Philosophy: Divide and Conquer. Sorting and merging small arrays mathematically beats comparing all ele"
   },
   {
-    "title": "Chapter 21 - Searching Algorithms",
+    "title": "Chapter 21: Searching Algorithms",
     "permalink": "/dsag-webbook/docs/part-v/chapter-21/",
     "summary": "Searching Algorithms",
-    "content": "<strong>\"<em>The art of programming is the art of organizing complexity.</em>\" — Edsger Dijkstra</strong> Chapter 21 covers searching algorithms: linear search, binary search, and interpolation search. Learn when each algorithm is appropriate and how to implement them idiomatically in Go using the standard library.  21.1. Linear Search Definition: Linear search sequentially checks each element until the target is found or the end is reached. It works on any data structure supporting traversal.  "
+    "content": "<strong>\"<em>The art of programming is the art of organizing complexity.</em>\" — Edsger Dijkstra</strong> Chapter 21 covers searching. Topics: Linear, Binary, Interpolation Search. Implements via Generics (cmp.Ordered) and slices package.  21.1. Linear Search Definition: Sequentially checks each element until target found or end reached. Background & Philosophy: Philosophy: exhaustive brute-force. Assumes no structure. Resilient but inefficient. Use Cases: Unindexed data. Short arrays. Unsortabl"
   },
   {
-    "title": "Chapter 22 - Median and Order Statistics",
-    "permalink": "/dsag-webbook/docs/part-v/chapter-22/",
-    "summary": "Median and Order Statistics",
-    "content": "<strong>\"<em>The greatest <abbr title=\"The data associated with a key in a key-value pair.\">value</abbr> of a picture is when it forces us to notice what we never expected to see.</em>\" — John Tukey</strong> Chapter 22 focuses on All-Pairs Shortest Paths, detailing Floyd-Warshall for dense <abbr title=\"A non-linear data structure consisting of nodes (vertices) and edges.\">graph</abbr> routing and Johnson's algorithm for sparse graphs containing negative weights, emphasizing <abbr title=\"Relating"
-  },
-  {
-    "title": "Chapter 23 - Divide and Conquer",
-    "permalink": "/dsag-webbook/docs/part-vi/chapter-23/",
+    "title": "Chapter 22: Divide and Conquer",
+    "permalink": "/dsag-webbook/docs/part-vi/chapter-22/",
     "summary": "Divide and Conquer",
-    "content": "<strong>\"<em>A recursive method is often the most natural way to solve a problem that can be broken down into smaller problems of the same type.</em>\" — Donald Knuth</strong> Chapter 23 focuses on the <abbr title=\"An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.\">Divide and Conquer</abbr> paradigm, breaking down problems recursively. It implements classical algorithms and demonstrates how to parallelize independent sub-problems efficiently us"
+    "content": "<strong>\"<em>A recursive method is often the most natural way to solve a problem that can be broken down into smaller problems of the same type.</em>\" — Donald Knuth</strong> Chapter 22: Divide and Conquer paradigm. Recursive problem decomposition. Parallelization using Go goroutines.  22.1. Introduction to <abbr title=\"An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.\">Divide and Conquer</abbr> Definition: Splits problem into smaller independ"
   },
   {
-    "title": "Chapter 24 - Dynamic Programming",
-    "permalink": "/dsag-webbook/docs/part-vi/chapter-24/",
+    "title": "Chapter 23: Dynamic Programming",
+    "permalink": "/dsag-webbook/docs/part-vi/chapter-23/",
     "summary": "Dynamic Programming",
-    "content": "<strong>\"<em>Those who cannot remember the past are condemned to repeat it.</em>\" — George Santayana</strong> Chapter 24 covers dynamic programming (DP): a method for solving complex problems by breaking them into overlapping subproblems and storing solutions to avoid redundant computation.  24.1. DP Fundamentals Definition: Dynamic programming solves problems by breaking them into smaller overlapping subproblems, solving each subproblem once, and storing the result for reuse. It applies when a "
+    "content": "<strong>\"<em>Memory prevents repetition.</em>\" — George Santayana</strong> Dynamic programming (DP) solves complex problems. It breaks problems into <abbr title=\"Subproblems that recur multiple times in a recursive solution\">overlapping subproblems</abbr>. It stores solutions to prevent redundant work.  23.1. DP Fundamentals Definition: <abbr title=\"A method combining solutions to overlapping subproblems\">Dynamic programming</abbr> solves problems by breaking them into <abbr title=\"Subproblems t"
   },
   {
-    "title": "Chapter 25 - Greedy Algorithms",
-    "permalink": "/dsag-webbook/docs/part-vi/chapter-25/",
+    "title": "Chapter 24: Greedy Algorithms",
+    "permalink": "/dsag-webbook/docs/part-vi/chapter-24/",
     "summary": "Greedy Algorithms",
-    "content": "<strong>\"<em>Greed, for lack of a better word, is good.</em>\" — Gordon Gekko</strong> Chapter 25 covers greedy algorithms: making locally optimal choices at each step to find a global optimum. Learn when greediness works and when it fails.  25.1. Greedy Strategy Definition: A greedy algorithm builds a solution piece by piece, always choosing the next piece that offers the most immediate benefit. It works only when the problem has the greedy choice property and optimal substructure.  When Greedy "
+    "content": "<strong>\"<em>Local optimization wins.</em>\" — Gordon Gekko</strong> Greedy algorithms make locally optimal choices. Goal: find <abbr title=\"The best possible solution over the entire search space\">global optimum</abbr>. Fast but structure-dependent.  24.1. Greedy Strategy Definition: A <abbr title=\"An algorithm making locally optimal choices at each step\">greedy algorithm</abbr> builds solutions incrementally. It picks the immediate best choice. Requires greedy choice property and <abbr title=\"P"
   },
   {
-    "title": "Chapter 26 - Backtracking",
-    "permalink": "/dsag-webbook/docs/part-vi/chapter-26/",
+    "title": "Chapter 25: Backtracking",
+    "permalink": "/dsag-webbook/docs/part-vi/chapter-25/",
     "summary": "Backtracking",
-    "content": "<strong>\"<em>In the middle of difficulty lies opportunity.</em>\" — Albert Einstein</strong> Chapter 26 covers backtracking: a systematic way to explore all potential solutions by building candidates incrementally and abandoning partial candidates (\"backtracking\") as soon as they cannot possibly lead to a valid solution.  26.1. Backtracking Fundamentals Definition: Backtracking is a refined brute-force approach that builds a solution incrementally. If a partial solution violates constraints, the "
+    "content": "<strong>\"<em>Difficulty holds opportunity.</em>\" — Albert Einstein</strong> <abbr title=\"An algorithmic technique for solving problems recursively by trying to build a solution incrementally.\">Backtracking</abbr> builds candidates incrementally. It abandons partial candidates upon constraint violation.  25.1. Backtracking Fundamentals Definition: <abbr title=\"Building candidates incrementally and abandoning dead ends\">Backtracking</abbr> refines <abbr title=\"A straightforward approach trying all"
   },
   {
-    "title": "Chapter 27 - Advanced Recursive Algorithms",
-    "permalink": "/dsag-webbook/docs/part-vi/chapter-27/",
+    "title": "Chapter 26: Advanced Recursive Algorithms",
+    "permalink": "/dsag-webbook/docs/part-vi/chapter-26/",
     "summary": "Advanced Recursive Algorithms",
-    "content": "<strong>\"<em>A recursive function calls itself, like a mirror facing a mirror, reflecting a problem into simpler and simpler versions of itself until it vanishes.</em>\" — Brian Kernighan</strong> Chapter 27 covers advanced <abbr title=\"A method where the solution to a problem depends on solutions to smaller instances of the same problem.\">recursion</abbr>: <abbr title=\"An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.\">divide and conquer</abbr"
+    "content": "<strong>\"<em>Recursion reflects problems into simpler versions.</em>\" — Brian Kernighan</strong> Advanced <abbr title=\"A method where the solution to a problem depends on solutions to smaller instances of the same problem.\">recursion</abbr> includes <abbr title=\"An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.\">divide and conquer</abbr>, recursive structures, <abbr title=\"A dynamic programming technique storing the results of expensive functi"
   },
   {
-    "title": "Chapter 28 - Probabilistic and Randomized Algorithms",
-    "permalink": "/dsag-webbook/docs/part-vi/chapter-28/",
+    "title": "Chapter 27: Probabilistic and Randomized Algorithms",
+    "permalink": "/dsag-webbook/docs/part-vi/chapter-27/",
     "summary": "Probabilistic and Randomized Algorithms",
-    "content": "<strong>\"<em>A good algorithm is a beautiful thing, but its beauty is often in its simplicity. The most complex algorithms are those that use randomization effectively.</em>\" — Donald Knuth</strong> Chapter 28 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized quicksort, skip lists, and powerful primality testing.  28.1. Randomized QuickSort Definition: QuickSort utilizing a randomly selected pivot successfully avoids the catastrophic <abbr title=\"The maximum runtime or resource"
+    "content": "<strong>\"<em>A good algorithm is a beautiful thing, but its beauty is often in its simplicity. The most complex algorithms are those that use randomization effectively.</em>\" — Donald Knuth</strong> Chapter 27 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized quicksort, skip lists, and primality testing.  27.1. Randomized QuickSort Definition: QuickSort using random pivot selection. Prevents $O(n^2)$ worst-case on sorted inputs. Background & Philosophy: Randomness trades absolu"
   },
   {
-    "title": "Chapter 29 - Vector, Matrix, and Tensor Operations",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-29/",
+    "title": "Chapter 28: Vector, Matrix, and Tensor Operations",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-28/",
     "summary": "Vector, Matrix, and Tensor Operations",
-    "content": "<strong>\"<em>Linear algebra is the mathematics of data. Matrices and vectors are the language in which modern algorithms speak.</em>\" — Gilbert Strang</strong> Chapter 29 covers vector, matrix, and tensor operations with idiomatic Go implementations utilizing slices and gonum.  29.1. Vector Operations Definition: A vector is a one-dimensional <abbr title=\"A collection of items stored at contiguous memory locations.\">array</abbr> representing a directed magnitude. Basic operations include additio"
+    "content": "<strong>\"<em>Linear algebra is the mathematics of data. Matrices and vectors are the language in which modern algorithms speak.</em>\" — Gilbert Strang</strong> Chapter 28 covers vector, matrix, and tensor operations. Implementations use Go slices and gonum.  28.1. Vector Operations Definition: Vector is 1D array. Represents directed magnitude. Operations: addition, scalar multiplication, dot product, cross product. Background & Philosophy: Vectors group numbers into spatial structures. Enables b"
   },
   {
-    "title": "Chapter 30 - Parallel and Distributed Algorithms",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-30/",
+    "title": "Chapter 29: Parallel and Distributed Algorithms",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-29/",
     "summary": "Parallel and Distributed Algorithms",
-    "content": "<strong>\"<em>Parallel programming is not about making programs faster, but about creating solutions that can solve larger problems.</em>\" — Jeff Dean</strong> Chapter 30 discusses parallel and distributed algorithms employing goroutines, channels, synchronization primitives, and worker pools in Go.  30.1. Parallelism in Go Definition: Parallelism involves executing computations simultaneously across multiple CPU cores. Go provides goroutines (lightweight threads) and channels for inter-process c"
+    "content": "<strong>\"<em>Parallel programming is not about making programs faster, but about creating solutions that can solve larger problems.</em>\" — Jeff Dean</strong> Chapter 30 discusses parallel and distributed algorithms. Uses goroutines, channels, and worker pools in Go.  29.1. Parallelism in Go Definition: Simultaneous computation across multiple CPU cores. Go provides goroutines and channels for coordination. Background & Philosophy: Hardware clock speeds plateaued. Computing must go wider. Parall"
   },
   {
-    "title": "Chapter 31 - Cryptographic Foundations Algorithms",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-31/",
+    "title": "Chapter 30: Cryptographic Foundations Algorithms",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-30/",
     "summary": "Cryptographic Foundations Algorithms",
-    "content": "<strong>\"<em>To keep a system secure, we need to be always on our toes. If we wait for the attackers to find vulnerabilities, it's already too late.</em>\" — Whitfield Diffie</strong> Chapter 31 explores cryptographic primitives: hash functions, symmetric encryption, asymmetric encryption, and digital signatures utilizing Go's standard <abbr title=\"A collection of precompiled routines that a program can use.\">library</abbr>.  31.1. Hash Functions Definition: A hash function maps arbitrary inputs "
+    "content": "<strong>\"<em>To keep a system secure, we need to be always on our toes. If we wait for the attackers to find vulnerabilities, it's already too late.</em>\" — Whitfield Diffie</strong> Chapter 30 explores cryptographic primitives. Covers hash functions, symmetric encryption, asymmetric encryption, and digital signatures. Uses Go standard library.  30.1. Hash Functions Definition: Hash function maps arbitrary input to fixed-size output. Cryptographic hashes must resist preimages and collisions. Bac"
   },
   {
-    "title": "Chapter 32 - Blockchain Data Structures and Algorithms",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-32/",
+    "title": "Chapter 31: Blockchain Data Structures and Algorithms",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-31/",
     "summary": "Blockchain Data Structures and Algorithms",
-    "content": "<strong>\"<em>Blockchain is the tech. Bitcoin is merely the first mainstream manifestation of its potential.</em>\" — Marc Kenigsberg</strong> Chapter 32 explores fundamental blockchain data structures: hash chains, Merkle trees, Proof of Work, and basic implementations in Go.  32.1. Block Structure Definition: A block acts as a container for transactions, maintaining a cryptographic hash that directly references the preceding block, thus creating an immutable chain.  Operations & Complexity | Ope"
+    "content": "<strong>\"<em>Blockchain is the tech. Bitcoin is merely the first mainstream manifestation of its potential.</em>\" — Marc Kenigsberg</strong> Chapter 31 covers blockchain data structures. Hash chains. Merkle trees. Proof of Work. Go implementation.  31.1. Block Structure Definition: Block holds transactions. Hash references previous block. Chain remains immutable. Mechanics: Cryptographic immutability ensures data integrity. Data modification invalidates subsequent chain. Trustless verification e"
   },
   {
-    "title": "Chapter 33 - Linear Programming",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-33/",
+    "title": "Chapter 32: Linear Programming",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-32/",
     "summary": "Linear Programming",
-    "content": "<strong>\"<em>Optimization is a powerful tool for solving many types of problems, and linear programming provides one of the most fundamental approaches.</em>\" — John Nash</strong> Chapter 33 covers linear programming: fundamental formulation, the Simplex algorithm, and implementations in Go leveraging both iterative methods and external solvers.  33.1. Linear Programming Formulation Definition: Linear Programming (LP) aims to maximize or minimize a linear objective function subject strictly to l"
+    "content": "<strong>\"<em>Optimization is a powerful tool for solving many types of problems, and linear programming provides one of the most fundamental approaches.</em>\" — John Nash</strong> Chapter 32 covers linear programming: fundamental formulation, the Simplex algorithm, and implementations in Go using iterative methods and external solvers.  32.1. Linear Programming Formulation Definition: <abbr title=\"Optimizing a linear objective function under linear equality and inequality constraints.\">Linear Pr"
   },
   {
-    "title": "Chapter 34 - Polynomial and FFT",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-34/",
+    "title": "Chapter 33: Polynomial and FFT",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-33/",
     "summary": "Polynomial and FFT",
-    "content": "<strong>\"<em>Algorithms are the backbone of modern computing. Without them, even the most powerful hardware would be rendered useless.</em>\" — Donald Knuth</strong> Chapter 34 explores polynomials and the Fast Fourier Transform (FFT). Go's stdlib lacks a native FFT; utilize math/cmplx for complex operations or rely on external libraries.  34.1. Polynomial Representation Definition: A polynomial of <abbr title=\"The number of edges incident to a vertex.\">degree</abbr> n is gracefully represented a"
+    "content": "<strong>\"<em>Algorithms are the backbone of modern computing. Without them, even the most powerful hardware would be rendered useless.</em>\" — Donald Knuth</strong> Chapter 33 covers polynomials and Fast Fourier Transform (FFT). Go lacks native FFT. Use math/cmplx or external libraries.  33.1. Polynomial Representation Definition: Polynomial of <abbr title=\"The number of edges incident to a vertex.\">degree</abbr> n is slice of coefficients: [a₀, a₁, ..., aₙ]. Mechanics: Dual representation exist"
   },
   {
-    "title": "Chapter 35 - String Matching Algorithms",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-35/",
+    "title": "Chapter 34: String Matching Algorithms",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-34/",
     "summary": "String Matching Algorithms",
-    "content": "<strong>\"<em>Algorithmic thinking is a fundamental part of our toolbox, helping us solve problems with precision and elegance.</em>\" — Donald Knuth</strong> Chapter 35 covers powerful string matching algorithms: Naive, KMP, Boyer-Moore, Rabin-Karp, and Aho-Corasick implemented natively in Go.  35.1. Naive String Matching Definition: The naive algorithm meticulously compares the targeted pattern directly against every possible overlapping position sequentially along the text.  Operations & Comple"
+    "content": "<strong>\"<em>Algorithmic thinking is a fundamental part of our toolbox, helping us solve problems with precision and elegance.</em>\" — Donald Knuth</strong> Chapter 34 covers <abbr title=\"Finding occurrences of a pattern within a text\">string matching</abbr> algorithms: Naive, <abbr title=\"A linear-time string matching algorithm using prefix-suffix tables.\">KMP</abbr>, <abbr title=\"A string matching algorithm scanning right to left using heuristics.\">Boyer-Moore</abbr>, <abbr title=\"A string mat"
   },
   {
-    "title": "Chapter 36 - Approximate Algorithms",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-36/",
+    "title": "Chapter 35: Approximate Algorithms",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-35/",
     "summary": "Approximate Algorithms",
-    "content": "<strong>\"<em>Algorithms are the soul of computing, and approximate algorithms are the art of making the impossible possible.</em>\" — David Williamson</strong> Chapter 36 explores approximation algorithms: greedy heuristics, local search, and randomized rounding tailored specifically for solving NP-hard problems.  36.1. Greedy Approximation Definition: Greedy algorithms continuously select the locally optimal choice at every isolated step. For a variety of NP-hard problems, a greedy approach yiel"
+    "content": "<strong>\"<em>Algorithms are the soul of computing, and approximate algorithms are the art of making the impossible possible.</em>\" — David Williamson</strong> Chapter 35 covers approximation algorithms: greedy heuristics, local search, and randomized rounding for NP-hard problems.  35.1. Greedy Approximation Definition: Greedy algorithms select local optimal choice at every step. NP-hard problems receive bounded <abbr title=\"A guarantee of how close an approximation is to the optimal solution.\">"
   },
   {
-    "title": "Chapter 37 - Trie Data Structures",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-37/",
+    "title": "Chapter 36: Trie Data Structures",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-36/",
     "summary": "Trie Data Structures",
-    "content": "<strong>\"<em>Words are, of course, the most powerful drug used by mankind.</em>\" — Rudyard Kipling</strong> Chapter 37 covers Trie (prefix tree) data structures: efficient storage and retrieval of strings with common prefixes. Essential for autocomplete, spell checking, and IP routing.  37.1. Trie Fundamentals Definition: A Trie is a tree where each node represents a character. Paths from root to leaf form complete words. All descendants of a node share the same prefix.  Operations & Complexity "
+    "content": "<strong>\"<em>Words are, of course, the most powerful drug used by mankind.</em>\" — Rudyard Kipling</strong> Chapter 36 covers <abbr title=\"A tree data structure for storing and searching strings with common prefixes.\">Trie</abbr> (<abbr title=\"A tree storing strings where common prefixes are shared, also called a Trie.\">prefix tree</abbr>) data structures. Efficient string storage and retrieval. Used for autocomplete, spell checking, and IP routing.  36.1. Trie Fundamentals Definition: Trie is a"
   },
   {
-    "title": "Chapter 38 - Segment Tree and Fenwick Tree",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-38/",
+    "title": "Chapter 37: Segment Tree and Fenwick Tree",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-37/",
     "summary": "Segment Tree and Fenwick Tree",
-    "content": "<strong>\"<em>Efficiency is doing things right; effectiveness is doing the right things.</em>\" — Peter Drucker</strong> Chapter 38 covers segment trees and Fenwick trees (Binary Indexed Trees): data structures for efficient range queries and point updates on arrays.  38.1. Segment Tree Definition: A segment tree is a binary tree where each node stores the result of a query (sum, min, max) over a segment of the array. It supports range queries and point updates in <code>O(log n)</code>.  Operation"
+    "content": "<strong>\"<em>Efficiency is doing things right; effectiveness is doing the right things.</em>\" — Peter Drucker</strong> Chapter 37 covers <abbr title=\"A binary tree for range queries storing aggregated results over array segments.\">segment trees</abbr> and <abbr title=\"A tree structure for efficient prefix sum queries using bitwise operations.\">Fenwick trees</abbr>. Efficient range queries and point updates on arrays.  37.1. Segment Tree Definition: Binary tree storing query results (sum, min, ma"
   },
   {
-    "title": "Chapter 39 - Bit Manipulation",
-    "permalink": "/dsag-webbook/docs/part-vii/chapter-39/",
+    "title": "Chapter 38: Bit Manipulation",
+    "permalink": "/dsag-webbook/docs/part-vii/chapter-38/",
     "summary": "Bit Manipulation",
-    "content": "<strong>\"<em>There are 10 types of people in the world: those who understand binary and those who don't.</em>\" — Unknown</strong> Chapter 39 covers bit manipulation techniques in Go: bitwise operators, common tricks, and algorithms that exploit binary representation for efficiency.  39.1. Bitwise Operators Definition: Bitwise operators manipulate individual bits of integers. They are fundamental for low-level optimization, flags, and compact data representation.  Go Bitwise Operators | Operator "
+    "content": "<strong>\"<em>There are 10 types of people in the world: those who understand binary and those who don't.</em>\"</strong> Chapter 38 covers <abbr title=\"Operations performed directly on individual bits of integers.\">bit manipulation</abbr> techniques in Go. Includes bitwise operators and binary efficiency algorithms.  38.1. Bitwise Operators Definition: Operators manipulate individual integer bits. Fundamental for optimization, flags, and data compression. Background: Mechanical sympathy achieved."
   },
   {
-    "title": "Chapter 40 - Origins of Algorithms",
-    "permalink": "/dsag-webbook/docs/part-viii/chapter-40/",
+    "title": "Chapter 39: Origins of Algorithms",
+    "permalink": "/dsag-webbook/docs/part-viii/chapter-39/",
     "summary": "Origins of Algorithms",
-    "content": "<strong>\"<em>The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.</em>\" — Edsger Dijkstra</strong> Chapter 40 explores the ancient origins of algorithms — from Babylonian clay tablets to Euclid's Elements — revealing that algorithmic thinking predates computers by millennia.  40.1. What Is an Algorithm? Definition: An <abbr title=\"A finite sequence of well-defined, computer-implementable instructions to solve a class of problems.\""
+    "content": "<strong>\"<em>The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.</em>\" — Edsger Dijkstra</strong> Chapter 39 covers algorithm origins: Babylonian tablets to Euclid. Algorithmic thinking exists since millennia.  39.1. Definition Algorithm: Finite sequence of well-defined instructions. Solves specific problems. Name derives from Persian mathematician <abbr title=\"A Persian polymath who lived c. 780–850 CE, considered the father of "
   },
   {
-    "title": "Chapter 41 - The Algorithmic Revolution",
-    "permalink": "/dsag-webbook/docs/part-viii/chapter-41/",
+    "title": "Chapter 40: The Algorithmic Revolution",
+    "permalink": "/dsag-webbook/docs/part-viii/chapter-40/",
     "summary": "The Algorithmic Revolution",
-    "content": "<strong>\"<em>We may say most aptly that the Analytical Engine weaves algebraic patterns just as the Jacquard loom weaves flowers and leaves.</em>\" — Ada Lovelace</strong> Chapter 41 covers the 20th-century revolution that transformed algorithms from mathematical curiosities into the foundation of modern computing — Turing, Church, Gödel, and the birth of complexity theory.  41.1. The Crisis of Foundations (1900–1936) Definition: The early 20th century saw a crisis in mathematics. <abbr title=\"A "
+    "content": "<strong>\"<em>We may say most aptly that the <abbr title=\"Babbage's design for a general-purpose mechanical computer\">Analytical Engine</abbr> weaves algebraic patterns just as the Jacquard loom weaves flowers and leaves.</em>\" — Ada Lovelace</strong> Chapter 40 covers the 20th-century revolution: Turing, Church, Gödel. Mathematical curiosities became modern computing foundations.  40.1. Crisis of Foundations (1900–1936) Hilbert Question: Can all mathematical truths derive mechanically? Answer: N"
   },
   {
-    "title": "Chapter 42 - Evolution of Data Structures",
-    "permalink": "/dsag-webbook/docs/part-viii/chapter-42/",
+    "title": "Chapter 41: Evolution of Data Structures",
+    "permalink": "/dsag-webbook/docs/part-viii/chapter-41/",
     "summary": "Evolution of Data Structures",
-    "content": "<strong>\"<em>Data dominates. If you've chosen the right data structures and organized things well, the algorithms will almost always be self-evident.</em>\" — Rob Pike</strong> Chapter 42 traces the evolution of data structures from simple arrays to complex trees and graphs — understanding why each structure emerged and what problem it solved.  42.1. The Array: The First Structure Definition: The <abbr title=\"A collection of items stored at contiguous memory locations, identified by index.\">array"
+    "content": "<strong>\"<em>Data dominates. If you've chosen the right data structures and organized things well, the algorithms will almost always be self-evident.</em>\" — Rob Pike</strong> Chapter 41 covers data structure evolution. Arrays to trees to graphs. Each emerged to solve specific problems.  41.1. The Array: The First Structure Definition: <abbr title=\"A collection of items stored at contiguous memory locations, identified by index.\">Array</abbr> is the simplest structure. Contiguous memory with <co"
   },
   {
-    "title": "Chapter 43 - Modern Algorithmic Thinking",
-    "permalink": "/dsag-webbook/docs/part-viii/chapter-43/",
+    "title": "Chapter 42: Modern Algorithmic Thinking",
+    "permalink": "/dsag-webbook/docs/part-viii/chapter-42/",
     "summary": "Modern Algorithmic Thinking",
-    "content": "<strong>\"<em>The most damaging phrase in the language is 'It's always been done this way.'</em>\" — Grace Hopper</strong> Chapter 43 explores modern algorithmic thinking: complexity classes, approximation, randomization, and the practical philosophy of algorithm design in the 21st century.  43.1. Beyond Big-O Definition: Modern algorithm analysis considers more than <abbr title=\"A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular val"
+    "content": "<strong>\"<em>The most damaging phrase in the language is 'It's always been done this way.'</em>\" — Grace Hopper</strong> Chapter 42 covers modern algorithm design: complexity classes, approximation, randomization. Balances theory with hardware reality.  42.1. Beyond Big-O Definition: Modern analysis looks beyond <abbr title=\"A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.\">Big-O</abbr>. Hardware laws bottlenec"
   },
   {
-    "title": "Chapter 44 - Philosophy of Computation",
-    "permalink": "/dsag-webbook/docs/part-viii/chapter-44/",
+    "title": "Chapter 43: Philosophy of Computation",
+    "permalink": "/dsag-webbook/docs/part-viii/chapter-43/",
     "summary": "Philosophy of Computation",
-    "content": "<strong>\"<em>The purpose of computing is insight, not numbers.</em>\" — Richard Hamming</strong> Chapter 44 reflects on what algorithms and data structures reveal about thinking, problem-solving, and the nature of computation itself.  44.1. Algorithms as Philosophy Definition: An algorithm is not merely code — it is a procedural philosophy: a way of decomposing reality into manageable steps. Every algorithm embodies assumptions about: - What matters (optimization criteria) - What is knowable (inf"
+    "content": "<strong>\"<em>The purpose of computing is insight, not numbers.</em>\" — Richard Hamming</strong> Chapter 43 covers computation philosophy. Explores thinking, problem-solving, and logic through algorithms and data structures.  43.1. Algorithms as Philosophy Definition: Algorithm embodies procedural philosophy. Decomposes reality into manageable steps. Operates on assumptions: - Optimization criteria (what matters) - Information availability (what is knowable) - Resource limits (what is computable)"
   },
   {
-    "title": "Chapter 45 - B-Trees",
-    "permalink": "/dsag-webbook/docs/part-ix/chapter-45/",
+    "title": "Chapter 44: B-Trees",
+    "permalink": "/dsag-webbook/docs/part-ix/chapter-44/",
     "summary": "B-Trees",
-    "content": "<strong>\"<em>The B-tree is the data structure that made modern databases possible.</em>\" — Rudolf Bayer</strong> Chapter 45 covers B-trees — the multi-way search tree optimized for disk access, powering every major database and file system.  45.1. Why B-Trees? Definition: A <abbr title=\"A self-balancing tree data structure that maintains sorted data and allows searches, sequential access, insertions, and deletions in logarithmic time.\">B-tree</abbr> is a self-balancing multi-way search tree desi"
+    "content": "<strong>\"<em>The B-tree is the data structure that made modern databases possible.</em>\" — Rudolf Bayer</strong> B-trees optimize disk access. Multi-way search trees power databases and file systems.  44.1. Purpose Definition: <abbr title=\"A self-balancing tree data structure that maintains sorted data and allows searches, sequential access, insertions, and deletions in logarithmic time.\">B-tree</abbr> minimizes disk I/O. Multi-way search tree stores hundreds of keys per node to match disk block"
   },
   {
-    "title": "Chapter 46 - Skip Lists",
-    "permalink": "/dsag-webbook/docs/part-ix/chapter-46/",
+    "title": "Chapter 45: Skip Lists",
+    "permalink": "/dsag-webbook/docs/part-ix/chapter-45/",
     "summary": "Skip Lists",
-    "content": "<strong>\"<em>Skip lists are a probabilistic alternative to balanced trees.</em>\" — William Pugh</strong> Chapter 46 introduces skip lists — a randomized linked list structure achieving O(log n) search without complex rebalancing logic.  46.1. The Problem with Balanced Trees Definition: <abbr title=\"A data structure that allows fast search within an ordered sequence of elements using a hierarchy of linked lists that skip over intermediate elements.\">Skip lists</abbr> offer the performance of bala"
+    "content": "<strong>\"<em>Skip lists are a probabilistic alternative to balanced trees.</em>\" — William Pugh</strong> Skip lists achieve <code>O(log n)</code> search via randomization. Randomized linked lists avoid complex rebalancing logic.  45.1. Purpose Definition: <abbr title=\"A data structure that allows fast search within an ordered sequence of elements using a hierarchy of linked lists that skip over intermediate elements.\">Skip lists</abbr> match balanced tree performance using linked list simplicity"
   },
   {
-    "title": "Chapter 47 - Bloom Filters",
-    "permalink": "/dsag-webbook/docs/part-ix/chapter-47/",
+    "title": "Chapter 46: Bloom Filters",
+    "permalink": "/dsag-webbook/docs/part-ix/chapter-46/",
     "summary": "Bloom Filters",
-    "content": "<strong>\"<em>A Bloom filter is a data structure that tells you an element is definitely not in a set, or maybe in a set.</em>\" — Unknown</strong> Chapter 47 explores Bloom filters — a space-efficient probabilistic data structure for set membership testing with no false negatives.  47.1. The Membership Problem Definition: A <abbr title=\"A space-efficient probabilistic data structure that is used to test whether an element is a member of a set, with possible false positives but no false negatives."
+    "content": "<strong>\"<em>A Bloom filter is a data structure that tells you an element is definitely not in a set, or maybe in a set.</em>\"</strong> Bloom filters are space-efficient probabilistic structures. Set membership tests provide zero false negatives.  46.1. Purpose Definition: A <abbr title=\"A space-efficient probabilistic data structure that is used to test whether an element is a member of a set, with possible false positives but no false negatives.\">Bloom filter</abbr> answers: \"Is element X in s"
   },
   {
-    "title": "Chapter 48 - LRU Cache",
-    "permalink": "/dsag-webbook/docs/part-ix/chapter-48/",
+    "title": "Chapter 47: LRU Cache",
+    "permalink": "/dsag-webbook/docs/part-ix/chapter-47/",
     "summary": "LRU Cache",
-    "content": "<strong>\"<em>There are only two hard things in Computer Science: cache invalidation and naming things.</em>\" — Phil Karlton</strong> Chapter 48 covers the LRU (Least Recently Used) cache — the most common caching strategy, combining hash tables with linked lists for O(1) operations.  48.1. The Caching Problem Definition: A <abbr title=\"A cache eviction policy that discards the least recently used items first when the cache is full.\">Least Recently Used (LRU)</abbr> cache maintains a fixed-size c"
+    "content": "<strong>\"<em>There are only two hard things in Computer Science: cache invalidation and naming things.</em>\" — Phil Karlton</strong> LRU (Least Recently Used) cache is the standard eviction strategy. Combines hash tables with linked lists for <code>O(1)</code> operations.  47.1. Purpose Definition: <abbr title=\"A cache eviction policy that discards the least recently used items first when the cache is full.\">Least Recently Used (LRU)</abbr> cache holds fixed-size data. Discards oldest accessed i"
   },
   {
-    "title": "Chapter 49 - Suffix Arrays",
-    "permalink": "/dsag-webbook/docs/part-ix/chapter-49/",
+    "title": "Chapter 48: Suffix Arrays",
+    "permalink": "/dsag-webbook/docs/part-ix/chapter-48/",
     "summary": "Suffix Arrays",
-    "content": "<strong>\"<em>String algorithms are the hidden engines of the modern world.</em>\" — Unknown</strong> Chapter 49 introduces suffix arrays — a space-efficient alternative to suffix trees for string searching, pattern matching, and bioinformatics.  49.1. The String Search Problem Definition: A <abbr title=\"A sorted array of all suffixes of a string, enabling efficient string matching and analysis.\">suffix array</abbr> is the lexicographically sorted array of all suffixes of a string. It enables powe"
+    "content": "<strong>\"<em>String algorithms are the hidden engines of the modern world.</em>\"</strong> Suffix arrays are space-efficient alternatives to suffix trees. Optimized for string searching and bioinformatics.  48.1. Purpose Definition: A <abbr title=\"A sorted array of all suffixes of a string, enabling efficient string matching and analysis.\">suffix array</abbr> is the lexicographically sorted array of all suffixes of a string. Enables <code>O(n log n)</code> construction and <code>O(m log n)</code>"
   },
   {
-    "title": "Chapter 50 - Persistent Data Structures",
-    "permalink": "/dsag-webbook/docs/part-ix/chapter-50/",
+    "title": "Chapter 49: Persistent Data Structures",
+    "permalink": "/dsag-webbook/docs/part-ix/chapter-49/",
     "summary": "Persistent Data Structures",
-    "content": "<strong>\"<em>Persistence is the path to immutability.</em>\" — Chris Okasaki</strong> Chapter 50 explores persistent data structures — structures that preserve previous versions when modified, enabling time-travel debugging and functional programming paradigms.  50.1. What Is Persistence? Definition: A <abbr title=\"A data structure that always preserves the previous version of itself when it is modified, enabling access to any version.\">persistent data structure</abbr> preserves all previous vers"
+    "content": "<strong>\"<em>Persistence is the path to immutability.</em>\" — Chris Okasaki</strong> Persistent data structures preserve previous versions. Modification enables time-travel debugging and immutability.  49.1. Purpose Definition: A <abbr title=\"A data structure that always preserves the previous version of itself when it is modified, enabling access to any version.\">persistent data structure</abbr> keeps all previous versions accessible after modification. Immutability Logic: Updates do not overwr"
   },
   {
-    "title": "Chapter 51 - Topological Sort",
-    "permalink": "/dsag-webbook/docs/part-x/chapter-51/",
+    "title": "Chapter 50: Topological Sort",
+    "permalink": "/dsag-webbook/docs/part-x/chapter-50/",
     "summary": "Topological Sort",
-    "content": "<strong>\"<em>Topological sort: because some things must happen before others.</em>\" — Unknown</strong> Chapter 51 covers topological sorting — ordering the vertices of a directed acyclic graph so that every edge goes from earlier to later in the ordering.  51.1. The Problem Definition: A <abbr title=\"A linear ordering of vertices in a directed acyclic graph such that for every directed edge uv, vertex u comes before v in the ordering.\">topological sort</abbr> of a <abbr title=\"A directed graph w"
+    "content": "<strong>\"<em>Topological sort: because some things must happen before others.</em>\"</strong> Chapter 50 covers topological sorting. Sorting orders vertices in a directed acyclic graph. Edges point from earlier to later vertices.  50.1. The Problem Definition: Topological sort produces linear ordering. Edges point forward. Sorting enables scheduling and dependency resolution. Background: Tasks have prerequisites. Topological sort models constraints via Directed Acyclic Graphs (DAG). Algorithm con"
   },
   {
-    "title": "Chapter 52 - Strongly Connected Components",
-    "permalink": "/dsag-webbook/docs/part-x/chapter-52/",
+    "title": "Chapter 51: Strongly Connected Components",
+    "permalink": "/dsag-webbook/docs/part-x/chapter-51/",
     "summary": "Strongly Connected Components",
-    "content": "<strong>\"<em>To understand a directed graph, first find its strongly connected components.</em>\" — Robert Tarjan</strong> Chapter 52 explores strongly connected components (SCCs) — maximal subgraphs where every vertex is reachable from every other vertex — and Tarjan's and Kosaraju's algorithms for finding them.  52.1. What Are SCCs? Definition: A <abbr title=\"A maximal subgraph of a directed graph where every vertex is reachable from every other vertex.\">strongly connected component</abbr> is a"
+    "content": "<strong>\"<em>To understand a <abbr title=\"A graph where edges have direction from one vertex to another\">directed graph</abbr>, first find its strongly connected components.</em>\" — Robert Tarjan</strong> Chapter 51 covers strongly connected components (SCCs). Vertices in SCCs are mutually reachable. Algorithms include Tarjan's and Kosaraju's.  51.1. What Are SCCs? Definition: Strongly connected component is maximal vertex set. Every vertex reaches every other vertex. SCCs partition directed gra"
   },
   {
-    "title": "Chapter 53 - A* Search",
-    "permalink": "/dsag-webbook/docs/part-x/chapter-53/",
+    "title": "Chapter 52: A* Search",
+    "permalink": "/dsag-webbook/docs/part-x/chapter-52/",
     "summary": "A* Search",
-    "content": "<strong>\"<em>A is the closest thing to a silver bullet in pathfinding.</em>\" — Steve Rabin</strong> Chapter 53 covers A (A-Star) search — the dominant pathfinding algorithm combining Dijkstra's completeness with heuristic guidance for optimal and efficient navigation.  53.1. From Dijkstra to A Definition: <abbr title=\"A best-first search algorithm that finds the shortest path from a start node to a goal node using a heuristic function.\">A search</abbr> extends Dijkstra by prioritizing nodes base"
+    "content": "<strong>\"<em>A is the closest thing to a silver bullet in pathfinding.</em>\" — Steve Rabin</strong> Chapter 52 covers A search. Pathfinding combines Dijkstra's completeness with heuristic guidance. Algorithm ensures optimal navigation.  52.1. From Dijkstra to A Definition: A search extends Dijkstra. Nodes are prioritized by: f(n) = g(n) + h(n) Where: - g(n): Cost from start to n. - h(n): Heuristic estimate from n to goal. Background: A directs search intuition. Dijkstra explores broadly. Greedy "
   },
   {
-    "title": "Chapter 54 - Tarjan's Bridge-Finding Algorithm",
-    "permalink": "/dsag-webbook/docs/part-x/chapter-54/",
+    "title": "Chapter 53: Tarjan's Bridge-Finding Algorithm",
+    "permalink": "/dsag-webbook/docs/part-x/chapter-53/",
     "summary": "Tarjan's Bridge-Finding Algorithm",
-    "content": "<strong>\"<em>Bridges are the weakest links in any network.</em>\" — Unknown</strong> Chapter 54 covers Tarjan's algorithm for finding bridges (cut edges) in undirected graphs — edges whose removal disconnects the graph.  54.1. Bridges and Articulation Points Definition: A <abbr title=\"An edge in an undirected graph whose removal increases the number of connected components.\">bridge</abbr> (cut edge) is an edge whose removal disconnects the graph. An <abbr title=\"A vertex whose removal increases t"
+    "content": "<strong>\"<em>Bridges are the weakest links in any network.</em>\"</strong> Chapter 53 covers Tarjan's algorithm for finding bridges (cut edges) in undirected graphs. Edges whose removal disconnects the graph are bridges.  53.1. Bridges and Articulation Points Definition: Bridge (cut edge) disconnects graphs upon removal. Articulation point (cut vertex) has identical properties for vertices.  Why They Matter | Domain | Bridge Significance | |--------|---------------------| | Network design | Singl"
   },
   {
-    "title": "Chapter 55 - Counting, Radix, and Bucket Sort",
-    "permalink": "/dsag-webbook/docs/part-xi/chapter-55/",
+    "title": "Chapter 54: Counting, Radix, and Bucket Sort",
+    "permalink": "/dsag-webbook/docs/part-xi/chapter-54/",
     "summary": "Counting, Radix, and Bucket Sort",
-    "content": "<strong>\"<em>Linear-time sorting is not magic — it is the reward of making strong assumptions about your data.</em>\" — Unknown</strong> Chapter 55 explores linear-time sorting algorithms — counting sort, radix sort, and bucket sort — that beat the O(n log n) comparison bound by exploiting data structure.  55.1. Beyond Comparison Sorting Definition: <abbr title=\"Sorting algorithms that do not rely on comparing elements, instead using assumptions about the data distribution.\">Non-comparison sorts<"
+    "content": "<strong>\"<em>Linear-time sorting requires data assumptions: reward of strong constraints.</em>\"</strong> Linear-time sorting beats <code>O(n log n)</code> bound: counting sort, radix sort, and bucket sort exploit data structure.  54.1. Beyond Comparison Sorting Definition: <abbr title=\"Sorting algorithms that do not rely on comparing elements, instead using assumptions about the data distribution.\">Non-comparison sorts</abbr> achieve <code>O(n)</code> time. Assumptions trade generality for speed"
   },
   {
-    "title": "Chapter 56 - Sliding Window and Two Pointers",
-    "permalink": "/dsag-webbook/docs/part-xi/chapter-56/",
+    "title": "Chapter 55: Sliding Window and Two Pointers",
+    "permalink": "/dsag-webbook/docs/part-xi/chapter-55/",
     "summary": "Sliding Window and Two Pointers",
-    "content": "<strong>\"<em>If brute force is O(n²), two pointers or sliding window often reduce it to O(n).</em>\" — Unknown</strong> Chapter 56 covers sliding window and two pointers — two fundamental techniques for solving subarray/substring problems in linear time.  56.1. The Two Pointers Technique Definition: The <abbr title=\"A technique using two indices to traverse a data structure, typically one starting from each end or both from the start.\">two pointers</abbr> technique maintains two indices moving th"
+    "content": "<strong>\"<em>Brute force is <code>O(n^2)</code>. Two pointers or sliding window yield <code>O(n)</code>.</em>\"</strong> Chapter 55 covers sliding window and two pointers: fundamental techniques for solving subarray and substring problems in <code>O(n)</code> time.  55.1. The Two Pointers Technique Definition: <abbr title=\"A technique using two indices to traverse a data structure, typically one starting from each end or both from the start.\">Two pointers</abbr> technique uses two indices. Sequen"
   },
   {
-    "title": "Chapter 57 - Kadane's Algorithm",
-    "permalink": "/dsag-webbook/docs/part-xi/chapter-57/",
+    "title": "Chapter 56: Kadane's Algorithm",
+    "permalink": "/dsag-webbook/docs/part-xi/chapter-56/",
     "summary": "Kadane's Algorithm",
-    "content": "<strong>\"<em>The maximum subarray problem is solved by asking: do I extend the previous subarray or start fresh?</em>\" — Jay Kadane</strong> Chapter 57 presents Kadane's algorithm — the elegant O(n) solution to the maximum subarray problem, foundational to dynamic programming thinking.  57.1. The Maximum Subarray Problem Definition: Given an array of integers (possibly negative), find the contiguous subarray with the largest sum. First solved in O(n) by Jay Kadane in 1984.  The Insight At each p"
+    "content": "<strong>\"<em>Maximum subarray problem asks: extend previous subarray or start fresh?</em>\" — Jay Kadane</strong> Chapter 57 presents <abbr title=\"An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.\">Kadane's algorithm</abbr>: an <code>O(n)</code> solution for maximum subarray problem and foundation for <abbr title=\"A method combining solutions to overlapping subproblems\">dynamic programming</abbr>.  56.1. The Maximum Subarray Problem Definition: Fin"
   },
   {
-    "title": "Chapter 58 - Minimax and Game Trees",
-    "permalink": "/dsag-webbook/docs/part-xii/chapter-58/",
+    "title": "Chapter 57: Minimax and Game Trees",
+    "permalink": "/dsag-webbook/docs/part-xii/chapter-57/",
     "summary": "Minimax and Game Trees",
-    "content": "<strong>\"<em>Chess is as elaborate a waste of human intelligence as you can find outside an advertising agency.</em>\" — Raymond Chandler</strong> Chapter 58 explores minimax — the foundational algorithm for two-player zero-sum games, and alpha-beta pruning that makes it practical.  58.1. Game Trees Definition: A <abbr title=\"A directed graph representing all possible game states and moves in a two-player game.\">game tree</abbr> represents all possible sequences of moves. In two-player zero-sum g"
+    "content": "<strong>\"<em>Chess wastes human intelligence. Equivalent to advertising agencies.</em>\" — Raymond Chandler</strong> Chapter 57 explores minimax: foundational algorithm for two-player zero-sum games. Alpha-beta pruning makes it practical.  57.1. Game Trees Definition: <abbr title=\"A directed graph representing all possible game states and moves in a two-player game.\">Game tree</abbr> represents all possible move sequences. Two-player zero-sum games: one player's gain equals other's loss. Backgrou"
   },
   {
-    "title": "Chapter 59 - Mo's Algorithm",
-    "permalink": "/dsag-webbook/docs/part-xii/chapter-59/",
+    "title": "Chapter 58: Mo's Algorithm",
+    "permalink": "/dsag-webbook/docs/part-xii/chapter-58/",
     "summary": "Mo's Algorithm",
-    "content": "<strong>\"<em>Mo's algorithm: when you have many range queries, sort them cleverly.</em>\" — Unknown</strong> Chapter 59 introduces Mo's algorithm — a sqrt-decomposition technique for efficiently answering offline range queries by reordering them to minimize recalculation.  59.1. The Offline Query Problem Definition: Given an array and multiple range queries, <abbr title=\"An algorithm that answers range queries by sorting them in a specific order to minimize pointer movement.\">Mo's algorithm</abbr"
+    "content": "Mo's algorithm sorts range queries cleverly. Reordering minimizes recalculation. Mo's algorithm uses <abbr title=\"A technique that divides a problem into blocks of size sqrt(N) to optimize query processing.\">sqrt-decomposition</abbr> for offline range queries. Reordering queries minimizes pointer movement.  58.1. The Offline Query Problem Definition: <abbr title=\"An algorithm that answers range queries by sorting them in a specific order to minimize pointer movement.\">Mo's algorithm</abbr> reord"
   },
   {
-    "title": "Chapter 60 - Convex Hull",
-    "permalink": "/dsag-webbook/docs/part-xii/chapter-60/",
+    "title": "Chapter 59: Convex Hull",
+    "permalink": "/dsag-webbook/docs/part-xii/chapter-59/",
     "summary": "Convex Hull",
-    "content": "<strong>\"<em>The convex hull is to computational geometry what sorting is to algorithms.</em>\" — Unknown</strong> Chapter 60 covers the convex hull — the smallest convex shape containing a set of points, and Graham's and Andrew's algorithms for computing it.  60.1. What Is a Convex Hull? Definition: The <abbr title=\"The smallest convex set that contains a given set of points, analogous to stretching a rubber band around the points.\">convex hull</abbr> of a set of points is the smallest convex po"
+    "content": "The convex hull is the fundamental operation of <abbr title=\"Algorithms for solving geometric problems\">computational geometry</abbr>. It is analogous to sorting. The <abbr title=\"The smallest convex set that contains a given set of points, analogous to stretching a rubber band around the points.\">convex hull</abbr> is the smallest convex shape containing all points. Andrew's Monotone Chain is the standard algorithm.  59.1. What Is a Convex Hull? Definition: The hull is the smallest convex <abbr"
   },
   {
-    "title": "Foreword",
+    "title": "Foreword: A Practitioner's Perspective",
     "permalink": "/dsag-webbook/docs/foreword-2/",
     "summary": "On the intersection of theory and practice",
-    "content": "In academia, we often teach data structures and algorithms as a ladder of abstraction — each concept building on the previous, each proof rigorous, each analysis asymptotically tight. This is beautiful. It is also incomplete. What we rarely teach is judgment: the ability to look at a real problem with real constraints and choose the right approach. Theory tells you that Dijkstra runs in O((V + E) log V). Practice tells you that for a sparse graph with millions of nodes, A with a good heuristic w"
+    "content": "Academic training emphasizes abstraction and proof. Production engineering emphasizes constraints and consequences. High-quality algorithmic work requires both. Theory might rank Dijkstra as <code>O((V + E) log V)</code>, while practice may favor <abbr title=\"Heuristic-driven shortest path algorithm\">A</abbr> on large <abbr title=\"A graph with far fewer edges than the maximum possible\">sparse graphs</abbr> with good heuristics. These are not contradictions; they are different lenses on the same "
   },
   {
     "title": "Foreword",
     "permalink": "/dsag-webbook/docs/foreword/",
     "summary": "On the craft of algorithmic thinking",
-    "content": "Algorithms are not recipes. They are not magic spells. They are compressed wisdom — the distilled experience of generations of problem-solvers who faced the same fundamental challenge: how to impose order on chaos with finite resources. This book approaches that challenge from a practitioner's perspective. It does not ask you to memorize red-black tree rotations (though you will understand them). It asks you to internalize a deeper question: given my constraints — time, space, maintainability, t"
+    "content": "Algorithms are compact engineering decisions. They determine how you spend finite resources: time, memory, latency budget, and operational complexity. This book is written from a practitioner's perspective. It assumes correctness is necessary but not sufficient: maintainability, system behavior under load, and team execution cost are part of the decision. Context matters. A <abbr title=\"Key-value structure using hash function\">hash table</abbr> can dominate in memory and still lose to a B-tree o"
   },
   {
     "title": "Part I - Foundations & Go Mechanics",
     "permalink": "/dsag-webbook/docs/part-i/-index/",
     "summary": "Foundations & Go Mechanics",
-    "content": "<strong>\"The Nobel Prize is the highest accolade that the world can offer a man, but no man is ever worthy of it.\" – Albert Einstein</strong> Part I establishes the core foundations of computer science and software engineering in Go. It covers the evolution of algorithms, the intricacies of Go's memory model, complexity analysis using <abbr title=\"A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.\">Big-O notation"
+    "content": "<strong>\"The Nobel Prize is the highest accolade that the world can offer a man, but no man is ever worthy of it.\" — Albert Einstein</strong> Part I establishes Go foundations. Text explains algorithm evolution, memory models, and <abbr title=\"A mathematical notation describing the limiting behavior of a function when the argument tends towards a particular value or infinity.\">Big-O notation</abbr> complexity. Implementation uses Go 1.18+ Generics for type-safe data structures. <center>  🧠 Chapt"
   },
   {
     "title": "Part II - Basic Data Structures",
     "permalink": "/dsag-webbook/docs/part-ii/-index/",
     "summary": "Basic Data Structures",
-    "content": "<strong>\"<em>The whole of science is nothing more than a refinement of everyday thinking.</em>\" — Albert Einstein</strong> Part II explores fundamental data structures. It critically examines the performance implications of Go's Garbage Collector and CPU <abbr title=\"A hardware or software component that stores data so future requests can be served faster.\">cache</abbr> locality, demonstrating why contiguous memory (Slices) consistently outperforms pointer-based structures (Linked Lists). <cente"
+    "content": "<strong>\"<em>The whole of science is nothing more than a refinement of everyday thinking.</em>\" — Albert Einstein</strong> Part II defines basic data structures. Text analyzes Garbage Collector and CPU <abbr title=\"A hardware or software component that stores data so future requests can be served faster.\">cache</abbr> locality impacts. Analysis compares Slices and Linked Lists. Contiguous memory outperforms pointer structures. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Part III - Trees, Graphs & Representations",
     "permalink": "/dsag-webbook/docs/part-iii/-index/",
     "summary": "Trees, Graphs & Representations",
-    "content": "<strong>\"<em>The greatest danger in science is not being wrong, but being trivial.</em>\" — Stephen Hawking</strong> Part III dives into hierarchical and relational data structures. It covers the generic implementations of <abbr title=\"A search algorithm that finds the position of a target value within a sorted array.\">Binary Search</abbr> Trees, Self-Balancing Trees, and Heaps, before laying the groundwork for representing networks using robust adjacency maps. <center>  🧠 Chapters </center>"
+    "content": "<strong>\"<em>The greatest danger in science is not being wrong, but being trivial.</em>\" — Stephen Hawking</strong> Part III details hierarchical and relational data structures. Code implements generic <abbr title=\"A search algorithm that finds the position of a target value within a sorted array.\">Binary Search</abbr> Trees, Self-Balancing Trees, and Heaps. Structures use adjacency maps for network representation. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Part IV - Graph Algorithms",
     "permalink": "/dsag-webbook/docs/part-iv/-index/",
     "summary": "Graph Algorithms",
-    "content": "<strong>\"<em>Intelligence is the ability to adapt to change.</em>\" — Stephen Hawking</strong> Part IV tackles <abbr title=\"The process of arranging elements in a specific order.\">sorting</abbr> and <abbr title=\"The process of finding a specific element in a data structure.\">searching</abbr> mechanisms. Starting from basic quadratic sorts to advanced <code>O(n log n)</code> algorithms like <abbr title=\"A divide-and-conquer sorting algorithm that divides the array into halves and merges them.\">Mer"
+    "content": "<strong>\"<em>Intelligence is the ability to adapt to change.</em>\" — Stephen Hawking</strong> Part IV covers <abbr title=\"A non-linear data structure consisting of nodes (vertices) and edges.\">graph</abbr> algorithms. Text explains BFS, DFS, Dijkstra, and Bellman-Ford paths. Analysis details Ford-Fulkerson and Edmonds-Karp network flows. Algorithms solve routing problems. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Part IX - Advanced Data Structures",
     "permalink": "/dsag-webbook/docs/part-ix/-index/",
     "summary": "Advanced Data Structures",
-    "content": "This part covers advanced data structures that go beyond the fundamentals — structures optimized for specific access patterns, memory hierarchies, and probabilistic guarantees.  Chapters - Chapter 45 — B-Trees - Chapter 46 — Skip Lists - Chapter 47 — Bloom Filters - Chapter 48 — LRU Cache - Chapter 49 — Suffix Arrays - Chapter 50 — Persistent Data Structures"
+    "content": "\"The best data structure is the one that makes your algorithm both simple and fast.\" — Bjarne Stroustrup Part IX details advanced data structures. Text covers B-Trees, Skip Lists, Bloom Filters, LRU Caches, Suffix Arrays, and Persistent Data Structures. Structures optimize specific access patterns. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Part V - Sorting & Searching",
     "permalink": "/dsag-webbook/docs/part-v/-index/",
     "summary": "Sorting & Searching",
-    "content": "\"Success in creating AI would be the biggest event in human history. Unfortunately, it might also be the last, unless we learn how to avoid the risks.\" – Stephen Hawking Part V groups the core algorithmic design paradigms: <abbr title=\"An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.\">Divide and Conquer</abbr>, <abbr title=\"A method for solving complex problems by breaking them into simpler subproblems and storing solutions.\">Dynamic Programm"
+    "content": "\"Algorithms: a common theme in the study of data structures and sorting and searching as elegant solutions to problems that are pervasive in computing.\" — Donald Knuth Part V explains sorting and searching algorithms. Text covers Basic Sorting, Advanced Sorting, and Search Algorithms. Analysis contrasts performance, stability, and memory requirements in Go. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Part VI - Algorithmic Paradigms",
     "permalink": "/dsag-webbook/docs/part-vi/-index/",
     "summary": "Algorithmic Paradigms",
-    "content": "<strong>\"<em>Success is not final, failure is not fatal: it is the courage to continue that counts.</em>\" — Winston Churchill</strong> Part VI groups the core algorithmic design paradigms: Divide and Conquer, Dynamic Programming, Greedy Algorithms, and Backtracking. It contrasts these philosophies and explores their practical applications in Go. <center>  🧠 Chapters </center>"
+    "content": "<strong>\"<em>Success is not final, failure is not fatal: it is the courage to continue that counts.</em>\" — Winston Churchill</strong> Part VI explains algorithmic paradigms. Text groups <abbr title=\"An algorithmic paradigm breaking problems into independent subproblems\">Divide and Conquer</abbr>, <abbr title=\"A method combining solutions to overlapping subproblems\">Dynamic Programming</abbr>, Greedy Algorithms, and <abbr title=\"Building candidates incrementally and abandoning dead ends\">Backtra"
   },
   {
     "title": "Part VII - Advanced Topics",
     "permalink": "/dsag-webbook/docs/part-vii/-index/",
     "summary": "Advanced Topics",
-    "content": "<strong>\"<em>The greatest ideas are the simplest.</em>\" — William Golding</strong> Part VII explores advanced and specialized topics in algorithms and data structures, including linear algebra operations, parallel computing, cryptography, blockchain, optimization techniques, and advanced string processing. <center>  🧠 Chapters </center>"
+    "content": "<strong>\"<em>The greatest ideas are the simplest.</em>\" — William Golding</strong> Part VII details advanced topics. Text explores linear algebra, parallel computing, cryptography, blockchain, optimization, and string processing. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Part VIII - History & Philosophy",
     "permalink": "/dsag-webbook/docs/part-viii/-index/",
     "summary": "History & Philosophy of Algorithms",
-    "content": "This part explores the intellectual history and philosophical foundations of algorithms and data structures — from ancient Babylonian computation to modern complexity theory.  Chapters - Chapter 40 — Origins of Algorithms - Chapter 41 — The Algorithmic Revolution - Chapter 42 — Evolution of Data Structures - Chapter 43 — Modern Algorithmic Thinking - Chapter 44 — Philosophy of Computation"
+    "content": "\"Those who cannot remember the past are condemned to repeat it.\" — George Santayana Part VIII covers algorithmic history and philosophy. Text traces development from Babylonian computation to complexity theory. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Part X - Advanced Graph Algorithms",
     "permalink": "/dsag-webbook/docs/part-x/-index/",
     "summary": "Advanced Graph Algorithms",
-    "content": "This part explores advanced graph algorithms for dependency analysis, pathfinding, and network structure discovery.  Chapters - Chapter 51 — Topological Sort - Chapter 52 — Strongly Connected Components - Chapter 53 — A Search - Chapter 54 — Tarjan's Bridge-Finding Algorithm"
+    "content": "\"Graphs are the mathematical structures used to model pairwise relations between objects. Master them, and you master networks.\" — Leonhard Euler Part X explores advanced graph algorithms. Text explains topological sort, strongly connected components, A search, and bridge-finding. Algorithms discover network structures. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Part XI - Specialized Sorting and Techniques",
     "permalink": "/dsag-webbook/docs/part-xi/-index/",
     "summary": "Specialized Sorting and Techniques",
-    "content": "This part covers specialized sorting algorithms that break the O(n log n) barrier and essential array/string processing techniques.  Chapters - Chapter 55 — Counting, Radix, and Bucket Sort - Chapter 56 — Sliding Window and Two Pointers - Chapter 57 — Kadane's Algorithm"
+    "content": "\"Sorting is the fundamental problem of computer science. It's the first thing you learn and the last thing you master.\" — Tim Peters Part XI covers specialized sorting. Algorithms break O(n log n) barriers. Text explains <abbr title=\"An integer sorting algorithm using frequency counting\">Counting Sort</abbr>, <abbr title=\"A sorting algorithm processing digits individually\">Radix Sort</abbr>, and <abbr title=\"A sorting algorithm distributing elements into buckets\">Bucket Sort</abbr>. Code demonst"
   },
   {
     "title": "Part XII - Advanced Topics",
     "permalink": "/dsag-webbook/docs/part-xii/-index/",
     "summary": "Advanced Topics",
-    "content": "This part covers advanced algorithmic topics spanning game theory, query optimization, and computational geometry.  Chapters - Chapter 58 — Minimax and Game Trees - Chapter 59 — Mo's Algorithm - Chapter 60 — Convex Hull"
+    "content": "\"The limits of my language mean the limits of my world. In algorithms, the limits of your tools mean the limits of your solutions.\" — Ludwig Wittgenstein Part XII explores complex problem-solving. Text covers Minimax game theory, Mo's Algorithm query optimization, and Convex Hull <abbr title=\"Algorithms for solving geometric problems\">computational geometry</abbr>. <center>  🧠 Chapters </center>"
   },
   {
     "title": "Preface",
     "permalink": "/dsag-webbook/docs/preface/",
     "summary": "How to use this book",
-    "content": "Most books on data structures and algorithms fall into one of two traps: they are either dense theoretical tomes that bury intuition under formalism, or shallow tutorials that teach syntax without substance. This book aims for a third path — practical depth with conceptual clarity. Written for software engineers who build real systems, not just solve interview puzzles, this book answers the question that matters most: \"When should I use this, and when should I avoid it?\"  How to Use This Book Th"
+    "content": "Most algorithm books fail one of two ways: they are mathematically correct but operationally unusable, or practical but conceptually thin. This book is designed to close that gap with practical depth and conceptual clarity. Its central question is simple: when should you use a technique, and when should you not?  How to Use This Book The book contains 59 chapters across 12 parts. Most chapters are designed to be read in 7-10 minutes, then validated by implementing or modifying the code examples."
   },
   {
     "title": "Table of Contents",
     "permalink": "/dsag-webbook/docs/table-of-contents/",
-    "summary": "Explore the chapters below to dive deep into the advanced programming data structures and algorithms using Go.  Main Sections - Modern Data Structures and Algorithms in Go - Preface - Foreword-1 - For",
-    "content": "Explore the chapters below to dive deep into the advanced programming data structures and algorithms using Go.  Main Sections - Modern Data Structures and Algorithms in Go - Preface - Foreword-1 - Foreword-2 --- Navigate through the detailed chapters to enhance your understanding of Go and its application in modern data structures and algorithms."
+    "summary": "Complete table of contents for Modern Data Structures and Algorithms in Go",
+    "content": "Chapters list. Access content. Technical deep dive.  Sections - Modern Data Structures and Algorithms in Go - Preface - Foreword - Foreword: A Practitioner's Perspective --- Detailed links. Navigate text. Mastery of Go."
   },
   {
     "title": "Documentation",
     "permalink": "/dsag-webbook/docs/-index/",
     "summary": "Complete book documentation",
-    "content": "Welcome to Modern Data Structures and Algorithms in Go. Browse by part: - Part I - Foundations & Go Mechanics - Part II - Basic Data Structures - Part III - Trees, Graphs & Representations - Part IV - Graph Algorithms - Part V - Sorting & Searching - Part VI - Algorithmic Paradigms - Part VII - Advanced Topics - Part VIII - History & Philosophy - Part IX - Advanced Data Structures - Part X - Advanced Graph Algorithms - Part XI - Specialized Sorting & Techniques - Part XII - Advanced Topics"
+    "content": "Modern Data Structures and Algorithms in Go. Technical guide. Master engineering. Browse parts: - Part I: Foundations & Go Mechanics - Part II: Basic Data Structures - Part III: Trees, Graphs & Representations - Part IV: Graph Algorithms - Part V: Sorting & Searching - Part VI: Algorithmic Paradigms - Part VII: Advanced Topics - Part VIII: History & Philosophy - Part IX: Advanced Data Structures - Part X: Advanced Graph Algorithms - Part XI: Specialized Sorting & Techniques - Part XII: Advanced "
   },
   {
     "title": "Appendix",
     "permalink": "/dsag-webbook/docs/appendix/",
-    "summary": "Supplementary Material",
-    "content": "This appendix contains supplementary material from chapters that were integrated into other sections. ---  Big-O Cheat Sheet Quick reference for time and space complexity of common data structures and algorithms.  Data Structures | Structure | Access | Search | Insert | Delete | Space | |-----------|--------|--------|--------|--------|-------| | Array | O(1) | O(n) | O(n) | O(n) | O(n) | | Linked List | O(n) | O(n) | O(1) | O(1) | O(n) | | Dynamic Array (Slice) | O(1) | O(n) | O(1) amortized | O"
+    "summary": "Big-O Cheat Sheet",
+    "content": "Big-O Cheat Sheet Use the following tables as a quick reference to understand the time and space complexity of common data structures and algorithms.  Data Structures | Structure | Access | Search | Insert | Delete | Space | |-----------|--------|--------|--------|--------|-------| | Array | <code>O(1)</code> | <code>O(n)</code> | <code>O(n)</code> | <code>O(n)</code> | <code>O(n)</code> | | Linked List | <code>O(n)</code> | <code>O(n)</code> | <code>O(1)</code> | <code>O(1)</code> | <code>O(n)<"
   },
   {
     "title": "Closing Remark",
     "permalink": "/dsag-webbook/docs/closing-remark/",
     "summary": "Final thoughts and the path forward",
-    "content": "You have reached the end of Modern Data Structures and Algorithms in Go — a journey through 60 chapters spanning 12 parts, from the ancient origins of algorithms to the cutting edge of computational thinking.  What You Have Learned This book was designed with a singular purpose: to transform how you think about problems. Not by memorizing algorithms, but by understanding the principles that make them work: - Trade-offs are everything. There is no best data structure or algorithm — only the right"
+    "content": "Congratulations on reaching the end of this journey. You have successfully navigated through 59 chapters and 12 parts, tracing the evolution from ancient algorithmic origins to modern computational thinking.  Lessons Learned Principles learned: - Trade-offs dominate. No best structure exists: only constraints. Speed vs space. Simple vs optimal. Deterministic vs probabilistic. - Hardware impacts. Cache, memory, GC pressure define real-world performance. Theoretical Big-O often fails to account fo"
   },
   {
     "title": "How to Use DSAG",
     "permalink": "/dsag-webbook/docs/how-to-use-dsag/",
     "summary": "Reading strategies and learning paths",
-    "content": "This guide helps you navigate Modern Data Structures and Algorithms in Go based on your goals.  Reading Strategies  Strategy 1: Linear Path (Complete Coverage) Read chapters in order. Best for beginners or those preparing for comprehensive exams. Path: Part I → Part II → Part III → Part IV → Part V → Part VI → Part VII → Part VIII → Part IX → Part X → Part XI → Part XII Time: 10–12 hours total  Strategy 2: Problem-Driven Path Jump to chapters based on what you need to solve. | Problem Type | Rel"
+    "content": "Guide navigates Modern Data Structures and Algorithms in Go. Match strategy to goals.  Reading Strategies  Strategy 1: Linear Path Read chapters sequentially. Best for beginners or exam prep. Path: Part I through Part XII. Time: 10 to 12 hours.  Strategy 2: Problem-Driven Path Select chapters by problem type. | Problem Type | Relevant Parts | |-------------|----------------| | Need fast lookups | Part II (Hashing), Part IX (<abbr title=\"Probabilistic set membership data structure\">Bloom Filters<"
   }
 ]

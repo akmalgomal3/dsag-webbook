@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Data dominates. If you've chosen the right data structures and organized things well, the algorithms will almost always be self-evident.</em>" : Rob Pike</strong>
+<strong>"<em>Data dominates. If you've chosen the right data structures and organized things well, the algorithms will almost always be self-evident.</em>" — Rob Pike</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -100,7 +100,7 @@ Modern CPUs bridge performance gap between Registers and <abbr title="Random Acc
 | <abbr title="The structured tiers from fast registers to slow disk">Memory hierarchy</abbr> | Implementation simplicity |
 | Concurrency needs | Historical precedent |
 
-### Common Traps
+### Edge Cases & Pitfalls
 
 - **Premature optimization:** Arrays beat trees for N < 1000 due to cache.
 - **Pointer chasing:** Modern CPUs stall on indirection. Prefer arrays.
@@ -123,6 +123,15 @@ Modern CPUs bridge performance gap between Registers and <abbr title="Random Acc
 | 1990s | Self-adjusting | <abbr title="Average cost per operation over a worst-case sequence">Amortized analysis</abbr> |
 | 2000s | Cache-oblivious | CPU-memory gap |
 | 2010s | Concurrent | Multi-core |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 41:</strong> Data structures evolved with hardware. Arrays for physical memory. Hash tables for speed. Cache-aware structures for modern CPUs. Best structure depends on hardware and workload.

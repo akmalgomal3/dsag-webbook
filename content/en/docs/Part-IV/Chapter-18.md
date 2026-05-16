@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithms are the most direct way to make our ideas into action.</em>" : Donald Knuth</strong>
+<strong>"<em>Algorithms are the most direct way to make our ideas into action.</em>" — Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -291,6 +291,15 @@ func main() {
 | Bipartite Check | `[]int` color | <code>O(V + E)</code> | <code>O(V)</code> | Structure validation |
 | Hungarian | `[][]int` matrix | <code>O(V³)</code> | <code>O(V²)</code> | Weighted assignment |
 | Hopcroft-Karp | `[][]int` adj | <code>O(E √V)</code> | <code>O(V)</code> | Max cardinality matching |
+
+
+## Quick Reference
+
+| Topic | Recommendation |
+|------|-----------------|
+| Primary strategy | Prefer the method with proven bounds for your workload. |
+| Data size | Benchmark with realistic input distributions. |
+| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 18:</strong> Bipartite matching optimization. Use Hungarian for weighted costs. Use Hopcroft-Karp for large-scale unweighted matching.

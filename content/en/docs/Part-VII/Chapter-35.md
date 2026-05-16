@@ -11,14 +11,14 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Algorithms are the soul of computing, and approximate algorithms are the art of making the impossible possible.</em>" : David Williamson</strong>
+<strong>"<em>Algorithms are the soul of computing, and approximate algorithms are the art of making the impossible possible.</em>" — David Williamson</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
 Chapter 35 covers approximation algorithms: greedy heuristics, local search, and randomized rounding for NP-hard problems.
 {{% /alert %}}
 
-## 36.1. Greedy Approximation
+## 35.1. Greedy Approximation
 
 **Definition:** Greedy algorithms select local optimal choice at every step. NP-hard problems receive bounded <abbr title="A guarantee of how close an approximation is to the optimal solution.">approximation ratio</abbr>.
 
@@ -89,7 +89,7 @@ func main() {
 Fractional knapsack is optimal using value/weight ratio. 0/1 Knapsack requires DP or <abbr title="Fully Polynomial Time Approximation Scheme - finds near-optimal solutions in polynomial time.">FPTAS</abbr>.
 {{% /alert %}}
 
-## 36.2. <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover 2-Approximation
+## 35.2. <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover 2-Approximation
 
 **Definition:** Vertex cover touches every <abbr title="A connection between two vertices in a graph.">edge</abbr>. Greedy 2-approximation selects both endpoints of uncovered edges.
 
@@ -166,7 +166,7 @@ func main() {
 - **Vertex cover tie-breaking:** Results depend on edge order. Quality remains constant at 2x.
 - **TSP nearest neighbor trap:** Tours reach O(log n) times optimal. Start city choice changes output.
 
-## 36.3. Metric TSP Heuristic (Nearest Neighbor)
+## 35.3. Metric TSP Heuristic (Nearest Neighbor)
 
 **Definition:** Metric TSP follows triangle inequality. Nearest Neighbor visits closest unvisited city. Not a constant-factor approximation. Max error is O(log n). MST double-tree provides provable 2-approximation.
 
@@ -228,7 +228,7 @@ func main() {
 }
 ```
 
-## 36.4. Randomized Approximation
+## 35.4. Randomized Approximation
 
 **Definition:** Randomized algorithms use random choices. Achieve expected approximation ratios.
 
@@ -278,7 +278,7 @@ Randomized Max-Cut produces expected cut size ≥ |E|/2. Run <code>k</code> time
 - **TSP Nearest Neighbor guarantee:** No constant guarantee exists. Use Christofides for 1.5-approx.
 - **Single Max-Cut run:** High variance occurs. Perform k trials.
 
-## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
