@@ -9,13 +9,13 @@ draft: false
 toc: true
 ---
 
-Books often fail: too dense or too shallow. This book takes the third path: **practical depth, conceptual clarity**.
+Most algorithm books fail one of two ways: they are mathematically correct but operationally unusable, or practical but conceptually thin. This book is designed to close that gap with **practical depth and conceptual clarity**.
 
-Focus: engineering real systems. Core question: **"When to use? When to avoid?"**
+Its central question is simple: **when should you use a technique, and when should you not**?
 
 ## How to Use This Book
 
-Content: **59 chapters**, **12 parts**. Read time: 7 to 10 minutes per chapter.
+The book contains **59 chapters** across **12 parts**. Most chapters are designed to be read in 7-10 minutes, then validated by implementing or modifying the code examples.
 
 | If You Are... | Start Here |
 |---------------|-----------|
@@ -27,20 +27,20 @@ Content: **59 chapters**, **12 parts**. Read time: 7 to 10 minutes per chapter.
 
 ## Chapter Structure
 
-Pattern:
+Each chapter follows a consistent structure:
 
-1. **Quote**: Context.
-2. **Definition**: Explanation.
-3. **Operations & Big-O**: Complexity.
-4. **Go Code**: Implementation.
-5. **Decision Matrix**: Trade-offs.
-6. **Edge Cases**: Pitfalls.
-7. **Quick Reference**: Summary.
-8. **See Also**: Related links.
+1. **Quote** for context and framing.
+2. **Definition** for the core concept.
+3. **Operations & Big-O** for computational behavior.
+4. **Go code** for implementation patterns.
+5. **Decision matrix** for practical selection.
+6. **Edge cases & pitfalls** for failure modes.
+7. **Quick reference** for condensed recall.
+8. **See also** for conceptual continuity.
 
 ## Search
 
-[Search bar] [Find] [Fast].
+Use search as an index, not a replacement for flow. The strongest learning path is still sequential within each part.
 
 ## Additional Resources
 
@@ -49,4 +49,4 @@ Pattern:
 
 ---
 
-[Ready?] [Chapter 1](/docs/part-i/chapter-1/).
+Start with [Chapter 1: The Role of Algorithms in Modern Software](/docs/part-i/chapter-1/) and treat the book as an engineering handbook you can revisit while building real systems.

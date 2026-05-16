@@ -11,7 +11,7 @@ toc: true
 
 ## Big-O Cheat Sheet
 
-[Reference] [Consult] [Fast]. Time and space complexity.
+Use the following tables as a quick reference to understand the time and space complexity of common data structures and algorithms.
 
 ### Data Structures
 
@@ -71,7 +71,7 @@ toc: true
 ---
 
 {{% alert icon="🎯" context="success" %}}
-[Guide] [Consult] [Learn]. See chapters for implementations and edge cases.
+Use this guide as a starting point for consultation and continuous learning through real-world implementation. Refer to the specific chapters for detailed implementations and edge-case handling.
 {{% /alert %}}
 
 ## See Also
@@ -79,3 +79,4 @@ toc: true
 - [Chapter 1: The Role of Algorithms in Modern Software](/docs/part-i/chapter-1/)
 - [Chapter 6: Elementary Data Structures](/docs/part-ii/chapter-6/)
 - [Table of Contents](/docs/table-of-contents/)
+ts](/docs/table-of-contents/)
