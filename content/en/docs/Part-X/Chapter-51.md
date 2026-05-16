@@ -15,35 +15,32 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 52 explores strongly connected components (SCCs): maximal subgraphs where every vertex is reachable from every other vertex, mapping <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> and <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> algorithms for finding them.
+Chapter 51 covers strongly connected components (SCCs). Vertices in SCCs are mutually reachable. Algorithms include Tarjan's and Kosaraju's.
 {{% /alert %}}
 
-## 52.1. What Are SCCs?
+## 51.1. What Are SCCs?
 
-**Definition:** A <abbr title="A maximal subgraph of a directed graph where every vertex is reachable from every other vertex.">strongly connected component</abbr> is a maximal set of vertices where each vertex is reachable from every other. SCCs partition a <abbr title="A graph where edges have direction from one vertex to another">directed graph</abbr> into a DAG of meta-nodes.
+**Definition:** Strongly connected component is maximal vertex set. Every vertex reaches every other vertex. SCCs partition directed graphs into DAG meta-nodes.
 
-**Background & Philosophy:**
-The philosophy is condensation. Complex directed graphs (like the entire World Wide Web) are large and interconnected. SCC algorithms group tightly interconnected nodes (where everyone can reach everyone) into singular "meta-nodes." This collapses the graph into a Directed <abbr title="A graph containing no cycles">Acyclic Graph</abbr> (DAG), allowing analysis of macro-structures.
+**Background:** Condensation simplifies complex graphs. Algorithms group tightly interconnected nodes. Grouping collapses graphs into Directed Acyclic Graphs (DAG). Macro-structure analysis becomes possible.
 
-**Use Cases:**
-Analyzing Twitter follow-clusters, optimizing database query joins, and designing compiler logic to handle mutually recursive function calls.
+**Use Cases:** Social media cluster analysis. Database query optimization. Compiler logic for recursive calls.
 
-**Memory Mechanics:**
-<abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's algorithm</abbr> is a memory-heavy two-pass system. It requires generating a completely reversed graph (`transposed [][]int`). In Go, allocating this duplicate graph essentially doubles the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> footprint, which triggers massive <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead for huge datasets. <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's algorithm</abbr>, conversely, executes in a single pass using integer tracking arrays (`discovery` and `low-link`). Tarjan entirely avoids allocating a secondary graph, saving significant <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, but places immense pressure on the recursive <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>.
+**Memory Mechanics:** Kosaraju's algorithm uses two passes. Method requires graph transposition. Transposition doubles heap footprint. GC overhead increases on large datasets. Tarjan's algorithm uses single pass. Discovery and low-link arrays track roots. Method avoids secondary graph allocation. RAM usage decreases. Recursive call stack pressure increases.
 
 ### Condensation Graph
 
-Contracting each SCC to a single node yields the <abbr title="A DAG formed by contracting each SCC of a directed graph into a single vertex.">condensation graph</abbr> — always a DAG.
+SCC contraction creates condensation graphs. Condensation graphs are always DAGs.
 
 | Original Graph | SCCs | Condensation |
 |---------------|------|--------------|
 | Complex directed | {A,B,C}, {D}, {E,F} | DAG of 3 nodes |
 
-## 52.2. Kosaraju's Algorithm
+## 51.2. Kosaraju's Algorithm
 
-1. DFS on original graph, push nodes to stack in finish order
-2. Reverse all edges
-3. DFS from stack top on reversed graph — each tree is an SCC
+1. DFS on original graph. Push nodes to stack in finish order.
+2. Reverse edges.
+3. DFS from stack top on reversed graph. Each tree identifies one SCC.
 
 ```go
 package main
@@ -114,16 +111,16 @@ func main() {
 }
 ```
 
-## 52.3. Tarjan's Algorithm
+## 51.3. Tarjan's Algorithm
 
-Single-pass DFS using discovery times and low-link values to identify SCC roots.
+Single-pass DFS identifies SCC roots. Discovery times and low-link values enable tracking.
 
 | Algorithm | Passes | Space | Simplicity |
 |-----------|--------|-------|------------|
 | Kosaraju | 2 DFS + transpose | <code>O(V + E)</code> | Easier to understand |
 | Tarjan | 1 DFS | <code>O(V)</code> | Slightly faster |
 
-## 52.4. Applications
+## 51.4. Applications
 
 | Application | SCC Use |
 |-------------|---------|
@@ -132,7 +129,7 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 | **Web crawling** | Find clusters of mutually linking pages |
 | **Package management** | Detect circular dependencies |
 
-## 52.5. Decision Matrix
+## 51.5. Decision Matrix
 
 | Use Kosaraju When... | Use Tarjan When... |
 |---------------------|-------------------|
@@ -142,18 +139,18 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 
 ### Edge Cases & Pitfalls
 
-- **Single-node SCCs:** Every isolated vertex strictly functions as its own independent SCC.
-- **Self-loops:** Immediately create SCCs of size 1.
-- **Large graphs:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr> may overflow; strictly use an iterative DFS or explicitly increase the stack size.
+- **Single-node SCCs:** Isolated vertices function as independent SCCs.
+- **Self-loops:** Loops create SCCs of size 1.
+- **Large graphs:** Recursion depth risks stack overflow. Iterative DFS provides safety.
 
 ### Anti-Patterns
 
-- **Confusing finish order with topological order:** Kosaraju's first-pass finish stack is a reverse topological order of the original graph, not the SCCs themselves — mixing these up yields wrong condensations.
-- **Doubling memory blindly with Kosaraju:** Allocating the full transposed graph doubles heap usage; on memory-constrained systems, Tarjan's single-pass approach is the safer choice.
-- **Ignoring single-node SCCs:** Every isolated vertex forms its own SCC of size 1; filtering these out skews the condensation DAG and hides legitimate self-loops.
-- **Assuming Tarjan is always better:** Tarjan's single pass is elegant but subtle to implement correctly; Kosaraju's two-pass approach is easier to debug and sufficient when memory is not critical.
+- **Confusing orders:** Kosaraju finish stack is reverse topological order. Misinterpretation causes condensation errors.
+- **Ignoring memory limits:** Kosaraju doubles heap usage. Tarjan preserves RAM.
+- **Filtering single nodes:** Isolated vertices are legitimate SCCs. Removal skews condensation DAG.
+- **Over-optimizing:** Tarjan is faster but complex. Kosaraju suffices for non-critical memory.
 
-## 52.6. Quick Reference
+## 51.6. Quick Reference
 
 | Concept | Value |
 |---------|-------|
@@ -166,7 +163,7 @@ Single-pass DFS using discovery times and low-link values to identify SCC roots.
 | No direct stdlib | Implement manually for deep graph analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 51:</strong> Strongly connected components reveal the cyclic structure of directed graphs. By contracting SCCs into a DAG, complex graphs become analyzable. <abbr title="A two-pass algorithm for finding SCCs using DFS on the original and transposed graph.">Kosaraju's</abbr> two-pass approach and <abbr title="A single-pass algorithm that finds SCCs using discovery times and low-link values.">Tarjan's</abbr> single-pass efficiency both achieve <code>O(V + E)</code>, proving that deep structural insights often come from simple traversals.
+<strong>Summary Chapter 51:</strong> SCCs reveal cyclic structures. Contraction enables graph analysis. Algorithms achieve linear time complexity.
 {{% /alert %}}
 
 ## See Also

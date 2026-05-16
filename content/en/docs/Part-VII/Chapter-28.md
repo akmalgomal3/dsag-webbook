@@ -15,30 +15,30 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 29 covers vector, matrix, and tensor operations with <abbr title="Code style considered standard and natural for Go">idiomatic Go</abbr> implementations utilizing slices and `gonum`.
+Chapter 29 covers vector, matrix, and tensor operations. Implementations use Go slices and `gonum`.
 {{% /alert %}}
 
 ## 29.1. Vector Operations
 
-**Definition:** A vector is a one-dimensional <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> representing a directed magnitude. Basic operations include addition, scalar multiplication, <abbr title="An operation returning the scalar product of two vectors">dot product</abbr>, and <abbr title="An operation on vectors producing a perpendicular vector">cross product</abbr>.
+**Definition:** Vector is 1D array. Represents directed magnitude. Operations: addition, scalar multiplication, dot product, cross product.
 
 **Background & Philosophy:**
-The philosophy is representing data mathematically. Instead of isolated variables, numbers are grouped into spatial structures (Vectors, Matrices), enabling batch transformations that GPUs and <abbr title="Single Instruction Multiple Data - parallel processing technique.">SIMD</abbr> CPU instructions handle efficiently.
+Vectors group numbers into spatial structures. Enables batch transformations. GPUs and SIMD instructions process these efficiently.
 
 **Use Cases:**
-Core foundation for 3D Graphics programming, deep learning backpropagation, and PageRank algorithms determining internet search results.
+3D Graphics. Deep learning backpropagation. PageRank algorithms.
 
 **Memory Mechanics:**
-Vectors map perfectly to 1D slices in Go. Because `[]float64` is a strictly <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, operations like <abbr title="An operation returning the scalar product of two vectors">dot product</abbr> exhibit perfect <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The CPU prefetcher can rapidly stream the bytes into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>.
+Vectors map to 1D Go slices. `[]float64` uses contiguous RAM. Dot product has perfect spatial locality. CPU prefetcher streams bytes into L1 cache.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Addition | <code>O(n)</code> | Element-wise |
-| <abbr title="An operation returning the scalar product of two vectors">Dot Product</abbr> | <code>O(n)</code> | Σ(aᵢ × bᵢ) |
-| Norm (L2) | <code>O(n)</code> | √(Σaᵢ²) |
-| <abbr title="An operation on vectors producing a perpendicular vector">Cross Product</abbr> | <code>O(1)</code> | Specific to 3D |
+| Addition | $O(n)$ | Element-wise operation |
+| Dot Product | $O(n)$ | $\sum(a_i \times b_i)$ |
+| Norm (L2) | $O(n)$ | $\sqrt{\sum a_i^2}$ |
+| Cross Product | $O(1)$ | 3D specific operation |
 
 ### Pseudocode
 
@@ -116,128 +116,128 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Go lacks operator overloading. Define explicit functions for every vector operation. Consider using `gonum.org/v1/gonum/floats` for large-scale vector manipulations.
+Go lacks operator overloading. Define explicit functions. Use `gonum.org/v1/gonum/floats` for large-scale work.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Slices When... | Avoid If... |
 |----------------------|------------------|
-| Dimensions are small to medium (< 10⁶) | Operations are complex matrices (use gonum) |
-| Using custom logic or sparse data | Relying on highly optimized BLAS/LAPACK |
+| Small to medium dimensions ($< 10^6$) | Matrix operations are complex: use gonum |
+| Custom logic or sparse data needed | BLAS/LAPACK optimization required |
 
 ### Edge Cases & Pitfalls
 
-- **Dimension mismatch:** Always rigorously validate slice lengths.
-- **NaN propagation:** Carefully handle and mitigate undefined values.
-- **Precision loss:** For massive vectors, implement Kahan summation to prevent float drift.
+- **Dimension mismatch:** Validate slice lengths.
+- **NaN propagation:** Undefined values break results.
+- **Precision loss:** Large vectors need Kahan summation. Prevents float drift.
 
 ## 29.2. Matrix Operations
 
-**Definition:** A matrix is a two-dimensional array. Critical operations include transposition, multiplication, determinant calculation, and inversion.
+**Definition:** Matrix is 2D array. Operations: transposition, multiplication, determinant, inversion.
 
 **Memory Mechanics:**
-In Go, matrices are often modeled naively as `[][]float64`, which creates `V` slice headers scattered across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. High-performance numerical packages like `gonum` use a 1D flat slice `[]float64` for a matrix and manually index via `stride * row + col`. This ensures strict <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory layout, enabling the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch matrix rows efficiently and preventing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> fragmentation.
+Nested slices `[][]float64` scatter headers across heap. `gonum` uses flat `[]float64`. Indexing via `stride * row + col`. Contiguous layout allows efficient CPU cache prefetching. Prevents GC fragmentation.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Transpose | <code>O(n²)</code> | Rows ↔ Columns |
-| Matrix Multiply | <code>O(n³)</code> naive, <code>O(n^2.81)</code> Strassen | Standard multiplication |
-| Determinant | <code>O(n³)</code> | LU decomposition |
-| Inverse | <code>O(n³)</code> | Gauss-Jordan elimination |
+| Transpose | $O(n^2)$ | Rows ↔ Columns |
+| Matrix Multiply | $O(n^3)$ | Standard multiplication |
+| Determinant | $O(n^3)$ | LU decomposition |
+| Inverse | $O(n^3)$ | Gauss-Jordan elimination |
 
 ### Idiomatic Go Implementation
 
-`gonum.org/v1/gonum/mat` serves as the de facto standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> for linear algebra in Go. Do not implement matrix operations from scratch unless specifically for educational purposes.
+Use `gonum.org/v1/gonum/mat`. Standard library for linear algebra in Go. Efficient and tested.
 
 ### Decision Matrix
 
 | Use Gonum When... | Implement Manually When... |
 |----------------------|------------------------------|
-| Working with dense matrices and standard operations | Building custom sparse matrices |
-| Needing SVD or eigenvalue decomposition | Running under extremely strict memory constraints |
+| Dense matrices and standard ops used | Custom sparse matrices required |
+| SVD or eigenvalue decomposition needed | Extreme memory constraints exist |
 
 ### Edge Cases & Pitfalls
 
-- **Singular matrix:** Inverses do not exist; you must consistently check for errors.
-- **Floating-point error:** Never perform a strict `==` check; always use an epsilon delta.
-- **Memory layout:** Go slices are row-major. Maintain an awareness of cache locality.
+- **Singular matrix:** Inverses do not exist. Check errors consistently.
+- **Floating-point error:** Avoid `==`. Use epsilon delta.
+- **Memory layout:** Go slices are row-major. Maintain cache locality.
 
 ## 29.3. Tensors and Multidimensional Data
 
-**Definition:** A tensor generalizes a matrix to arbitrary dimensions. Within Machine Learning, a rank-3 tensor frequently represents a batch of images (B × H × W × C).
+**Definition:** Tensor generalizes matrix to arbitrary dimensions. Rank-3 tensor represents image batches (B × H × W × C).
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Tensor Add | <code>O(n)</code> | Element-wise addition |
-| Tensor Contraction | <code>O(n^k)</code> | Sum over specific indices |
-| Reshape | <code>O(1)</code> | Viewing memory without a copy |
+| Tensor Add | $O(n)$ | Element-wise addition |
+| Tensor Contraction | $O(n^k)$ | Sum over specific indices |
+| Reshape | $O(1)$ | View memory without copy |
 
-Rank-3 tensors formulated via nested slices in Go carry heavy <abbr title="A variable that stores a memory address.">pointer</abbr> overhead. For significantly large tensors, utilize a flat 1D slice with manual indexing: `flat[i*H*W + j*W + k]`.
+Nested slices cause pointer overhead. Large tensors should use flat 1D slice. Indexing: `flat[i*H*W + j*W + k]`.
 
 ### Decision Matrix
 
 | Use Nested Slices When... | Use Flat Slices When... |
 |-----------------------------|---------------------------|
-| Dimensions are small and intuitive access matters | Tensors are massive, focusing purely on performance |
-| Rapidly prototyping | Facilitating GPU transfers or SIMD optimizations |
+| Small dimensions: intuitive access | Massive tensors: performance focus |
+| Prototyping rapidly | GPU transfers or SIMD required |
 
 ### Edge Cases & Pitfalls
 
-- **Nil slices:** Always verify `len(slice) > 0` before attempting to access `slice[0]`.
-- **Jagged arrays:** Go slices of slices are not inherently uniform. Mathematical tensors *must* be uniform.
-- **GC pressure:** Deeply nested slices yield countless individual objects. Flat slices dramatically ease Garbage Collection.
+- **Nil slices:** Verify `len(slice) > 0` before access.
+- **Jagged arrays:** Slices of slices can be non-uniform. Tensors must be uniform.
+- **GC pressure:** Nested slices create many objects. Flat slices ease Garbage Collection.
 
 ## 29.4. Matrix Computation Optimization
 
-**Definition:** Techniques strategically designed to accelerate matrix operations via leveraging cache locality, data blocking, and explicit parallelization.
+**Definition:** Strategies to accelerate matrix operations. Uses cache locality, blocking, and parallelization.
 
 ### Operations & Complexity
 
 | Technique | Speedup | Description |
 |--------|---------|------------|
-| Loop reordering | 2-10x | Dramatically enhances cache locality |
-| Block matrix | 2-5x | Ensure operations fit nicely within L1/L2 caches |
-| Goroutine parallel | p× (cores) | Apply row-wise decomposition |
-| Strassen | 0.8-2x | Theoretical limit, rarely practical for everyday n |
+| Loop reordering | 2-10x | Enhances cache locality |
+| Block matrix | 2-5x | Fits operations in L1/L2 |
+| Parallelization | $p \times$ cores | Row-wise decomposition |
+| Strassen | 0.8-2x | Rare practical utility |
 
-A loop ordering of `i-k-j` proves significantly faster than `i-j-k` specifically due to <abbr title="The tendency of a processor to access memory addresses that are near each other.">cache</abbr> locality on matrix b's rows. Thoroughly profile your code prior to declaring a complete optimization.
+Loop order `i-k-j` is faster than `i-j-k`. Optimizes cache locality on second matrix rows. Profile before final optimization.
 
 ### Decision Matrix
 
 | Use Parallel When... | Avoid If... |
 |-------------------------|------------------|
-| The matrix exceeds 256×256 dimensions | The matrix is tiny (goroutine overhead kills performance) |
-| The problem is CPU-bound on a dense matrix | You have a sparse matrix (leverage CSR/CSC arrays instead) |
+| Dimensions exceed 256×256 | Tiny matrix: goroutine overhead |
+| CPU-bound on dense matrix | Sparse matrix: use CSR/CSC |
 
 ### Edge Cases & Pitfalls
 
-- **False sharing:** Strongly segregate data chunks by at least a few cache lines (e.g., 64 bytes).
-- **Load imbalance:** Rely upon a dynamic task queue for heavily non-uniform matrix structures.
-- **Numerical stability:** Aggressive parallel summation can potentially aggravate floating-point inaccuracies.
+- **False sharing:** Segregate data by cache lines (64 bytes).
+- **Load imbalance:** Use dynamic task queues for non-uniform structures.
+- **Numerical stability:** Parallel summation increases float inaccuracies.
 
 ### Anti-Patterns
 
-- **`[][]float64` for performance-critical matrices:** Jagged slices create pointer-chasing overhead and break cache locality. Use a flat `[]float64` with `stride*row+col` indexing for hot paths.
-- **Comparing floats with `==`:** Floating-point arithmetic accumulates error; never compare two `float64` values with `==`. Use an epsilon threshold like `math.Abs(a-b) < 1e-9`.
-- **Ignoring gonum for production:** Hand-rolling matrix multiply, determinant, or inversion in Go is error-prone and slow. Use `gonum.org/v1/gonum/mat` unless the goal is purely educational.
+- **Jagged slices for performance:** Creates pointer-chasing overhead. Use flat `[]float64`.
+- **Strict float equality:** Arithmetic accumulates error. Use `math.Abs(a-b) < epsilon`.
+- **Ignoring gonum:** Manual implementations are error-prone. Use established libraries.
 
 ## Quick Reference
 
 | Name | Go Type | Complexity | Access | Use Case |
 |------|---------|------------|--------|----------|
-| Vector | `[]float64` | <code>O(1)</code> access | varies | 1D Data |
-| Matrix | `[][]float64` | <code>O(1)</code> access | varies | 2D Data |
-| Tensor | `[][][]float64` | <code>O(1)</code> access | varies | ML batching |
-| Dense Matrix | `[]float64` flat | <code>O(1)</code> access | varies | Heavy linear algebra |
-| Sparse | `map[int]map[int]float64` | <code>O(1)</code> access avg | varies | Graphs, NLP sparse arrays |
+| Vector | `[]float64` | $O(1)$ | . | 1D Data |
+| Matrix | `[][]float64` | $O(1)$ | . | 2D Data |
+| Tensor | `[][][]float64` | $O(1)$ | . | ML batching |
+| Dense Matrix | `[]float64` flat | $O(1)$ | . | Linear algebra |
+| Sparse | `map[int]map[int]float64` | $O(1)$ avg | . | Graphs, NLP |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 28:</strong> This chapter covers vector, matrix, and tensor operations with idiomatic Go implementations. Utilize standard slices for vectors, the `gonum` package for large-scale linear algebra, nested slices for small-scale tensors, and manually indexed flat slices for large tensors. Parallelizing code with goroutines becomes highly effective when matrix dimensions exceed 256×256.
+<strong>Summary Chapter 28:</strong> Vectors use standard slices. Matrices use `gonum` for scale. Tensors use flat slices for performance. Parallelize with goroutines for dimensions above 256×256.
 {{% /alert %}}
 
 ## See Also

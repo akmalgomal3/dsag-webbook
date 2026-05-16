@@ -10,10 +10,10 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-"The best data structure is the one that makes your algorithm both simple and fast." — Bjarne Stroustrup
+"The best data structure is the one that makes your algorithm both simple and fast." : Bjarne Stroustrup
 {{% /alert %}}
 {{% alert icon="📘" context="success" %}}
-Part IX covers advanced data structures beyond the fundamentals — B-Trees, Skip Lists, Bloom Filters, LRU Caches, Suffix Arrays, and Persistent Data Structures — each optimized for specific access patterns and memory hierarchies.
+Part IX details advanced data structures. Text covers B-Trees, Skip Lists, Bloom Filters, LRU Caches, Suffix Arrays, and Persistent Data Structures. Structures optimize specific access patterns.
 {{% /alert %}}
 
 <center>

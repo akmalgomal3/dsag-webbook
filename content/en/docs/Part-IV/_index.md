@@ -9,11 +9,11 @@ draft: false
 toc: true
 ---
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Intelligence is the ability to adapt to change.</em>" — Stephen Hawking</strong>
+<strong>"<em>Intelligence is the ability to adapt to change.</em>" : Stephen Hawking</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Part IV tackles <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> traversal, shortest paths, minimum spanning trees, and maximum flow. From BFS/DFS to Dijkstra, Bellman-Ford, and network flow algorithms like Ford-Fulkerson and Edmonds-Karp, it provides the foundation for solving real-world routing and connectivity problems.
+Part IV covers <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> algorithms. Text explains BFS, DFS, Dijkstra, and Bellman-Ford paths. Analysis details Ford-Fulkerson and Edmonds-Karp network flows. Algorithms solve routing problems.
 {{% /alert %}}
 
 <center>

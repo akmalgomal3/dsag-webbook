@@ -10,11 +10,11 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The whole of science is nothing more than a refinement of everyday thinking.</em>" — Albert Einstein</strong>
+<strong>"<em>The whole of science is nothing more than a refinement of everyday thinking.</em>" : Albert Einstein</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Part II explores fundamental data structures. It critically examines the performance implications of Go's Garbage Collector and CPU <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> locality, demonstrating why contiguous memory (Slices) consistently outperforms pointer-based structures (Linked Lists).
+Part II defines basic data structures. Text analyzes Garbage Collector and CPU <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> locality impacts. Analysis compares Slices and Linked Lists. Contiguous memory outperforms pointer structures.
 {{% /alert %}}
 
 <center>

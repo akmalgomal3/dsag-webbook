@@ -11,7 +11,7 @@ toc: true
 
 ## Big-O Cheat Sheet
 
-Quick reference for time and space complexity of common data structures and algorithms.
+[Reference] [Consult] [Fast]. Time and space complexity.
 
 ### Data Structures
 
@@ -71,7 +71,7 @@ Quick reference for time and space complexity of common data structures and algo
 ---
 
 {{% alert icon="🎯" context="success" %}}
-This cheat sheet covers the most common data structures and algorithms. Refer to individual chapters for detailed analysis, Go implementations, and edge cases.
+[Guide] [Consult] [Learn]. See chapters for implementations and edge cases.
 {{% /alert %}}
 
 ## See Also

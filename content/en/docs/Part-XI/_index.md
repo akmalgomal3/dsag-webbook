@@ -10,10 +10,10 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-"Sorting is the fundamental problem of computer science. It's the first thing you learn and the last thing you master." — Tim Peters
+"Sorting is the fundamental problem of computer science. It's the first thing you learn and the last thing you master." : Tim Peters
 {{% /alert %}}
 {{% alert icon="📘" context="success" %}}
-Part XI covers specialized sorting algorithms that break the O(n log n) barrier — <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr>, <abbr title="A sorting algorithm processing digits individually">Radix Sort</abbr>, <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr> — and essential array/string processing techniques: Sliding Window, Two Pointers, and Kadane's Algorithm.
+Part XI covers specialized sorting. Algorithms break O(n log n) barriers. Text explains <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr>, <abbr title="A sorting algorithm processing digits individually">Radix Sort</abbr>, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>. Code demonstrates array processing techniques.
 {{% /alert %}}
 
 <center>

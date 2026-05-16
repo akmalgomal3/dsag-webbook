@@ -15,30 +15,30 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 30 discusses parallel and distributed algorithms employing goroutines, channels, synchronization primitives, and worker pools in Go.
+Chapter 30 discusses parallel and distributed algorithms. Uses goroutines, channels, and worker pools in Go.
 {{% /alert %}}
 
 ## 30.1. Parallelism in Go
 
-**Definition:** Parallelism involves executing computations simultaneously across multiple CPU cores. Go provides <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> (lightweight threads) and <abbr title="A Go construct for communication between goroutines.">channels</abbr> for inter-process communication.
+**Definition:** Simultaneous computation across multiple CPU cores. Go provides goroutines and channels for coordination.
 
 **Background & Philosophy:**
-The philosophy stems from Amdahl's Law: hardware clock speeds have plateaued, so to compute faster, we must compute wider. It trades the straightforwardness of sequential programming for the complexities of coordination, state sharing, and consensus.
+Hardware clock speeds plateaued. Computing must go wider. Parallelism trades simplicity for coordination complexity. Follows Amdahl's Law.
 
 **Use Cases:**
-Processing terabytes of logs asynchronously, distributing HTTP requests across clusters, and parallel matrix multiplication.
+Asynchronous log processing. Distributed HTTP requests. Parallel matrix multiplication.
 
 **Memory Mechanics:**
-Parallelism directly exposes the harsh reality of hardware <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> coherence. When two goroutines on different CPU cores write to adjacent array elements simultaneously, they cause "False Sharing". The CPU hardware must lock and invalidate the L1 cache lines across the entire motherboard, destroying performance. Properly padding memory structures or isolating data chunks to avoid false sharing is mandatory for true parallel speedup.
+Exposes hardware cache coherence issues. Adjacent array writes cause "False Sharing". CPU locks and invalidates L1 cache lines. Performance drops. Padding memory structures avoids this. Isolating data chunks is mandatory for speedup.
 
 ### Operations & Complexity
 
 | Model | Time | Overhead | Description |
 |-------|------|----------|------------|
-| Sequential | <code>O(T)</code> | 0 | Baseline |
-| <abbr title="A lightweight concurrent execution thread managed by the Go runtime">Goroutine</abbr> | <code>O(T/p)</code> | ~2μs spawn | Lightweight thread |
-| Worker Pool | <code>O(T/p)</code> | Fixed pool | Reuses goroutines |
-| SIMD (Go asm) | <code>O(T/vec)</code> | Manual | AVX/SSE |
+| Sequential | $O(T)$ | 0 | Baseline execution |
+| Goroutine | $O(T/p)$ | ~2μs spawn | Lightweight thread |
+| Worker Pool | $O(T/p)$ | Fixed pool | Goroutine reuse |
+| SIMD (Go asm) | $O(T/vec)$ | Manual | AVX/SSE instructions |
 
 ### Pseudocode
 
@@ -115,64 +115,64 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Go's <abbr title="The period during which a computer program is executing.">runtime</abbr> scheduler utilizes an M:N scheduling model. Do not spawn goroutines for microscopic tasks; enforce a minimum threshold for tasks to yield a tangible benefit.
+Go runtime uses M:N scheduling. Avoid goroutines for microscopic tasks. Tasks should exceed 1ms for tangible benefit.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Goroutines When... | Avoid If... |
 |--------------------------|------------------|
-| The task is CPU-bound and execution time > 1ms | The task is excessively small (< 100μs) |
-| Dealing with independent sub-problems | Dealing with highly shared state lacking synchronization |
-| Constructing pipeline stages | There is a strict, strong sequential dependency |
+| Task is CPU-bound: $> 1$ms | Task is too small: $< 100$μs |
+| Independent sub-problems exist | Shared state lacks synchronization |
+| Building pipeline stages | Strict sequential dependency exists |
 
 ### Edge Cases & Pitfalls
 
-- **Goroutine leak:** Always verify that channels are closed or `defer close()` is guaranteed to be called.
-- **<abbr title="A bug when multiple threads access shared data without synchronization.">Data race</abbr>:** Extensively use `go test -race` for detection. Rely on <abbr title="A synchronization primitive ensuring mutual exclusion.">sync.Mutex</abbr> or channels for safety.
-- **Too many goroutines:** While millions of goroutines are permissible, they can consume massive amounts of stack memory (starting at 2KB each).
+- **Goroutine leak:** Verify channels close. Use `defer close()`.
+- **Data race:** Use `go test -race`. Protect with `sync.Mutex` or channels.
+- **Excessive goroutines:** Millions are allowed. Stack starts at 2KB. Memory exhaustion possible.
 
 ## 30.2. Synchronization and Concurrency
 
-**Definition:** Synchronization coordinates access to shared states. Go supplies standard tools such as Mutex, RWMutex, WaitGroup, and channels for orchestration.
+**Definition:** Coordination of access to shared state. Go provides Mutex, RWMutex, WaitGroup, and channels.
 
 ### Operations & Complexity
 
 | Primitive | Lock | Unlock | Description |
 |-----------|------|--------|------------|
-| sync.Mutex | `Lock()` | `Unlock()` | Absolute mutual exclusion |
-| sync.RWMutex | `RLock()` R, `Lock()` W | `RUnlock()` / `Unlock()` | Multiple concurrent readers, single writer |
-| sync.Map | `Load()` avg | . | Specialized concurrent-safe map |
-| Channel | `<-ch` send/recv | . | Pure CSP-style communication |
+| sync.Mutex | `Lock()` | `Unlock()` | Mutual exclusion |
+| sync.RWMutex | `RLock()` R, `Lock()` W | `RUnlock()` / `Unlock()` | Concurrent readers, single writer |
+| sync.Map | `Load()` avg | . | Concurrent-safe map |
+| Channel | `<-ch` | . | CSP-style communication |
 
-Hierarchical preference: channels > `sync/atomic` > `sync.Mutex`. Utilize `sync.Map` exclusively for intensely read-heavy concurrent access; otherwise, standard maps protected by a mutex are generally faster.
+Preference: channels > `sync/atomic` > `sync.Mutex`. Use `sync.Map` for read-heavy access. Standard maps with mutex are generally faster.
 
 ### Decision Matrix
 
 | Use When... | Avoid If... |
 |----------------|------------------|
-| Channels: coordination, building pipelines | Only needing a basic counter (use atomic instead) |
-| Mutex: complex state updates | Simple counter updates (atomic is much faster) |
-| sync.Map: many readers, infrequent writes | Write-heavy workloads |
+| Channels: coordination, pipelines | Simple counter needed: use atomic |
+| Mutex: complex state updates | Simple counter updates: use atomic |
+| sync.Map: many readers, rare writes | Write-heavy workloads |
 
 ### Edge Cases & Pitfalls
 
-- **<abbr title="A state where concurrent processes wait on each other indefinitely.">Deadlock</abbr>:** Absolutely ensure locks are always unlocked; utilize `defer mu.Unlock()`.
-- **Priority inversion:** An `RWMutex` writer can suffer from starvation if readers perpetually acquire the lock.
-- **Copying sync primitives:** Never copy a `sync.Mutex` by <abbr title="The data associated with a key in a key-value pair.">value</abbr> (always pass it by <abbr title="A variable that stores a memory address.">pointer</abbr>).
+- **Deadlock:** Ensure unlock calls. Use `defer mu.Unlock()`.
+- **Priority inversion:** RWMutex writers can starve if readers persist.
+- **Primitive copying:** Never copy `sync.Mutex` by value. Pass by pointer.
 
 ## 30.3. Parallel Algorithms
 
-**Definition:** Algorithms designed specifically to run efficiently across multiple processors through diligent task or data decomposition.
+**Definition:** Algorithms for multi-processor efficiency. Use task or data decomposition.
 
 ### Operations & Complexity
 
-| Algorithm | Sequential | Parallel (p processors) |
+| Algorithm | Sequential | Parallel ($p$ processors) |
 |-----------|------------|-----------------------|
-| Parallel Prefix Sum | <code>O(n)</code> | <code>O(n/p + log p)</code> |
-| Parallel <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge Sort</abbr> | <code>O(n log n)</code> | <code>O(n/p log(n/p))</code> |
-| Parallel BFS | <code>O(V+E)</code> | <code>O((V+E)/p + d·log p)</code> |
-| Map-Reduce | <code>O(n)</code> | <code>O(n/p)</code> |
+| Parallel Prefix Sum | $O(n)$ | $O(n/p + \log p)$ |
+| Parallel Merge Sort | $O(n \log n)$ | $O(n/p \log(n/p))$ |
+| Parallel BFS | $O(V+E)$ | $O((V+E)/p + d \cdot \log p)$ |
+| Map-Reduce | $O(n)$ | $O(n/p)$ |
 
 ### Pseudocode
 
@@ -238,67 +238,67 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-**Amdahl's Law:** If 90% of your codebase is parallelizable, the absolute maximum theoretical speedup is 10×. Parallelizing tiny fragments is rarely worth the overhead.
+**Amdahl's Law:** Parallelizable part limits speedup. Parallelizing tiny fragments adds overhead without gain.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Parallel Map When... | Avoid If... |
 |-----------------------------|------------------|
-| The function is pure with zero side effects | The function performs I/O operations |
-| The <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> is massive, > 10K elements | The <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> is small (< 1K elements) |
+| Pure function used: no side effects | Function performs I/O |
+| Array is massive: $> 10$K elements | Array is small: $< 1$K elements |
 
 ### Edge Cases & Pitfalls
 
-- **False sharing:** Goroutines writing to adjacent array elements force cache coherence updates, severely degrading performance.
-- **Uneven workload:** Dynamic work stealing proves vastly superior when dealing with severe load imbalances.
+- **False sharing:** Adjacent array writes force cache updates. Degrades performance.
+- **Uneven workload:** Use dynamic work stealing for load imbalance.
 
 ## 30.4. Worker Pools and Pipelines
 
-**Definition:** A worker pool strictly limits the maximum number of running goroutines; a pipeline seamlessly connects processing stages through channels.
+**Definition:** Worker pool bounds running goroutines. Pipeline connects stages via channels.
 
 ### Operations & Complexity
 
 | Pattern | Throughput | Latency | Description |
 |---------|------------|---------|------------|
-| Worker Pool | High | Low | Bounds concurrency |
-| Pipeline | Medium | Low | Stream processing architecture |
-| Fan-out/Fan-in | Very High | Medium | Highly parallel stages |
+| Worker Pool | High | Low | Concurrency bounding |
+| Pipeline | Medium | Low | Stream processing |
+| Fan-out/Fan-in | Very High | Medium | Parallel stages |
 
-Channel buffer sizes dramatically influence throughput. For I/O-bound tasks, large buffers mitigate blocking. For purely CPU-bound tasks, very small buffers often suffice.
+Buffer sizes affect throughput. I/O-bound tasks need large buffers. CPU-bound tasks need small buffers.
 
 ### Decision Matrix
 
 | Use Worker Pool When... | Use Pipeline When... |
 |----------------------------|-------------------------|
-| Resources are strictly limited (DB connections, file descriptors) | Engaging in stream processing |
-| Tasks are completely homogeneous | Executing multi-stage transformations |
+| Resources limited: DB, files | Stream processing needed |
+| Homogeneous tasks | Multi-stage transformations required |
 
 ### Edge Cases & Pitfalls
 
-- **Channel deadlock:** Guarantee that there is always an active goroutine reading from every channel.
-- **Panic propagation:** Proactively use `defer/recover()` within worker goroutines or utilize dedicated error channels.
+- **Channel deadlock:** Ensure active readers for every channel.
+- **Panic propagation:** Use `defer/recover()` in workers. Use error channels.
 
 ### Anti-Patterns
 
-- **Spawning one goroutine per item:** Creating N goroutines for N elements overwhelms the scheduler. Use a bounded worker pool (`N = runtime.NumCPU()`) or `errgroup.Group` with `SetLimit()`.
-- **Sharing memory without synchronization:** Concurrent goroutines writing to the same map or slice without a mutex or channel produces data races. Always run `go test -race` to detect them.
-- **Unbuffered channels with single producer/consumer:** Deadlock occurs if the producer blocks on a send while the consumer hasn't started. Size channel buffers appropriately or use `sync.WaitGroup` for coordination.
+- **Unbounded goroutines:** Spawning one per item overwhelms scheduler. Use pools.
+- **Missing synchronization:** Concurrent map/slice writes cause races. Run `-race` test.
+- **Blocking channels:** Deadlock possible in producer/consumer mismatch. Size buffers. Use `WaitGroup`.
 
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Mutex | `sync.Mutex` | . | 1 word | Shared state protection |
+| Mutex | `sync.Mutex` | . | 1 word | State protection |
 | RWMutex | `sync.RWMutex` | . | 1 word | Read-heavy caching |
-| WaitGroup | `sync.WaitGroup` | . | 1 word | Barrier synchronization |
-| Atomic | `sync/atomic` | <code>O(1)</code> | . | Lock-free counters and flags |
-| Channel | `chan T` | Blocking | varies | Pure CSP communication |
-| sync.Map | `sync.Map` | . | . | Highly concurrent maps |
-| Context | `context.Context` | . | . | Cancellations and timeouts |
+| WaitGroup | `sync.WaitGroup` | . | 1 word | Barrier sync |
+| Atomic | `sync/atomic` | $O(1)$ | . | Lock-free counters |
+| Channel | `chan T` | . | . | CSP communication |
+| sync.Map | `sync.Map` | . | . | Concurrent maps |
+| Context | `context.Context` | . | . | Timeouts |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 29:</strong> This chapter discusses parallelism in Go using goroutines, synchronization primitives (Mutex, RWMutex, atomic, WaitGroup), channels, as well as worker pool and pipeline patterns. Utilize goroutines for independent CPU-bound tasks, channels for coordination, and worker pools to strictly bound concurrency when resources are limited.
+<strong>Summary Chapter 29:</strong> Go uses goroutines and synchronization primitives. Mutex and channels coordinate state. Worker pools bound concurrency. Pipelines process streams.
 {{% /alert %}}
 
 ## See Also

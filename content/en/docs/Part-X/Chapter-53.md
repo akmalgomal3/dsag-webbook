@@ -1,6 +1,6 @@
 ---
 weight: 100400
-title: "Chapter 54 - Tarjan's Bridge-Finding Algorithm"
+title: "Chapter 53: Tarjan's Bridge-Finding Algorithm"
 description: "Tarjan's Bridge-Finding Algorithm"
 icon: "article"
 date: "2026-05-12T00:00:00+07:00"
@@ -11,16 +11,16 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Bridges are the weakest links in any network.</em>" — Unknown</strong>
+<strong>"<em>Bridges are the weakest links in any network.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 54 covers Tarjan's algorithm for finding bridges (cut edges) in undirected graphs — edges whose removal disconnects the graph.
+Chapter 53 covers Tarjan's algorithm for finding bridges (cut edges) in undirected graphs. Edges whose removal disconnects the graph are bridges.
 {{% /alert %}}
 
-## 54.1. Bridges and Articulation Points
+## 53.1. Bridges and Articulation Points
 
-**Definition:** A <abbr title="An edge in an undirected graph whose removal increases the number of connected components.">bridge</abbr> (cut edge) is an edge whose removal disconnects the graph. An <abbr title="A vertex whose removal increases the number of connected components.">articulation point</abbr> (cut vertex) is a vertex with the same property.
+**Definition:** Bridge (cut edge) disconnects graphs upon removal. Articulation point (cut vertex) has identical properties for vertices.
 
 ### Why They Matter
 
@@ -31,9 +31,9 @@ Chapter 54 covers Tarjan's algorithm for finding bridges (cut edges) in undirect
 | Social networks | Key connectors |
 | Electrical grids | Vulnerable transmission lines |
 
-## 54.2. Tarjan's Bridge Algorithm
+## 53.2. Tarjan's Bridge Algorithm
 
-Using DFS discovery times and low values:
+DFS discovery times and low values identify bridges.
 
 ```go
 func findBridges(graph [][]int, n int) [][]int {
@@ -78,7 +78,7 @@ func findBridges(graph [][]int, n int) [][]int {
 }
 ```
 
-## 54.3. Algorithm Analysis
+## 53.3. Algorithm Analysis
 
 | Aspect | Complexity |
 |--------|------------|
@@ -88,15 +88,15 @@ func findBridges(graph [][]int, n int) [][]int {
 
 ### Key Insight
 
-Edge (u, v) is a bridge if and only if no back edge connects v's subtree to u or above. This is precisely what `low[v] > disc[u]` checks.
+Edge (u, v) is a bridge if no back edge connects v's subtree to u or higher. Expression `low[v] > disc[u]` validates condition.
 
-## 54.4. Articulation Points
+## 53.4. Articulation Points
 
-Similar logic: vertex u is an articulation point if:
-- Root with ≥2 children in DFS tree
-- Non-root with `low[v] ≥ disc[u]` for some child v
+Logic: Vertex u is articulation point if:
+- Root has ≥2 children in DFS tree.
+- Non-root child v satisfies `low[v] ≥ disc[u]`.
 
-## 54.5. Decision Matrix
+## 53.5. Decision Matrix
 
 | Find Bridges When... | Find Articulation Points When... |
 |---------------------|----------------------------------|
@@ -106,18 +106,18 @@ Similar logic: vertex u is an articulation point if:
 
 ### Edge Cases & Pitfalls
 
-- **Multiple edges:** Parallel edges between two vertices mean neither is a bridge.
-- **Self-loops:** Ignore for bridge finding.
-- **<abbr title="A graph with vertices not connected by any path">Disconnected graph</abbr>:** Run DFS from each component.
+- **Multiple edges:** Parallel edges prevent bridge status.
+- **Self-loops:** Ignore for bridge detection.
+- **Disconnected graph:** Run DFS from every component.
 
 ### Anti-Patterns
 
-- **Treating the parent edge as a back edge:** Forgetting to skip `v == parent` in DFS causes false-positive bridges; the tree edge to a parent is never a back edge.
-- **Confusing bridge and articulation-point conditions:** Bridges require `low[v] > disc[u]` (strictly greater), while articulation points require `low[v] ≥ disc[u]` (greater-or-equal) — swapping them produces wrong results.
-- **Ignoring multi-edges:** Parallel edges between two vertices mean neither edge is a bridge; algorithms must count edge multiplicity or merge parallel edges before analysis.
-- **Running from a single source on disconnected graphs:** Bridge-finding must DFS from every unvisited vertex; a single start misses entire components.
+- **Parent edge confusion:** Skip `v == parent` in DFS. Parent edges are not back edges.
+- **Swapping conditions:** Bridges require `low[v] > disc[u]`. Articulation points require `low[v] ≥ disc[u]`.
+- **Multi-edge neglect:** Parallel edges negate bridge status. Multiplicity must be handled.
+- **Single-source limit:** DFS from all unvisited vertices. Disconnected components require individual seeding.
 
-## 54.6. Quick Reference
+## 53.6. Quick Reference
 
 | Condition | Meaning |
 |-----------|---------|
@@ -130,12 +130,11 @@ Similar logic: vertex u is an articulation point if:
 | No direct stdlib | Implement for network analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 53:</strong> Tarjan's bridge-finding algorithm exemplifies the power of DFS: a single linear traversal reveals the critical vulnerabilities of an entire network. By tracking discovery times and lowest reachable ancestors, it identifies every bridge in O(V + E) time. In network reliability, infrastructure planning, and system design, knowing your bridges is knowing your risks.
+<strong>Summary Chapter 53:</strong> Tarjan's algorithm identifies network vulnerabilities. Linear traversal finds every bridge. Algorithm enables reliability planning.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 51 — Topological Sort](/docs/part-x/chapter-50/)
-- [Chapter 52 — Strongly Connected Components](/docs/part-x/chapter-51/)
-- [Chapter 12 — Graphs and Graph Representations](/docs/part-iii/chapter-12/)
-
+- [Chapter 50: Topological Sort](/docs/part-x/chapter-50/)
+- [Chapter 51: Strongly Connected Components](/docs/part-x/chapter-51/)
+- [Chapter 12: Graphs and Graph Representations](/docs/part-iii/chapter-12/)

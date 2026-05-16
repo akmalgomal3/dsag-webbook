@@ -1,15 +1,15 @@
 ---
 title: "Modern Data Structures and Algorithms in Go"
-description: "A comprehensive 60-chapter technical book covering data structures, algorithms, and their implementation in Go."
+description: "60-chapter technical book. Data structures and algorithms. Idiomatic Go implementation."
 ---
 
 # Modern Data Structures and Algorithms in Go
 
-A comprehensive, practitioner-focused book on data structures and algorithms, implemented idiomatically in **Go**.
+Practitioner-focused text. Master data structures. Idiomatic Go.
 
-## What You'll Learn
+## Content Scope
 
-This book covers **60 chapters** across **12 parts**, from foundational concepts to advanced topics:
+60 chapters. 12 parts. Foundations to advanced topics.
 
 | Part | Topic | Chapters |
 |------|-------|----------|
@@ -26,18 +26,18 @@ This book covers **60 chapters** across **12 parts**, from foundational concepts
 | **XI** | Specialized Sorting & Techniques | 55–57 |
 | **XII** | Advanced Topics | 58–60 |
 
-## Philosophy
+## Core Principles
 
-- **Brevity over verbosity** — Each chapter readable in 7–10 minutes
-- **Intuition over formalism** — Understand why, not just how
-- **Go idiomatic** — No pseudocode, no language mixing
-- **Practical** — Decision matrices for real-world choices
-- **Honest** — Edge cases and when NOT to use something
+- **Brevity**: 7-10 minute chapters. Efficient learning.
+- **Intuition**: Focus on logic. Deep understanding.
+- **Go Idioms**: No pseudocode. Direct implementation.
+- **Practical**: Decision matrices. Real-world application.
+- **Honest**: Edge cases. Safety analysis.
 
-## Get Started
+## Start
 
-Start with the [Preface](/docs/Preface/) or jump straight to [Chapter 1](/docs/Part-I/Chapter-1/).
+Read [Preface](/docs/Preface/). Study [Chapter 1](/docs/Part-I/Chapter-1/).
 
 ---
 
-*Built with Hugo · Open Source*
+Hugo. Open Source.

@@ -11,32 +11,32 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Chess is as elaborate a waste of human intelligence as you can find outside an advertising agency.</em>" : Raymond Chandler</strong>
+<strong>"<em>Chess wastes human intelligence. Equivalent to advertising agencies.</em>" : Raymond Chandler</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 58 explores minimax — the foundational algorithm for two-player zero-sum games, and alpha-beta pruning that makes it practical.
+Chapter 58 explores minimax: foundational algorithm for two-player zero-sum games. Alpha-beta pruning makes it practical.
 {{% /alert %}}
 
 ## 58.1. Game Trees
 
-**Definition:** A <abbr title="A directed graph representing all possible game states and moves in a two-player game.">game tree</abbr> represents all possible sequences of moves. In two-player zero-sum games, one player's gain is the other's loss.
+**Definition:** <abbr title="A directed graph representing all possible game states and moves in a two-player game.">Game tree</abbr> represents all possible move sequences. Two-player zero-sum games: one player's gain equals other's loss.
 
 **Background & Philosophy:**
-The philosophy is deterministic pessimism. <abbr title="A decision rule used in two-player zero-sum games that minimizes the possible loss for a worst-case scenario.">Minimax</abbr> assumes the opponent plays optimally. By mapping out possible futures and planning against the worst-case scenario, the algorithm guarantees it will never make a critical mistake.
+Deterministic pessimism guides <abbr title="A decision rule used in two-player zero-sum games that minimizes the possible loss for a worst-case scenario.">minimax</abbr>. Algorithm assumes optimal opponent play. Mapping futures and worst-case scenarios prevents critical mistakes.
 
 **Use Cases:**
-Classic turn-based, perfect-information board games like Chess, Checkers, and Tic-Tac-Toe, as well as business negotiation models in Game Theory.
+Turn-based perfect-information games: Chess, Checkers, Tic-Tac-Toe. Game Theory applies models to business negotiations.
 
 **Memory Mechanics:**
-<abbr title="A technique that eliminates branches in a game tree that cannot affect the final minimax decision.">Minimax</abbr> relies exclusively on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> to navigate the game tree via depth-first search. Without <abbr title="An optimization technique for minimax that eliminates branches that cannot possibly influence the final decision.">Alpha-Beta pruning</abbr>, the tree expands exponentially, pushing millions of frames onto the <abbr title="Memory used to execute functions and store local variables.">stack</abbr> and threatening an <abbr title="An error caused by using more stack memory than allocated.">Out of Memory (OOM)</abbr> crash. Alpha-Beta pruning acts as a memory circuit breaker, abruptly stopping the recursion when a mathematical threshold is crossed. This drastically shrinks the active <abbr title="Memory used to execute functions and store local variables.">stack</abbr> depth and keeps the algorithm firmly within the physical limits of the L1/L2 caches.
+<abbr title="A technique that eliminates branches in a game tree that cannot affect the final minimax decision.">Minimax</abbr> uses <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> for depth-first search. Tree expands exponentially without pruning. <abbr title="An optimization technique for minimax that eliminates branches that cannot possibly influence the final decision.">Alpha-Beta pruning</abbr> acts as memory circuit breaker. Recursion stops at mathematical threshold. Active stack depth shrinks. Algorithm stays within L1/L2 cache limits.
 
 ### The Minimax Principle
 
-- **Maximizer** (AI): Tries to maximize the score
-- **Minimizer** (Opponent): Tries to minimize the score
+- **Maximizer** (AI): Maximizes score.
+- **Minimizer** (Opponent): Minimizes score.
 
-Assume the opponent plays optimally — pessimistic but safe.
+Algorithm assumes opponent plays optimally: pessimistic but safe.
 
 ## 58.2. Minimax Algorithm
 
@@ -219,7 +219,7 @@ func main() {
 
 ## 58.3. Alpha-Beta Pruning
 
-**Definition:** <abbr title="An optimization technique for minimax that eliminates branches that cannot possibly influence the final decision.">Alpha-beta pruning</abbr> skips evaluating branches that cannot affect the final decision.
+**Definition:** <abbr title="An optimization technique for minimax that eliminates branches that cannot possibly influence the final decision.">Alpha-beta pruning</abbr> skips branches. Irrelevant branches do not affect final decision.
 
 | Without Pruning | With Pruning |
 |-----------------|--------------|
@@ -228,7 +228,7 @@ func main() {
 
 ### Key Insight
 
-If the maximizer already has a move worth 5, and the minimizer finds a response worth 3, the minimizer will never choose a path allowing 5 — so stop exploring that branch.
+Maximizer finds move worth 5. Minimizer finds response worth 3. Minimizer avoids path allowing 5. Stop exploring branch.
 
 ## 58.4. Decision Matrix
 
@@ -240,17 +240,17 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 
 ### Edge Cases & Pitfalls
 
-- **Horizon effect:** Bad moves beyond search depth are invisible.
-- **<abbr title="A function that assigns a score to a game state to determine how favorable it is for a player.">Evaluation function</abbr>:** A poor heuristic defeats perfect search.
-- **Transpositions:** Same position via different paths — use transposition tables.
-- **Memory:** Deep searches exhaust memory — iterative deepening helps.
+- **Horizon effect:** Bad moves beyond search depth remain invisible.
+- **<abbr title="A function that assigns a score to a game state to determine how favorable it is for a player.">Evaluation function</abbr>:** Poor heuristic defeats perfect search.
+- **Transpositions:** Different paths reach same position. Use transposition tables.
+- **Memory:** Deep searches exhaust memory. Use iterative deepening.
 
 ### Anti-Patterns
 
-- **Running minimax without alpha-beta pruning:** Without pruning, the full game tree expands at O(b^d); alpha-beta cuts this by roughly half per level — omitting it makes even moderate games intractable.
-- **Using minimax for non-zero-sum or stochastic games:** Minimax assumes a deterministic, perfect-information, zero-sum game; applying it to poker, backgammon, or cooperative games produces strategically flawed decisions.
-- **Poor evaluation function:** Minimax's output is only as good as its heuristic; a bad evaluation function causes systematic blunders that no amount of search depth can fix.
-- **Ignoring transpositions:** The same board position reached by different move sequences should be evaluated once and cached; recomputing it every time multiplies work exponentially.
+- **Omitting alpha-beta pruning:** Full tree expands at <code>O(b^d)</code>. Pruning cuts expansion. Omission makes games intractable.
+- **Using minimax for stochastic games:** Minimax requires deterministic perfect-information zero-sum games. Poker or backgammon yield flawed decisions.
+- **Poor evaluation function:** Output depends on heuristic quality. Bad heuristic causes systematic blunders. Search depth cannot fix poor evaluation.
+- **Ignoring transpositions:** Evaluate reached positions once and cache them. Recomputing multiplies work exponentially.
 
 ## 58.5. Quick Reference
 
@@ -266,7 +266,7 @@ If the maximizer already has a move worth 5, and the minimizer finds a response 
 | No direct stdlib | Implement natively for game AI |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 57:</strong> <abbr title="A decision rule used in two-player zero-sum games that minimizes possible loss for a worst-case scenario.">Minimax</abbr> is the algorithmic embodiment of strategic thinking: assume your opponent is as smart as you, and plan accordingly. Alpha-beta pruning proves that even in exhaustive search, clever ordering can eliminate the impossible. From chess engines to checkers bots, minimax remains the conceptual foundation of competitive game AI.
+<strong>Summary Chapter 57:</strong> <abbr title="A decision rule used in two-player zero-sum games that minimizes possible loss for a worst-case scenario.">Minimax</abbr> embodies strategic thinking. Algorithm assumes opponent intelligence and plans accordingly. Alpha-beta pruning eliminates impossible branches. Minimax remains foundation of competitive game AI.
 {{% /alert %}}
 
 ## See Also

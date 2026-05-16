@@ -15,34 +15,34 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 49 introduces suffix arrays — a space-efficient alternative to suffix trees for string searching, <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr>, and bioinformatics.
+Suffix arrays are space-efficient alternatives to suffix trees. Optimized for string searching and bioinformatics.
 {{% /alert %}}
 
-## 49.1. The String Search Problem
+## 48.1. Purpose
 
-**Definition:** A <abbr title="A sorted array of all suffixes of a string, enabling efficient string matching and analysis.">suffix array</abbr> is the lexicographically sorted array of all suffixes of a string. It enables <code>O(n log n)</code> construction and <code>O(m log n)</code> pattern search.
+**Definition:** A <abbr title="A sorted array of all suffixes of a string, enabling efficient string matching and analysis.">suffix array</abbr> is the lexicographically sorted array of all suffixes of a string. Enables <code>O(n log n)</code> construction and <code>O(m log n)</code> pattern search.
 
-**Background & Philosophy:**
-The philosophy is reducing complex string geometries into mathematically sortable integers. Suffix Trees are comprehensive but complex to build and store. A Suffix Array abandons the tree structure, opting to sort pointers to the suffixes. It relies on the insight that binary search over a sorted list of suffixes solves <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> directly.
+**Logic:**
+String geometries reduced to sortable integers. Sorts pointers to suffixes. Binary search over sorted suffixes solves matching directly.
 
 **Use Cases:**
-Bioinformatics (DNA sequence alignment), full-text search engines, and data compression (Burrows-Wheeler Transform).
+Bioinformatics (DNA sequence alignment). Full-text search engines. Data compression (Burrows-Wheeler Transform).
 
 **Memory Mechanics:**
-A <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr> allocates a node for every character, severely fragmenting <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. A Suffix Array merely stores an array of integers (the starting indices of suffixes). For a string of length `N`, it strictly requires <code>O(N)</code> contiguous memory (just `4N` or `8N` bytes). This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> integer array allows the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> to prefetch data efficiently during binary searches, making it superior to Suffix Trees in real-world memory performance.
+Suffix trees allocate nodes for every character. Suffix arrays store integer indices. String length N requires <code>O(N)</code> contiguous memory. Contiguous integer arrays allow efficient prefetching and <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> performance.
 
-### Suffix Array vs <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr>
+### Comparison: Suffix Array vs Suffix Tree
 
-| Aspect | Suffix Array | <abbr title="A compressed trie containing all suffixes of a text">Suffix Tree</abbr> |
+| Aspect | Suffix Array | Suffix Tree |
 |--------|--------------|-------------|
 | Space | <code>O(n)</code> integers | <code>O(n)</code> pointers (heavy) |
-| Construction | <code>O(n log n)</code> or <code>O(n)</code> | <code>O(n)</code> |
-| Pattern search | <code>O(m log n)</code> | <code>O(m)</code> |
+| Construction | <code>O(n log n)</code> / <code>O(n)</code> | <code>O(n)</code> |
+| Search | <code>O(m log n)</code> | <code>O(m)</code> |
 | Implementation | Moderate | Complex |
 
-## 49.2. Construction
+## 48.2. Construction
 
-For string "banana":
+Example: "banana":
 
 | Index | Suffix |
 |-------|--------|
@@ -83,48 +83,48 @@ func main() {
 }
 ```
 
-## 49.3. Pattern Search
+## 48.3. Search
 
-With a suffix array, <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> finds all occurrences of pattern P in <code>O(\|P\| log n)</code> time.
+Binary search finds pattern P in <code>O(\|P\| log n)</code>.
 
 ### Longest Common Prefix (LCP)
 
-The <abbr title="An array storing the length of the longest common prefix between each adjacent pair of suffixes in the suffix array.">LCP array</abbr> enables:
-- Finding repeated substrings
-- Computing number of distinct substrings
-- Solving bioinformatics problems
+<abbr title="An array storing the length of the longest common prefix between each adjacent pair of suffixes in the suffix array.">LCP array</abbr> enables:
+- Finding repeated substrings.
+- Counting distinct substrings.
+- DNA sequence analysis.
 
-## 49.4. Applications
+## 48.4. Applications
 
-| Application | How Suffix Array Helps |
+| Application | Function |
 |-------------|----------------------|
-| **Full-text search** | Find all occurrences of a word |
-| **Bioinformatics** | DNA sequence alignment |
-| **Data compression** | Burrows-Wheeler transform |
-| **Plagiarism detection** | Find longest common substring |
+| **Full-text search** | Fast word occurrence lookups. |
+| **Bioinformatics** | DNA sequence alignment. |
+| **Compression** | Burrows-Wheeler transform base. |
+| **Plagiarism** | Longest common substring detection. |
 
-## 49.5. Decision Matrix
+## 48.5. Decision Matrix
 
 | Use Suffix Arrays When... | Use Tries When... |
 |---------------------------|-------------------|
-| Searching in one static text | Dynamic dictionary of words |
-| Space matters | Prefix queries dominate |
-| Multiple pattern searches | Single pattern, many texts |
+| Static text search. | Dynamic word dictionary. |
+| Memory is constrained. | Prefix queries dominate. |
+| Multiple pattern checks. | Single pattern, many texts. |
 
-### Edge Cases & Pitfalls
+### Constraints & Risks
 
-- **Sentinel character:** Append `$` to ensure no suffix is a prefix of another.
-- **Memory:** For large texts (genomes), use compressed suffix arrays.
-- **Construction time:** <code>O(n² log n)</code> naive sort is too slow for n > 10⁵ — use doubling or SA-IS algorithm.
+- **Sentinels:** Append `$` to prevent one suffix being a prefix of another.
+- **Scaling:** Use compressed suffix arrays for massive genomes.
+- **Efficiency:** Naive <code>O(n² log n)</code> sort fails for n > 10⁵. Use SA-IS algorithm.
 
 ### Anti-Patterns
 
-- **Building suffix arrays with naive <code>O(n² log n)</code> sort on large texts.** The naive approach compares full suffixes on every sort comparison, making it catastrophically slow for strings over 10⁵ characters. Always use the <code>O(n log n)</code> doubling algorithm or the <code>O(n)</code> SA-IS algorithm for production workloads.
-- **Using suffix arrays on frequently mutated text.** Any insertion or deletion invalidates the entire suffix array, requiring a full rebuild. For dynamic text, a suffix automaton or incremental index is far more appropriate.
-- **Omitting the sentinel character.** Without a unique terminator (`$`), one suffix can be a prefix of another, breaking lexicographic ordering and producing incorrect binary search results. Always append a sentinel that is lexicographically smaller than every character in the alphabet.
-- **Using suffix arrays for prefix-based dictionary lookups.** A suffix array organizes suffixes, not prefixes. If your queries are "find all strings starting with X," a trie (Chapter 36) answers in <code>O(|X|)</code> without the <code>O(log n)</code> binary search overhead.
+- **Large Naive Sort:** Naive sorting full suffixes is catastrophically slow. Use <code>O(n)</code> SA-IS.
+- **Mutating Text:** Any text change requires full rebuild. Use automata for dynamic text.
+- **Missing Sentinels:** Without unique terminators, lexicographic ordering breaks.
+- **Dictionary Lookups:** Tries beat suffix arrays for simple "starts with" queries.
 
-## 49.6. Quick Reference
+## 48.6. Quick Reference
 
 | Algorithm | Time | Space |
 |-----------|------|-------|
@@ -134,15 +134,15 @@ The <abbr title="An array storing the length of the longest common prefix betwee
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `strings` | `Index`, `Contains` for simple cases |
-| `index/suffixarray` | Go's production-ready suffix array implementation |
+| `strings` | `Index`, `Contains` for simple strings. |
+| `index/suffixarray` | Production implementation. |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 48:</strong> Suffix arrays prove that sorting can solve complex string problems. By lexicographically sorting all suffixes, they transform <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> into binary search — a direct <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr> from string complexity to array simplicity. For static text search, they offer the best balance of speed, space, and implementation clarity.
+Suffix arrays transform string matching into binary search. Space efficient. sorting all suffixes solves complex string problems.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/part-vii/chapter-34/)
+- [Chapter 34: String Matching Algorithms](/docs/part-vii/chapter-34/)
 - [Chapter 36: Trie Data Structures](/docs/part-vii/chapter-36/)
 - [Chapter 49: Persistent Data Structures](/docs/part-ix/chapter-49/)

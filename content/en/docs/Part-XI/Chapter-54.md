@@ -11,25 +11,25 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Linear-time sorting is not magic — it is the reward of making strong assumptions about your data.</em>" : Unknown</strong>
+<strong>"<em>Linear-time sorting requires data assumptions: reward of strong constraints.</em>" : Unknown</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 55 explores linear-time sorting algorithms — <abbr title="An integer sorting algorithm using frequency counting">counting sort</abbr>, <abbr title="A sorting algorithm processing digits individually">radix sort</abbr>, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> — that beat the <code>O(n log n)</code> comparison bound by exploiting data structure.
+Linear-time sorting beats <code>O(n log n)</code> bound: counting sort, radix sort, and bucket sort exploit data structure.
 {{% /alert %}}
 
 ## 55.1. Beyond Comparison Sorting
 
-**Definition:** <abbr title="Sorting algorithms that do not rely on comparing elements, instead using assumptions about the data distribution.">Non-comparison sorts</abbr> achieve <code>O(n)</code> time by making assumptions about the input domain. They trade general applicability for raw speed.
+**Definition:** <abbr title="Sorting algorithms that do not rely on comparing elements, instead using assumptions about the data distribution.">Non-comparison sorts</abbr> achieve <code>O(n)</code> time. Assumptions trade generality for speed.
 
 **Background & Philosophy:**
-The philosophy is breaking the comparison barrier. Mathematical proofs guarantee that comparison-based sorting (Merge, Quick) can never be faster than <code>O(n log n)</code>. Non-comparison sorts (Counting, Radix) completely bypass this law by making strict assumptions about the data (e.g., "all elements are integers between 0 and k"). They trade universal applicability for raw, linear speed.
+Comparison-based sorting (Merge, Quick) has <code>O(n log n)</code> limit. Non-comparison sorts bypass limits. Algorithms assume data constraints: raw speed results.
 
 **Use Cases:**
-Rendering engines sorting 3D polygons by depth, network routers organizing packets by priority flags, and sorting massive arrays of dates/timestamps.
+3D rendering sorts polygons by depth. Network routers organize packets by priority. Systems sort massive date arrays.
 
 **Memory Mechanics:**
-Non-comparison sorts are notoriously memory-hungry. <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr> allocates an auxiliary array of size `k`. If `k` is 1 billion, it allocates a massive chunk of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> just to count. <abbr title="A sorting algorithm processing digits individually">Radix Sort</abbr> performs multiple passes, often allocating and copying data into 10 or 256 distinct "buckets" during each pass. While algorithmically <code>O(n)</code>, the constant <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> and heavy <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> tracing caused by these bucket arrays in Go can make them ironically slower than a highly-optimized in-place Quick Sort for datasets that easily fit within the L1/L2 caches.
+Non-comparison sorts consume high memory. Counting Sort needs <code>O(k)</code> array. Radix Sort uses multiple bucket passes. Cache misses and GC overhead impact Go performance. Quicksort often faster for small cached data.
 
 | Algorithm | Assumption | Time | Space |
 |-----------|-----------|------|-------|
@@ -39,7 +39,7 @@ Non-comparison sorts are notoriously memory-hungry. <abbr title="An integer sort
 
 ## 55.2. <abbr title="An integer sorting algorithm using frequency counting">Counting Sort</abbr>
 
-Count occurrences, then compute <abbr title="An array where each element is the sum of all preceding elements, enabling O(1) range sum queries.">prefix sums</abbr> for exact array positions.
+Counting Sort tracks occurrences. Prefix sums determine indices.
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
@@ -77,7 +77,7 @@ func main() {
 
 ## 55.3. Radix Sort
 
-Sort digit by digit from least significant to most significant, rigidly utilizing counting sort as the stable mathematical subroutine.
+Radix Sort sorts digit by digit. Least significant first: uses stable counting sort subroutine.
 
 | Variant | Order | Stable? |
 |---------|-------|---------|
@@ -145,7 +145,7 @@ func main() {
 
 ## 55.4. Bucket Sort
 
-Distribute elements into distinct physical buckets based entirely on range, sort each bucket individually (often utilizing <abbr title="A sorting algorithm that builds the final sorted array one item at a time.">insertion sort</abbr>), then sequentially concatenate them.
+Bucket Sort distributes elements to ranges. Individual buckets sort separately. Concat results in linear time.
 
 | Step | Time |
 |------|------|
@@ -162,17 +162,17 @@ Distribute elements into distinct physical buckets based entirely on range, sort
 
 ### Edge Cases & Pitfalls
 
-- **Counting sort:** k >> n completely ruins performance, causing it to run vastly slower than comparison sorts.
-- **Radix sort:** `d log n` may easily exceed `log n` for remarkably large numbers.
-- **Bucket sort:** A highly skewed distribution rapidly degenerates performance to <code>O(n^2)</code>.
-- **Stability:** Absolutely mandatory for radix sort to function; counting sort natively provides this stability.
+- **Counting sort:** Large <code>k</code> range ruins performance.
+- **Radix sort:** Large numbers increase digit count pass overhead.
+- **Bucket sort:** Skewed distribution leads to <code>O(n^2)</code>.
+- **Stability:** Radix sort requires stable subroutine.
 
 ### Anti-Patterns
 
-- **Counting sort when k >> n:** Allocating an array of size k for a few elements is catastrophic memory waste; if `k` dwarfs `n`, falling back to comparison sort is essential.
-- **Radix sort on floating-point numbers:** LSD radix sort operates on integer digit positions; naive application to IEEE 754 floats produces garbage without bit-level manipulation.
-- **Bucket sort with non-uniform data:** Bucket sort's O(n) average assumes uniform distribution; skewed input concentrates all elements in one bucket, degenerating to O(n²).
-- **Assuming linear-time sorts are always faster:** Constant factors and cache behavior mean comparison sorts often outperform counting/radix on small-to-medium datasets within L1/L2 cache.
+- **Large k range:** Wastes memory. Comparison sort preferred if <code>k >> n</code>.
+- **Floating-point numbers:** Radix sort needs bit-level manipulation.
+- **Non-uniform data:** Skewed input breaks <code>O(n)</code> guarantee.
+- **Ignoring constants:** Comparison sorts often beat <code>O(n)</code> for small sets.
 
 ## 55.6. Quick Reference
 
@@ -184,11 +184,11 @@ Distribute elements into distinct physical buckets based entirely on range, sort
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `sort.Ints` | Standard <abbr title="A sorting algorithm that only compares elements">comparison sort</abbr> (quicksort/heap sort hybrid) |
-| No native non-<abbr title="A sorting algorithm that only compares elements">comparison sort</abbr> | Implement manually for specialized, integer-bound cases |
+| <code>sort.Ints</code> | Standard comparison sort: quicksort/heap sort hybrid. |
+| No native non-comparison sort | Implement manually for specialized, integer-bound cases. |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 54:</strong> Linear-time sorting algorithms prove that the <code>O(n log n)</code> comparison <abbr title="A function that grows no faster than the given function">lower bound</abbr> applies only when you know nothing about your data. By exploiting integer ranges, digit structure, or uniform distributions, counting, radix, and <abbr title="A sorting algorithm distributing elements into buckets">bucket sort</abbr> achieve <code>O(n)</code> — a reminder that algorithmic efficiency emerges from understanding your specific problem domain.
+<strong>Summary Chapter 54:</strong> Linear-time sorting proves <code>O(n log n)</code> limit is conditional. Exploiting range or structure yields <code>O(n)</code> efficiency. Performance comes from domain knowledge.
 {{% /alert %}}
 
 ## See Also

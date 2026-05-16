@@ -15,32 +15,32 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 50 explores persistent data structures — structures that preserve previous versions when modified, enabling time-travel debugging and functional programming paradigms.
+Persistent data structures preserve previous versions. Modification enables time-travel debugging and immutability.
 {{% /alert %}}
 
-## 50.1. What Is Persistence?
+## 49.1. Purpose
 
-**Definition:** A <abbr title="A data structure that always preserves the previous version of itself when it is modified, enabling access to any version.">persistent data structure</abbr> preserves all previous versions after modification. There are two flavors:
+**Definition:** A <abbr title="A data structure that always preserves the previous version of itself when it is modified, enabling access to any version.">persistent data structure</abbr> keeps all previous versions accessible after modification.
 
-**Background & Philosophy:**
-The philosophy is absolute immutability. In standard data structures, an update destroys the past. Persistent structures treat data like a timeline: an update does not overwrite the old data; it creates a new "version" of the world that points back to the unchanged parts of the old world.
+**Immutability Logic:**
+Updates do not overwrite data. New versions created as deltas. Old parts shared structurally. Immutability prevents data races. Read-only versions need no locks.
 
 **Use Cases:**
-Git version control (trees and blobs), functional programming languages (Clojure, Haskell), and time-travel debugging tools.
+Git version control. Functional programming (Clojure, Haskell). Time-travel debugging tools.
 
 **Memory Mechanics:**
-Persistent structures rely heavily on <abbr title="A technique where only the nodes along the path from root to the modified node are copied, sharing unchanged subtrees.">"Path Copying"</abbr>. Instead of deep-copying an entire 1-million node tree (which would instantly exhaust memory), they only copy the <code>O(log n)</code> nodes along the path from the root to the modified leaf. This structural sharing heavily depends on the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> to reclaim versions that are no longer referenced. Because nodes are never modified in-place, persistent structures completely eliminate data races, making them inherently thread-safe without any memory locks.
+Relies on <abbr title="A technique where only the nodes along the path from root to the modified node are copied, sharing unchanged subtrees.">"Path Copying"</abbr>. Copies only <code>O(log n)</code> nodes along modified paths. Shares unchanged subtrees. Garbage Collector reclaims unreferenced versions.
 
 | Type | Behavior | Example |
 |------|----------|---------|
-| **Partial persistence** | Read all versions, write only latest | Versioned logs |
-| **Full persistence** | Read and write any version | Functional data structures |
+| **Partial persistence** | Read all, write latest. | Versioned logs. |
+| **Full persistence** | Read and write any. | Functional data structures. |
 
-## 50.2. Path Copying
+## 49.2. Path Copying
 
-The key technique: when updating a node, copy the path from root to that node, sharing unchanged subtrees.
+Primary technique: update node by copying path from root to modified node. Share all unchanged siblings.
 
-### Persistent Linked List
+### Persistent Linked List: Go Implementation
 
 ```go
 package main
@@ -52,13 +52,12 @@ type List struct {
     next *List
 }
 
-// Prepend returns a NEW list, original unchanged
+// Prepend returns NEW list. Original unchanged.
 func (l *List) Prepend(v int) *List {
     return &List{val: v, next: l}
 }
 
 func main() {
-    // Original list still valid
     list1 := &List{val: 1}
     list2 := list1.Prepend(2)
     
@@ -67,62 +66,62 @@ func main() {
 }
 ```
 
-## 50.3. Persistent <abbr title="A tree where each node has at most two children">Binary Tree</abbr>
+## 49.3. Persistent <abbr title="A tree where each node has at most two children">Binary Tree</abbr>
 
-Update a leaf → copy the leaf, then copy every ancestor up to the root. Unchanged siblings are shared.
+Leaf update triggers copying leaf and all ancestors to root. Non-modified siblings stay shared.
 
 | Operation | Time | Space |
 |-----------|------|-------|
-| Update | <code>O(log n)</code> | <code>O(log n)</code> new nodes |
-| Access | <code>O(log n)</code> | <code>O(1)</code> |
+| Update | <code>O(log n)</code> | <code>O(log n)</code> new nodes. |
+| Access | <code>O(log n)</code> | <code>O(1)</code>. |
 
-## 50.4. Applications
+## 49.4. Applications
 
-| Application | Why Persistence |
+| Application | Function |
 |-------------|-----------------|
-| **Git** | Every commit is a persistent snapshot |
-| **Undo/redo** | Each state preserved automatically |
-| **Functional programming** | Immutability by default |
-| **Time-travel debugging** | Inspect any past program state |
-| **Concurrent structures** | No locks needed for read-only versions |
+| **Git** | Commits as persistent snapshots. |
+| **Undo/Redo** | State preservation. |
+| **Functional Programming** | Default immutability. |
+| **Debugging** | Past state inspection. |
+| **Concurrency** | Lock-free reading. |
 
-## 50.5. Decision Matrix
+## 49.5. Decision Matrix
 
 | Use Persistence When... | Use Mutation When... |
 |-------------------------|---------------------|
-| History matters | Only latest state needed |
-| Functional style | Imperative style |
-| Concurrent reads | Single-threaded performance |
-| Undo functionality | Memory is constrained |
+| Version history required. | Only latest state needed. |
+| Functional paradigms. | Imperative performance. |
+| Read-heavy concurrency. | Single-threaded speed. |
+| Undo logic needed. | Memory is constrained. |
 
-### Edge Cases & Pitfalls
+### Constraints & Risks
 
-- **Space growth:** n updates create <code>O(n log n)</code> nodes — garbage collection essential.
-- **Node sharing:** Modifying a "shared" node corrupts all versions — immutability must be stringently enforced.
-- **Amortization:** Some persistent structures (queues) use lazy evaluation for efficiency.
+- **Space Growth:** n updates produce <code>O(n log n)</code> nodes. GC required.
+- **Node Sharing:** Modifying shared nodes corrupts all versions.
+- **Amortization:** Queues use lazy evaluation for efficiency.
 
 ### Anti-Patterns
 
-- **Using persistence when only the latest version matters.** Path copying creates <code>O(log n)</code> new nodes per update. If you never read past versions, this is pure overhead — a mutable structure with copy-on-write snapshots is more appropriate.
-- **Mutating shared nodes.** Persistent data structures rely on structural sharing: multiple versions point to the same subtrees. Modifying a "shared" node in-place silently corrupts every version that references it. Immutability must be enforced — no exceptions.
-- **Applying path copying to flat arrays.** Updating a single element in an unbalanced persistent array copies <code>O(n)</code> nodes. Use fat nodes (store deltas in a version map) or switch to a persistent tree-based array (<code>O(log n)</code>) to avoid linear blowup.
-- **Ignoring garbage collection pressure.** Each update to a persistent tree creates <code>O(log n)</code> stale nodes. Over a million updates, that's millions of unreachable nodes the GC must reclaim. Profile GC pauses and consider version pruning or arena allocation for long-running processes.
+- **Single Version Work:** Path copying overhead wastes memory if history is ignored.
+- **In-place Mutation:** Changing shared subtrees corrupts history. Immutability is mandatory.
+- **Flat Array Persistence:** Updating arrays via path copying is <code>O(n)</code>. Use trees.
+- **GC Neglect:** Millions of updates stress Garbage Collection. Use version pruning.
 
-## 50.6. Quick Reference
+## 49.6. Quick Reference
 
-| Structure | Persistent Variant | Overhead |
+| Structure | Variant | Overhead |
 |-----------|-------------------|----------|
-| Linked list | Fully persistent | <code>O(1)</code> per update |
-| <abbr title="A tree where each node has at most two children">Binary tree</abbr> | Path copying | <code>O(log n)</code> per update |
-| Array | Fat nodes / copy-on-write | <code>O(1)</code>–<code>O(n)</code> |
-| Queue | Banker's method | <code>O(1)</code> amortized |
+| Linked list | Fully persistent. | <code>O(1)</code> / update. |
+| Binary tree | Path copying. | <code>O(log n)</code> / update. |
+| Array | Copy-on-write. | <code>O(1)</code> to <code>O(n)</code>. |
+| Queue | Banker's method. | <code>O(1)</code> amortized. |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| Immutable by convention | Slices share arrays (but not truly persistent) |
+| Slice sharing | Array sharing without full persistence. |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 49:</strong> Persistent data structures trade space for time travel — preserving every version of data by sharing unchanged parts and copying only modified paths. They enable functional programming, version control systems, and undo functionality. The key insight: immutability eliminates entire classes of bugs by preventing unexpected mutation.
+Persistence trades space for history. Structural sharing minimizes overhead. Immutability prevents mutation-based bugs.
 {{% /alert %}}
 
 ## See Also

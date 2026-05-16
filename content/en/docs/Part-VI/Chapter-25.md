@@ -11,25 +11,28 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>In the middle of difficulty lies opportunity.</em>" : Albert Einstein</strong>
+<strong>Difficulty holds opportunity. : Albert Einstein</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 26 covers <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>: a systematic way to explore all potential solutions by building candidates incrementally and abandoning partial candidates ("<abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr>") as soon as they cannot possibly lead to a valid solution.
+<abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> builds candidates incrementally. It abandons partial candidates upon constraint violation.
 {{% /alert %}}
 
-## 26.1. <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> Fundamentals
+## 25.1. Backtracking Fundamentals
 
-**Definition:** <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> is a refined <abbr title="A straightforward approach trying all possible solutions">brute-force</abbr> approach that builds a solution incrementally. If a partial solution violates constraints, the algorithm backtracks and tries the next alternative. It is equivalent to a depth-first search of the solution space.
+**Definition:** <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> refines <abbr title="A straightforward approach trying all possible solutions">brute-force</abbr>. It builds solutions incrementally. It backtracks upon constraint violation. It equals depth-first search of solution space.
 
-**Background & Philosophy:**
-The philosophy is exhaustive exploration with intelligent pruning. Unlike pure <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> which blindly evaluates complete solutions (trying every combination regardless of obvious impossibilities), <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> actively evaluates partial solutions. The moment a partial solution breaks a rule, it abandons that entire branch of the search tree.
+**Mechanics:**
+Backtracking explores exhaustively. Intelligent pruning stops dead ends. A violated constraint kills the search branch.
 
 **Use Cases:**
-Solving constraint satisfaction problems like Sudoku or crossword puzzles, generating regular expression parsers, discovering passwords, and traversing complex logical state machines (N-Queens).
+- Constraint satisfaction (Sudoku).
+- Regular expression parsing.
+- Password discovery.
+- Logical state machines (N-Queens).
 
-**Memory Mechanics:**
-<abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> uses the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> to represent the <abbr title="The set of all candidate solutions in a problem">search space</abbr> tree. In Go, passing a slice <abbr title="A variable that stores a memory address.">pointer</abbr> or mutating a shared slice across recursive calls avoids allocating millions of small arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. However, the developer must meticulously "undo" the mutation (`path = path[:len(path)-1]`) before returning to the parent frame, otherwise the shared memory state becomes permanently corrupted for adjacent branches.
+**Memory Management:**
+Backtracking uses the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Go passes slice <abbr title="A variable that stores a memory address.">pointers</abbr>. This avoids <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocation. Developers must undo mutations (`path = path[:len(path)-1]`) before returning. Failure corrupts shared memory.
 
 ### Template Structure
 
@@ -49,13 +52,11 @@ func backtrack(candidate, path) {
 }
 ```
 
-## 26.2. N-Queens Problem
+## 25.2. N-Queens Problem
 
-**Definition:** Place N queens on an N×N chessboard such that no two queens threaten each other. Queens attack horizontally, vertically, and diagonally.
+**Goal:** Place N queens on N×N board. Queens cannot threaten each other.
 
-### Idiomatic Go Implementation
-
-Use a slice to track column positions; index represents row.
+### Go Implementation
 
 ```go
 package main
@@ -112,11 +113,11 @@ func main() {
 }
 ```
 
-## 26.3. Subset Sum
+## 25.3. Subset Sum
 
-**Definition:** Given a set of integers and a target sum, determine if there is a subset that sums to the target.
+**Goal:** Find subset matching target sum.
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -144,11 +145,11 @@ func main() {
 }
 ```
 
-## 26.4. Permutations
+## 25.4. Permutations
 
-**Definition:** Generate all permutations of a given set of distinct elements.
+**Goal:** Generate all permutations.
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -181,41 +182,41 @@ func main() {
 }
 ```
 
-## 26.5. Decision Matrix
+## 25.5. Selection Matrix
 
-| Use Backtracking When... | Avoid If... |
-|--------------------------|-------------|
-| Need all valid solutions | Only need existence (use DP or greedy) |
-| Constraints prune search space heavily | Problem size > 20 (exponential blowup) |
+| Use Backtracking If... | Avoid If... |
+|------------------------|-------------|
+| Need all valid solutions | Only need existence |
+| Constraints prune search | Problem size > 20 |
 | Exact solution required | Approximation suffices |
 
-### Edge Cases & Pitfalls
+### Pitfalls & Errors
 
-- **State management:** Ensure state is fully restored after recursive calls.
-- **Pruning:** Aggressive pruning is essential; without it, backtracking degrades to brute force.
-- **Duplicate handling:** For inputs with duplicates, sort and skip repeated elements.
+- **State Management:** Restore state after recursion.
+- **Pruning:** Missing pruning causes brute-force degradation.
+- **Duplicates:** Sort and skip repeated elements.
 
 ### Anti-Patterns
 
-- **Omitting state restoration:** Forgetting to undo changes (e.g., not removing a value from a path slice) after recursive calls corrupts all subsequent branches. Always `defer` or explicitly restore state.
-- **No pruning (brute-force degradation):** Without constraint checking at each recursion depth, backtracking degenerates into O(2^n) brute force. Prune early and aggressively.
-- **Mutating shared slices in-place:** Appending to a shared `[]int` and not popping after recursion causes cross-branch contamination. Copy the slice or use index-based swaps.
+- **Missing Restoration:** Forgetting state undo corrupts subsequent branches. Use `defer` or explicit undo.
+- **No Pruning:** Search degenerates to <code>O(2^n)</code> brute force.
+- **In-place Mutation:** Appending without popping corrupts branches.
 
-## 26.6. Quick Reference
+## 25.6. Quick Reference
 
 | Problem | Go Type | Time | Space | Key Insight |
 |---------|---------|------|-------|-------------|
 | N-Queens | `[]int` | <code>O(n!)</code> | <code>O(n)</code> | Column + diagonal checks |
-| Subset Sum | Recursion | <code>O(2^n)</code> | <code>O(n)</code> | Include/exclude each element |
+| Subset Sum | Recursion | <code>O(2^n)</code> | <code>O(n)</code> | Include/exclude element |
 | Permutations | Recursion | <code>O(n!)</code> | <code>O(n)</code> | Track used elements |
 | Sudoku | `[][]int` | <code>O(9^m)</code> | <code>O(81)</code> | Constraint propagation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 25:</strong> <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> systematically explores the solution space using depth-first search with pruning. Master the template: build candidates incrementally, validate constraints, recurse, and undo changes. In Go, use slices for state tracking and ensure proper cleanup after each recursive call.
+<strong>Summary:</strong> Backtracking explores solution space systematically. Build candidates. Validate. Recurse. Undo. Go slices require proper cleanup.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/chapter-23/)
+- [Chapter 23: Dynamic Programming](/docs/part-vi/chapter-23/)
 - [Chapter 24: Greedy Algorithms](/docs/part-vi/chapter-24/)
 - [Chapter 57: Minimax and Game Trees](/docs/part-xii/chapter-57/)

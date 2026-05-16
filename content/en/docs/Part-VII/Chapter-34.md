@@ -15,29 +15,29 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 35 covers <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: Naive, <abbr title="A linear-time string matching algorithm using prefix-suffix tables.">KMP</abbr>, <abbr title="A string matching algorithm scanning right to left using heuristics.">Boyer-Moore</abbr>, <abbr title="A string matching algorithm using rolling hash for efficient comparison.">Rabin-Karp</abbr>, and <abbr title="A multi-pattern string matching algorithm using a trie with failure links.">Aho-Corasick</abbr> implemented in Go.
+Chapter 34 covers <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: Naive, <abbr title="A linear-time string matching algorithm using prefix-suffix tables.">KMP</abbr>, <abbr title="A string matching algorithm scanning right to left using heuristics.">Boyer-Moore</abbr>, <abbr title="A string matching algorithm using rolling hash for efficient comparison.">Rabin-Karp</abbr>, and <abbr title="A multi-pattern string matching algorithm using a trie with failure links.">Aho-Corasick</abbr> in Go.
 {{% /alert %}}
 
-## 35.1. Naive <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr>
+## 34.1. Naive <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr>
 
-**Definition:** The naive algorithm meticulously compares the targeted pattern directly against every possible overlapping position sequentially along the text.
+**Definition:** Compares pattern directly against every overlapping text position.
 
-**Background & Philosophy:**
-The philosophy is recognizing patterns efficiently. Instead of treating text as a random stream, advanced <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms preprocess the pattern (or the text) to map out structural repetitions. They mathematically guarantee that if a mismatch occurs, the algorithm skips chunks of text it already knows cannot match.
+**Mechanics:**
+Advanced algorithms preprocess patterns. Mismatches trigger skips over known non-matching chunks. Guarantees efficiency over random streams.
 
 **Use Cases:**
-The UNIX `grep` command, DNA sequence analysis in bioinformatics, and virus signature scanning in antivirus software.
+UNIX `grep`. DNA sequence analysis. Virus signature scanning.
 
 **Memory Mechanics:**
-<abbr title="Finding occurrences of a pattern within a text">String matching</abbr> fundamentally operates on raw bytes. To correctly parse multi-byte Unicode strings, convert them into a `[]rune` <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> first. Nevertheless, traditional string matching algorithms operate upon standard byte arrays.
+Operates on raw bytes. Convert to `[]rune` for multi-byte Unicode. Byte arrays standard for traditional matching.
 
 ### Operations & Complexity
 
 | Case | Time | Space |
 |-------|------|-------|
-| Best | <code>O(n)</code> | Pattern matched instantly at the start |
-| Average | <code>O(n × m)</code> | Standard exhaustive search |
-| Worst | <code>O(n × m)</code> | Highly repetitive, overlapping patterns |
+| Best | <code>O(n)</code> | Immediate match |
+| Average | <code>O(n × m)</code> | Exhaustive search |
+| Worst | <code>O(n × m)</code> | Repetitive overlapping patterns |
 
 ### Pseudocode
 
@@ -92,24 +92,19 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Go dictates string indexing at the raw byte <abbr title="The set of all nodes at a given depth.">level</abbr>. To correctly parse multi-byte Unicode strings, convert them into a `[]rune` <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> first. Nevertheless, traditional string matching algorithms operate upon standard byte arrays.
+Go indices raw bytes. Use `[]rune` for Unicode awareness. Traditional algorithms use byte arrays.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Naive When... | Avoid If... |
 |----------------------|------------------|
-| Rapidly prototyping, or managing tiny text streams | The text is massive, and the pattern displays fierce repetition |
-| The pattern length m < 5 | The pattern length m is huge (> 100) |
+| Rapid prototyping | Massive text. Heavy repetition. |
+| Pattern length m < 5 | Pattern length m large (> 100) |
 
-### Edge Cases & Pitfalls
+## 34.2. Knuth-Morris-Pratt (KMP)
 
-- **Empty pattern:** Decide to either return all possible positions natively or exit immediately yielding an empty slice.
-- **Unicode formatting:** The `len(string)` function exclusively counts raw bytes, blatantly ignoring actual visual runes.
-
-## 35.2. Knuth-Morris-Pratt (KMP)
-
-**Definition:** The <abbr title="The Knuth-Morris-Pratt string-searching algorithm that searches for occurrences of a word within a text.">KMP algorithm</abbr> uses <abbr title="A substring at the beginning of a string.">prefix</abbr>-<abbr title="A substring at the end of a string.">suffix</abbr> data derived from the Longest Prefix Suffix (LPS) <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> to skip redundant data comparisons.
+**Definition:** Uses prefix-suffix data (LPS array). Skips redundant comparisons.
 
 ### Operations & Complexity
 
@@ -218,32 +213,20 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-KMP achieves peak optimality when dealing with texts packed with repetitive prefix-suffix overlaps. However, for exceptionally large alphabets, Boyer-Moore routinely outpaces it.
+KMP optimal for repetitive prefix-suffix overlaps. Boyer-Moore faster for large alphabets.
 {{% /alert %}}
 
-### Decision Matrix
+## 34.3. Boyer-Moore
 
-| Use KMP When... | Avoid If... |
-|--------------------|------------------|
-| Analyzing massive text chunks featuring a medium-sized pattern | Operating over a large alphabet where pattern matches are rare |
-| A guaranteed, airtight <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n)</code> performance is mandated | Extensive heuristic leaping and skipping is highly preferred |
-
-### Edge Cases & Pitfalls
-
-- **LPS bounds violation:** Assiduously confirm `length = lps[length-1]` is executed solely if `length > 0`.
-- **Pattern length 1:** The generated LPS is merely `[0]`; manually handle this if optimizing heavily.
-
-## 35.3. Boyer-Moore
-
-**Definition:** Boyer-Moore evaluates patterns in complete reverse (from right to left) and relies upon a "bad character" heuristic to perform massive leaps and skips over mismatching data blocks.
+**Definition:** Evaluates pattern right-to-left. Uses "bad character" heuristic. Leaps over mismatches.
 
 ### Operations & Complexity
 
 | Case | Time | Space |
 |-------|------|-------|
-| Best | <code>O(n/m)</code> | Featuring massive skips |
+| Best | <code>O(n/m)</code> | Massive leaps |
 | Average | <code>O(n/m)</code> | . |
-| Worst | <code>O(n × m)</code> | When all input characters are painfully identical |
+| Worst | <code>O(n × m)</code> | Identical input characters |
 
 ### Idiomatic Go Implementation
 
@@ -306,20 +289,16 @@ func main() {
 }
 ```
 
-{{% alert icon="📌" context="warning" %}}
-A basic Boyer-Moore employing only the bad character heuristic is practical. Adding the good suffix rule repairs the <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> scenario but tangles complexity. For production use, lean on Go's optimized `strings.Index`.
-{{% /alert %}}
+## 34.4. Rabin-Karp
 
-## 35.4. Rabin-Karp
-
-**Definition:** The <abbr title="A string-searching algorithm using hashing to find patterns in a text.">Rabin-Karp algorithm</abbr> meticulously calculates a rolling mathematical hash to seamlessly compare a pattern <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> directly alongside text substrings.
+**Definition:** Uses rolling hash. Compares pattern hash against text substring hashes.
 
 ### Operations & Complexity
 
 | Case | Time | Space |
 |-------|------|-------|
 | Average | <code>O(n + m)</code> | <code>O(1)</code> |
-| Worst | <code>O(n × m)</code> | <code>O(1)</code> (Hash <abbr title="An event when two keys hash to the same index.">collision</abbr>) |
+| Worst | <code>O(n × m)</code> | <code>O(1)</code> (Hash collisions) |
 
 ### Idiomatic Go Implementation
 
@@ -372,9 +351,9 @@ func main() {
 }
 ```
 
-## 35.5. Aho-Corasick
+## 34.5. Aho-Corasick
 
-**Definition:** Aho-Corasick builds a finite <abbr title="A self-operating state machine or computational model.">state machine</abbr> (a <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> with failure links) to locate multiple patterns in a single pass.
+**Definition:** Finite <abbr title="A self-operating state machine or computational model.">state machine</abbr>. Trie with failure links. Locates multiple patterns in single pass.
 
 ### Idiomatic Go Implementation
 
@@ -468,23 +447,23 @@ func main() {
 
 ### Anti-Patterns
 
-- **Indexing Unicode strings by byte position:** Go's `string` is UTF-8 encoded; `s[i]` gives a byte, not a rune. Convert to `[]rune` for Unicode-aware matching or stay in byte domain for ASCII-only patterns.
-- **Rabin-Karp without collision verification:** A rolling hash match is not a guaranteed match. Always verify the substring equals the pattern after a hash hit, or produce false positives.
-- **Rebuilding Aho-Corasick per query:** Preprocessing is O(Σm); construct the automaton once and reuse it across multiple texts to amortize the cost.
+- **Unicode index by byte:** UTF-8 strings return bytes. Use `[]rune` for correct rune matching.
+- **Rabin-Karp hash only:** Match is not guaranteed. Verify actual characters after hash hit.
+- **Rebuilding Aho-Corasick:** Construct once. Search many. Amortize preprocessing cost.
 
-## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Naive | . | <code>O(nm)</code> | <code>O(1)</code> | Early prototyping |
-| KMP | preprocessed | <code>O(n)</code> | <code>O(m)</code> | Deep <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantees |
-| Boyer-Moore | preprocessed | <code>O(n/m)</code> avg | <code>O(\sigma)</code> | Utilizing large character alphabets |
-| Rabin-Karp | hashed | <code>O(n)</code> avg | <code>O(1)</code> | Running multiple simultaneous pattern scans |
-| Aho-Corasick | <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> | <code>O(n + occ)</code> | <code>O(\sum m)</code> | Full dictionary text matching |
-| `strings.Index` | builtin | hyper-optimized | <code>O(1)</code> | Primary production single <abbr title="Finding a specific sequence within a larger data set">pattern matching</abbr> |
+| Naive | . | <code>O(nm)</code> | <code>O(1)</code> | Prototyping |
+| KMP | preprocessed | <code>O(n)</code> | <code>O(m)</code> | Worst-case guarantees |
+| Boyer-Moore | preprocessed | <code>O(n/m)</code> avg | <code>O(\sigma)</code> | Large alphabets |
+| Rabin-Karp | hashed | <code>O(n)</code> avg | <code>O(1)</code> | Multiple pattern scans |
+| Aho-Corasick | <abbr title="A tree-like data structure used to store a dynamic set of strings.">trie</abbr> | <code>O(n + occ)</code> | <code>O(\sum m)</code> | Dictionary matching |
+| `strings.Index` | builtin | hyper-optimized | <code>O(1)</code> | Production default |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 34:</strong> This chapter dissects <abbr title="A field or set of fields used to identify a record.">key</abbr> <abbr title="Finding occurrences of a pattern within a text">string matching</abbr> algorithms: the Naive approach achieving <code>O(nm)</code>, KMP reliably offering <code>O(n+m)</code>, Boyer-Moore's rapid <code>O(n/m)</code> average, Rabin-Karp utilizing efficient rolling hashes, and the multi-pattern Aho-Corasick for dense multiple-pattern environments. Leverage KMP to lock down a strict <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> guarantee, Boyer-Moore to handle wide alphabets, and Aho-Corasick for sweeping dictionary matches.
+<strong>Summary Chapter 34:</strong> String matching uses Naive, KMP, Boyer-Moore, Rabin-Karp, and Aho-Corasick. KMP locks worst-case. Boyer-Moore handles wide alphabets. Aho-Corasick matches dictionaries in one pass.
 {{% /alert %}}
 
 ## See Also

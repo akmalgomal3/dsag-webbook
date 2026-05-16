@@ -15,21 +15,21 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 38 covers <abbr title="A binary tree for range queries storing aggregated results over array segments.">segment trees</abbr> and <abbr title="A tree structure for efficient prefix sum queries using bitwise operations.">Fenwick trees</abbr> (Binary Indexed Trees): data structures for efficient range queries and point updates on arrays.
+Chapter 37 covers <abbr title="A binary tree for range queries storing aggregated results over array segments.">segment trees</abbr> and <abbr title="A tree structure for efficient prefix sum queries using bitwise operations.">Fenwick trees</abbr>. Efficient range queries and point updates on arrays.
 {{% /alert %}}
 
 ## 38.1. Segment Tree
 
-**Definition:** A segment tree is a <abbr title="A tree where each node has at most two children">binary tree</abbr> where each node stores the result of a query (sum, min, max) over a segment of the array. It supports range queries and point updates in <code>O(log n)</code>.
+**Definition:** Binary tree storing query results (sum, min, max) over array segments. Supports <code>O(log n)</code> range queries and point updates.
 
-**Background & Philosophy:**
-The philosophy is precomputed aggregation. When an array is repeatedly updated and queried for range sums (e.g., sum from index 100 to 5000), a linear scan <code>O(n)</code> is too slow. Segment and Fenwick trees pre-calculate chunks of the array hierarchically, reducing the scan to a mathematical traversal of <code>O(log n)</code> boundaries.
+**Background:**
+Precomputed aggregation. Linear scans are slow for repeated queries. Trees pre-calculate chunks hierarchically. Traversal follows <code>O(log n)</code> boundaries.
 
 **Use Cases:**
-Competitive programming, dynamic financial ledgers querying balances over specific date ranges, and mapping visible objects in 2D game rendering.
+Competitive programming. Dynamic financial ledgers. 2D game rendering visibility.
 
 **Memory Mechanics:**
-Both trees use array-based storage instead of <abbr title="A variable that stores a memory address.">pointer</abbr>-based nodes. A Segment Tree allocates an array of `4*n` size. A Fenwick Tree (Binary Indexed Tree) is compact, allocating exactly `n+1` size array. Fenwick tree uses bitwise operations (`i & -i`) to jump to the next aggregation block. This <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> layout provides excellent <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> performance and zero <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> overhead during updates.
+Array-based storage used. Segment Tree requires `4*n` size. Fenwick Tree uses `n+1` size. Fenwick uses bitwise jumps (`i & -i`). <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">Contiguous</abbr> layout optimizes <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> performance. Zero <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> overhead during updates.
 
 ### Operations & Complexity
 
@@ -42,8 +42,6 @@ Both trees use array-based storage instead of <abbr title="A variable that store
 ## 38.2. Range Sum Query
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
-
-Use a slice-based tree with 1-based or 0-based indexing.
 
 ```go
 package main
@@ -105,7 +103,7 @@ func main() {
 
 ## 38.3. Fenwick Tree (Binary Indexed Tree)
 
-**Definition:** A Fenwick tree achieves the same <code>O(log n)</code> query/update as a segment tree but uses <code>O(n)</code> space and has better constant factors.
+**Definition:** Fenwick tree achieves <code>O(log n)</code> query/update. Uses <code>O(n)</code> space. Efficient constant factors.
 
 ### Operations & Complexity
 
@@ -165,21 +163,21 @@ func main() {
 
 | Use Segment Tree When... | Use Fenwick Tree When... |
 |--------------------------|--------------------------|
-| Need min/max queries | Only need sum queries |
-| Need lazy propagation | Point updates and prefix sums suffice |
-| Query operation is non-invertible | Operation is invertible (sum) |
+| Min/max queries required | Sum queries suffice |
+| Lazy propagation needed | Point updates are enough |
+| Query is non-invertible | Operation is invertible (sum) |
 
 ### Edge Cases & Pitfalls
 
-- **1-based vs 0-based:** Fenwick trees are naturally 1-based; be careful with index mapping.
-- **Overflow:** Range sums can overflow `int`; use `int64` for large values.
-- **Lazy propagation:** For range updates, segment trees require lazy propagation, which adds complexity.
+- **1-based indexing:** Fenwick trees are 1-based. Map indices carefully.
+- **Overflow:** Use `int64` for large range sums.
+- **Lazy propagation:** Segment trees require it for range updates. Complexity increases.
 
 ### Anti-Patterns
 
-- **Mixing 0-based and 1-based indexing:** Fenwick trees internally use 1-based indexing, but Go arrays are 0-based. Always convert by adding 1 on input and subtracting 1 on output — mixing them causes silent off-by-one errors.
-- **Using segment trees for sum-only queries:** If you only need prefix sums and point updates, Fenwick trees are simpler, faster, and use less memory (O(n) vs O(4n)). Don't over-engineer with segment trees.
-- **Forgetting lazy propagation for range updates:** Standard segment trees handle one-element updates in O(log n). Applying a range update (e.g., "add 5 to [l,r]") without lazy propagation degrades to O(n) per update.
+- **Index mixing:** Go arrays are 0-based. Fenwick trees use 1-based logic. Add 1 on input. Subtract 1 on output.
+- **Over-engineering:** Using segment trees for simple sum queries is inefficient. Use Fenwick trees for <code>O(n)</code> space.
+- **Missing lazy propagation:** Range updates without it take <code>O(n)</code>. System performance degrades.
 
 ## 38.5. Quick Reference
 
@@ -190,7 +188,7 @@ func main() {
 | Sparse Table | `[][]int` | <code>O(1)</code> | . | <code>O(n log n)</code> |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 37:</strong> Segment trees and Fenwick trees solve range query problems efficiently. Use Fenwick trees for sum queries due to their simplicity and space efficiency. Use segment trees for min/max queries or when lazy propagation is needed. In Go, implement Fenwick trees with 1-based indexing for cleaner code.
+<strong>Summary Chapter 37:</strong> Segment and Fenwick trees handle range queries efficiently. Use Fenwick for sum queries. Use Segment trees for min/max or range updates. Implement Fenwick with 1-based indexing in Go.
 {{% /alert %}}
 
 ## See Also

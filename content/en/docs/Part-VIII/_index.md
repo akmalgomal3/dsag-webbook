@@ -10,10 +10,10 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-"Those who cannot remember the past are condemned to repeat it." — George Santayana
+"Those who cannot remember the past are condemned to repeat it." : George Santayana
 {{% /alert %}}
 {{% alert icon="📘" context="success" %}}
-Part VIII explores the intellectual history and philosophical foundations of algorithms and data structures — from ancient Babylonian computation to modern complexity theory and the philosophy of computation.
+Part VIII covers algorithmic history and philosophy. Text traces development from Babylonian computation to complexity theory.
 {{% /alert %}}
 
 <center>

@@ -15,48 +15,44 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 20 covers advanced sorting algorithms: <abbr title="An <code>O(n log n)</code> divide-and-conquer sorting algorithm merging sorted halves.">Merge Sort</abbr>, <abbr title="An <code>O(n log n)</code> average sorting algorithm using a pivot element.">Quick Sort</abbr>, and <abbr title="An <code>O(n log n)</code> sorting algorithm using a binary heap.">Heap Sort</abbr>. These achieve <code>O(n log n)</code> complexity and form the backbone of real-world sorting systems.
+Chapter 20 covers advanced sorting. Topics: Merge, Quick, Heap Sort. Achieves `O(n log n)`. Forms real-world backbone. Uses Generics. Adds `context` parallelization.
 {{% /alert %}}
 
 ## 20.1. Merge Sort
 
-**Definition:** Merge Sort is a <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> algorithm that divides the array into halves, recursively sorts each half, and merges the sorted halves.
+**Definition:** Divide and conquer algorithm. Divides array, recursively sorts halves, merges halves.
 
 **Background & Philosophy:**
-The philosophy is <abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr>. John von Neumann invented it in 1945, recognizing that sorting two smaller arrays and merging them is mathematically far faster than comparing every element to every other element. It guarantees <code>O(n log n)</code> execution time regardless of the input data structure.
+Philosophy: Divide and Conquer. Sorting and merging small arrays mathematically beats comparing all elements. Guarantees `O(n log n)` execution time regardless of input.
 
 **Use Cases:**
-Essential for "external sorting" where the dataset is too large to fit into <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and must be sorted in chunks on a disk. It is also the algorithm of choice for sorting Linked Lists, as it doesn't require random access.
+External sorting (datasets larger than RAM). Sorting Linked Lists (lacks random access).
 
 **Memory Mechanics:**
-Merge Sort's major weakness is memory. It requires an auxiliary array of size <code>O(n)</code> to merge the halves. In Go, this means allocating a new slice `make([]int, 0, len(left)+len(right))` repeatedly on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This dynamic allocation triggers heavy <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> pressure. Furthermore, writing data back and forth between the original array and the auxiliary array constantly thrashes the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
+Memory intensive. Requires `O(n)` auxiliary array for merging. Naive Go recursion allocates short-lived slices. Triggers heavy Garbage Collector pressure. Thrashing array blocks between main array and auxiliary array ruins CPU cache locality.
 
-### Operations & Complexity
-
-| Operation | Complexity | Description |
-|-----------|------------|-------------|
-| Divide | <code>O(log n)</code> levels | Split array in half |
-| Merge | <code>O(n)</code> per level | Combine sorted halves |
-| Total | <code>O(n log n)</code> | Guaranteed |
-| Space | <code>O(n)</code> | Auxiliary array |
-
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+### Idiomatic Go 1.21+ Generic Implementation
 
 ```go
 package main
 
-import "fmt"
+import (
+	"cmp"
+	"fmt"
+)
 
-func mergeSort(arr []int) []int {
-	if len(arr) <= 1 { return arr }
+func mergeSort[T cmp.Ordered](arr []T) []T {
+	if len(arr) <= 1 {
+		return arr
+	}
 	mid := len(arr) / 2
 	left := mergeSort(arr[:mid])
 	right := mergeSort(arr[mid:])
 	return merge(left, right)
 }
 
-func merge(left, right []int) []int {
-	result := make([]int, 0, len(left)+len(right))
+func merge[T cmp.Ordered](left, right []T) []T {
+	result := make([]T, 0, len(left)+len(right))
 	for len(left) > 0 && len(right) > 0 {
 		if left[0] < right[0] {
 			result = append(result, left[0])
@@ -70,123 +66,137 @@ func merge(left, right []int) []int {
 	result = append(result, right...)
 	return result
 }
-
-func main() {
-	arr := []int{38, 27, 43, 3, 9, 82, 10}
-	fmt.Println(mergeSort(arr))
-}
 ```
 
-### Decision Matrix
+### Parallel Merge Sort with Context (Modern Go)
 
-| Use Merge Sort When... | Avoid If... |
-|------------------------|-------------|
-| Stability is required | Memory is constrained |
-| Guaranteed <code>O(n log n)</code> needed | In-place sorting is mandatory |
-| Linked list sorting | Random access pattern (slower cache) |
-
-## 20.2. Quick Sort
-
-**Definition:** Quick Sort selects a pivot, partitions the array into elements less than and greater than the pivot, and recursively sorts each partition.
-
-**Background & Philosophy:**
-Invented by Tony Hoare, Quick Sort's philosophy is "partitioning". Instead of meticulously merging sorted halves, it partitions by moving smaller elements to the left of a pivot and larger to the right, then recursively sorts the sub-arrays. It gambles on probability: with a random pivot, the tree is statistically balanced.
-
-**Use Cases:**
-The default general-purpose sorting algorithm for arrays in most programming languages (C++, Java primitives) because of its unmatched in-memory speed.
-
-**Memory Mechanics:**
-Quick Sort is done in-place. It only swaps elements within the existing <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array. This means zero <code>O(n)</code> heap allocations, avoiding the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> completely. The <abbr title="A variable that stores a memory address.">pointers</abbr> `i` and `j` scan towards each other, reading sequential memory addresses. The CPU's hardware prefetcher anticipates this perfectly, locking the relevant array blocks into the ultra-fast L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>. This cache-friendliness is why Quick Sort usually beats Merge Sort in reality, despite both being mathematically <code>O(n log n)</code>.
-
-### Operations & Complexity
-
-| Case | Complexity | Condition |
-|------|------------|-----------|
-| Average | <code>O(n log n)</code> | Random pivot |
-| Worst | <code>O(n^2)</code> | Bad pivot choices |
-| Space | <code>O(log n)</code> | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> stack |
-
-### Idiomatic Go Implementation
+CPU-bound tasks require `context.Context` cancellation support.
 
 ```go
 package main
 
-import "fmt"
+import (
+	"cmp"
+	"context"
+	"fmt"
+	"sync"
+)
 
-func quickSort(arr []int) {
-	var sort func(left, right int)
-	sort = func(left, right int) {
-		if left >= right { return }
-		pivot := partition(arr, left, right)
-		sort(left, pivot-1)
-		sort(pivot+1, right)
+func ParallelMergeSort[T cmp.Ordered](ctx context.Context, arr []T) ([]T, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
 	}
-	sort(0, len(arr)-1)
+
+	if len(arr) < 1024 {
+		return mergeSort(arr), nil
+	}
+
+	mid := len(arr) / 2
+	var left, right []T
+	var lErr, rErr error
+	var wg sync.WaitGroup
+
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		left, lErr = ParallelMergeSort(ctx, arr[:mid])
+	}()
+	go func() {
+		defer wg.Done()
+		right, rErr = ParallelMergeSort(ctx, arr[mid:])
+	}()
+	wg.Wait()
+
+	if lErr != nil { return nil, lErr }
+	if rErr != nil { return nil, rErr }
+
+	return merge(left, right), nil
+}
+```
+
+## 20.2. Quick Sort
+
+**Definition:** Selects pivot. Partitions array into smaller/larger elements. Recursively sorts partitions.
+
+**Background & Philosophy:**
+Philosophy: Partitioning. Skips meticulous merging. Moves elements relative to pivot. Gambles on random probability for balanced tree.
+
+**Use Cases:**
+Default general-purpose array sorting. Unmatched in-memory speed.
+
+**Memory Mechanics:**
+In-place execution. Zero `O(n)` heap allocations. Bypasses GC. Pointers scan array sequentially. Hardware prefetcher locks array blocks into L1 cache. Cache-friendliness makes Quick Sort consistently beat Merge Sort in reality.
+
+### Idiomatic Go 1.21+ Generic Implementation
+
+```go
+package main
+
+import (
+	"cmp"
+	"fmt"
+)
+
+func QuickSort[T cmp.Ordered](arr []T) {
+	if len(arr) <= 1 {
+		return
+	}
+	pivotIdx := partition(arr)
+	QuickSort(arr[:pivotIdx])
+	QuickSort(arr[pivotIdx+1:])
 }
 
-func partition(arr []int, left, right int) int {
-	pivot := arr[right]
-	i := left
-	for j := left; j < right; j++ {
+func partition[T cmp.Ordered](arr []T) int {
+	pivot := arr[len(arr)-1]
+	i := 0
+	for j := 0; j < len(arr)-1; j++ {
 		if arr[j] < pivot {
 			arr[i], arr[j] = arr[j], arr[i]
 			i++
 		}
 	}
-	arr[i], arr[right] = arr[right], arr[i]
+	arr[i], arr[len(arr)-1] = arr[len(arr)-1], arr[i]
 	return i
-}
-
-func main() {
-	arr := []int{10, 7, 8, 9, 1, 5}
-	quickSort(arr)
-	fmt.Println(arr)
 }
 ```
 
 ## 20.3. Heap Sort
 
-**Definition:** Heap Sort builds a max heap from the array, then repeatedly extracts the maximum element and places it at the end of the array.
+**Definition:** Builds max heap from array. Repeatedly extracts maximum element to array end.
 
 **Background & Philosophy:**
-Heap Sort treats the array as a binary tree without actually building a tree. The philosophy is strict priority management: by organizing the array into a Max-Heap, it guarantees that the largest element is always at index 0, ready to be extracted.
+Treats array as binary tree. Philosophy: Strict priority management. Max-Heap guarantees largest element stays at index 0.
 
 **Use Cases:**
-Used in strict real-time systems (like aerospace or medical software) or the Linux kernel because it guarantees <code>O(n log n)</code> worst-case time while using strictly <code>O(1)</code> auxiliary space, preventing out-of-memory errors that Merge Sort might cause.
+Real-time systems. Linux kernel. Guarantees `O(n log n)` time with strict `O(1)` auxiliary space.
 
 **Memory Mechanics:**
-Heap Sort is notorious for its poor memory access patterns. Because the mathematical parent-child relationship jumps across indices (`2*i + 1`), the algorithm accesses the array randomly. As the array grows, these jumps easily exceed the size of the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> line, causing severe <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. Consequently, while mathematically optimal, it runs 2-3x slower than Quick Sort in practice.
+Poor memory access patterns. Parent-child math (`2*i + 1`) jumps across indices. Causes severe cache misses. Mathematically optimal but lacks hardware sympathy. Slower than Quick Sort.
 
-### Operations & Complexity
-
-| Operation | Complexity | Description |
-|-----------|------------|-------------|
-| Build heap | <code>O(n)</code> | Bottom-up heapify |
-| Extract max | <code>O(log n)</code> | n times |
-| Total | <code>O(n log n)</code> | Guaranteed |
-| Space | <code>O(1)</code> | In-place |
-
-### Idiomatic Go Implementation
+### Idiomatic Go 1.21+ Generic Implementation
 
 ```go
 package main
 
-import "fmt"
+import (
+	"cmp"
+	"fmt"
+)
 
-func heapSort(arr []int) {
+func HeapSort[T cmp.Ordered](arr []T) {
 	n := len(arr)
-	// Build max heap
 	for i := n/2 - 1; i >= 0; i-- {
 		heapify(arr, n, i)
 	}
-	// Extract elements
 	for i := n - 1; i > 0; i-- {
 		arr[0], arr[i] = arr[i], arr[0]
 		heapify(arr, i, 0)
 	}
 }
 
-func heapify(arr []int, n, i int) {
+func heapify[T cmp.Ordered](arr []T, n, i int) {
 	largest := i
 	left := 2*i + 1
 	right := 2*i + 2
@@ -197,50 +207,41 @@ func heapify(arr []int, n, i int) {
 		heapify(arr, n, largest)
 	}
 }
-
-func main() {
-	arr := []int{12, 11, 13, 5, 6, 7}
-	heapSort(arr)
-	fmt.Println(arr)
-}
 ```
 
 ## 20.4. Decision Matrix
 
 | Algorithm | Time | Space | Stable | Cache Friendly | Best For |
 |-----------|------|-------|--------|----------------|----------|
-| Merge Sort | <code>O(n log n)</code> | <code>O(n)</code> | Yes | Poor | External sorting, stability |
-| Quick Sort | <code>O(n log n)</code> avg | <code>O(log n)</code> | No | Good | General purpose, in-place |
-| Heap Sort | <code>O(n log n)</code> | <code>O(1)</code> | No | Poor | Memory-constrained systems |
-| Go sort.Ints | <code>O(n log n)</code> | <code>O(log n)</code> | No | Excellent | Production code |
+| Merge Sort | `O(n log n)` | `O(n)` | Yes | Poor | External sorting, stability |
+| Quick Sort | `O(n log n)` avg | `O(log n)` | No | Good | General purpose, in-place |
+| Heap Sort | `O(n log n)` | `O(1)` | No | Poor | Constrained memory |
+| Go slices.Sort | `O(n log n)` | `O(log n)` | No | Excellent | Production |
 
 ### Edge Cases & Pitfalls
-
-- **Pivot selection:** Randomized pivot or median-of-three prevents <code>O(n^2)</code> worst case in Quick Sort.
-- **Stability:** Neither Quick Sort nor Heap Sort is stable. Use Merge Sort if stability matters.
-- **Go's sort:** Go uses a hybrid of Quick Sort, Heap Sort, and <abbr title="A sorting algorithm building the final array one element at a time">Insertion Sort</abbr> (pdqsort in Go 1.19+).
+- **Pivot selection:** Randomized pivot avoids `O(n^2)` worst case in Quick Sort.
+- **Stability:** Quick/Heap Sort are unstable. Use Merge Sort if stability required.
+- **Concurrency:** Parallel algorithms must accept context cancellation.
 
 ### Anti-Patterns
-
-- **Allocating a temp slice on every Merge Sort merge step:** Allocate one auxiliary slice of length n once, then pass it through recursion. Per-step allocation turns O(n log n) into O(n log n) allocations.
-- **Using Quick Sort on nearly-sorted data without randomized pivot:** Deterministic pivot choice on sorted input triggers O(n²). Use `rand.Intn` for pivot selection or rely on `slices.Sort` which handles this.
-- **Ignoring stability when it matters:** Merge Sort is stable; Quick Sort and Heap Sort are not. If relative order of equal keys matters, use `slices.SortStableFunc` or Merge Sort.
+- **Temporary recursion slices:** Turns `O(n log n)` time into massive GC pressure. Pre-allocate auxiliary array once.
+- **Ignoring hardware sympathy:** Using Heap Sort for massive arrays instead of cache-friendly Quick Sort.
+- **Deterministic Pivot:** Last-element pivot on sorted data triggers quadratic degradation.
 
 ## 20.5. Quick Reference
 
 | Name | Go Type | Time | Space | Stable | Use Case |
 |------|---------|------|-------|--------|----------|
-| Merge Sort | Recursive | <code>O(n log n)</code> | <code>O(n)</code> | Yes | Linked lists, stability |
-| Quick Sort | In-place | <code>O(n log n)</code> avg | <code>O(log n)</code> | No | General purpose |
-| Heap Sort | In-place | <code>O(n log n)</code> | <code>O(1)</code> | No | Embedded systems |
-| Go stdlib | Hybrid | <code>O(n log n)</code> | <code>O(log n)</code> | No | Always use this |
+| Merge Sort | Generic | `O(n log n)` | `O(n)` | Yes | Linked lists, stability |
+| Quick Sort | Generic | `O(n log n)` avg | `O(log n)` | No | General purpose |
+| Heap Sort | Generic | `O(n log n)` | `O(1)` | No | Embedded systems |
+| Go slices.Sort | Generic | `O(n log n)` | `O(log n)` | No | Standard library default |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 20:</strong> Advanced sorting algorithms achieve <code>O(n log n)</code> through fundamentally different strategies: Merge Sort divides and conquers with guaranteed performance, Quick Sort partitions for cache-friendly in-place sorting, and Heap Sort uses a <abbr title="A heap implemented using a binary tree.">binary heap</abbr> for minimal memory usage. In Go, always default to <code>sort.Ints()</code> or <code>slices.Sort()</code> for production.
+<strong>Summary Chapter 20:</strong> Advanced sorting achieves `O(n log n)` via Divide and Conquer, Partitioning, or Priority Management. Modern Go utilizes Generics for safety and Context for robust parallelization.
 {{% /alert %}}
 
 ## See Also
-
 - [Chapter 19: Basic Sorting Algorithms](/docs/part-v/chapter-19/)
 - [Chapter 21: Searching Algorithms](/docs/part-v/chapter-21/)
-- [Chapter 54: Counting, Radix, and <abbr title="A sorting algorithm distributing elements into buckets">Bucket Sort</abbr>](/docs/part-xi/chapter-54/)
+- [Chapter 54: Counting, Radix, and Bucket Sort](/docs/part-xi/chapter-54/)

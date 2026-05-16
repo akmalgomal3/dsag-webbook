@@ -15,21 +15,21 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 16 focuses on Minimum Spanning Trees (MST) utilizing Kruskal's, Prim's, and Borůvka's algorithms. It applies Generic Go <abbr title="An algorithm to perform union and find operations on disjoint sets.">Union-Find</abbr> sets and priority queues to efficiently map optimal network topologies.
+Chapter 16: Minimum Spanning Trees (MST). Covers Kruskal's, Prim's, and Borůvka's algorithms. Compares usage and implementations.
 {{% /alert %}}
 
 ## 16.1. Kruskal’s Algorithm
 
-**Definition:** Kruskal builds an MST by greedily selecting the smallest edges, utilizing a <abbr title="An algorithm to perform union and find operations on disjoint sets.">Union-Find</abbr> data structure to detect and avoid cycles.
+**Definition:** Builds MST by selecting minimum weight edges. Uses <abbr title="An algorithm to perform union and find operations on disjoint sets.">Union-Find</abbr> to prevent cycles.
 
-**Background & Philosophy:**
-The philosophy of Kruskal's algorithm is global greed. Instead of growing a single connected tree, it looks at every edge in the entire graph simultaneously, picks the absolute cheapest one, and trusts that as long as it doesn't form a cycle, combining these fragments (a forest) will eventually yield the globally optimal <abbr title="A spanning tree with the minimum possible total edge weight.">Minimum Spanning Tree</abbr>.
+**Logic:**
+Global greed. Evaluates all edges simultaneously. Selects absolute cheapest edge. Merges forest fragments into global <abbr title="A spanning tree with the minimum possible total edge weight.">Minimum Spanning Tree</abbr>.
 
 **Use Cases:**
-Ideal for laying out physical infrastructure over large distances where connecting points randomly is fine as long as the total cost of materials is minimized, such as planning fiber optic cable networks across a country.
+Physical infrastructure layout. Long-distance fiber optic networks.
 
 **Memory Mechanics:**
-Kruskal relies on an Edge List `[]Edge`. Because it must sort all edges globally, `sort.Slice` operates directly on this <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory block, taking advantage of the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. The Union-Find data structure consists of two flat `[]int` slices (`parent` and `rank`), which are also highly <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>-friendly. Kruskal allocates almost no <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory during its execution loop, making it extremely memory-efficient.
+Relies on edge list `[]Edge`. Global sort operates on <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory. Leverages <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. Union-Find uses flat `[]int` slices. Avoids dynamic <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocation. High memory efficiency.
 
 ### Operations & Complexity
 
@@ -106,26 +106,26 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Edge list is readily available | Adjacency list format is required |
-| E is relatively small (sparse) | Need online MST (edges arriving continuously) |
+| Edge list format exists | Adjacency list format is required |
+| Sparse graph | Online MST processing required |
 
 ### Edge Cases & Pitfalls
 
-- **Disconnected graph:** An MST only covers the largest component; check connectivity first with BFS/DFS before computing MST.
-- **Union-Find without path compression:** This can degenerate to <code>O(log V)</code> per operation, wrecking performance.
+- **Disconnected graph:** MST covers largest component only. Run BFS/DFS reachability check first.
+- **Missing path compression:** Union-Find degrades to <code>O(log V)</code>. Kills performance.
 
 ## 16.2. Prim’s Algorithm
 
-**Definition:** Prim expands the MST from a single starting vertex, consistently choosing the smallest edge that connects to an unvisited vertex outside the current MST.
+**Definition:** Expands MST from single start vertex. Selects minimum connecting edge to unvisited vertex.
 
-**Background & Philosophy:**
-While Kruskal is globally greedy, Prim is locally greedy. Its philosophy is continuous growth. It starts from a single point and acts like a mold spreading outward, always taking the cheapest adjacent step.
+**Logic:**
+Local greed. Grows continuously outward. Takes cheapest adjacent step.
 
 **Use Cases:**
-Used in dense networks, such as laying out printed circuit boards (PCBs) where chips are densely packed and the distance between every pin to every other pin is known.
+Dense network design. Printed circuit board (PCB) layouts.
 
 **Memory Mechanics:**
-Prim’s algorithm relies on an <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">Adjacency List</abbr> and a Min-Heap. The Min-Heap (`Priority Queue`) acts as the frontier of exploration. As the MST grows, the algorithm constantly pushes neighboring edges into the heap. In highly dense graphs, this heap can grow rapidly, causing <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory allocations in Go if the underlying slice capacity is exceeded. However, because it only looks at adjacent edges, it avoids the massive upfront <code>O(E log E)</code> sorting cost required by Kruskal.
+Requires <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">Adjacency List</abbr> and Min-Heap. Heap acts as exploration frontier. Dense graphs cause rapid heap growth and <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> allocations. Avoids upfront <code>O(E log E)</code> sorting cost.
 
 ### Operations & Complexity
 
@@ -209,28 +209,28 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Dense graphs | <abbr title="A connection between two vertices in a graph.">Edge</abbr> list is easier to process (Kruskal) |
-| <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">Adjacency list</abbr> is readily available | Global <abbr title="A connection between two vertices in a graph.">edge</abbr> <abbr title="The process of arranging elements in a specific order.">sorting</abbr> is necessary |
+| Dense graphs | Edge list format exists |
+| Adjacency list format exists | Global edge sorting is required |
 
 ## 16.3. Borůvka’s Algorithm
 
-**Definition:** Borůvka runs in parallel to find the smallest <abbr title="A connection between two vertices in a graph.">edge</abbr> for every component and merges them, making it highly suitable for distributed computing.
+**Definition:** Finds minimum connecting edge per component in parallel. Merges components iteratively.
 
-**Background & Philosophy:**
-Borůvka’s algorithm predates computers entirely (designed in 1926 to construct electrical networks). Its philosophy is concurrent component merging. Unlike Prim (which grows one tree) or Kruskal (which examines one edge at a time), Borůvka examines all trees in a forest simultaneously, making it inherently parallelizable.
+**Logic:**
+Concurrent component merging. Evaluates all forest trees simultaneously. Scales horizontally.
 
 **Use Cases:**
-The absolute best choice for distributed systems calculating MSTs across massive clusters of machines (like MapReduce or Apache Spark graph processing), where data is too large to fit in a single machine's RAM.
+Distributed systems. Massive MapReduce clusters. RAM-exceeding datasets.
 
 **Memory Mechanics:**
-In a single-threaded Go implementation, it uses a flat `best` array (or slice of pointers) that is overwritten during each phase. Because the algorithm halves the number of components in every phase, it runs in at most `log V` phases. Accessing the `best` array is sequential, leveraging <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>, and merging components via Union-Find uses pure integer indexing without chasing pointers.
+Uses flat `best` array. Halves component count per phase. Runs max `log V` phases. Sequential array access ensures <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. Avoids pointer chasing.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Per phase | <code>O(E log V)</code> | Merging components |
-| Total | <code>O(E log V)</code> | log V phases |
+| Per phase | <code>O(E log V)</code> | Component merging |
+| Total | <code>O(E log V)</code> | Max log V phases |
 
 ### Pseudocode
 
@@ -312,14 +312,14 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Parallel processing environment | A simpler implementation suffices (Kruskal) |
-| Distributed systems | Single-threaded environments |
+| Distributed computing environment | Simple implementation works |
+| Parallel processing framework | Single-threaded environment |
 
 ### Anti-Patterns
 
-- **Skipping Union-Find path compression:** Without path compression + union-by-rank, `Find` degrades to O(log V) or worse, making Kruskal's O(E log V) turn into O(E · V). Always compress paths.
-- **Using Prim's on edge-list input:** Prim's requires adjacency-list/O(V²) matrix access. If your input is already an edge list, Kruskal's avoids the O(V²) conversion cost.
-- **Computing MST on a disconnected graph without checking:** An MST is only defined for a connected component. Run a BFS/DFS reachability check first, or verify `len(mst) == V-1` afterward.
+- **Skipping path compression:** Degrades Find to <code>O(log V)</code>. Wrecks Kruskal efficiency. Always compress paths.
+- **Prim on edge lists:** Requires O(V²) conversion. Kruskal avoids this cost.
+- **Unverified graph connectivity:** MST requires single connected component. Verify `len(mst) == V-1`.
 
 ## 16.4. Quick Reference
 
@@ -330,7 +330,7 @@ func main() {
 | Borůvka | Union-Find | <code>O(E log V)</code> | <code>O(V)</code> | Parallel, distributed |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 16:</strong> This chapter covers Kruskal's, Prim's, and Borůvka's algorithms for <abbr title="A spanning tree with the minimum possible total edge weight.">Minimum Spanning Tree</abbr>. Use Kruskal when you have an <abbr title="A connection between two vertices in a graph.">edge</abbr> list, Prim for dense graphs with adjacency lists, and Borůvka for parallel or distributed computation scenarios.
+<strong>Summary Chapter 16:</strong> Kruskal uses edge lists. Prim uses adjacency lists for dense graphs. Borůvka supports parallel processing.
 {{% /alert %}}
 
 ## See Also

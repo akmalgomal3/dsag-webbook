@@ -15,31 +15,30 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 34 explores polynomials and the Fast Fourier Transform (FFT). Go's stdlib lacks a native FFT; utilize `math/cmplx` for complex operations or rely on external libraries.
+Chapter 33 covers polynomials and Fast Fourier Transform (FFT). Go lacks native FFT. Use `math/cmplx` or external libraries.
 {{% /alert %}}
 
-## 34.1. Polynomial Representation
+## 33.1. Polynomial Representation
 
-**Definition:** A polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n is gracefully represented as a slice of coefficients: `[a₀, a₁, ..., aₙ]`.
+**Definition:** Polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n is slice of coefficients: `[a₀, a₁, ..., aₙ]`.
 
-**Background & Philosophy:**
-The philosophy is the dual representation of data. A polynomial can be represented either by its coefficients or by its evaluated points. Multiplying coefficients takes <code>O(n^2)</code> time, but multiplying evaluated points takes <code>O(n)</code> time. FFT translates coefficients into points in <code>O(n log n)</code>, enabling fast multiplication.
+**Mechanics:**
+Dual representation exists: coefficients or points. Multiplying points is <code>O(n)</code>. Multiplying coefficients is <code>O(n^2)</code>. FFT converts between them in <code>O(n log n)</code>. Enables fast multiplication.
 
 **Use Cases:**
-Digital signal processing (audio/image compression), quantum mechanics, and multiplying incredibly large numbers (e.g., 100,000 digits) efficiently.
+Digital signal processing. Audio/image compression. Quantum mechanics. Large number multiplication.
 
 **Memory Mechanics:**
-FFT's memory access pattern is governed by the "butterfly" operation, which intertwines elements mathematically using a bit-reversal permutation. This creates a highly <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> memory read pattern that brutally thrashes the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> if implemented naively. High-performance FFT libraries pre-calculate and cache the sine/cosine "twiddle factors" into an array and heavily optimize memory strides to keep data trapped in the L1/L2 caches.
+FFT uses butterfly operation. Bit-reversal permutation required. Non-contiguous access thrashes <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. Pre-calculate twiddle factors. Optimize memory strides for L1/L2 cache.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Evaluation (Horner's) | <code>O(n)</code> | Highly optimal |
-| Naive Evaluation | <code>O(n^2)</code> | Features repetitive exponentiation |
-| Addition | <code>O(n)</code> | Strict element-wise addition |
-| Naive Multiplication | <code>O(n^2)</code> | Standard mathematical convolution |
-| FFT Multiplication | <code>O(n log n)</code> | Rapid DFT-based execution |
+| Evaluation (Horner's) | <code>O(n)</code> | Optimal evaluation |
+| Addition | <code>O(n)</code> | Element-wise |
+| Naive Multiplication | <code>O(n^2)</code> | Mathematical convolution |
+| FFT Multiplication | <code>O(n log n)</code> | DFT-based execution |
 
 ### Pseudocode
 
@@ -73,7 +72,6 @@ package main
 
 import "fmt"
 
-// Polynomials are strictly represented as coefficients [a0, a1, a2, ...]
 type Polynomial []float64
 
 func (p Polynomial) Evaluate(x float64) float64 {
@@ -112,68 +110,61 @@ func multiplyNaive(a, b Polynomial) Polynomial {
 }
 
 func main() {
-    p := Polynomial{1, -3, 2} // Represents 2x² - 3x + 1
+    p := Polynomial{1, -3, 2}
     fmt.Println("P(2) =", p.Evaluate(2))
-    q := Polynomial{1, 1} // Represents x + 1
+    q := Polynomial{1, 1}
     fmt.Println("P * Q =", multiplyNaive(p, q))
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Go inherently lacks operator overloading. Always employ explicit method receivers for polynomial operations. A flat slice representation operates much more efficiently than a struct relying on pointers.
+Go lacks operator overloading. Use explicit method receivers. Slice representation is more efficient than struct with pointers.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Slice Representation When... | Avoid If... |
 |----------------------|------------------|
-| Degrees are small to medium (< 10⁴) | You are managing sparse polynomials (use a map instead) |
-| All coefficients are fundamentally non-zero | The degree is massive yet remains highly sparse |
+| Degrees small to medium (< 10⁴) | Sparse polynomials. Use map. |
+| Non-zero coefficients dominant | Massive sparse degree. |
 
-### Edge Cases & Pitfalls
+## 33.2. FFT and Convolution
 
-- **Leading zeros:** Rigorously trim trailing zeros in the array to prevent generating a false, artificially high degree.
-- **Zero polynomial:** It is represented by `[]float64{0}`, not a completely empty slice `nil`.
-
-## 34.2. FFT and Convolution
-
-**Definition:** The Fast Fourier Transform (FFT) calculates the Discrete Fourier Transform with a complexity of <code>O(n log n)</code>. It is heavily utilized for executing polynomial multiplication via convolution.
+**Definition:** Fast Fourier Transform (FFT) computes DFT in <code>O(n log n)</code>. Enables polynomial multiplication via convolution.
 
 ### Operations & Complexity
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Naive DFT | <code>O(n²)</code> | <code>O(n)</code> | Direct mathematical execution |
-| Cooley-Tukey FFT | <code>O(n log n)</code> | <code>O(n)</code> | Standard recursive method |
-| Iterative FFT | <code>O(n log n)</code> | <code>O(1)</code> in-place | Memory-efficient in-place execution |
-| Bluestein | <code>O(n log n)</code> | <code>O(n)</code> | Supports arbitrary input sizes |
-
-Go's stdlib does not furnish an FFT algorithm. A comprehensive implementation demands roughly 100 lines of code. For production integrity, depend on libraries like `github.com/mjibson/go-dsp` or `github.com/cpmech/fftx`.
+| Naive DFT | <code>O(n²)</code> | <code>O(n)</code> | Direct execution |
+| Cooley-Tukey FFT | <code>O(n log n)</code> | <code>O(n)</code> | Recursive method |
+| Iterative FFT | <code>O(n log n)</code> | <code>O(1)</code> | In-place execution |
+| Bluestein | <code>O(n log n)</code> | <code>O(n)</code> | Arbitrary input size |
 
 ### Decision Matrix
 
 | Use FFT When... | Avoid If... |
 |--------------------|------------------|
-| Multiplying massive polynomials (degree > 100) | Dealing with very small degrees (naive is far quicker) |
-| Running signal convolutions | An exact, flawless integer result is heavily required (due to rounding errors) |
+| Large polynomial degree (> 100) | Small degree. Naive is faster. |
+| Signal convolution | Flawless integer precision required. Rounding error risk. |
 
 ### Edge Cases & Pitfalls
 
-- **Non-power-of-2 constraints:** Pad the input with trailing zeros. For completely arbitrary sizes, integrate Bluestein's or Rader's algorithms.
-- **Floating point error:** The mathematical outcome of an FFT may harbor an error margin of ~1e-9. Actively round the outcome to achieve pristine integer results.
-- **Inverse scaling oversight:** Never forget to vigorously divide the outcome by n immediately following the inverse FFT phase.
+- **Power-of-2 constraint:** Pad input with trailing zeros. Use Bluestein for arbitrary sizes.
+- **Floating point error:** Error margin ~1e-9. Round outcome for integers.
+- **Inverse scaling:** Divide results by n after inverse FFT.
 
-## 34.3. Polynomial Interpolation
+## 33.3. Polynomial Interpolation
 
-**Definition:** Interpolation derives a polynomial of <abbr title="The number of edges incident to a vertex.">degree</abbr> n that intersects n+1 designated points.
+**Definition:** Find degree n polynomial through n+1 points.
 
 ### Operations & Complexity
 
 | Method | Time | Space | Description |
 |--------|------|-------|------------|
-| Lagrange | <code>O(n^2)</code> | <code>O(n)</code> | Operates via a direct mathematical formula |
-| Newton Divided Diff | <code>O(n^2)</code> | <code>O(n)</code> | Facilitates an incremental buildup |
-| FFT Interpolation | <code>O(n log n)</code> | <code>O(n)</code> | Evaluated at the roots of unity |
+| Lagrange | <code>O(n^2)</code> | <code>O(n)</code> | Direct formula |
+| Newton | <code>O(n^2)</code> | <code>O(n)</code> | Incremental buildup |
+| FFT Interpolation | <code>O(n log n)</code> | <code>O(n)</code> | Roots of unity evaluation |
 
 ### Pseudocode
 
@@ -220,45 +211,38 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Lagrange interpolation holds remarkable stability solely for a sparse number of equidistant points. For a large volume of points or Chebyshev nodes, transition immediately to divided differences or barycentric interpolation.
+Lagrange is stable for few points. Use divided differences or barycentric interpolation for many points.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Lagrange When... | Avoid If... |
 |-------------------------|------------------|
-| The volume of points is tiny (< 50) | The volume of points is large (triggers the Runge phenomenon) |
-| Evaluating a single specific coordinate | Evaluating a massive number of points (evaluate via basis polynomials instead) |
-
-### Edge Cases & Pitfalls
-
-- **Runge phenomenon:** Interpolation over many equidistant nodes causes oscillation. Switch to Chebyshev nodes.
-- **Identical x coordinates:** Evaluating two distinct points sharing an identical x coordinate forces an undefined mathematical outcome (division by zero).
+| Point count low (< 50) | Point count high. Runge phenomenon risk. |
+| Single point evaluation | Massive point count evaluation. |
 
 ### Anti-Patterns
 
-- **Input size not a power of two:** Cooley-Tukey FFT requires power-of-two input lengths. Always zero-pad the coefficient array to the next power of two before calling FFT.
-- **Forgetting inverse FFT scaling:** The inverse FFT must divide all output values by n. Omitting this produces results that are n times too large.
-- **Using float64 for exact integer convolution:** FFT-based polynomial multiplication introduces floating-point rounding errors. Round results to the nearest integer and verify; for exact results, use NTT (Number Theoretic Transform) instead.
+- **Input size not power-of-2:** Cooley-Tukey requires it. Zero-pad coefficient array.
+- **Skip inverse FFT scaling:** Division by n mandatory. Omitting yields n-times larger results.
+- **Float64 for integer convolution:** Rounding errors occur. Round to nearest integer. Use NTT for exact results.
 
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Polynomial | `[]float64` | <code>O(n)</code> | <code>O(n)</code> | Standard coefficient storage |
-| Horner evaluation | func | <code>O(n)</code> | <code>O(1)</code> | Hyper-fast value evaluation |
-| Naive multiply | nested loop | <code>O(n²)</code> | <code>O(n)</code> | Handling tiny polynomial degrees |
-| FFT multiply | <code>O(n log n)</code> | <code>O(n log n)</code> | <code>O(n)</code> | Handling massive polynomial degrees |
-| Interpolation | func | <code>O(n²)</code> | <code>O(n)</code> | Precise data curve fitting |
-| DFT | <code>O(n²)</code> | <code>O(n²)</code> | <code>O(n)</code> | Thorough signal analysis |
-| FFT | custom/3rd party | <code>O(n log n)</code> | <code>O(n)</code> | Extreme high-speed transformation |
+| Polynomial | `[]float64` | <code>O(n)</code> | <code>O(n)</code> | Coefficient storage |
+| Horner evaluation | func | <code>O(n)</code> | <code>O(1)</code> | Fast evaluation |
+| Naive multiply | loop | <code>O(n²)</code> | <code>O(n)</code> | Small degrees |
+| FFT multiply | FFT | <code>O(n log n)</code> | <code>O(n)</code> | Large degrees |
+| Interpolation | func | <code>O(n²)</code> | <code>O(n)</code> | Curve fitting |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 33:</strong> This chapter dissects polynomial representation employing coefficient slices, hyper-fast Horner evaluation occurring in <code>O(n)</code>, and both naive <code>O(n^2)</code> and advanced FFT <code>O(n log n)</code> multiplications, alongside Lagrange interpolation. Rely on FFT strictly for massive <abbr title="The number of edges incident to a vertex.">degree</abbr> polynomial multiplications and Horner for rapid evaluations.
+<strong>Summary Chapter 33:</strong> Polynomials use coefficient slices. Horner evaluation is <code>O(n)</code>. FFT enables <code>O(n log n)</code> multiplication. Lagrange performs <code>O(n^2)</code> interpolation. Use FFT for large degrees.
 {{% /alert %}}
 
 ## See Also
 
 - [Chapter 28: Vector, Matrix, and Tensor Operations](/docs/part-vii/chapter-28/)
-- [Chapter 34: <abbr title="Finding occurrences of a pattern within a text">String Matching</abbr> Algorithms](/docs/part-vii/chapter-34/)
+- [Chapter 34: String Matching Algorithms](/docs/part-vii/chapter-34/)
 - [Chapter 38: Bit Manipulation](/docs/part-vii/chapter-38/)

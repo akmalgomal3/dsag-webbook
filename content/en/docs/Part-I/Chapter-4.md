@@ -15,46 +15,32 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 4 focuses on the fundamentals of Go programming, discussing the memory model, type system, functional patterns, and concurrency primitives that form the foundation for safe algorithm implementation.
+Chapter 4 covers Go programming fundamentals. Topics: memory model, type system, Generics, Iterators (1.23+), concurrency primitives.
 {{% /alert %}}
 
-## 4.1. Understanding Go's Memory Model
+## 4.1. Go Memory Model
 
-**Definition:** Go manages memory via <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">garbage collection</abbr>; <abbr title="A variable that stores a memory address.">pointers</abbr> are safe (no <abbr title="Performing mathematical operations on memory addresses.">pointer arithmetic</abbr>), and slices are references to an underlying <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr>.
+**Definition:** Go manages memory via Garbage Collection (GC). Pointers pass memory addresses without pointer arithmetic. Slices reference backing arrays.
 
 **Background & Philosophy:**
-Go's memory model was designed to strike a balance between the raw control of C and the safety of Java. The philosophy is "safe by default". By removing <abbr title="Performing mathematical operations on memory addresses.">pointer arithmetic</abbr>, Go eliminates a whole class of buffer overflow vulnerabilities, while still allowing developers to pass memory addresses to avoid expensive data copying.
+Balances C control with Java safety. "Safe by default". Removes pointer arithmetic. Eliminates buffer overflows. Allows zero-copy data passing.
 
 **Use Cases:**
-Essential when designing low-latency network servers, parsing large JSON or XML files where copying data would crash the system, and implementing complex data structures like linked lists or binary trees where node traversal is required.
+Low-latency network servers. Parsing large JSON/XML. Implementing linked lists, binary trees.
 
 **Memory Mechanics:**
-When you pass a <abbr title="A variable that stores a memory address.">pointer</abbr> in Go, you are passing an 8-byte integer (on 64-bit systems) representing a specific address in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Unlike C, the Go compiler uses <abbr title="The process of determining whether a variable can be safely allocated on the stack or if it must escape to the heap.">escape analysis</abbr> to determine if the variable pointed to should live on the <abbr title="Memory used to execute functions and store local variables.">stack</abbr> (fast, automatically reclaimed) or the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> (managed by the Garbage Collector). If a function returns a pointer to a local variable, the compiler safely "escapes" that variable to the heap to ensure it survives after the function returns.
+Pointer passes 8-byte integer (64-bit). Compiler escape analysis determines allocation. Local variables stay on stack (fast, auto-reclaimed). Escaping variables move to heap (GC-managed). Returning local pointer forces heap allocation.
 
 ### Operations & Complexity
 
 | Operation | Go Construct | Complexity | Description |
 |---------|--------------|------------|------------|
-| <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> allocation | Local var | <code>O(1)</code> | Automatic, <abbr title="Last In, First Out stack discipline">LIFO</abbr> |
-| <abbr title="A specialized tree-based data structure that satisfies the heap property.">Heap</abbr> allocation | `make`, `new`, `&T{}` | <code>O(1)</code> amortized | GC-managed |
-| <abbr title="A variable that stores a memory address.">Pointer</abbr> dereference | `*p` | <code>O(1)</code> | Safe, no arithmetic |
-| Slice re-slicing | `s[i:j]` | <code>O(1)</code> | Shares backing <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr> |
-
-### Pseudocode
-
-```text
-mutateSlice(s):
-    s[0] = 99
-    return
-
-mutatePointer(p):
-    dereference p and set value to 20
-    return
-```
+| Stack allocation | Local var | `O(1)` | Automatic, LIFO |
+| Heap allocation | `make`, `new`, `&T{}` | `O(1)` amortized | GC-managed |
+| Pointer dereference | `*p` | `O(1)` | Safe, no arithmetic |
+| Slice re-slicing | `s[i:j]` | `O(1)` | Shares backing array |
 
 ### Idiomatic Go Implementation
-
-<abbr title="A variable that stores a memory address.">Pointer</abbr> and slice behavior:
 
 ```go
 package main
@@ -68,63 +54,43 @@ func mutateSlice(s []int) {
 func main() {
 	data := []int{1, 2, 3}
 	mutateSlice(data)
-	fmt.Println(data)
+	fmt.Println(data) // [99 2 3]
 
 	x := 10
 	p := &x
 	*p = 20
-	fmt.Println(x)
+	fmt.Println(x) // 20
 }
 ```
 
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| Need to share data between functions without copying | Data is immutable and small (pass by <abbr title="The data associated with a key in a key-value pair.">value</abbr>) |
-| Need to modify data in-place | Explicit ownership transfer is required |
-| Linked/<abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> data structures | <abbr title="A variable that stores a memory address.">Pointer</abbr> arithmetic is required |
-
 ### Edge Cases & Pitfalls
-- **Case slice alias:** `s2 := s1[:]` shares the backing <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr>; modifying `s2` affects `s1`.
-- **Case append reallocate:** `s = append(s, v)` might allocate a new <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr>; pointers to old elements become invalid.
-- **Case nil <abbr title="A variable that stores a memory address.">pointer</abbr> dereference:** Dereferencing a `nil` <abbr title="A variable that stores a memory address.">pointer</abbr> causes a panic.
+- **Slice alias:** `s2 := s1[:]` shares backing array. Modifying `s2` alters `s1`.
+- **Append reallocation:** `s = append(s, v)` creates new array if capacity full. Old pointers invalidate.
+- **Nil pointer:** Dereferencing `nil` pointer panics.
 
-## 4.2. Go's Type System and Its Role in Algorithms
+## 4.2. Type System & Generics
 
-**Definition:** Go features static typing with type inference, generics (Go 1.18+), and interfaces to ensure type safety at compile time.
+**Definition:** Go uses static typing, type inference, interfaces, Generics (1.18+).
 
 **Background & Philosophy:**
-Go strongly favors composition over inheritance. The type system is designed to be rigid enough to catch errors at compile-time, but flexible enough (via structural typing with interfaces) to allow decoupled, reusable code. The recent addition of Generics (type parameters) specifically addressed the historical pain point of writing strongly-typed container algorithms (like a generic Tree or Queue) without relying on unsafe type assertions.
+Favors composition over inheritance. Catches errors at compile-time. Generics solve strongly-typed container algorithms without unsafe type assertions.
 
 **Use Cases:**
-Generics are heavily used when building standard library-level data structures (e.g., `slices` and `maps` packages). Interfaces are used to abstract implementations, such as defining an `io.Reader` interface to process data from either a file, a network socket, or an in-memory buffer using the exact same algorithm.
+Generics build standard libraries (`slices`, `maps`). Interfaces abstract implementations (`io.Reader` for files, sockets, buffers).
 
 **Memory Mechanics:**
-Using an interface in Go introduces a small memory overhead: an interface value is a two-word construct (16 bytes on 64-bit systems) containing a pointer to the concrete data and a pointer to the type information (itable). This means calling a method on an interface requires <abbr title="A variable that stores a memory address.">pointer</abbr> indirection, which can cause <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. Generics, conversely, rely on monomorphization (or partial dictionary passing), generating concrete type implementations at compile time. This increases the binary size but allows direct, inline-able execution with excellent <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.
+Interface adds 16-byte overhead (data pointer, type pointer). Interface method calls require pointer indirection. Causes cache misses. Generics use monomorphization. Compiler generates concrete types. Increases binary size. Enables inlining. Excellent CPU cache locality.
 
 ### Operations & Complexity
 
 | Feature | Usage | Overhead |
 |-------|----------|----------|
-| Static typing | Catch errors at compile time | Zero <abbr title="The period during which a computer program is executing.">runtime</abbr> |
-| Generics | Reusable algorithms | Monomorphization (compile time) |
-| <abbr title="A shared boundary across which two or more separate components exchange information.">Interface</abbr> | Polymorphism | <abbr title="A variable that stores a memory address.">Pointer</abbr> indirection |
-| Type assertion | <abbr title="The period during which a computer program is executing.">Runtime</abbr> type check | <code>O(1)</code> |
-
-### Pseudocode
-
-```text
-find(arr, target):
-    for i = 0 to len(arr)-1:
-        if arr[i] == target:
-            return (i, true)
-    return (0, false)
-```
+| Static typing | Compile-time checks | Zero runtime |
+| Generics | Reusable algorithms | Compile-time monomorphization |
+| Interface | Polymorphism | Pointer indirection |
+| Type assertion | Runtime check | `O(1)` |
 
 ### Idiomatic Go Implementation
-
-Generic search with `comparable`:
 
 ```go
 package main
@@ -148,55 +114,34 @@ func main() {
 }
 ```
 
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| Need type-safe reusable code | Performance-critical inner loops |
-| Various data types share the same logic | Only one type is used, generics add complexity |
-| <abbr title="A shared boundary across which two or more separate components exchange information.">Interface</abbr> abstraction is needed | <abbr title="A shared boundary across which two or more separate components exchange information.">Interface</abbr> call overhead is significant |
-
 ### Edge Cases & Pitfalls
-- **Case type assertion panic:** `x.(int)` on the wrong type causes a panic; use `v, ok := x.(int)`.
-- **Case nil <abbr title="A shared boundary across which two or more separate components exchange information.">interface</abbr>:** An <abbr title="A shared boundary across which two or more separate components exchange information.">interface</abbr> <abbr title="The data associated with a key in a key-value pair.">value</abbr> with a `nil` concrete <abbr title="A variable that stores a memory address.">pointer</abbr> is not equal to a `nil` <abbr title="A shared boundary across which two or more separate components exchange information.">interface</abbr>.
-- **Case generic instantiation:** Generics increase binary size due to monomorphization.
+- **Type assertion panic:** `x.(int)` panics if type mismatch. Use `v, ok := x.(int)`.
+- **Nil interface:** Interface with nil concrete pointer != nil interface.
+- **Binary bloat:** Excessive generics instantiate massive binaries.
 
-## 4.3. Slices and Functional Programming in Go
+## 4.3. Slices & Functional Patterns
 
-**Definition:** Slices in Go are references to arrays that support functional-style operations like map, filter, and reduce through manual <abbr title="The repetition of a process, typically using loops.">iteration</abbr>.
+**Definition:** Slices support functional operations (map, filter, reduce) via explicit loops.
 
 **Background & Philosophy:**
-Go does not have built-in `map()`, `filter()`, or `reduce()` methods attached to slices like JavaScript or Python. The philosophy is "clear is better than clever". Explicit `for` loops are preferred because they make the computational cost (time and space complexity) immediately obvious to the reader, hiding no invisible allocations or closure overheads.
+Go omits built-in `map()`, `filter()`. "Clear is better than clever." Explicit `for` loops expose computational cost. Hides zero invisible allocations.
 
 **Use Cases:**
-Processing streams of data, cleaning up API responses, or aggregating mathematical calculations. For instance, filtering out inactive users from a slice of database records before serializing them to JSON.
+Data streams. API response cleanup. Math aggregation.
 
 **Memory Mechanics:**
-Every time a functional pattern like `filter` appends to a new slice, it allocates <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap memory</abbr>. If the final size is known, pre-allocating the slice (`make([]T, 0, capacity)`) is crucial. This reserves a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> upfront, preventing the runtime from having to repeatedly copy the growing array to larger memory addresses behind the scenes, thereby saving massive amounts of CPU cycles.
+Filtering into new slice allocates heap memory. Pre-allocate known size (`make([]T, 0, cap)`). Reserves contiguous RAM upfront. Prevents array copying. Saves CPU cycles.
 
 ### Operations & Complexity
 
 | Operation | Go Idiom | Complexity |
 |---------|----------|--------------|
-| Map | Loop + append | <code>O(n)</code> |
-| Filter | Loop + conditional append | <code>O(n)</code> |
-| Reduce | Loop + accumulator | <code>O(n)</code> |
-| Slicing | `s[i:j]` | <code>O(1)</code> |
-
-### Pseudocode
-
-```text
-filter(arr, predicate):
-    out = empty array
-    for each element in arr:
-        if predicate(element):
-            append element to out
-    return out
-```
+| Map | Loop + append | `O(n)` |
+| Filter | Loop + conditional append | `O(n)` |
+| Reduce | Loop + accumulator | `O(n)` |
+| Slicing | `s[i:j]` | `O(1)` |
 
 ### Idiomatic Go Implementation
-
-Higher-order function with closure:
 
 ```go
 package main
@@ -221,63 +166,87 @@ func main() {
 }
 ```
 
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| Need data transformation pipelines | Performance is critical (manual loops are faster) |
-| Readability is more important than micro-optimization | High memory pressure (intermediate slices) |
-
 ### Edge Cases & Pitfalls
-- **Case nil slice append:** `append(nil, 1)` works and returns a new slice.
-- **Case slice sharing:** Modifying elements in a slice passed to a function affects the caller.
-- **Case capacity leak:** `s[:0]` reuses the backing <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr>, but old elements are still referenced, preventing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">garbage collection</abbr>.
+- **Nil slice append:** `append(nil, 1)` works. Returns new slice.
+- **Capacity leak:** `s[:0]` reuses backing array. Old elements retain references. Prevents GC.
 
-## 4.4. Concurrency in Go for Parallel Algorithms
+## 4.4. Iterators (Go 1.23+)
 
-**Definition:** <abbr title="Lightweight thread managed by Go runtime">Goroutines</abbr>, <abbr title="Go mechanism for goroutine communication">channels</abbr>, and sync primitives enable parallel algorithms in Go with memory safety through communication (<abbr title="Go mechanism for goroutine communication">channels</abbr>) or synchronization (mutexes).
+**Definition:** `iter.Seq` standardizes traversal using `for ... range` over functions.
 
 **Background & Philosophy:**
-Go's concurrency philosophy is deeply rooted in CSP (Communicating Sequential Processes). The famous proverb is: "Do not communicate by sharing memory; instead, share memory by communicating." This encourages developers to pass ownership of data via <abbr title="Go mechanism for goroutine communication">channels</abbr> rather than wrapping every variable in complex mutex locks, drastically reducing the chances of <abbr title="Situation where concurrent processes wait on each other">deadlocks</abbr> and <abbr title="Unpredictable behavior from unsynchronized concurrent access">race conditions</abbr>.
+Unifies iteration. Pulls or pushes values. Hides internal data structure complexity. Maintains readable syntax.
 
 **Use Cases:**
-Essential for web scraping crawlers, concurrent API requests, real-time data ingestion pipelines, and parallelizing CPU-bound algorithms like merge sort or image processing across multiple cores.
+Traverse Trees, Graphs, Linked Lists. Lazy evaluation for massive datasets.
 
 **Memory Mechanics:**
-A <abbr title="Lightweight thread managed by Go runtime">goroutine</abbr> starts with a tiny, 2KB <abbr title="Memory used to execute functions and store local variables.">stack</abbr> that grows dynamically, making it possible to spawn millions of them in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. However, when multiple goroutines access the same memory address simultaneously without synchronization, it causes a "<abbr title="Concurrent access to shared memory without synchronization">data race</abbr>," corrupting memory bytes at the hardware level. Using a <abbr title="Mutual exclusion lock for concurrent safety">`sync.Mutex`</abbr> forces the CPU to issue memory barriers, stalling other threads from reading or writing to that specific <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> address until the lock is released, inherently slowing down execution to ensure safety.
+Loop body passes as `yield` function. Maintains state in closure. Zero heap allocations for traversal. Avoids intermediate slice buffers. Highly memory-efficient.
+
+### Operations & Complexity
+
+| Feature | Go Construct | Complexity | Description |
+|---------|--------------|------------|-------------|
+| Iterator Type | `iter.Seq[V]` | `O(1)` overhead | Single value stream |
+| Key-Value Iterator | `iter.Seq2[K, V]` | `O(1)` overhead | Paired value stream |
+| Traversal | `for v := range seq` | `O(n)` | Linear access |
+
+### Idiomatic Go Implementation
+
+```go
+package main
+
+import (
+	"fmt"
+	"iter"
+)
+
+func Backward[T any](s []T) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for i := len(s) - 1; i >= 0; i-- {
+			if !yield(s[i]) {
+				return
+			}
+		}
+	}
+}
+
+func main() {
+	nums := []int{1, 2, 3, 4, 5}
+	for v := range Backward(nums) {
+		fmt.Print(v, " ")
+	}
+}
+```
+
+### Edge Cases & Pitfalls
+- **Yield Return:** If `yield` returns `false`, iterator must stop. Supports loop `break`.
+- **Panic Recovery:** Closure panics obscure stack traces.
+- **Version:** Requires `go 1.23+`.
+
+## 4.5. Concurrency for Algorithms
+
+**Definition:** Goroutines, channels, mutexes enable parallel execution.
+
+**Background & Philosophy:**
+CSP (Communicating Sequential Processes) basis. "Do not communicate by sharing memory; share memory by communicating." Channels pass ownership. Reduces deadlocks and race conditions.
+
+**Use Cases:**
+Web crawlers. Concurrent API requests. Parallel CPU-bound algorithms (Merge Sort).
+
+**Memory Mechanics:**
+Goroutine allocates 2KB stack. Grows dynamically. Spawns millions in RAM. Unsynchronized shared access causes data race. Corrupts memory. `sync.Mutex` forces memory barriers. Stalls threads. Ensures safety.
 
 ### Operations & Complexity
 
 | Primitive | Overhead | Use Case |
 |-----------|----------|----------|
-| Goroutine | ~2KB <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> | Lightweight concurrency |
-| Channel | Blocking/unblocking | Communication between goroutines |
-| Mutex | Contention cost | Shared mutable state |
-| Atomic | Hardware-level | Counter, flag |
-
-### Pseudocode
-
-```text
-parallelMergeSort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr) / 2
-    spawn sort(left = arr[0:mid])
-    spawn sort(right = arr[mid:])
-    wait for both
-    return merge(left, right)
-
-merge(a, b):
-    result = empty array
-    while a and b not empty:
-        append smaller front element
-    append remaining elements
-    return result
-```
+| Goroutine | ~2KB stack | Lightweight concurrency |
+| Channel | Blocking | Communication |
+| Mutex | Contention | Shared state |
+| Atomic | Hardware | Counter, flag |
 
 ### Idiomatic Go Implementation
-
-Parallel <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr> with goroutines:
 
 ```go
 package main
@@ -302,8 +271,8 @@ func merge(a, b []int) []int {
 }
 
 func pSort(a []int) []int {
-	if len(a) <= 1 {
-		return a
+	if len(a) < 1024 {
+		return sequentialSort(a)
 	}
 	mid := len(a) / 2
 	var l, r []int
@@ -315,54 +284,40 @@ func pSort(a []int) []int {
 	return merge(l, r)
 }
 
+func sequentialSort(a []int) []int {
+    return a 
+}
+
 func main() {
 	fmt.Println(pSort([]int{3, 1, 4, 1, 5, 9, 2, 6}))
 }
 ```
 
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| Need parallelism for CPU-bound tasks | Goroutine overhead > speedup (small n) |
-| I/O-bound concurrency | Shared state without synchronization |
-| Natural data parallelism | Tasks with many dependencies |
-
-### Edge Cases & Pitfalls
-- **Case <abbr title="Concurrent access to shared memory without synchronization">data race</abbr>:** `go test -race` is mandatory for concurrent code; the race detector slows execution by 10-20x but is crucial for <abbr title="The process of finding and resolving defects within a computer program.">debugging</abbr>.
-- **Case <abbr title="Lightweight thread managed by Go runtime">goroutine</abbr> leak:** A goroutine blocked on a <abbr title="Go mechanism for goroutine communication">channel</abbr> without a receiver causes a leak.
-- **Case closing <abbr title="Go mechanism for goroutine communication">channel</abbr>:** Only the sender should close a channel; a receiver closing it will cause a panic.
-- **Case WaitGroup reuse:** Reusing a `WaitGroup` without ensuring `Wait` has completed can cause a <abbr title="Unpredictable behavior from unsynchronized concurrent access">race condition</abbr>.
-- **Case unbounded goroutines:** The `pSort` example spawns 2 goroutines per recursive call, leading to O(n) goroutines for large inputs. Production code should use a threshold (e.g., `len(a) < 4096`) below which it falls back to sequential `sort.Slice`, or use a bounded worker pool with `semaphore.Weighted`.
-
 ### Anti-Patterns
+- **Escape Analysis Ignorance:** Returning local pointer forces heap allocation. Use `go build -gcflags="-m"`. Keep hot-path data on stack.
+- **Slice Header Copy:** `b := a` copies header. Mutating `b` alters `a`. Use `copy()` for isolation.
+- **Type Assertion Without Comma-Ok:** `x.(int)` panics on mismatch.
+- **Unbounded Goroutines:** `go func()` in tight loop exhausts memory. Use `semaphore.Weighted`.
+- **Unsynchronized Maps:** Concurrent map writes trigger fatal panic. Run `go test -race`.
 
-- **Ignoring Escape Analysis:** Returning a pointer to a local variable forces heap allocation in Go. Use `go build -gcflags="-m"` to inspect escapes and keep hot-path data on the stack.
-- **Slice Header Value Copy:** Assigning a slice to another variable (`b := a`) copies only the 24-byte header; both share the same backing array. Mutating via `b` affects `a`. Copy explicitly with `copy()` when independence is needed.
-- **Nil Interface != Nil Concrete:** A `*MyStruct` that is `nil` wrapped in an interface is NOT `nil`. Always check `if err != nil` on the interface, not the concrete type.
-- **Type Assertion Without Comma-Ok:** Writing `x.(int)` without the `v, ok := x.(int)` pattern causes a panic on mismatch. Always use the two-value form unless a panic is intentional.
-- **Unbounded Goroutine Spawns:** Launching `go func()` in a loop without a bounding mechanism. Use `semaphore.Weighted` or a buffered channel as a worker pool to limit concurrency.
-- **Map Concurrency Without Sync:** Reading and writing a `map` from multiple goroutines without `sync.Mutex` or `sync.Map` causes a fatal panic in Go. The race detector catches this, but only if you run it.
-
-## 4.5. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## 4.6. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| <abbr title="A variable that stores a memory address.">Pointer</abbr> | `*T` | <code>O(1)</code> | . | No arithmetic |
-| Slice | `[]T` | <code>O(1)</code> access | . | Shared backing <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr> |
-| Map | `map[K]V` | <code>O(1)</code> avg | . | Not ordered |
-| Generic | `func f[T comparable]` | Compile time | . | Monomorphization |
-| Goroutine | `go func()` | <code>O(1)</code> start | ~2KB <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> | Concurrent execution |
+| Pointer | `*T` | `O(1)` | . | No arithmetic |
+| Slice | `[]T` | `O(1)` access | . | Shared backing array |
+| Map | `map[K]V` | `O(1)` avg | . | Unordered storage |
+| Iterator | `iter.Seq[T]` | `O(1)` overhead | `O(1)` | Traversal (1.23+) |
+| Generic | `[T any]` | Compile time | . | Monomorphization |
+| Goroutine | `go func()` | `O(1)` start | ~2KB | Concurrent execution |
 | Channel | `chan T` | Blocking | varies | CSP communication |
-| Mutex | `sync.Mutex` | Contention | Lock/Unlock |
-| Atomic | `sync/atomic` | Hardware | For int, <abbr title="A variable that stores a memory address.">pointer</abbr> |
+| Mutex | `sync.Mutex` | Contention | . | Shared state lock |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 4:</strong> This chapter covers Go's memory model, type system with generics, functional programming patterns with slices, and concurrency primitives for parallel algorithms. It explains how <abbr title="A variable that stores a memory address.">pointers</abbr>, slices, goroutines, channels, and mutexes enable efficient and safe algorithm implementations in Go.
+<strong>Summary Chapter 4:</strong> Go provides safe pointers, dynamic slices, Generics, Iterators, and CSP concurrency. Avoid hidden allocations. Respect hardware limits.
 {{% /alert %}}
 
 ## See Also
-
 - [Chapter 2: Complexity Analysis](/docs/part-i/chapter-2/)
 - [Chapter 3: Introduction to Data Structures and Algorithms in Go](/docs/part-i/chapter-3/)
 - [Chapter 6: Elementary Data Structures](/docs/part-ii/chapter-6/)

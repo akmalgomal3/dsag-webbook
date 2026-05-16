@@ -10,11 +10,11 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The greatest danger in science is not being wrong, but being trivial.</em>" — Stephen Hawking</strong>
+<strong>"<em>The greatest danger in science is not being wrong, but being trivial.</em>" : Stephen Hawking</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Part III dives into hierarchical and relational data structures. It covers the generic implementations of <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary Search</abbr> Trees, Self-Balancing Trees, and Heaps, before laying the groundwork for representing networks using robust adjacency maps.
+Part III details hierarchical and relational data structures. Code implements generic <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary Search</abbr> Trees, Self-Balancing Trees, and Heaps. Structures use adjacency maps for network representation.
 {{% /alert %}}
 
 <center>

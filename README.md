@@ -1,4 +1,4 @@
-# DSAG — Data Structures and Algorithms in Go
+# DSAG: Data Structures and Algorithms in Go
 
 [![Chapters](https://img.shields.io/badge/Chapters-60-blue)](./)
 [![Parts](https://img.shields.io/badge/Parts-12-blue)](./)
@@ -6,26 +6,26 @@
 [![Go](https://img.shields.io/badge/Go-1.21%2B-00ADD8)](https://golang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-A comprehensive, practitioner-focused book on data structures and algorithms, implemented idiomatically in Go. Built as a Hugo static site.
+Technical book. Implement data structures. Use idiomatic Go. Hugo static site.
 
 ---
 
 ## Overview
 
-**DSAG** (Data Structures and Algorithms in Go) is a 60-chapter technical book designed for software engineers who want to:
+**DSAG**: 60-chapter technical book. Target software engineers. Goals:
 
-- Understand how data structures and algorithms work under the hood
-- Implement them idiomatically in Go
-- Know **when** to use (and when **not** to use) specific structures and algorithms
-- Recognize edge cases, anti-patterns, and Go-specific pitfalls
+- Understand internals. Core mechanics.
+- Implement logic. Idiomatic Go.
+- Select structures. Know trade-offs.
+- Identify edge cases. Avoid anti-patterns.
 
-Each chapter is written for a 7–10 minute reading time, with practical code examples, decision matrices, Big-O tables, and references to Go's standard library.
+Format: 7-10 minute read. Practical code. Decision matrices. Big-O tables.
 
 ---
 
 ## Book Structure
 
-The book is organized into **12 parts** and **60 chapters**:
+12 parts. 60 chapters.
 
 | Part | Title | Chapters |
 |------|-------|----------|
@@ -44,23 +44,23 @@ The book is organized into **12 parts** and **60 chapters**:
 
 ### Chapter Topics
 
-- **Fundamentals:** Time/space complexity, Go basics, benchmarking
-- **Data Structures:** Arrays, linked lists, stacks, queues, hash tables, BST, heaps, tries, segment trees, B-trees, skip lists, Bloom filters
-- **Graphs:** Representations, BFS, DFS, Dijkstra, Bellman-Ford, Floyd-Warshall, MST, max flow, topological sort, SCC, A*, bridge-finding
-- **Sorting & Searching:** Quicksort, mergesort, heapsort, counting/radix/bucket sort, binary search, interpolation search
-- **Paradigms:** Dynamic programming, greedy algorithms, backtracking, divide & conquer
-- **Advanced:** Parallel algorithms, cryptography, blockchain, bit manipulation, persistent structures, suffix arrays
-- **History & Philosophy:** Origins of algorithms, Turing, complexity theory, modern algorithmic thinking
+- **Fundamentals:** Complexity. Go basics. Benchmarking.
+- **Data Structures:** Arrays. Lists. Trees. Filters.
+- **Graphs:** Representations. Search. Pathfinding. Max flow.
+- **Sorting & Searching:** Quicksort. Mergesort. Binary search.
+- **Paradigms:** Dynamic programming. Greedy. Backtracking. Divide & conquer.
+- **Advanced:** Parallel. Cryptography. Blockchain. Bits.
+- **History:** Origins. Turing. Complexity.
 
 ---
 
 ## Philosophy
 
-- **Brevity over verbosity** — No fluff, no unnecessary proofs
-- **Intuition over formalism** — Understand why, not just how
-- **Go idiomatic** — No pseudocode, no language mixing
-- **Practical** — Decision matrices for real-world choices
-- **Honest** — Edge cases and when NOT to use something
+- **Brevity**: No fluff. No proofs.
+- **Intuition**: Focus logic. Deep understanding.
+- **Go Idiomatic**: No pseudocode. Pure Go.
+- **Practical**: Decision matrices. Real-world use.
+- **Honest**: Edge cases. Safety limits.
 
 ---
 
@@ -85,7 +85,7 @@ hugo server --port 1313
 hugo --quiet
 ```
 
-The site will be available at `http://localhost:1313`.
+Access site: `http://localhost:1313`.
 
 ---
 
@@ -114,29 +114,29 @@ dsag/
 
 ## Contributing
 
-This book is developed with AI assistance. For development guidelines, shortcode usage, and chapter templates, see [AGENTS.md](AGENTS.md).
+AI assisted development. Read [AGENTS.md](AGENTS.md). Follow guidelines.
 
-### Key Guidelines
+### Guidelines
 
-- Follow the chapter template in `AGENTS.md`
-- Include decision matrices and Big-O tables
-- Write idiomatic Go code (max 40 lines per block)
-- Include edge cases and anti-patterns
-- Ensure `hugo --quiet` builds without errors
+- Use template.
+- Include matrices. Detail Big-O.
+- Write Go. Max 40 lines.
+- Document edge cases. List anti-patterns.
+- Verify build. Run `hugo --quiet`.
 
 ---
 
 ## License
 
-This project is open source. See the repository for license details.
+Open source. Check license file.
 
 ---
 
 ## Acknowledgments
 
-- Built with [Hugo](https://gohugo.io/)
-- Go standard library documentation
-- Inspired by *Introduction to Algorithms* (CLRS) and *The Algorithm Design Manual*
+- Built with [Hugo](https://gohugo.io/).
+- Go standard library docs.
+- Inspired by CLRS and Algorithm Design Manual.
 
 ---
 

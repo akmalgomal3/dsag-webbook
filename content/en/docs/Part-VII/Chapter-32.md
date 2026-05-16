@@ -15,21 +15,21 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 33 covers linear programming: fundamental formulation, the Simplex algorithm, and implementations in Go leveraging both iterative methods and external solvers.
+Chapter 32 covers linear programming: fundamental formulation, the Simplex algorithm, and implementations in Go using iterative methods and external solvers.
 {{% /alert %}}
 
-## 33.1. Linear Programming Formulation
+## 32.1. Linear Programming Formulation
 
-**Definition:** <abbr title="Optimizing a linear objective function under linear equality and inequality constraints.">Linear Programming</abbr> (LP) aims to maximize or minimize a linear <abbr title="The function to be maximized or minimized in an optimization problem.">objective function</abbr> subject strictly to linear equality and inequality <abbr title="Conditions or restrictions in an optimization problem that define the solution space.">constraints</abbr>.
+**Definition:** <abbr title="Optimizing a linear objective function under linear equality and inequality constraints.">Linear Programming</abbr> (LP) optimizes linear <abbr title="The function to be maximized or minimized in an optimization problem.">objective function</abbr>. Subject to linear <abbr title="Conditions or restrictions in an optimization problem that define the solution space.">constraints</abbr>.
 
-**Background & Philosophy:**
-The philosophy is geometric optimization. Linear constraints form a convex <abbr title="A plane figure bounded by straight line segments">polygon</abbr> (or polytope in N-dimensions) representing the <abbr title="The set of all valid solutions satisfying all constraints in an optimization problem.">"feasible region"</abbr>. The fundamental theorem of LP states that the optimal solution *always* lies on a vertex (corner) of this polytope. Because of this mathematical certainty, solvers do not need to check infinite interior points; they only need to "walk" along the edges from corner to corner until they find the peak.
+**Mechanics:**
+Geometric optimization follows linear constraints. Constraints form convex polytope. <abbr title="The set of all valid solutions satisfying all constraints in an optimization problem.">"Feasible region"</abbr> represents valid space. Optimal solution resides on vertex. Solver walks edges to find peak.
 
 **Use Cases:**
-Airline crew scheduling, financial portfolio optimization, manufacturing supply chains, and routing massive logistical fleets.
+Airline scheduling. Portfolio optimization. Supply chains. Logistics routing.
 
 **Memory Mechanics:**
-LP solvers (like Simplex) use a tableau (a 2D matrix) to represent equations. Modifying this tableau involves Gaussian elimination, scanning and updating entire rows. Because the matrix elements are <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr>, the CPU processes them efficiently using SIMD instructions. However, in enormous real-world models with millions of variables, these matrices are hyper-sparse (mostly zeros). Efficient LP solvers discard the 2D array format entirely, using specialized sparse memory maps to prevent exhausting system <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
+Simplex uses tableau matrix. Row updates use Gaussian elimination. SIMD instructions optimize <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory. Large models use sparse memory maps. Prevents <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> exhaustion.
 
 Standard form:
 ```
@@ -41,9 +41,9 @@ subject to: Ax ≤ b, x ≥ 0
 
 | Algorithm | Worst Case | Average | Description |
 |-----------|------------|---------|------------|
-| <abbr title="An algorithm for solving linear programming problems by traversing polytope vertices.">Simplex</abbr> | <code>O(2^n)</code> | <code>O(n³)</code> | Pivot-based <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> traversal |
-| Interior Point | <code>O(n³·⁵L)</code> | <code>O(n³)</code> | Strictly polynomial |
-| Dual Simplex | <code>O(2^n)</code> | <code>O(n³)</code> | Starts from a dual feasible state |
+| <abbr title="An algorithm for solving linear programming problems by traversing polytope vertices.">Simplex</abbr> | <code>O(2^n)</code> | <code>O(n³)</code> | Pivot-based traversal |
+| Interior Point | <code>O(n³·⁵L)</code> | <code>O(n³)</code> | Polynomial time |
+| Dual Simplex | <code>O(2^n)</code> | <code>O(n³)</code> | Starts dual feasible |
 
 ### Pseudocode
 
@@ -64,7 +64,7 @@ Solve2DLP(c1, c2, constraints):
 
 ### Idiomatic Go Implementation
 
-Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> does not provide a native LP solver. Use C bindings or write a highly simplified implementation for trivial cases.
+Go lacks native LP solver. Use C bindings or simplified methods.
 
 ```go
 package main
@@ -74,11 +74,9 @@ import (
     "math"
 )
 
-// Simplified Simplex for 2 variables (graphical corner-point method)
 func solve2DLP(c1, c2 float64, constraints [][3]float64) (float64, float64, float64) {
     bestVal := math.Inf(-1)
     var bestX, bestY float64
-    // Find corner points from constraint intersections
     n := len(constraints)
     for i := 0; i < n; i++ {
         for j := i + 1; j < n; j++ {
@@ -113,12 +111,11 @@ func solve2DLP(c1, c2 float64, constraints [][3]float64) (float64, float64, floa
 }
 
 func main() {
-    // max 3x + 2y subject to x + y <= 4, x + 2y <= 5, x,y >= 0
     constraints := [][3]float64{
         {1, 1, 4},
         {1, 2, 5},
-        {-1, 0, 0}, // x >= 0  (encoded as -1*x + 0*y <= 0)
-        {0, -1, 0}, // y >= 0  (encoded as 0*x + -1*y <= 0)
+        {-1, 0, 0},
+        {0, -1, 0},
     }
     x, y, val := solve2DLP(3, 2, constraints)
     fmt.Printf("x=%.2f y=%.2f val=%.2f\n", x, y, val)
@@ -126,32 +123,32 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Writing a full Simplex implementation in Go from scratch is verbose and error-prone. For production systems, leverage bindings to GLPK, lp_solve, or Go libraries such as `github.com/codered/lp`.
+Manual Simplex implementation in Go is error-prone. Use GLPK, lp_solve, or `github.com/codered/lp` for production.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use LP When... | Avoid If... |
 |-------------------|------------------|
-| Both the objective and constraints are strictly linear | The objective is non-linear (employ NLP instead) |
-| Variables represent continuous domains | Variables demand integer values (employ MILP) |
+| Linear objective and constraints | Objective non-linear. Use NLP. |
+| Continuous variable domains | Variables demand integers. Use MILP. |
 
 ### Edge Cases & Pitfalls
 
-- **Infeasible problem:** Constraints blatantly contradict each other. Verify using phase-I of the Simplex method.
-- **Unbounded problem:** The objective function can grow to infinity. Verify the feasible region's boundaries.
-- **Degeneracy:** Simplex can fall into infinite cycling. Counteract this by implementing Bland's rule.
+- **Infeasible problem:** Constraints contradict. Phase-I Simplex detects.
+- **Unbounded problem:** Objective grows to infinity. Check feasible boundaries.
+- **Degeneracy:** Simplex cycles infinitely. Use Bland's rule.
 
-## 33.2. Integer Linear Programming
+## 32.2. Integer Linear Programming
 
-**Definition:** Integer Linear Programming (ILP) strictly mandates that some or all variables represent integer values. Branch and Bound stands as the industry-standard resolution method.
+**Definition:** Variables must be integers. Branch and Bound is industry standard.
 
 ### Operations & Complexity
 
 | Algorithm | Worst Case | Description |
 |-----------|------------|------------|
 | Branch and Bound | <code>O(2^n)</code> | Exponential exploration |
-| Cutting Plane | <code>O(2^n)</code> | Polynomial solely for the LP relaxation |
+| Cutting Plane | <code>O(2^n)</code> | Polynomial for LP relaxation |
 
 ### Pseudocode
 
@@ -172,11 +169,8 @@ KnapsackILP(weights, values, capacity):
 ```go
 package main
 
-import (
-    "fmt"
-)
+import "fmt"
 
-// 0/1 Knapsack treated as an ILP via DP (pseudo-polynomial time)
 func knapsackILP(weights, values []int, capacity int) int {
     n := len(weights)
     dp := make([][]int, n+1)
@@ -194,7 +188,6 @@ func knapsackILP(weights, values []int, capacity int) int {
     return dp[n][capacity]
 }
 
-
 func main() {
     weights := []int{2, 3, 4, 5}
     values := []int{3, 4, 5, 6}
@@ -203,39 +196,34 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-0/1 Knapsack is inherently NP-hard, yet resolvable within pseudo-polynomial <code>O(nW)</code> bounds. Branch and Bound serves as a much more universally applicable approach for standard ILP.
+0/1 Knapsack is NP-hard. Resolvable in pseudo-polynomial <code>O(nW)</code> time. Branch and Bound applies universally to ILP.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use DP When... | Use Branch & Bound When... |
 |-------------------|-------------------------------|
-| Solving Knapsack with a reasonably small W | Facing a generalized ILP problem |
-| Pseudo-polynomial performance is acceptable | An exact, globally optimal solution is absolutely required |
+| Knapsack with small capacity | Generalized ILP problem |
+| Pseudo-polynomial time acceptable | Global optimality required |
 
-### Edge Cases & Pitfalls
+## 32.3. Duality and Sensitivity
 
-- **Integer overflow:** The required DP table can expand massively. Utilize heavy space optimization (e.g., 1D arrays).
-- **Feasibility:** Consistently verify if any mathematical solution actively satisfies the defined constraints.
-
-## 33.3. Duality and Sensitivity
-
-**Definition:** Every single LP (the primal) possesses an associated dual. Strong duality states: the optimal primal equals the optimal dual, provided a feasible solution exists.
+**Definition:** Every LP (primal) has associated dual. Optimal primal equals optimal dual.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Dual formulation | <code>O(mn)</code> | Structurally converting constraints |
-| Shadow price | <code>O(1)</code> | Readily available from the optimal tableau |
-| Sensitivity range | <code>O(n)</code> | Calculated per individual variable |
+| Dual formulation | <code>O(mn)</code> | Convert constraints |
+| Shadow price | <code>O(1)</code> | Read from optimal tableau |
+| Sensitivity range | <code>O(n)</code> | Calculated per variable |
 
 ### Pseudocode
 
 ```text
 FormulateDual(A, b, c):
-    m = number of rows in A
-    n = number of cols in A
+    m = rows in A
+    n = cols in A
     dual objective: minimize b^T y
     dual constraints: A^T y >= c, y >= 0
     return dual formulation
@@ -248,7 +236,6 @@ package main
 
 import "fmt"
 
-// Dual formulation of max c^T x subject to Ax <= b is min b^T y subject to A^T y >= c, y >= 0
 func formulateDual(A [][]float64, b, c []float64) {
     m, n := len(A), len(A[0])
     fmt.Println("Dual variables:", m)
@@ -265,39 +252,33 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-The Dual LP proves highly beneficial for intensive sensitivity analysis and driving primal-dual algorithms. Within Go, calculating the dual formulation manually is rarely necessary; external solvers naturally provide this data.
+Dual LP aids sensitivity analysis. Primal-dual algorithms use it. Production solvers provide dual data automatically.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Dual When... | Avoid If... |
 |---------------------|------------------|
-| Conducting deep sensitivity analysis | The primal solution independently suffices |
-| The primal model is infeasible | Exploring the dual yields no actionable benefit |
-
-### Edge Cases & Pitfalls
-
-- **Weak duality:** Any feasible dual <abbr title="The data associated with a key in a key-value pair.">value</abbr> definitively bounds the primal. The gap fails to reach zero solely if the system is infeasible or unbounded.
-- **Complementary slackness:** Strictly utilize this to verify the ultimate optimality.
+| Sensitivity analysis required | Primal solution suffices |
+| Primal model infeasible | Dual yields no insight |
 
 ### Anti-Patterns
 
-- **Hand-rolling Simplex in production:** Go has no native LP solver; a manual Simplex is verbose and prone to numerical instability. Use external solvers (GLPK, lp_solve) or Go bindings for production workloads.
-- **Floating-point DP for integer knapsack:** Using `float64` in DP tables for 0/1 Knapsack introduces rounding errors that yield non-optimal selections. Use `int` DP tables for integer-valued problems.
-- **Skipping LP relaxation feasibility checks:** Branch and Bound on infeasible regions wastes exponential time. Always solve the LP relaxation first and prune branches whose bound is worse than the current best integer solution.
+- **Hand-rolling Simplex:** Manual implementations unstable. Use GLPK or lp_solve.
+- **Floating-point DP:** `float64` in knapsack DP causes rounding errors. Use `int`.
+- **Skip relaxation checks:** Branch and Bound on infeasible regions wastes time. Solve LP relaxation first. Prune branches early.
 
-## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| LP Solver | External / custom | <code>O(n^3)</code> avg | varies | Continuous variable optimization |
-| Knapsack DP | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | Integer-based programming |
-| Constraints | `[]float64` | . | . | Defining mathematical bounds |
-| Objective | `[]float64` | . | . | Establishing coefficients |
-| Dual | Formulation | <code>O(mn)</code> | varies | Executing sensitivity analysis |
+| LP Solver | External | <code>O(n^3)</code> avg | varies | Continuous optimization |
+| Knapsack DP | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | Integer programming |
+| Constraints | `[]float64` | . | . | Mathematical bounds |
+| Dual | Formulation | <code>O(mn)</code> | varies | Sensitivity analysis |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 32:</strong> This chapter discusses linear programming: grasping standard formulations, applying the Simplex algorithm conceptually for 2 variables, tackling integer linear programming through <abbr title="Finding optimal solutions by pruning search trees">branch and bound</abbr> (and DP for knapsack variants), and examining duality for sensitivity analysis. Strongly prefer external solvers for production environments; reserve manual implementations purely for deep educational exercises.
+<strong>Summary Chapter 32:</strong> Linear programming optimizes linear objectives under constraints. Simplex traverses polytope vertices. ILP uses branch and bound. Duality provides sensitivity analysis. Use external solvers for production.
 {{% /alert %}}
 
 ## See Also

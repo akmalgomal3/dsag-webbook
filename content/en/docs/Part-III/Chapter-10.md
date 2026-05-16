@@ -15,47 +15,37 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 10 covers heaps and priority queues: tree-based structures for efficient access to the maximum or minimum element. Essential for scheduling, graph algorithms, and top-k problems.
+Chapter 10 covers heaps and priority queues. Use these for scheduling, graph algorithms, and top-k problems.
 {{% /alert %}}
 
-## 10.1. <abbr title="A heap data structure implemented using a binary tree">Binary Heap</abbr>
+## 10.1. Binary Heap
 
-**Definition:** A <abbr title="A heap data structure implemented using a binary tree">binary heap</abbr> is a complete <abbr title="A tree where each node has at most two children">binary tree</abbr> where each parent is greater than (<abbr title="A heap where each parent is greater than or equal to its children">max-heap</abbr>) or less than (<abbr title="A heap where each parent is less than or equal to its children">min-heap</abbr>) its children. It supports extract-max and insert in <code>O(log n)</code>.
+**Definition:** Binary heap is a complete binary tree. Parent is always greater than (max-heap) or less than (min-heap) its children.
 
-**Background & Philosophy:**
-While standard binary trees are optimized for searching any element in <code>O(log n)</code> time, a heap sacrifices full searchability to optimize retrieving the single most important element (the min or max). The philosophy is "partial ordering". By only enforcing ordering between parent and child (and not between siblings), the heap drastically reduces the number of operations needed to insert or extract data compared to a fully sorted array or a balanced BST.
+**Mechanics:**
+Binary heap optimizes extreme element retrieval. Sacrifices full searchability for fast min/max access. Partial ordering reduces operations compared to full sorting.
 
-**Use Cases:**
-Essential for implementing Priority Queues in operating system task schedulers, finding the shortest path in graph algorithms like Dijkstra's, and solving "Top K" streaming problems (e.g., maintaining the leaderboard of the top 100 players in real-time).
-
-**Memory Mechanics:**
-The key engineering advantage of a <abbr title="A heap data structure implemented using a binary tree">binary heap</abbr> is its memory mapping. Although conceptually a tree, a heap is almost universally implemented using a flat, <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array (or slice in Go). Mathematical formulas (`2*i + 1` for left child, `2*i + 2` for right child, `(i-1)/2` for parent) replace physical <abbr title="A variable that stores a memory address.">pointers</abbr>. This eliminates the memory overhead of pointers entirely and exploits <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> to the maximum. Traversing a heap means moving sequentially through <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, resulting in near-perfect <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> hit rates.
+Heap uses flat array mapping. Indices compute parent and child locations without pointers. Left child is `2*i + 1`. Right child is `2*i + 2`. Parent is `(i-1)/2`. Array layout ensures high cache hit rates.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
 | Insert | <code>O(log n)</code> | Add at end, bubble up |
-| Extract Max/Min | <code>O(log n)</code> | Remove root, heapify down |
-| Peek | <code>O(1)</code> | View root without removal |
+| Extract | <code>O(log n)</code> | Remove root, heapify down |
+| Peek | <code>O(1)</code> | View root |
 | Build Heap | <code>O(n)</code> | Bottom-up heapify |
 
 ## 10.2. Priority Queue
 
-**Definition:** A <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr> is an abstract data type where each element has a priority. The highest-priority element is served first. A heap is the canonical implementation.
+**Definition:** Priority queue serves highest-priority elements first. Heap is the standard implementation.
 
-**Background & Philosophy:**
-A standard queue treats all elements equally (<abbr title="First In, First Out queue discipline">FIFO</abbr>). A priority queue reflects the real world: some tasks are more important than others and must preempt the queue. The philosophy is "fairness based on weight, not arrival time".
+**Mechanics:**
+Priority queue prioritizes by weight rather than arrival time. Essential for network routing and task scheduling.
 
-**Use Cases:**
-Used in routing network packets where VoIP traffic takes priority over file downloads, event-driven simulations, and Huffman coding for data compression.
+Go `container/heap` applies methods to a slice. `Push` appends to slice and bubbles up. `Pop` swaps with end and sinks down. Memory writes stay within contiguous array.
 
-**Memory Mechanics:**
-In Go, `container/heap` is not a data structure itself, but rather a set of interface methods applied to your own slice. When you call `heap.Push()`, Go appends the item to your underlying slice (potentially triggering an <code>O(n)</code> memory reallocation if capacity is exceeded) and then performs memory swaps (exchanging values at different array indices) to "bubble up" the value. These swaps are purely <code>O(1)</code> memory writes within the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array.
-
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
-
-Go's `container/heap` provides a heap interface. Wrap it with generics for type safety.
+### Idiomatic Go Implementation
 
 ```go
 package main
@@ -100,32 +90,32 @@ func main() {
 
 | Use Heap When... | Avoid If... |
 |------------------|-------------|
-| Need frequent max/min access | Only sequential access needed |
-| Implementing Dijkstra's algorithm | Data is already sorted |
-| Top-k problems | Random access required |
+| Frequent min/max access needed | Random access required |
+| Implementing Dijkstra | Data is already sorted |
+| Top-k problems | Only sequential access needed |
 
 ### Edge Cases & Pitfalls
 
-- **Stability:** Standard heaps are not stable; ties broken arbitrarily.
-- **Update priority:** Decreasing a key requires bubble-up; not directly supported by `container/heap`.
-- **Memory layout:** Heap as array has excellent cache locality compared to tree pointers.
+- **Stability:** Heaps do not preserve relative order of equal elements.
+- **Priority updates:** `container/heap` does not natively support `DecreaseKey`.
+- **Memory:** Array-based heaps outperform pointer-based trees in cache efficiency.
 
 ### Anti-Patterns
 
-- **Sorted slice as a priority queue:** Calling `sort.Sort` on every insert or extract is O(n log n) instead of O(log n) per heap operation. Always implement `heap.Interface`.
-- **Forgetting `heap.Init` after bulk mutations:** Directly appending elements to the underlying slice and calling `Push`/`Pop` without `heap.Init` leaves the heap invariant broken. After batch changes, call `heap.Init`.
-- **Stale priority updates:** Decreasing a key requires a bubble-up, but `container/heap` has no `DecreaseKey`. The idiomatic workaround is lazy deletion: push a new entry and skip stale ones on `Pop`.
+- **Frequent Sorting:** Calling `sort.Sort` on every insert is O(n log n). Use heap for O(log n).
+- **Missing Init:** Appending to slice without `heap.Init` breaks invariants. Always initialize.
+- **Lazy Delete:** `container/heap` lacks priority updates. Push new values and skip stale entries during `Pop`.
 
 ## 10.4. Quick Reference
 
 | Structure | Go Type | Insert | Extract | Peek | Use Case |
 |-----------|---------|--------|---------|------|----------|
-| Min Heap | `[]int` + interface | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Dijkstra, scheduling |
-| Max Heap | `[]int` + interface | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Median finding |
-| Priority Queue | `container/heap` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Task queues |
+| Min Heap | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Dijkstra |
+| Max Heap | `[]int` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Median |
+| Priority Queue | `heap.Interface` | <code>O(log n)</code> | <code>O(log n)</code> | <code>O(1)</code> | Task queue |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 10:</strong> Heaps provide <code>O(log n)</code> insertion and extraction of extreme elements, making them ideal for priority queues and graph algorithms. In Go, use <code>container/heap</code> with a generic wrapper for type-safe priority queues. Remember that heaps excel at extreme-value access, not general searching.
+<strong>Summary:</strong> Heaps allow fast extreme-value access. Use for priority queues and graph algorithms. Not for general searching.
 {{% /alert %}}
 
 ## See Also

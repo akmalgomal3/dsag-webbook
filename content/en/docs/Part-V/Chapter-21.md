@@ -15,87 +15,98 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 21 covers searching algorithms: <abbr title="A search algorithm checking each element sequentially.">linear search</abbr>, <abbr title="A search algorithm repeatedly dividing a sorted array in half.">binary search</abbr>, and <abbr title="A search algorithm using linear interpolation to estimate position.">interpolation search</abbr>. Learn when each algorithm is appropriate and how to implement them idiomatically in Go using the standard library.
+Chapter 21 covers searching. Topics: Linear, Binary, Interpolation Search. Implements via Generics (`cmp.Ordered`) and `slices` package.
 {{% /alert %}}
 
 ## 21.1. Linear Search
 
-**Definition:** Linear search sequentially checks each element until the target is found or the end is reached. It works on any data structure supporting traversal.
+**Definition:** Sequentially checks each element until target found or end reached.
 
 **Background & Philosophy:**
-The philosophy is exhaustive <abbr title="A straightforward approach trying all possible solutions">brute-force</abbr> checking. It assumes absolutely no structure or order in the data, making it the most resilient but least efficient searching method.
+Philosophy: exhaustive brute-force. Assumes no structure. Resilient but inefficient.
 
 **Use Cases:**
-Used when searching through unindexed data, short arrays, or streams of data where sorting is impossible or more expensive than a single linear scan.
+Unindexed data. Short arrays. Unsortable data streams.
 
 **Memory Mechanics:**
-Linear search exhibits excellent <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> prefetcher predicts the access pattern, loading <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory blocks into the L1 cache ahead of the CPU. Thus, for very small arrays (e.g., `n < 64`), Linear Search is often faster than Binary Search due to zero branch misprediction overhead.
+Excellent spatial locality. CPU cache prefetcher predicts sequential access. Loads contiguous memory blocks to L1 cache. For small arrays (`n < 64`), Linear Search beats Binary Search due to zero branch misprediction.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
-| Search | <code>O(n)</code> | Scan every element |
-| Best case | <code>O(1)</code> | Target at first position |
-| Space | <code>O(1)</code> | No extra memory |
+| Search | `O(n)` | Scan every element |
+| Best case | `O(1)` | Target at first position |
+| Space | `O(1)` | No extra memory |
 
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+### Idiomatic Go 1.21+ Generic Implementation
 
-Use a simple loop. For slices, the built-in approach is often sufficient.
-
-```go
-package main
-
-import "fmt"
-
-func linearSearch(arr []int, target int) int {
-	for i, v := range arr {
-		if v == target { return i }
-	}
-	return -1
-}
-
-func main() {
-	arr := []int{5, 2, 8, 1, 9, 3}
-	fmt.Println(linearSearch(arr, 8)) // 2
-	fmt.Println(linearSearch(arr, 7)) // -1
-}
-```
-
-## 21.2. Binary Search
-
-**Definition:** Binary search repeatedly divides a sorted array in half, eliminating half of the remaining elements with each comparison. It requires the data to be sorted.
-
-**Background & Philosophy:**
-The philosophy is elimination. By demanding that the input is sorted, Binary Search safely eliminates half of the remaining search space with every comparison, reducing a million elements to a mere 20 comparisons.
-
-**Use Cases:**
-The absolute standard for querying ordered data, finding elements in B-Trees (databases), and resolving numerical ranges in graphics and geometry.
-
-**Memory Mechanics:**
-Binary Search jumps across the array. The first jump is `n/2`, the next is `n/4`, etc. These large jumps easily break out of the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> line, causing repeated <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. This means Binary Search's performance is bottlenecked by <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> latency rather than CPU speed. Despite this, its <code>O(log n)</code> algorithmic advantage overwhelmingly dominates for large datasets.
-
-### Operations & Complexity
-
-| Operation | Complexity | Description |
-|-----------|------------|-------------|
-| Search | <code>O(log n)</code> | Halve search space each step |
-| Precondition | Sorted data | Must sort first if unsorted |
-| Space | <code>O(1)</code> | Iterative version |
-
-### Idiomatic Go Implementation
-
-Use `sort.Search` from the standard library for production code.
+Use `slices.Contains` or `slices.Index`.
 
 ```go
 package main
 
 import (
 	"fmt"
-	"sort"
+	"slices"
 )
 
-func binarySearch(arr []int, target int) int {
+func linearSearch[T comparable](arr []T, target T) int {
+	for i, v := range arr {
+		if v == target {
+			return i
+		}
+	}
+	return -1
+}
+
+func main() {
+	arr := []string{"Go", "Rust", "C++", "Zig"}
+	
+	if slices.Contains(arr, "Rust") {
+		fmt.Println("Found Rust!")
+	}
+
+	idx := slices.Index(arr, "C++")
+	fmt.Println("Index:", idx)
+}
+```
+
+## 21.2. Binary Search
+
+**Definition:** Repeatedly divides sorted array in half. Eliminates half remaining elements per comparison. Requires sorted data.
+
+**Background & Philosophy:**
+Philosophy: elimination. Safely discards half the search space per check. Reduces million elements to 20 comparisons.
+
+**Use Cases:**
+Querying ordered data. B-Trees. Resolving numerical ranges.
+
+**Memory Mechanics:**
+Jumps across array (`n/2`, `n/4`). Breaks CPU cache line. Causes repeated cache misses. RAM latency bottlenecks performance on massive datasets. Logarithmic algorithmic advantage still dominates scales.
+
+### Operations & Complexity
+
+| Operation | Complexity | Description |
+|-----------|------------|-------------|
+| Search | `O(log n)` | Halve search space |
+| Precondition | Sorted data | Sort first if unsorted |
+| Space | `O(1)` | Iterative version |
+
+### Idiomatic Go 1.21+ Generic Implementation
+
+Use `slices.BinarySearch`.
+
+```go
+package main
+
+import (
+	"cmp"
+	"fmt"
+	"slices"
+)
+
+func binarySearch[T cmp.Ordered](arr []T, target T) int {
 	left, right := 0, len(arr)-1
 	for left <= right {
 		mid := left + (right-left)/2
@@ -112,50 +123,36 @@ func binarySearch(arr []int, target int) int {
 
 func main() {
 	arr := []int{1, 3, 5, 7, 9, 11, 13}
-	fmt.Println(binarySearch(arr, 7)) // 3
 	
-	// Idiomatic: use sort.Search
-	idx := sort.Search(len(arr), func(i int) bool { return arr[i] >= 7 })
-	fmt.Println(idx) // 3
+	idx, found := slices.BinarySearch(arr, 7)
+	if found {
+		fmt.Println("Index:", idx)
+	}
 }
 ```
 
-### Decision Matrix
-
-| Use Binary Search When... | Avoid If... |
-|---------------------------|-------------|
-| Data is sorted (or can be sorted once) | Data changes frequently |
-| Need multiple searches on same dataset | Only searching once on small data |
-| Memory is constrained | Data is unsorted and sorting cost exceeds benefit |
-
-### Edge Cases & Pitfalls
-
-- **Integer overflow:** Use `mid := left + (right-left)/2`, not `(left+right)/2`.
-- **Off-by-one:** Ensure loop condition is `left <= right` for inclusive bounds.
-- **Duplicates:** Standard binary search returns any matching index, not first/last.
-
 ## 21.3. Interpolation Search
 
-**Definition:** Interpolation search estimates the position of the target value using linear interpolation, making it <code>O(log log n)</code> for uniformly distributed data.
+**Definition:** Estimates target position via linear interpolation. `O(log log n)` for uniformly distributed data.
 
 **Background & Philosophy:**
-Interpolation Search mimics how humans use a physical dictionary. We don't open the dictionary exactly in the middle to find "Zebra"; we open it near the end. The philosophy relies on guessing the position based on the data's uniform distribution.
+Mimics physical dictionary use. Guesses position based on data distribution.
 
 **Use Cases:**
-Used in massive, uniformly distributed datasets where computing a linear formula is cheaper than performing multiple <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> via Binary Search.
+Massive, uniformly distributed numerical datasets. Math calculation cheaper than Binary Search cache misses.
 
 **Memory Mechanics:**
-Interpolation search uses complex arithmetic (multiplication and division) to guess the index. Modern ALUs perform this math incredibly fast. If the guess is accurate, it jumps directly to the target memory address, minimizing the number of <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> compared to the strict halving pattern of Binary Search.
+Uses complex arithmetic for index guessing. ALUs perform math instantly. Accurate guess minimizes cache misses compared to strict halving.
 
 ### Operations & Complexity
 
 | Case | Complexity | Condition |
 |------|------------|-----------|
-| Average | <code>O(log log n)</code> | Uniformly distributed data |
-| Worst | <code>O(n)</code> | Exponentially distributed data |
-| Best | <code>O(1)</code> | Target at interpolated position |
+| Average | `O(log log n)` | Uniform distribution |
+| Worst | `O(n)` | Exponential distribution |
+| Best | `O(1)` | Target at exact guess |
 
-### Idiomatic Go Implementation
+### Idiomatic Go Generic Implementation
 
 ```go
 package main
@@ -175,32 +172,39 @@ func interpolationSearch(arr []int, target int) int {
 	}
 	return -1
 }
-
-func main() {
-	arr := []int{10, 20, 30, 40, 50, 60, 70, 80}
-	fmt.Println(interpolationSearch(arr, 50)) // 4
-}
 ```
 
+## 21.4. Decision Matrix
+
+| Use Search When... | Conditions | Cache Locality | Time |
+|--------------------|------------|----------------|------|
+| Linear Search | Short or Unsorted | Excellent | `O(n)` |
+| Binary Search | Large and Sorted | Poor | `O(log n)` |
+| Interpolation Search | Large, Sorted, Uniform | Good | `O(log log n)` |
+| Hash Map Lookup | Key-Value Needs | None | `O(1)` avg |
+
+### Edge Cases & Pitfalls
+- **Integer overflow:** `mid := left + (right-left)/2` prevents overflow.
+- **Unsorted input:** Binary search fails silently. Verify via `slices.IsSorted`.
+- **Search vs Map:** `map[T]struct{}` outperforms repeated binary searches for simple existence checks.
+
 ### Anti-Patterns
+- **Sorting for single search:** Sorting (`O(n log n)`) costs more than single linear search (`O(n)`).
+- **Binary searching unsorted slice:** Results undefined. Sort first.
+- **Ignoring `slices.BinarySearchFunc`:** Manual loops over complex structs breed bugs. Use standard library custom comparison functions.
 
-- **Binary searching an unsorted slice:** Results are undefined — the algorithm assumes sorted input. Always verify with `slices.IsSorted` or sort first with `slices.Sort`.
-- **Using `(left+right)/2` for midpoint:** This overflows for large `left+right`. Use `left + (right-left)/2` to stay within `int` bounds.
-- **Binary search when a hash map suffices:** If you need O(1) lookups and don't require ordered iteration, `map[K]V` beats binary search's O(log n). Only use binary search when you also need predecessor/successor queries or range scans.
+## 21.5. Quick Reference
 
-## 21.4. Quick Reference
-
-| Algorithm | Go Type | Time | Space | Precondition |
-|-----------|---------|------|-------|--------------|
-| Linear Search | Loop over `[]T` | <code>O(n)</code> | <code>O(1)</code> | None |
-| Binary Search | `sort.Search` | <code>O(log n)</code> | <code>O(1)</code> | Sorted data |
-| Interpolation Search | Custom | <code>O(log log n)</code> avg | <code>O(1)</code> | Sorted + uniform |
+| Algorithm | Go Implementation | Precondition | Complexity |
+|-----------|-------------------|--------------|------------|
+| Linear Search | `slices.Index` | None | `O(n)` |
+| Existence Check | `slices.Contains` | None | `O(n)` |
+| Binary Search | `slices.BinarySearch` | Sorted | `O(log n)` |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 21:</strong> Choose linear search for unsorted or small datasets, binary search for sorted data requiring repeated queries, and interpolation search for large uniformly distributed datasets. In Go, always prefer `sort.Search` for binary search in production code.
+<strong>Summary Chapter 21:</strong> Prefer `slices` package. Linear search for unstructured data. Binary search for sorted data. Interpolation search minimizes cache misses on uniform numerical data.
 {{% /alert %}}
 
 ## See Also
-
 - [Chapter 7: Hashing and Hash Tables](/docs/part-ii/chapter-7/)
 - [Chapter 19: Basic Sorting Algorithms](/docs/part-v/chapter-19/)

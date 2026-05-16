@@ -11,47 +11,47 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Those who cannot remember the past are condemned to repeat it.</em>" : George Santayana</strong>
+<strong>Memory prevents repetition. : George Santayana</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 24 covers <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (DP): a method for solving complex problems by breaking them into <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr> and storing solutions to avoid redundant computation.
+Dynamic programming (DP) solves complex problems. It breaks problems into <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>. It stores solutions to prevent redundant work.
 {{% /alert %}}
 
-## 24.1. DP Fundamentals
+## 23.1. DP Fundamentals
 
-**Definition:** <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> solves problems by breaking them into smaller <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>, solving each subproblem once, and storing the result for reuse. It applies when a problem exhibits **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>** and **<abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>**.
+**Definition:** <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> solves problems by breaking them into <abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>. Solve once. Store result. Reuse. Requires **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>** and **<abbr title="Subproblems that recur multiple times in a recursive solution">overlapping subproblems</abbr>**.
 
-**Background & Philosophy:**
-"Those who cannot remember the past are condemned to repeat it." DP is the philosophy of trading space for time. It recognizes that in many recursive problems, the exact same subproblems are evaluated millions of times. By explicitly memoizing (caching) these results, it transforms exponential <code>O(2^n)</code> chaos into polynomial <code>O(n)</code> order.
+**Mechanics:**
+DP trades space for time. Caching subproblem results transforms exponential <code>O(2^n)</code> recursion into polynomial <code>O(n)</code> order.
 
 **Use Cases:**
-Sequence alignment in bioinformatics (DNA matching), pricing complex financial derivatives, and solving optimization problems like the Knapsack problem for resource allocation.
+- Sequence alignment (DNA matching).
+- Financial derivative pricing.
+- Resource allocation (Knapsack).
 
-**Memory Mechanics:**
-DP introduces severe memory demands. A 2D DP table for LCS allocates `m * n` memory cells. In Go, `[][]int` allocates a slice of slice headers, each pointing to a separate underlying array. This scatters memory and causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. An effective memory optimization in DP is "state <abbr title="Transforming one problem into another to prove difficulty">reduction</abbr>": since calculating row `i` often only requires row `i-1`, developers can discard the rest of the matrix and only keep two 1D slices in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>, drastically improving <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and reducing <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
+**Memory Management:**
+2D DP tables use `m * n` memory. Go `[][]int` scatters memory across slices. This causes <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. State reduction saves space. Using two 1D slices instead of a matrix improves <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. This reduces <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">GC</abbr> pressure.
 
 ### Two Approaches
 
 | Approach | Method | Space | Use Case |
 |----------|--------|-------|----------|
-| Top-down (Memoization) | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> | <code>O(n)</code> | Natural recursive formulation |
-| Bottom-up (Tabulation) | Iterative table filling | <code>O(n)</code> or <code>O(n^2)</code> | Better constant factors, no <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
+| Top-down | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> | <code>O(n)</code> | Recursive logic |
+| Bottom-up | Iterative table | <code>O(n)</code> or <code>O(n^2)</code> | No <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> overhead |
 
-## 24.2. Fibonacci and Memoization
+## 23.2. Fibonacci and Memoization
 
-**Definition:** The classic Fibonacci sequence demonstrates DP. Without memoization, it has <code>O(2^n)</code> complexity; with memoization, it drops to <code>O(n)</code>.
+**Fact:** Fibonacci without memoization is <code>O(2^n)</code>. Memoization reduces it to <code>O(n)</code>.
 
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
-
-Use a `map[int]int` for memoization or a slice for tabulation.
+### Go Implementation
 
 ```go
 package main
 
 import "fmt"
 
-// Top-down with memoization
+// Top-down: recursion + map
 func fibMemo(n int, memo map[int]int) int {
 	if n <= 1 { return n }
 	if v, ok := memo[n]; ok { return v }
@@ -59,7 +59,7 @@ func fibMemo(n int, memo map[int]int) int {
 	return memo[n]
 }
 
-// Bottom-up tabulation
+// Bottom-up: iteration + slice
 func fibTab(n int) int {
 	if n <= 1 { return n }
 	dp := make([]int, n+1)
@@ -76,13 +76,11 @@ func main() {
 }
 ```
 
-## 24.3. 0/1 Knapsack Problem
+## 23.3. 0/1 Knapsack Problem
 
-**Definition:** Given items with weights and values, select items to maximize total value without exceeding a weight capacity. Each item can be taken at most once.
+**Goal:** Maximize item value within weight capacity. Items selected once.
 
-### Idiomatic Go Implementation
-
-Use a 2D DP table or optimize to 1D.
+### Go Implementation
 
 ```go
 package main
@@ -100,7 +98,8 @@ func knapsack(weights, values []int, capacity int) int {
 				dp[i][w] = max(dp[i-1][w], dp[i-1][w-weights[i-1]]+values[i-1])
 			} else {
 				dp[i][w] = dp[i-1][w]
-}
+			}
+		}
 	}
 	return dp[n][capacity]
 }
@@ -112,11 +111,11 @@ func main() {
 }
 ```
 
-## 24.4. Longest Common Subsequence (LCS)
+## 23.4. Longest Common Subsequence (LCS)
 
-**Definition:** Given two sequences, find the length of the longest subsequence present in both. A subsequence maintains relative order but need not be contiguous.
+**Goal:** Find length of longest shared subsequence. Relative order matters. Contiguity does not.
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -145,37 +144,37 @@ func main() {
 }
 ```
 
-## 24.5. Decision Matrix
+## 23.5. Selection Criteria
 
-| Use DP When... | Avoid If... |
-|----------------|-------------|
-| Problem has overlapping subproblems | <abbr title="An algorithm making locally optimal choices at each step.">Greedy</abbr> choice property holds (use greedy instead) |
-| Optimal substructure exists | Subproblems are independent (use divide and conquer) |
-| Brute force is exponential | A simpler algorithm achieves same result |
+| Use DP If... | Use Alternatives If... |
+|--------------|------------------------|
+| Overlapping subproblems exist | <abbr title="An algorithm making locally optimal choices at each step.">Greedy</abbr> choice property holds |
+| Optimal substructure exists | Subproblems are independent |
+| Brute force is exponential | Simple algorithm exists |
 
-### Edge Cases & Pitfalls
+### Optimization & Errors
 
-- **Space optimization:** Many DP problems can reduce from <code>O(n^2)</code> to <code>O(n)</code> by only keeping the previous row.
-- **Integer overflow:** Knapsack and similar problems may overflow; use `int64` for large values.
-- **Base cases:** Incorrect initialization of DP table leads to wrong answers.
+- **Space:** Reduce <code>O(n^2)</code> to <code>O(n)</code> using rolling arrays.
+- **Overflow:** Large values exceed `int`. Use `int64`.
+- **Initialization:** Base cases must be set. Zero-values lead to errors.
 
 ### Anti-Patterns
 
-- **Top-down memoization with maps:** Using `map[int]int` for DP memoization in Go is 5-10x slower than slice-based tabulation due to hash overhead and allocations. Prefer bottom-up tabulation with pre-allocated slices when the state space is dense.
-- **Over-allocated DP tables:** If `dp[i]` only depends on `dp[i-1]` or `dp[i-2]`, a full 2D table wastes memory and cache. Use a rolling array of constant size for 1D recurrences.
-- **Missing base case initialization:** Omitting `dp[0]` or relying on Go's zero-value produces silent wrong answers. Always explicitly initialize base cases.
+- **Maps for Dense State:** `map[int]int` is slow. Slice-based tabulation is 5-10x faster.
+- **Wasted Memory:** 2D tables waste cache if subproblems only need previous rows.
+- **Missing Base Cases:** Relying on zero-values creates bugs. Initialize explicitly.
 
-## 24.6. Quick Reference
+## 23.6. Quick Reference
 
 | Problem | Go Type | Time | Space | Approach |
 |---------|---------|------|-------|----------|
-| Fibonacci | `[]int` or `map` | <code>O(n)</code> | <code>O(n)</code> | Tabulation |
+| Fibonacci | `[]int` | <code>O(n)</code> | <code>O(n)</code> | Tabulation |
 | Knapsack 0/1 | `[][]int` | <code>O(nW)</code> | <code>O(nW)</code> | 2D DP |
 | LCS | `[][]int` | <code>O(mn)</code> | <code>O(mn)</code> | 2D DP |
 | Coin Change | `[]int` | <code>O(nk)</code> | <code>O(n)</code> | 1D DP |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 23:</strong> <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> transforms exponential-time recursive problems into polynomial-time solutions by storing subproblem results. Master the pattern: define states, write the recurrence, initialize base cases, and fill the table. In Go, use slices for tabulation and maps for sparse memoization.
+<strong>Summary:</strong> DP solves exponential recursive problems in polynomial time. Identify states. Define recurrence. Initialize base cases. Fill table. Use slices for speed.
 {{% /alert %}}
 
 ## See Also

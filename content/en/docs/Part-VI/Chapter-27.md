@@ -20,25 +20,25 @@ Chapter 28 covers probabilistic algorithms: Las Vegas, Monte Carlo, randomized q
 
 ## 28.1. Randomized QuickSort
 
-**Definition:** QuickSort utilizing a randomly selected pivot avoids the severe <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n^2)</code> on already sorted inputs.
+**Definition:** QuickSort using random pivot selection. Prevents $O(n^2)$ worst-case on sorted inputs.
 
 **Background & Philosophy:**
-The philosophy is trading absolute certainty for overwhelming probability. Deterministic algorithms often hit pathological worst-cases crafted by malicious inputs or unlucky sequential data. Injecting randomness (Las Vegas method) breaks these deterministic worst-cases mathematically, ensuring that <code>O(n log n)</code> execution is highly expected regardless of input distribution.
+Randomness trades absolute certainty for high probability. Deterministic algorithms fail on specific inputs. Las Vegas method breaks deterministic worst-cases. $O(n \log n)$ execution is expected regardless of input.
 
 **Use Cases:**
-Randomized QuickSort is the underlying default sorting strategy in modern standard libraries, used constantly when data comes from untrusted networks where users might submit intentionally sorted arrays to DDOS the server via worst-case CPU burn.
+Default sorting in modern libraries. Prevents CPU burn attacks from malicious sorted data.
 
 **Memory Mechanics:**
-Randomization heavily relies on Pseudo-Random Number Generators (PRNGs). Fetching from a PRNG requires querying a shared internal state. If multiple <abbr title="A lightweight concurrent execution thread managed by the Go runtime.">goroutines</abbr> request random numbers from the global `rand.Seed`, it creates massive <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> at the memory level. High-performance randomized algorithms allocate a distinct `rand.New(rand.NewSource())` per <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> to maintain isolated <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> states, avoiding cross-thread memory stalling.
+Randomization uses Pseudo-Random Number Generators (PRNGs). Shared PRNG state causes lock contention in concurrent code. Go goroutines should use `rand.New(rand.NewSource())` per thread. Isolates RAM state. Avoids memory stalling.
 
 ### Operations & Complexity
 
 | Case | Deterministic QS | Randomized QS |
 |-------|-----------------|---------------|
-| Best | <code>O(n log n)</code> | <code>O(n log n)</code> |
-| Average | <code>O(n log n)</code> | <code>O(n log n)</code> expected |
-| Worst | <code>O(n^2)</code> | <code>O(n^2)</code> with prob 1/n! |
-| Space | <code>O(log n)</code> | <code>O(log n)</code> expected |
+| Best | $O(n \log n)$ | $O(n \log n)$ |
+| Average | $O(n \log n)$ | $O(n \log n)$ expected |
+| Worst | $O(n^2)$ | $O(n^2)$ with prob $1/n!$ |
+| Space | $O(\log n)$ | $O(\log n)$ expected |
 
 ### Pseudocode
 
@@ -99,42 +99,42 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Randomized QuickSort has an expected time of <code>O(n log n)</code> across all input varieties. For heavy production systems, Go's stdlib `sort.Ints` natively utilizes introsort (a robust hybrid of quicksort + heapsort + <abbr title="A sorting algorithm that builds the final sorted array one item at a time.">insertion sort</abbr>) which is already hyper-optimized.
+Randomized QuickSort gives $O(n \log n)$ expected time. Go stdlib `sort.Ints` uses introsort: a hybrid of quicksort, heapsort, and insertion sort. Introsort is preferred for production.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Randomized QS When... | Avoid If... |
 |------------------------------|------------------|
-| Implementing a robust sort from absolute scratch | Operating in a production environment (always use the `sort` stdlib) |
-| A solid expected guarantee is required | A strict, unflinching deterministic guarantee is legally mandatory |
+| Scratch implementation required | Production environment: use `sort` stdlib |
+| Expected performance is sufficient | Legal mandates require deterministic guarantees |
 
 ### Edge Cases & Pitfalls
 
-- **All equal elements:** The basic Lomuto partition degrades heavily. Utilize a 3-way partition (the Dutch national flag algorithm) instead.
-- **<abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr>:** For n > 10⁶, purely recursive quicksort runs the immense risk of a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>. Switch to introsort or the stdlib.
+- **Equal elements:** Lomuto partition fails. Use 3-way partition (Dutch National Flag).
+- **Recursion depth:** Large $n$ causes stack overflow. Use introsort or iterative methods.
 
 ## 28.2. <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr>
 
-**Definition:** A <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr> acts as a probabilistic data structure that masterfully simulates a balanced <abbr title="A hierarchical data structure with a root node and child nodes.">tree</abbr> utilizing multiple layered linked lists featuring randomized heights.
+**Definition:** Probabilistic data structure. Simulates balanced tree using layered linked lists. Nodes have randomized heights.
 
 **Background & Philosophy:**
-Balancing an AVL or Red-Black tree involves complex pointer manipulation and structural rotations. Skip lists take a different approach: instead of mathematically guaranteeing balance via rigid rules, they achieve statistical balance via probability. By randomly "promoting" elements to higher layers, they establish express lanes for searching.
+Trees use rotations for balance. Skip lists use probability. Elements promoted to higher layers randomly. Establishes express lanes for search.
 
 **Use Cases:**
-Highly effective in concurrent programming. Because inserting an element doesn't require massive structural rotations, it requires fewer memory locks. Skip lists famously power the backend sorted sets in Redis.
+Concurrent programming. No structural rotations required. Used in Redis sorted sets.
 
 **Memory Mechanics:**
-Skip lists require an array of `next` pointers per node depending on their randomized "height". In Go, `make([]*SkipNode, lvl)` dynamically allocates this array. This makes skip lists heavier in memory usage than standard binary trees and introduces unpredictable memory fragmentation across the <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr>. However, the absence of complex <code>O(log n)</code> rebalancing operations offsets the cache misses encountered during forward traversal.
+Nodes store array of `next` pointers. Go uses `make([]*SkipNode, lvl)`. Higher memory overhead than binary trees. Causes heap fragmentation. Lack of rebalancing offset by simplified pointers.
 
 ### Operations & Complexity
 
 | Operation | Expected | Worst | Description |
 |---------|----------|-------|------------|
-| Search | <code>O(log n)</code> | <code>O(n)</code> | Solved with remarkably high probability |
-| Insert | <code>O(log n)</code> | <code>O(n)</code> | Relies upon randomized <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> <abbr title="The length of the longest path from a node to a leaf.">height</abbr> |
-| Delete | <code>O(log n)</code> | <code>O(n)</code> | Carefully updates linking pointers |
-| Space | <code>O(n)</code> | <code>O(n log n)</code> | Expected memory layout |
+| Search | $O(\log n)$ | $O(n)$ | High probability success |
+| Insert | $O(\log n)$ | $O(n)$ | Depends on randomized height |
+| Delete | $O(\log n)$ | $O(n)$ | Updates linking pointers |
+| Space | $O(n)$ | $O(n \log n)$ | Expected memory layout |
 
 ### Pseudocode
 
@@ -261,119 +261,119 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-A <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip list</abbr> demands an expected space of <code>O(n)</code> primarily because E[<abbr title="The set of all nodes at a given depth.">level</abbr>] = 1/(1-p) = 2 for p=0.5. Never use a p <abbr title="The data associated with a key in a key-value pair.">value</abbr> that is overwhelmingly large (it brutally consumes memory) or exceedingly small (forces low heights, making searches agonizingly slow).
+Skip list space is $O(n)$ expected. Average height is 2 for $p=0.5$. Large $p$ consumes memory. Small $p$ slows search.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr> When... | Avoid If... |
 |--------------------------|------------------|
-| Need heavy concurrent access (via a lock-free variant) | Raw memory overhead represents a critical bottleneck |
-| Seeking an implementation fundamentally simpler than AVL/RB trees | Executing a massive volume of range queries |
+| Lock-free concurrency required | Memory overhead is a bottleneck |
+| Simple implementation needed | High volume of range queries expected |
 
 ### Edge Cases & Pitfalls
 
-- **Deterministic random:** Skip lists fundamentally require extremely good randomness. Never use a constant seed in a production environment.
-- **Max <abbr title="The set of all nodes at a given depth.">level</abbr>:** p=0.5 coupled with maxLevel=16 is perfectly sufficient for n=2^16=65536. Vigorously adjust this limit for dramatically larger n values.
+- **Weak RNG:** Probability logic fails without good randomness. Use robust seeds.
+- **Max Level:** $p=0.5$ and maxLevel=16 supports $n \approx 65536$. Increase limit for larger data.
 
 ## 28.3. Miller-Rabin Primality Test
 
-**Definition:** Miller-Rabin stands as a Monte Carlo algorithm utilized for fierce primality testing boasting an error probability firmly ≤ 4^(-k) across k continuous rounds.
+**Definition:** Monte Carlo algorithm. Tests primality. Error probability $\le 4^{-k}$ after $k$ rounds.
 
 **Background & Philosophy:**
-The philosophy is "guilt by association." Since testing true primality for massive 2048-bit numbers takes astronomically long deterministically, Miller-Rabin uses Monte Carlo rules: it randomly selects "witnesses" to testify if a number is composite. If it finds a witness, it is 100% sure the number is not prime. If it fails to find one after `k` random trials, it declares the number "probably prime" with a mathematical certainty near absolute.
+True primality testing for large numbers is slow. Miller-Rabin uses random witnesses. Witness found: 100% composite. No witness found: probably prime. Mathematical certainty increases with trials.
 
 **Use Cases:**
-Generating massive RSA or Diffie-Hellman encryption keys safely.
+Generating RSA keys. Diffie-Hellman key generation.
 
 **Memory Mechanics:**
-Miller-Rabin uses modular exponentiation. Since 2048-bit numbers greatly exceed the 64-bit size of standard CPU registers, Go uses the `math/big` package. `big.Int` allocates arrays of underlying `Word` slices in <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap memory</abbr>. These allocations create <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collection</abbr> churn. However, because the operations are mathematically heavy, CPU compute vastly dominates memory IO costs.
+Modular exponentiation required. Large numbers exceed 64-bit registers. Go uses `math/big`. Allocates underlying Word slices in heap. CPU compute cost dominates GC churn.
 
 ### Operations & Complexity
 
 | Parameter | Time | Error Probability |
 |-----------|------|-------------------|
-| k rounds | <code>O(k log³ n)</code> | ≤ 4^(-k) |
-| k=5 | <code>O(log³ n)</code> | < 0.1% |
-| k=20 | <code>O(log³ n)</code> | < 10^(-12) |
-| k=40 | <code>O(log³ n)</code> | < 10^(-24) |
+| $k$ rounds | $O(k \log^3 n)$ | $\le 4^{-k}$ |
+| $k=5$ | $O(\log^3 n)$ | $< 0.1\%$ |
+| $k=20$ | $O(\log^3 n)$ | $< 10^{-12}$ |
+| $k=40$ | $O(\log^3 n)$ | $< 10^{-24}$ |
 
 ### Idiomatic Go Implementation
 
-Miller-Rabin (probabilistic primality test) is available natively in `crypto/rand`. Use `big.NewInt()` and `big.Int.ProbablePrime()` for production.
+Use `math/big.Int.ProbablePrime()` for production.
 
 ### Decision Matrix
 
 | Use Miller-Rabin When... | Avoid If... |
 |-----------------------------|------------------|
-| Conducting large number primality checks | A strict deterministic guarantee is fully mandatory (employ AKS, though it runs agonizingly slow) |
-| Performing cryptographic key generation | n < 2^64 (run a heavily optimized deterministic test instead) |
+| Testing large primes | Deterministic guarantee required: use AKS (slow) |
+| Cryptographic key generation | $n < 2^{64}$: use optimized deterministic test |
 
 ### Edge Cases & Pitfalls
 
-- **Carmichael numbers:** Miller-Rabin successfully identifies these, unlike a naive Fermat test.
-- **Modular multiplication overflow:** Utilize `math/big.Int.ModMul` vigorously for any n > 2^32.
-- **Deterministic variant:** For any n < 2^64, testing strictly against the base set {2, 3, 5, 7, 11, 13, 17} is provably deterministic.
+- **Carmichael numbers:** Miller-Rabin identifies these correctly.
+- **Modular overflow:** Use `math/big.Int.ModMul` for $n > 2^{32}$.
+- **Deterministic variant:** Testing against base {2, 3, 5, 7, 11, 13, 17} is deterministic for $n < 2^{64}$.
 
 ## 28.4. Reservoir Sampling
 
-**Definition:** Reservoir sampling selects k items uniformly randomly from an infinite stream without requiring prior knowledge of the total volume.
+**Definition:** Selects $k$ random items from infinite stream. No total size knowledge required.
 
 **Background & Philosophy:**
-The philosophy is stream intelligence. When data is infinite or too large to fit in memory (like all logs generated by a server today), you cannot store it to randomly select `k` items later. Reservoir sampling processes items exactly once, maintaining a "reservoir" of size `k`, probabilistically replacing items as new ones stream in, ensuring fair representation continuously.
+Stream intelligence. Large data cannot fit in memory. Processes items once. Maintains reservoir of size $k$. Probability of replacement ensures fairness.
 
 **Use Cases:**
-Providing live, random analytics samples from continuous Kafka streams or massive network logs.
+Analytics on live streams (Kafka). Sampling massive logs.
 
 **Memory Mechanics:**
-It requires strictly <code>O(k)</code> memory. A single <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slice of size `k` is allocated in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. As new data streams in, it reads one item at a time, making it incredibly hardware friendly since it uses minimal <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes virtually zero <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> during sequential data ingestion.
+Strictly $O(k)$ memory. Single slice allocated in RAM. Sequential data read. Minimal RAM usage. Zero cache misses during ingestion.
 
 ### Operations & Complexity
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| Reservoir k | <code>O(k)</code> per item | <code>O(k)</code> | Handles a stream of completely unknown size |
-| Weighted | <code>O(k log k)</code> per item | <code>O(k)</code> | Executes priority-based sampling |
+| Reservoir $k$ | $O(1)$ per item | $O(k)$ | Infinite stream handling |
+| Weighted | $O(\log k)$ per item | $O(k)$ | Priority-based sampling |
 
-Reservoir sampling guarantees that every single item possesses an exact mathematical probability of k/n of being selected. For heavily weighted streams, implement exponential random variates.
+Guarantees $k/n$ selection probability for all items. Weighted streams use exponential random variates.
 
 ### Decision Matrix
 
 | Use Reservoir When... | Avoid If... |
 |--------------------------|------------------|
-| The stream is too massive to fit entirely in memory | Total N is strictly known upfront (use a standard random shuffle) |
-| Conducting real-time analytical sampling | Complex stratified sampling is heavily required |
+| Stream exceeds memory | $N$ is known: use random shuffle |
+| Real-time sampling needed | Complex stratified sampling required |
 
 ### Edge Cases & Pitfalls
 
-- **k > n:** Always reliably handle the scenario where the raw stream is ultimately shorter than k.
-- **Biased RNG:** Strictly utilize `crypto/rand` if cryptographic-level randomness is vitally critical.
+- **$k > n$:** Handle streams shorter than $k$.
+- **Biased RNG:** Use `crypto/rand` for high-stakes randomness.
 
 ### Anti-Patterns
 
-- **Using `math/rand` for security:** `math/rand` is deterministic and predictable. Never use it for cryptographic operations, token generation, or anything requiring true unpredictability — use `crypto/rand`.
-- **Ignoring seed initialization:** Forgetting to seed `math/rand` in benchmarks produces identical results across runs, hiding bugs. Use `rand.New(rand.NewSource(...))` for reproducible tests.
-- **Relying on probabilistic guarantees for safety:** A Monte Carlo algorithm with 99% correctness still fails 1% of the time. Do not use probabilistic algorithms where correctness must be absolute (e.g., authentication, financial settlement).
+- **Using `math/rand` for security:** Predictable. Use `crypto/rand` for tokens/crypto.
+- **Static seeds:** Identical results hide bugs. Use dynamic source.
+- **Misplaced trust:** 99% correctness is not 100%. Avoid in financial settlements.
 
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Randomized QuickSort | Las Vegas | <code>O(n log n)</code> | <code>O(log n)</code> | General <abbr title="The process of arranging elements in a specific order.">Sorting</abbr> |
-| <abbr title="A probabilistic data structure that allows fast search within an ordered sequence.">Skip List</abbr> | Las Vegas | <code>O(log n)</code> | <code>O(n)</code> | Ordered data set |
-| Miller-Rabin | Monte Carlo | <code>O(k log^3 n)</code> | <code>O(1)</code> | Advanced Primality testing |
-| Reservoir Sampling | . | <code>O(n)</code> | <code>O(k)</code> | Infinite Stream sampling |
-| Randomized Select | Las Vegas | <code>O(n)</code> | <code>O(1)</code> | Isolating the k-th order statistic |
-| <abbr title="A data structure that implements an associative array using a hash function.">Hash Table</abbr> | Las Vegas | <code>O(1)</code> avg | <code>O(n)</code> | High-speed Dictionary |
-| Bloom Filter | Monte Carlo | <code>O(k)</code> | <code>O(m)</code> | Rapid Membership test |
-| Treap | Las Vegas | <code>O(log n)</code> | <code>O(n)</code> | Fused BST + <abbr title="A specialized tree-based data structure that satisfies the heap property.">heap</abbr> |
+| Randomized QuickSort | Las Vegas | $O(n \log n)$ | $O(\log n)$ | General Sorting |
+| Skip List | Las Vegas | $O(\log n)$ | $O(n)$ | Ordered data set |
+| Miller-Rabin | Monte Carlo | $O(k \log^3 n)$ | $O(1)$ | Primality testing |
+| Reservoir Sampling | . | $O(n)$ | $O(k)$ | Infinite Stream sampling |
+| Randomized Select | Las Vegas | $O(n)$ | $O(1)$ | k-th order statistic |
+| Hash Table | Las Vegas | $O(1)$ avg | $O(n)$ | High-speed Dictionary |
+| Bloom Filter | Monte Carlo | $O(k)$ | $O(m)$ | Rapid Membership test |
+| Treap | Las Vegas | $O(\log n)$ | $O(n)$ | Fused BST + heap |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 27:</strong> This chapter dissects probabilistic algorithms: randomized quicksort yielding <code>O(n log n)</code> expected, skip lists hitting <code>O(log n)</code> expected, the Miller-Rabin primality test (a Monte Carlo approach), and reservoir sampling for boundless streams. Leverage skip lists for creating a straightforward ordered set, Miller-Rabin for evaluating large primes, and reservoir sampling to manage streaming data.
+<strong>Summary Chapter 27:</strong> Probabilistic algorithms use randomness for efficiency. Randomized quicksort avoids $O(n^2)$. Skip lists provide $O(\log n)$ search. Miller-Rabin tests large primes. Reservoir sampling handles infinite streams.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/chapter-25/)
+- [Chapter 25: Backtracking](/docs/part-vi/chapter-25/)
 - [Chapter 26: Advanced Recursive Algorithms](/docs/part-vi/chapter-26/)
 - [Chapter 45: Skip Lists](/docs/part-ix/chapter-45/)

@@ -15,21 +15,21 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 37 covers <abbr title="A tree data structure for storing and searching strings with common prefixes.">Trie</abbr> (<abbr title="A tree storing strings where common prefixes are shared, also called a Trie.">prefix tree</abbr>) data structures: efficient storage and retrieval of strings with common prefixes. Essential for autocomplete, spell checking, and IP routing.
+Chapter 36 covers <abbr title="A tree data structure for storing and searching strings with common prefixes.">Trie</abbr> (<abbr title="A tree storing strings where common prefixes are shared, also called a Trie.">prefix tree</abbr>) data structures. Efficient string storage and retrieval. Used for autocomplete, spell checking, and IP routing.
 {{% /alert %}}
 
 ## 37.1. Trie Fundamentals
 
-**Definition:** A Trie is a tree where each node represents a character. Paths from root to leaf form complete words. All descendants of a node share the same prefix.
+**Definition:** Trie is a tree. Each node represents one character. Paths form words. Descendants share prefixes.
 
-**Background & Philosophy:**
-The philosophy is structural prefix sharing. Instead of storing ten words that start with "auto" as ten distinct strings, a Trie stores the prefix "a-u-t-o" exactly once, branching off only when the words diverge. It transforms string retrieval from an <code>O(N)</code> scan into an <code>O(m)</code> traversal based strictly on the word's length, independent of dictionary size.
+**Background:**
+Structural prefix sharing. Prefixes stored once. Branches occur at word divergence. Retrieval takes <code>O(m)</code> time. Performance independent of dictionary size.
 
 **Use Cases:**
-Search engine autocomplete engines, routing IP addresses in networking hardware (<abbr title="A space-optimized Trie with edge labels, also known as a Radix Trie.">Radix Tries</abbr>), and mobile phone predictive text keyboards.
+Search engine autocomplete. IP routing in network hardware. Predictive text keyboards.
 
 **Memory Mechanics:**
-A standard Trie is incredibly memory-hungry. Each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> in Go typically holds a `map[rune]*TrieNode`. Allocating millions of tiny maps across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> severely fragments <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and causes massive <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> tracing overhead. High-performance production Tries (like Double-Array Tries or Radix Trees) compress these <abbr title="A variable that stores a memory address.">pointers</abbr> into packed, flat arrays to drastically reduce memory footprints and restore <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.
+Standard Trie consumes high memory. Each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> uses `map[rune]*TrieNode`. Heap allocation causes fragmentation. <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead increases. High-performance versions use flat arrays for <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> locality.
 
 ### Operations & Complexity
 
@@ -43,8 +43,6 @@ A standard Trie is incredibly memory-hungry. Each <abbr title="A basic unit of a
 ## 37.2. Basic Trie
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
-
-Use a map for children to support any character set dynamically.
 
 ```go
 package main
@@ -106,7 +104,7 @@ func main() {
 
 ## 37.3. Autocomplete
 
-**Definition:** Given a prefix, return all words in the Trie that start with that prefix.
+**Definition:** Returns all words sharing a specific prefix.
 
 ### Idiomatic Go Implementation
 
@@ -170,21 +168,21 @@ func main() {
 
 | Use Trie When... | Avoid If... |
 |------------------|-------------|
-| Many strings share prefixes | Strings are random with no common prefixes |
-| Need fast prefix queries | Memory is extremely constrained |
-| Implementing autocomplete or spell checker | Only exact match lookups needed (use hashmap) |
+| Strings share common prefixes | Strings lack common prefixes |
+| Fast prefix queries required | Memory is extremely limited |
+| Autocomplete or spell checking | Only exact matches needed (use hashmap) |
 
 ### Edge Cases & Pitfalls
 
-- **Memory overhead:** Each node allocates a map; for dense alphabets (e.g., Unicode), use arrays or compressed tries.
-- **Empty string:** Decide whether empty string is a valid word in your Trie.
-- **Case sensitivity:** Normalize to lowercase before insertion unless case matters.
+- **Memory overhead:** Map allocation per node is expensive. Use arrays for fixed sets.
+- **Empty string:** Decide validity of `""`.
+- **Case sensitivity:** Normalize to lowercase before insertion.
 
 ### Anti-Patterns
 
-- **`map[rune]*TrieNode` for large alphabets:** Each map allocates a hash table, causing massive memory and GC overhead for Unicode or large character sets. Use fixed-size `[256]*TrieNode` arrays for byte-level tries or compressed/radix tries for production.
-- **Not handling empty string input:** Failing to define behavior for empty string insertion/search creates ambiguity. Decide explicitly and document whether `""` is a valid word.
-- **Unbounded autocomplete results:** DFS traversal can return every word in the trie for a short prefix. Limit results with a counter or use a priority-based top-k collection.
+- **Uncompressed Unicode tries:** Map overhead is severe. Use Radix trees for large sets.
+- **Undefined empty string behavior:** Create explicit rules for `""`.
+- **Unbounded results:** Short prefixes yield large result sets. Use counters or top-k logic.
 
 ## 37.5. Quick Reference
 
@@ -196,7 +194,7 @@ func main() {
 | Compressed Trie | Edge labels | <code>O(m)</code> | Reduced | Memory optimization |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 36:</strong> Tries excel at prefix-based string operations with <code>O(m)</code> time complexity. In Go, use `map[rune]*TrieNode` for flexibility or fixed-size arrays for performance. Apply tries to autocomplete, spell checking, and any problem involving shared string prefixes.
+<strong>Summary Chapter 36:</strong> Tries provide <code>O(m)</code> string operations. Use `map[rune]*TrieNode` for character sets. Use arrays for performance. Best for autocomplete and spell checking.
 {{% /alert %}}
 
 ## See Also

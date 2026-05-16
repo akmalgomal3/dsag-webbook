@@ -11,29 +11,29 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The maximum subarray problem is solved by asking: do I extend the previous subarray or start fresh?</em>" : Jay Kadane</strong>
+<strong>"<em>Maximum subarray problem asks: extend previous subarray or start fresh?</em>" : Jay Kadane</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr> — an <code>O(n)</code> solution for the maximum subarray problem, serving as a foundation for <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> thinking.
+Chapter 57 presents <abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's algorithm</abbr>: an <code>O(n)</code> solution for maximum subarray problem and foundation for <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr>.
 {{% /alert %}}
 
 ## 57.1. The Maximum Subarray Problem
 
-**Definition:** Given an array of integers (often containing negative numbers), find the contiguous subarray with the largest sum. First solved in <code>O(n)</code> by Jay Kadane in 1984.
+**Definition:** Find contiguous subarray with largest sum in integer array. Solved in <code>O(n)</code> by Jay Kadane in 1984.
 
 **Background & Philosophy:**
-The philosophy is aggressive amnesia. Kadane's algorithm is a clean application of <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>: it asks a localized question at each step. "Is the accumulated baggage of the past dragging me down so much that I'm better off starting fresh right now?" If the running sum drops below the current element, it cuts ties with the past.
+Kadane's algorithm applies <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>. Algorithm asks localized question at each step. Running sum below current element forces fresh start.
 
 **Use Cases:**
-Identifying the most profitable sequence of trades in algorithmic finance, and genomic sequence analysis where negative scores represent mutations and positive scores represent matches.
+Algorithmic finance identifies profitable trade sequences. Genomic sequence analysis uses negative scores for mutations and positive scores for matches.
 
 **Memory Mechanics:**
-<abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's Algorithm</abbr> achieves maximum theoretical performance. It requires precisely <code>O(1)</code> memory—merely two integer variables (`maxEndingHere` and `maxSoFar`). Because it only performs a single, forward-only scan over the `[]int` slice, it requires zero <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations and never triggers the Go <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>. These variables reside completely within the CPU registers, allowing the algorithm to execute at the sheer maximum bandwidth of the memory bus.
+<abbr title="An O(n) algorithm that finds the maximum sum of any contiguous subarray using dynamic programming.">Kadane's Algorithm</abbr> achieves theoretical maximum performance. <code>O(1)</code> memory requires two integer variables (`maxEndingHere` and `maxSoFar`). Single forward scan avoids <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> allocations and <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> triggers. Variables reside in CPU registers for maximum bandwidth.
 
 ### The Insight
 
-At each precise position, confidently ask: "Is it mathematically better to extend the previous subarray or start a completely new one precisely here?"
+At each position: extend previous subarray or start new one.
 
 ```text
 maxEndingHere = max(arr[i], maxEndingHere + arr[i])
@@ -85,37 +85,37 @@ func main() {
 | maxEndingHere | Best sum of the subarray strictly ending at the current index |
 | maxSoFar | Absolute best sum witnessed anywhere so far |
 
-The recurrence captures the unyielding essence of <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>: the optimal solution exactly at position i depends completely and only on the optimal solution firmly established at position i-1.
+Recurrence defines <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>: optimal solution at position i depends solely on optimal solution at position i-1.
 
 ## 57.4. Variations
 
 | Variation | Modification |
 |-----------|-------------|
-| **Track indices** | Accurately record start/end positions whenever maxSoFar updates |
-| **All negative** | Mathematically returns the least negative element (or must be handled distinctly) |
-| **2D version** | Maximum submatrix typically requiring <code>O(n^3)</code> or <code>O(n^4)</code> |
-| **Circular array** | Yields the max of Kadane's against total sum - min subarray |
+| **Track indices** | Record start/end positions when maxSoFar updates |
+| **All negative** | Returns least negative element |
+| **2D version** | Maximum submatrix typically requires <code>O(n^3)</code> or <code>O(n^4)</code> |
+| **Circular array** | Yields max of Kadane's against total sum minus min subarray |
 
 ## 57.5. Decision Matrix
 
 | Use Kadane's When... | Use Prefix Sum When... |
 |----------------------|------------------------|
-| A strictly contiguous subarray is mandatory | Addressing any arbitrary subarray, strictly query-based |
-| A solitary single pass is structurally acceptable | Conducting multiple varied queries on the exact same array |
-| Raw, unchecked simplicity is paramount | Handling requirements for mathematically arbitrary range sums |
+| Contiguous subarray is mandatory | Addressing arbitrary query-based subarray |
+| Single pass is structurally acceptable | Conducting multiple queries on same array |
+| Raw simplicity is paramount | Handling arbitrary range sums |
 
 ### Edge Cases & Pitfalls
 
-- **All negatives:** The standard implementation of Kadane's algorithm confidently returns the absolute maximum (least negative) element.
-- **Empty subarray allowed:** If a totally empty subarray (summing to 0) is permitted by business logic, initialize the trackers rigidly to 0.
-- **Integer overflow:** Utilize wider 64-bit integer tracking types (`int64`) for handling exceptionally huge sums safely.
+- **All negatives:** Standard implementation returns maximum element.
+- **Empty subarray:** Initialize trackers to 0 if sum of 0 is permitted.
+- **Integer overflow:** Use <code>int64</code> for handling large sums.
 
 ### Anti-Patterns
 
-- **Returning 0 for all-negative arrays without clarification:** Standard Kadane's returns the maximum (least negative) element; if an empty subarray (sum = 0) is valid, initialize trackers to 0 — but document the choice explicitly.
-- **Applying Kadane's to non-contiguous problems:** Kadane's solves maximum *contiguous* subarray; for maximum *subsequence* (non-contiguous), just sum all positive numbers instead.
-- **Confusing subarray with subsequence:** A subarray is contiguous; a subsequence need not be. Kadane's solves the former — using it for the latter yields incorrect results.
-- **Integer overflow on large financial datasets:** The running sum can exceed `int` bounds; use `int64` or `math/big` when processing price or transaction arrays with large values.
+- **Returning 0 for all-negative arrays:** Document choice explicitly if empty subarray is valid.
+- **Non-contiguous problems:** Kadane's solves contiguous subarray only. Sum positive numbers for subsequence.
+- **Subarray vs subsequence:** Subarray is contiguous. Subsequence is not. Kadane's yields incorrect results for subsequences.
+- **Integer overflow:** Running sum exceeds int bounds. Use <code>int64</code> or <code>math/big</code> for large values.
 
 ## 57.6. Quick Reference
 
@@ -124,14 +124,14 @@ The recurrence captures the unyielding essence of <abbr title="A method for solv
 | Time | <code>O(n)</code> |
 | Space | <code>O(1)</code> |
 | Technique | <abbr title="A method combining solutions to overlapping subproblems">Dynamic programming</abbr> paradigm |
-| Key idea | Transform <abbr title="A solution better than neighbors but not globally best">local optimum</abbr> cleanly into <abbr title="The best possible solution over the entire search space">global optimum</abbr> |
+| Key idea | Transform <abbr title="A solution better than neighbors but not globally best">local optimum</abbr> into <abbr title="The best possible solution over the entire search space">global optimum</abbr> |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| No direct equivalent | Requires manual implementation specifically tailored for financial or stock tracking |
+| No direct equivalent | Requires manual implementation |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 56:</strong> Kadane's algorithm is a clean demonstration of <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> principles. In a single pass with <code>O(1)</code> auxiliary space, it solves a problem that intuitively seems to require examining all <code>O(n^2)</code> possible subarrays. The core lesson: whenever tackling "best subarray" questions, ask if the optimal state ending at position i can be derived from position i-1. If it can, Kadane's insight applies.
+<strong>Summary Chapter 56:</strong> Kadane's algorithm demonstrates <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr> principles. Single pass with <code>O(1)</code> space solves <code>O(n^2)</code> problem. Core lesson: derive optimal state at position i from position i-1.
 {{% /alert %}}
 
 ## See Also

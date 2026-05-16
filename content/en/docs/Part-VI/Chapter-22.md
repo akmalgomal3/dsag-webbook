@@ -15,38 +15,36 @@ toc: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 23 focuses on the <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr> paradigm, breaking down problems recursively. It implements classical algorithms and demonstrates how to parallelize independent sub-problems efficiently using Go's goroutines.
+Chapter 22: Divide and Conquer paradigm. Recursive problem decomposition. Parallelization using Go goroutines.
 {{% /alert %}}
 
-## 23.1. Introduction to <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr>
+## 22.1. Introduction to <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr>
 
-**Definition:** <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and conquer</abbr> breaks down a problem into smaller independent subproblems, solves them recursively, and combines their results.
+**Definition:** Splits problem into smaller independent subproblems. Solves recursively. Combines results.
 
-**Background & Philosophy:**
-The philosophy is breaking seemingly insurmountable problems into trivial base cases. Instead of attacking a fortress directly, you divide it into manageable stones. Because it maps problems to independent execution branches, it natively supports mathematical induction for correctness proofs and parallel processing.
+**Logic:**
+Decomposes complex problems into trivial base cases. Maps to independent execution branches. Supports mathematical induction and parallel processing.
 
 **Use Cases:**
-Essential for recursive sorting (Merge Sort, Quick Sort), fast multiplication (Karatsuba), and processing independent queries in massive distributed databases via MapReduce architectures.
+Recursive sorting (Merge Sort, Quick Sort). Fast multiplication (Karatsuba). MapReduce distributed queries.
 
 **Memory Mechanics:**
-<abbr title="An algorithmic paradigm breaking problems into independent subproblems">Divide and Conquer</abbr> relies heavily on the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Each recursive split pushes a new frame onto the stack. In Go, <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> stacks start at 2KB and grow dynamically, preventing overflow for moderate depth <code>O(log n)</code>. When the divide step requires creating new slices `arr[:mid]`, Go merely copies a 24-byte <abbr title="A small struct describing a slice: pointer, length, capacity">slice header</abbr> (pointer, length, capacity) without allocating new arrays on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This makes Go's slice splitting an incredibly fast <code>O(1)</code> memory operation that does not trigger the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr>.
+Relies on <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Go goroutine stacks start at 2KB and grow dynamically. O(log n) depth avoids overflow. Slice splitting `arr[:mid]` copies 24-byte header only. No heap allocation. Fast O(1) memory operation.
 
 ### Operations & Complexity
 
-| Phase | Operation | Complexity                                   | Description |
+| Phase | Operation | Complexity | Description |
 |------|---------|----------------------------------------------|------------|
-| Divide | Divide problem | <code>O(1)</code> or <code>O(n)</code>       | Usually split in the middle |
-| Conquer | Solve subproblem | <code>T(n/b)</code>                          | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> |
-| Combine | Merge results | <code>O(n)</code> or <code>O(n log n)</code> | Merge, partition |
+| Divide | Split problem | <code>O(1)</code> or <code>O(n)</code> | Usually middle split |
+| Conquer | Solve subproblem | <code>T(n/b)</code> | Recursive step |
+| Combine | Merge results | <code>O(n)</code> or <code>O(n log n)</code> | Result integration |
 
 ### Pseudocode
 
 ```text
 sumDivideConquer(arr):
-    if arr is empty:
-        return 0
-    if len(arr) == 1:
-        return arr[0]
+    if arr is empty: return 0
+    if len(arr) == 1: return arr[0]
     mid = len(arr) / 2
     left = sumDivideConquer(arr[0:mid])
     right = sumDivideConquer(arr[mid:])
@@ -55,20 +53,14 @@ sumDivideConquer(arr):
 
 ### Idiomatic Go Implementation
 
-Basic <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>:
-
 ```go
 package main
 
 import "fmt"
 
 func sumDC(arr []int) int {
-	if len(arr) == 0 {
-		return 0
-	}
-	if len(arr) == 1 {
-		return arr[0]
-	}
+	if len(arr) == 0 { return 0 }
+	if len(arr) == 1 { return arr[0] }
 	mid := len(arr) / 2
 	return sumDC(arr[:mid]) + sumDC(arr[mid:])
 }
@@ -82,52 +74,29 @@ func main() {
 
 | Use This When... | Avoid If... |
 |--------------------|------------------|
-| Independent and non-overlapping subproblems | Overlapping subproblems (DP is better) |
-| Combine step is cheaper than <abbr title="A straightforward approach trying all possible solutions.">brute force</abbr> | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> overhead > gain (small n) |
-| Natural recursive structure | <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr> is strictly limited |
+| Independent subproblems exist | Subproblems overlap (use DP) |
+| Combine step is efficient | Recursion overhead > speed gain |
+| Natural recursive structure | Stack depth is strictly limited |
 
 ### Edge Cases & Pitfalls
-- **Case <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> on <code>n > 10⁴</code> can cause a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>; convert to an iterative approach.
-- **Case base case:** Forgetting to handle `len <= 1` causes infinite <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>.
-- **Case off-by-one:** `arr[:mid]` and `arr[mid:]` for `mid = len/2` works perfectly for balanced splits.
+- **Stack overflow:** Deep recursion (n > 10⁴) risks stack exhaustion. Use iterative approach.
+- **Base case:** Handle `len <= 1` to prevent infinite recursion.
+- **Off-by-one:** Use `arr[:mid]` and `arr[mid:]` for balanced splits.
 
-## 23.2. Implementing <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr> in Go
+## 22.2. Implementing <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr> in Go
 
-**Definition:** Go supports <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> through slices, <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>, and generics, with automatic memory management preventing leaks during intermediate allocations.
+**Definition:** Go employs slices, recursion, and generics. Automatic memory management prevents intermediate leaks.
 
 ### Operations & Complexity
 
 | Technique | Go Feature | Complexity | Description |
 |--------|-----------|--------------|------------|
-| Slice split | `arr[:mid]` | <code>O(1)</code> | Shared backing <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> |
-| In-place partition | Swap | <code>O(n)</code> | <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> |
-| Merge auxiliary | `make([]T, n)` | <code>O(n)</code> | <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> space |
-| Tail <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> | Not optimized | . | Go does not optimize tail calls |
+| Slice split | `arr[:mid]` | <code>O(1)</code> | Shared backing array |
+| In-place partition | Swap | <code>O(n)</code> | Quick sort step |
+| Merge auxiliary | `make([]T, n)` | <code>O(n)</code> | Merge sort space |
+| Tail recursion | Not optimized | . | Go lacks tail-call optimization |
 
-### Pseudocode
-
-```text
-quickSort(arr):
-    if len(arr) <= 1:
-        return
-    pivotIndex = PARTISI(arr)
-    quickSort(arr[0:pivotIndex])
-    quickSort(arr[pivotIndex+1:])
-
-PARTISI(arr):
-    pivot = last element
-    i = 0
-    for j = 0 to len(arr)-2:
-        if arr[j] < pivot:
-            swap arr[i] and arr[j]
-            i = i + 1
-    swap arr[i] and pivot
-    return i
-```
-
-### Idiomatic Go Implementation
-
-In-place <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>:
+### Idiomatic Go Implementation (Quick Sort)
 
 ```go
 package main
@@ -135,9 +104,7 @@ package main
 import "fmt"
 
 func quickSort(arr []int) {
-	if len(arr) <= 1 {
-		return
-	}
+	if len(arr) <= 1 { return }
 	pivot := partition(arr)
 	quickSort(arr[:pivot])
 	quickSort(arr[pivot+1:])
@@ -164,93 +131,51 @@ func main() {
 }
 ```
 
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| In-place <abbr title="The process of arranging elements in a specific order.">sorting</abbr> is required | Data is nearly sorted (<abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> <code>O(n^2)</code>) |
-| Memory is strictly limited | A stable sort is required |
-| <abbr title="The expected runtime or resource usage of an algorithm over random inputs.">Average-case</abbr> <code>O(n log n)</code> is sufficient | <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">Worst-case</abbr> guarantee is required (use <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>) |
-
-### Edge Cases & Pitfalls
-- **Case sorted input:** <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> with the last element as pivot degrades to <code>O(n^2)</code>; use a randomized pivot or median-of-three.
-- **Case duplicate elements:** Partitioning with just `<` can lead to imbalanced splits; consider three-way partitioning.
-- **Case small subarrays:** Switch to <abbr title="A sorting algorithm that builds the final sorted array one item at a time.">insertion sort</abbr> for <code>n < 10-20</code> (hybrid sort).
-
-## 23.3. Case Studies: Divide and Conquer Algorithms
-
-**Definition:** Case studies of merge sort, quick sort, binary search, and Strassen's matrix multiplication demonstrate the practical application of divide and conquer with time and space trade-offs.
-
-### Operations & Complexity
+## 22.3. Case Studies
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
 | Merge sort | <code>O(n log n)</code> | <code>O(n)</code> | Stable, predictable |
-| Quick sort | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place, fast avg |
-| Binary search | <code>O(log n)</code> | <code>O(1)</code> | Sorted data required |
-| Strassen | <code>O(n^2.81)</code> | <code>O(n²)</code> | Large matrices only |
+| Quick sort | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place, fast average |
+| Binary search | <code>O(log n)</code> | <code>O(1)</code> | Requires sorted data |
+| Strassen | <code>O(n^2.81)</code> | <code>O(n²)</code> | Large matrix optimization |
+
+## 22.4. Parallelizing in Go
+
+**Definition:** Independent subproblems enable goroutine-based concurrency.
+
+**Rules:**
+Use threshold for granularity (e.g., n > 1000). Small tasks should run sequentially to avoid spawning overhead.
 
 ### Decision Matrix
 
 | Use This When... | Avoid If... |
 |--------------------|------------------|
-| Need stable and predictable sort | <code>O(n)</code> auxiliary memory is unavailable |
-| Data is sorted and frequently searched | Data is dynamic with many inserts |
-| Large matrices where Strassen is beneficial | Small matrices (overhead > gain) |
-
-### Edge Cases & Pitfalls
-- **Case integer overflow on mid:** Use `mid := lo + (hi-lo)/2` to prevent overflow in other languages (Go handles slice indices safely, but it's a good habit).
-- **Case empty slice:** `mergeSort(nil)` and `binarySearch(nil, x)` must be safe.
-- **Case duplicate keys:** `binarySearch` may return the first occurrence or an arbitrary one; define the requirement clearly.
-
-## 23.4. Parallelizing <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr> Algorithms in Go
-
-**Definition:** Independent subproblems in <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> algorithms enable trivial parallelization using goroutines, but synchronization overhead must be carefully managed.
-
-### Operations & Complexity
-
-| Aspect | Sequential | Parallel | Overhead |
-|-------|------------|----------|----------|
-| <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> | <code>O(n log n)</code> | <code>O(n log n / p)</code> | <code>O(n)</code> merge, goroutine spawn |
-| <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> | <code>O(n log n)</code> avg | <code>O(n log n / p)</code> | Partition is sequential |
-| Granularity | . | Threshold n > 1000 | Spawn cost < sort cost |
-
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|--------------------|------------------|
-| Large datasets and multi-core are available | Small datasets (< 1000 elements) |
-| Balanced subproblems | Highly uneven subproblem sizes |
-| CPU-bound and pure computation | I/O-bound (use channels/callbacks instead) |
-
-### Edge Cases & Pitfalls
-- **Case goroutine explosion:** Without a threshold, > 10⁶ goroutines can exhaust memory.
-- **Case load imbalance:** Parallel <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr> with a bad pivot makes one goroutine busy while others idle.
-- **Case false sharing:** Goroutines accessing adjacent data in a <abbr title="A hardware or software component that stores data so future requests can be served faster.">cache</abbr> line causes invalidation.
-- **Case WaitGroup misuse:** `wg.Add` must be called before the `go` statement; `wg.Done` must be called (defer is recommended).
+| Massive datasets + multi-core | Small datasets (n < 1000) |
+| Balanced subproblems | Highly uneven task sizes |
+| CPU-bound computation | I/O-bound tasks (use channels) |
 
 ### Anti-Patterns
 
-- **Unbounded goroutine spawning:** Launching a goroutine per subproblem without a size threshold causes O(n) goroutines for merge sort, exhausting the scheduler and memory. Set a minimum threshold and fall back to sequential sort below it.
-- **Shared-slice writes from goroutines:** Multiple goroutines writing to overlapping slice ranges causes data races. Use `sync.WaitGroup` with partitioned output slices or collect results via channels.
-- **Ignoring uneven partitioning:** Parallel quicksort with a poor pivot strategy makes one goroutine do nearly all work. Randomize pivots or use median-of-three to balance the workload.
+- **Unbounded spawning:** Spawning goroutines per subproblem without threshold kills performance. Use minimum size limits.
+- **Data races:** Concurrent writes to overlapping slices cause corruption. Partition output ranges.
+- **Load imbalance:** Bad pivot strategies cause idle cores. Use randomized pivots.
 
-## 23.5. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## 22.5. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge sort</abbr> | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + merge | <code>O(n log n)</code> | <code>O(n)</code> | Stable <abbr title="The process of arranging elements in a specific order.">sorting</abbr>, parallel |
-| <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr> | In-place partition | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place <abbr title="The process of arranging elements in a specific order.">sorting</abbr> |
-| <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary search</abbr> | Iterative loop | <code>O(log n)</code> | <code>O(1)</code> | Sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> lookup |
-| Strassen | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> + matrix ops | <code>O(n^{2.807})</code> | <code>O(n^{2.807})</code> | Fast matrix multiply |
-| Sum/Max | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> | <code>O(n)</code> | <code>O(log n)</code> | Trivial parallelization |
+| Merge sort | Recursion + merge | <code>O(n log n)</code> | <code>O(n)</code> | Stable, parallel sorting |
+| Quick sort | In-place partition | <code>O(n log n)</code> avg | <code>O(log n)</code> | Memory-efficient sorting |
+| Binary search | Iterative loop | <code>O(log n)</code> | <code>O(1)</code> | Fast lookup |
+| Strassen | Recursion | <code>O(n^{2.807})</code> | <code>O(n^{2.807})</code> | Matrix multiplication |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 22:</strong> This chapter introduces the <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> paradigm with implementations of <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>, <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>, and <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> in Go. It covers recursive decomposition, in-place partitioning techniques, and parallelization using goroutines for CPU-bound problems on multi-core systems.
+<strong>Summary Chapter 22:</strong> Divide and Conquer breaks problems into independent sub-tasks. Optimal for recursive sorting and searching. Goroutines enable efficient multi-core parallelization.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/chapter-23/)
-- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/chapter-25/)
+- [Chapter 23: Dynamic Programming](/docs/part-vi/chapter-23/)
+- [Chapter 25: Backtracking](/docs/part-vi/chapter-25/)
 - [Chapter 26: Advanced Recursive Algorithms](/docs/part-vi/chapter-26/)

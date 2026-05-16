@@ -11,25 +11,27 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>A recursive function calls itself, like a mirror facing a mirror, reflecting a problem into simpler and simpler versions of itself until it vanishes.</em>" : Brian Kernighan</strong>
+<strong>Recursion reflects problems into simpler versions. : Brian Kernighan</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 27 covers advanced <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>: <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, recursive data structures, <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, and <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr> — all implemented idiomatically in Go.
+Advanced <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> includes <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, recursive structures, <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, and <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>. 
 {{% /alert %}}
 
-## 27.1. Fundamentals of <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr>
+## 26.1. Fundamentals of <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr>
 
-**Definition:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> is a programming technique where a function calls itself to solve smaller sub-problems until it reaches a base case.
+**Definition:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> calls itself to solve smaller sub-problems. It terminates at a base case.
 
-**Background & Philosophy:**
-The philosophy elevates recursion from a simple loop replacement to a structural paradigm. It treats functions as mathematical formulas that map complex states to simpler sub-states, proving algorithmic correctness through induction.
+**Mechanics:**
+Functions map complex states to simpler sub-states. Correctness relies on induction.
 
 **Use Cases:**
-Tree Traversals, parsing hierarchical data structures like ASTs in compilers, and orchestrating complex distributed tasks.
+- Tree Traversals.
+- Parsing hierarchical structures (ASTs).
+- Orchestrating distributed tasks.
 
-**Memory Mechanics:**
-Advanced recursion heavily loads the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. In Go, parallel recursion (spawning goroutines for sub-branches) shifts this load from a single deep stack to thousands of shallow, 2KB <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> stacks spread across the <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. This enables massive horizontal scaling without single-thread <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>, provided the developer sets a threshold to avoid <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> overhead for trivially small sub-problems.
+**Memory Management:**
+Recursion loads the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Go parallel recursion uses goroutines. This shifts load from one deep stack to many shallow 2KB <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> stacks. It enables horizontal scaling. Thresholds prevent <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> overhead for small sub-problems.
 
 ### Operations & Complexity
 
@@ -57,7 +59,7 @@ Fibonacci(n, cache):
     return cache[n]
 ```
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -90,34 +92,34 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Go does not guarantee tail call optimization. Avoid extremely deep <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>; use <abbr title="The repetition of a process, typically using loops.">iteration</abbr> or increase the <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> size if necessary.
+Go lacks tail call optimization. Deep <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> risks overflow. Use <abbr title="The repetition of a process, typically using loops.">iteration</abbr> for extreme depth.
 {{% /alert %}}
 
-### Decision Matrix
+### Selection Matrix
 
-| Use <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> When... | Avoid If... |
+| Use <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> If... | Avoid If... |
 |------------------------|------------------|
-| The problem divides naturally (trees, graphs) | <abbr title="The length of the path from the root to a node.">Depth</abbr> > 10^4 (risk of <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>) |
-| <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> is required (N-Queens, Sudoku) | Sub-problems overlap heavily without <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> |
-| <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and conquer</abbr> (Merge/<abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick sort</abbr>) | Performance is hyper-critical and call overhead matters |
+| Problem divides naturally | <abbr title="The length of the path from the root to a node.">Depth</abbr> > 10^4 |
+| <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> is required | Sub-problems overlap without <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> |
+| <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and conquer</abbr> | Performance requires zero overhead |
 
-### Edge Cases & Pitfalls
+### Pitfalls & Errors
 
-- **<abbr title="An error caused by using more stack memory than allocated.">Stack overflow</abbr>:** <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> without a base case or excessive <abbr title="The length of the path from the root to a node.">depth</abbr>. Go stacks start at 2KB and grow, but are still bounded.
-- **Missing base case:** Always define the termination condition.
-- **Redundant computation:** Without <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr>, naive Fibonacci computes the same sub-problems repeatedly.
+- **<abbr title="An error caused by using more stack memory than allocated.">Stack overflow</abbr>:** Excessive <abbr title="The length of the path from the root to a node.">depth</abbr> exceeds bounds.
+- **Missing base case:** Function loops infinitely.
+- **Redundant computation:** Lack of <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> repeats sub-problems.
 
-## 27.2. <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr>
+## 26.2. <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">Divide and Conquer</abbr>
 
-**Definition:** A strategy that breaks a problem into independent sub-problems, solves each recursively, and then combines their results.
+**Definition:** Break problem into independent sub-problems. Solve recursively. Combine results.
 
 ### Operations & Complexity
 
 | Algorithm | Time | Space | Description |
 |-----------|------|-------|------------|
-| <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge Sort</abbr> | <code>O(n log n)</code> | <code>O(n)</code> | Stable, divides arrays |
-| <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place, randomized pivot |
-| <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary Search</abbr> | <code>O(log n)</code> | <code>O(1)</code> iterative, <code>O(log n)</code> recursive | Sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> required |
+| <abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">Merge Sort</abbr> | <code>O(n log n)</code> | <code>O(n)</code> | Stable. Divides arrays. |
+| <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place. Randomized pivot. |
+| <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary Search</abbr> | <code>O(log n)</code> | <code>O(1)</code> | Sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> required. |
 
 ### Pseudocode
 
@@ -140,7 +142,7 @@ QuickSort(A):
     return QuickSort(left) + mid + QuickSort(right)
 ```
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -208,33 +210,33 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-<abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> with a deterministic pivot on a sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> degrades to <code>O(n^2)</code>. A random pivot or median-of-three avoids this <abbr title="The maximum runtime or resource usage of an algorithm over all possible inputs.">worst-case</abbr> scenario.
+<abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> with deterministic pivot on sorted <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> hits <code>O(n^2)</code>. Random pivot prevents this.
 {{% /alert %}}
 
-### Decision Matrix
+### Selection Matrix
 
-| Use D&C When... | Avoid If... |
+| Use D&C If... | Avoid If... |
 |--------------------|------------------|
-| The problem can be partitioned independently | Sub-problems overlap (use DP instead) |
-| Combining results is easier than a direct solution | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> overhead outweighs the performance gain |
+| Problem partitions independently | Sub-problems overlap |
+| Combining is simpler than direct solution | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> overhead kills performance |
 
-### Edge Cases & Pitfalls
+### Pitfalls & Errors
 
-- **Empty or single-element <abbr title="A collection of items stored at contiguous memory locations.">array</abbr>:** Handle these immediately before recursive calls.
-- **Integer overflow on mid:** Use `mid := low + (high-low)/2` instead of `(low+high)/2`.
-- **<abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="The length of the path from the root to a node.">depth</abbr>:** <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> on a <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr> can cause a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>.
+- **Base cases:** Handle single-element arrays immediately.
+- **Overflow:** Compute mid using `low + (high-low)/2`.
+- **<abbr title="The length of the path from the root to a node.">Depth</abbr>:** <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">Quick Sort</abbr> on <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr> overflows stack.
 
-## 27.3. Recursive Data Structures
+## 26.3. Recursive Data Structures
 
-**Definition:** Data structures defined in terms of themselves, such as linked lists and binary trees.
+**Definition:** Structures defined in terms of themselves. Examples include linked lists and binary trees.
 
 ### Operations & Complexity
 
 | Operation | <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">Linked List</abbr> | <abbr title="A tree data structure in which each node has at most two children.">Binary Tree</abbr> (BST) |
 |---------|-------------|-------------------|
-| Insert | <code>O(n)</code> | <code>O(h)</code> = <code>O(log n)</code> balanced |
-| Search | <code>O(n)</code> | <code>O(h)</code> = <code>O(log n)</code> balanced |
-| Delete | <code>O(n)</code> | <code>O(h)</code> = <code>O(log n)</code> balanced |
+| Insert | <code>O(n)</code> | <code>O(log n)</code> balanced |
+| Search | <code>O(n)</code> | <code>O(log n)</code> balanced |
+| Delete | <code>O(n)</code> | <code>O(log n)</code> balanced |
 | Traversal | <code>O(n)</code> | <code>O(n)</code> |
 
 ### Pseudocode
@@ -261,7 +263,7 @@ TreeInorder(node):
     return TreeInorder(node.left) + [node.value] + TreeInorder(node.right)
 ```
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -318,25 +320,25 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Go does not have destructuring pattern matching. Use pointers (`*Tree`) and explicit nil checks to manipulate recursive structures.
+Go relies on pointers (`*Tree`) and explicit nil checks for recursive structures.
 {{% /alert %}}
 
-### Decision Matrix
+### Selection Matrix
 
-| Use When... | Avoid If... |
+| Use If... | Avoid If... |
 |----------------|------------------|
-| Establishing hierarchical relationships (trees) | Frequent random access is needed (use slices) |
-| Dynamic sizing with frequent inserts/deletes | <abbr title="A variable that stores a memory address.">Pointer</abbr> memory overhead is a concern |
+| Hierarchical relationships exist | Random access dominates |
+| Dynamic sizing is required | <abbr title="A variable that stores a memory address.">Pointer</abbr> overhead kills memory |
 
-### Edge Cases & Pitfalls
+### Pitfalls & Errors
 
-- **Dangling <abbr title="A variable that stores a memory address.">pointer</abbr>:** Always check for `nil` before dereferencing.
-- **Circular references:** Go's GC handles cycles, but avoid unnecessary cyclical designs.
-- **<abbr title="An error caused by using more stack memory than allocated.">Stack overflow</abbr> traversal:** For exceedingly deep trees, use <abbr title="The repetition of a process, typically using loops.">iteration</abbr> with an explicit <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>.
+- **Dangling <abbr title="A variable that stores a memory address.">pointers</abbr>:** Check `nil` before dereference.
+- **Cycles:** Avoid unnecessary cyclical designs.
+- **Traversal:** Deep trees overflow stacks. Use explicit stack <abbr title="The repetition of a process, typically using loops.">iteration</abbr>.
 
-## 27.4. <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">Memoization</abbr> and <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">Dynamic Programming</abbr>
+## 26.4. <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">Memoization</abbr> and <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">Dynamic Programming</abbr>
 
-**Definition:** <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">Memoization</abbr> caches function results for identical inputs; <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">Dynamic Programming</abbr> breaks down overlapping sub-problems and stores solutions in a table.
+**Definition:** <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">Memoization</abbr> caches results. <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">Dynamic Programming</abbr> breaks down sub-problems into tables.
 
 ### Operations & Complexity
 
@@ -370,7 +372,7 @@ Knapsack(weights, values, capacity):
     return dp[n][capacity]
 ```
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -434,26 +436,26 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Top-down approaches with deep <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> in Go carry the risk of <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr> for n > 10^5. Bottom-up approaches are safer for massive scales.
+Top-down <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> risks <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr> for n > 10^5. Bottom-up handles massive scales.
 {{% /alert %}}
 
-### Decision Matrix
+### Selection Matrix
 
-| Use Top-down When... | Use Bottom-up When... |
+| Use Top-down If... | Use Bottom-up If... |
 |-------------------------|--------------------------|
-| Not all sub-problems need evaluating | Every sub-problem must be evaluated |
-| A recursive formulation is more natural | Space optimization is required |
-| n is small to medium | n is exceptionally large, avoiding the call <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
+| Sub-problems skip evaluation | Sub-problems demand evaluation |
+| Logic remains natural | Space optimization matters |
+| n remains small | n grows large |
 
-### Edge Cases & Pitfalls
+### Pitfalls & Errors
 
-- **Integer overflow:** DP on Fibonacci exceeds `int64` at n=93. Utilize `math/big` if necessary.
-- **Wrong base case:** Continuously validate the initial boundary conditions.
-- **Space waste:** Use a rolling <abbr title="A collection of items stored at contiguous memory locations.">array</abbr> if you only require the immediate previous row.
+- **Overflow:** Fibonacci exceeds `int64` at n=93. Use `math/big`.
+- **Base cases:** Validate boundaries.
+- **Memory waste:** Rolling arrays reduce space for previous-row dependencies.
 
-## 27.5. Advanced <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>
+## 26.5. Advanced <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>
 
-**Definition:** <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> systematically trials possibilities and "reverts" when a solution is invalid, primarily used for constraint satisfaction problems.
+**Definition:** <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> trials possibilities and reverts upon invalidity. Built for constraint satisfaction.
 
 ### Operations & Complexity
 
@@ -482,7 +484,7 @@ SolveNQueens(n):
     return result
 ```
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -542,25 +544,25 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-<abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> can be explosive in execution time. Implement pruning (cutting branches that are demonstrably invalid) to speed up execution.
+<abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> explodes in time. Pruning stops invalid branches early.
 {{% /alert %}}
 
-### Decision Matrix
+### Selection Matrix
 
-| Use <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> When... | Avoid If... |
+| Use <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr> If... | Avoid If... |
 |-----------------------------|------------------|
-| You must enumerate all valid solutions | The solution space is impossibly large |
-| Constraints are easy to verify | The problem can be solved with DP/greedy algorithms |
+| Enumeration is required | Solution space explodes |
+| Constraints evaluate fast | DP or greedy succeeds |
 
-### Edge Cases & Pitfalls
+### Pitfalls & Errors
 
-- **No solution:** Always handle scenarios where no valid solution exists.
-- **State mutation:** Ensure you perfectly undo any changes after <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> (restore the state).
-- **Duplicate solutions:** Employ an ordering logic or a set to prevent yielding duplicates.
+- **No solution:** Handle impossible cases.
+- **State mutation:** Restore state perfectly after <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr>.
+- **Duplicates:** Track sets to avoid repetition.
 
-## 27.6. Recursive Parallelism
+## 26.6. Recursive Parallelism
 
-**Definition:** Running recursive sub-problems concurrently using goroutines to dramatically speed up <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> algorithms.
+**Definition:** Concurrent <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> using goroutines.
 
 ### Operations & Complexity
 
@@ -568,7 +570,7 @@ func main() {
 |-------|------|----------|
 | Sequential | <code>O(T)</code> | 0 |
 | Goroutine per sub-problem | <code>O(T/p)</code> | Context switch |
-| Worker pool | <code>O(T/p)</code> | More efficient for numerous tasks |
+| Worker pool | <code>O(T/p)</code> | High task efficiency |
 
 ### Pseudocode
 
@@ -585,7 +587,7 @@ ParallelMergeSort(A):
     return Merge(left, right)
 ```
 
-### Idiomatic Go Implementation
+### Go Implementation
 
 ```go
 package main
@@ -652,42 +654,42 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Thresholding is vital for recursive parallelism. Spawning goroutines on tiny sub-problems severely degrades performance due to overhead. Establish a minimum cutoff (e.g., 1000 elements).
+Thresholding limits <abbr title="A lightweight concurrent execution thread managed by the Go runtime">goroutine</abbr> overhead. Execute small sub-problems sequentially.
 {{% /alert %}}
 
-### Decision Matrix
+### Selection Matrix
 
-| Use Parallel When... | Avoid If... |
+| Use Parallel If... | Avoid If... |
 |------------------------|------------------|
-| Sub-problems are large and entirely independent | Sub-problems are tiny (< 1000 elements) |
-| The problem is CPU-bound | The problem is I/O-bound (use pipelines instead) |
+| Sub-problems divide independently | Sub-problems remain tiny |
+| Execution is CPU-bound | Execution is I/O-bound |
 
-### Edge Cases & Pitfalls
+### Pitfalls & Errors
 
-- **Goroutine leak:** Always verify that channels are closed or `defer wg.Done()` is invoked, ideally using `sync.WaitGroup`.
-- **Data race:** Goroutines must not write to the identical slice without explicit synchronization.
-- **Too many goroutines:** Restrict the count via thresholding or a bounded worker pool.
+- **Goroutine leaks:** Synchronize with `sync.WaitGroup`.
+- **Data races:** Avoid concurrent slice writes.
+- **Excessive concurrency:** Bound execution with thresholds or worker pools.
 
 ### Anti-Patterns
 
-- **Stack overflow from deep recursion:** Go goroutines start with a small stack that grows dynamically, but very deep recursion (>O(10^6) depth) still risks stack overflow. Convert to iterative when depth is unbounded.
-- **Capturing loop variables by reference:** Closures in goroutines that capture loop variable `i` by reference all see the final value. Pass `i` as a parameter to the goroutine function.
-- **Redundant recomputation without memoization:** Naive Fibonacci or recursive tree counting recalculates identical subproblems exponentially. Always add memoization when overlapping subproblems exist.
+- **Stack overflow:** Deep recursion panics. Convert to iteration.
+- **Closure capture:** Loop variables leak by reference. Pass them as arguments.
+- **Redundant recomputation:** Unmemoized recursion recalculates overlap exponentially. Cache results.
 
-## Quick Reference
+## 26.7. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |-----------|---------|------|-------|----------|
-| Factorial | func recursion | <code>O(n)</code> | <code>O(n)</code> stack | Basic example |
-| Fibonacci memo | map[int]int | <code>O(n)</code> | <code>O(n)</code> | Classic DP |
+| Factorial | func | <code>O(n)</code> | <code>O(n)</code> | Basic |
+| Fibonacci memo | map[int]int | <code>O(n)</code> | <code>O(n)</code> | DP |
 | Merge Sort | []int | <code>O(n log n)</code> | <code>O(n)</code> | Stable sorting |
 | Quick Sort | []int | <code>O(n log n)</code> avg | <code>O(log n)</code> | In-place sorting |
 | Knapsack 0/1 | [][]int | <code>O(nW)</code> | <code>O(nW)</code> | Combinatorial DP |
-| N-Queens | <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> | <code>O(n!)</code> | <code>O(n)</code> | Constraint satisfaction |
-| Binary Search | []int | <code>O(log n)</code> | <code>O(1)</code> | Search on sorted |
+| N-Queens | <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> | <code>O(n!)</code> | <code>O(n)</code> | Constraint |
+| Binary Search | []int | <code>O(log n)</code> | <code>O(1)</code> | Sorted search |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 26:</strong> This chapter covers advanced recursive algorithms: <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr> (<abbr title="A divide-and-conquer sorting algorithm that divides the array into halves and merges them.">merge sort</abbr>, <abbr title="A divide-and-conquer sorting algorithm using a pivot element to partition the array.">quick sort</abbr>), recursive data structures (BST), <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> and <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr> (Fibonacci, knapsack), <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr> (N-Queens), and recursive parallelism with goroutines. Use <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> for naturally dividing problems, <abbr title="A dynamic programming technique storing the results of expensive function calls and returning cached results.">memoization</abbr> for overlapping sub-problems, and bottom-up <abbr title="A bottom-up dynamic programming technique filling a table iteratively.">tabulation</abbr> for large scales.
+<strong>Summary:</strong> Advanced <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> implements <abbr title="An algorithmic paradigm that breaks a problem into subproblems, solves them, and combines the results.">divide and conquer</abbr>, <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">dynamic programming</abbr>, <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">backtracking</abbr>, and parallelism. Caching stops redundancy. Thresholds stop overhead.
 {{% /alert %}}
 
 ## See Also

@@ -15,35 +15,35 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 48 covers the LRU (Least Recently Used) cache — the most common caching strategy, combining hash tables with linked lists for <code>O(1)</code> operations.
+LRU (Least Recently Used) cache is the standard eviction strategy. Combines hash tables with linked lists for <code>O(1)</code> operations.
 {{% /alert %}}
 
-## 48.1. The Caching Problem
+## 47.1. Purpose
 
-**Definition:** A <abbr title="A cache eviction policy that discards the least recently used items first when the cache is full.">Least Recently Used (LRU)</abbr> cache maintains a fixed-size collection where the least recently accessed item is evicted when space is needed.
+**Definition:** <abbr title="A cache eviction policy that discards the least recently used items first when the cache is full.">Least Recently Used (LRU)</abbr> cache holds fixed-size data. Discards oldest accessed item when capacity reached.
 
-**Background & Philosophy:**
-The philosophy is <abbr title="The tendency to reuse recently accessed memory addresses">temporal locality</abbr>. If a piece of data was requested recently, it is statistically highly probable it will be requested again very soon. By explicitly keeping the "freshest" data readily available and discarding the stale data, an LRU cache creates a buffer that shields the slow backing store (database or disk) from repeated identical requests.
+**Temporal Locality:**
+Recent data likely requested again soon. Freshest data stays in RAM. Stale data evicted to shield slow databases or disks.
 
 **Use Cases:**
-Database query caching, CDN edge nodes, and CPU hardware caching (L1/L2 caches physically implement LRU logic).
+Database query caching. CDN edge nodes. CPU hardware (L1/L2 caches).
 
 **Memory Mechanics:**
-An LRU cache couples a `map` (for <code>O(1)</code> lookups) with a doubly-linked list (for <code>O(1)</code> reordering). In Go, the map stores <abbr title="A variable that stores a memory address.">pointers</abbr> to the list nodes. This structure guarantees that cache memory size is strictly capped. However, every time an item is accessed (even a read), the doubly-linked list must update <abbr title="A variable that stores a memory address.">pointers</abbr> to move the node to the front. These pointer swaps trigger memory writes, meaning that in highly concurrent environments, read-heavy operations on an LRU cache can bottleneck severely due to mutex <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> compared to lock-free caches.
+Couples `map` (O(1) lookup) with doubly-linked list (O(1) reordering). Memory size strictly capped. Access triggers pointer swaps. Mutex <abbr title="A situation where multiple threads attempt to modify the same memory address simultaneously.">lock contention</abbr> bottlenecks concurrent reads.
 
-### Why Caching Matters
+### Caching Impact
 
 | System | Without Cache | With Cache |
 |--------|--------------|------------|
 | CPU | ~100 ns (RAM) | ~1 ns (L1) |
-| Web server | ~100 ms (database) | ~1 ms (Redis) |
-| CDN | ~500 ms (origin) | ~20 ms (edge) |
+| Web server | ~100 ms (DB) | ~1 ms (Redis) |
+| CDN | ~500 ms (Origin) | ~20 ms (Edge) |
 
-## 48.2. The Data Structure
+## 47.2. Data Structure
 
-LRU cache requires:
-- **O(1) lookup:** <abbr title="A data structure that implements an associative array using a hash function.">Hash table</abbr> maps key to node
-- **O(1) eviction:** <abbr title="A linked list where each node points to both the next and previous nodes.">Doubly linked list</abbr> maintains usage order
+LRU requirements:
+- **O(1) lookup:** <abbr title="A data structure that implements an associative array using a hash function.">Hash table</abbr> maps key to node.
+- **O(1) eviction:** <abbr title="A linked list where each node points to both the next and previous nodes.">Doubly linked list</abbr> tracks usage order.
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: LRU Cache
 
@@ -127,60 +127,59 @@ func main() {
 }
 ```
 
-## 48.3. Operations
+## 47.3. Operations
 
 | Operation | Time | Description |
 |-----------|------|-------------|
-| Get | <code>O(1)</code> | Hash lookup + list reorder |
-| Put | <code>O(1)</code> | Insert or update + possible eviction |
-| Evict | <code>O(1)</code> | Remove tail, delete from hash |
+| Get | <code>O(1)</code> | Hash lookup + list reorder. |
+| Put | <code>O(1)</code> | Insert/update + eviction check. |
+| Evict | <code>O(1)</code> | Remove tail node and map entry. |
 
-## 48.4. Cache Eviction Strategies
+## 47.4. Eviction Strategies
 
 | Strategy | Eviction Target | Use Case |
 |----------|----------------|----------|
-| **LRU** | Least recently used | General-purpose, temporal locality |
-| **LFU** | Least frequently used | Popular items stay |
-| **FIFO** | First in, first out | Simple streaming |
-| **Random** | Random item | Avoiding adversarial patterns |
-| **TTL** | Expired by time | Session data |
+| **LRU** | Least recently used. | General purpose. |
+| **LFU** | Least frequently used. | Popular item persistence. |
+| **FIFO** | First in, first out. | Streaming buffers. |
+| **Random** | Random item. | Adversarial protection. |
+| **TTL** | Time-based expiry. | Session data. |
 
-## 48.5. Decision Matrix
+## 47.5. Decision Matrix
 
 | Use LRU When... | Use LFU When... |
 |-----------------|-----------------|
-| Recent access predicts future access | Popularity matters more than recency |
-| Workload has temporal locality | Some items are consistently hot |
+| Recency predicts future requests. | Frequency matters more than recency. |
+| Workload has temporal locality. | Some items stay consistently hot. |
 
-### Edge Cases & Pitfalls
+### Constraints & Risks
 
-- **Capacity 0:** Handle as no-op or error.
-- **Concurrency:** Standard LRU is not thread-safe. You MUST use `sync.RWMutex` or sharded locks for concurrent access.
-- **Memory overhead:** Each entry has ~48 bytes of <abbr title="A variable that stores a memory address.">pointer</abbr> overhead plus the map overhead.
-- **Scan resistance:** LRU fails under sequential scans (all items become "recent" and flush the cache).
+- **Thread Safety:** Standard implementation requires `sync.RWMutex` or sharding.
+- **Overhead:** High pointer counts increase memory consumption (~48 bytes/node).
+- **Sequential Scans:** Full scans flush hot data (cache pollution).
 
 ### Anti-Patterns
 
-- **Using LRU under sequential scan workloads.** A full-table scan touches every item once, making all entries "recent" and evicting the actually useful hot data. This is the classic cache-pollution problem — consider LRU-2, ARC, or LFU to resist scan thrashing.
-- **Deploying a single global LRU cache without thread-safety.** An unprotected `map` + doubly-linked list is not safe under concurrent access. Either wrap in `sync.RWMutex` (which creates lock contention), shard the cache, or use `sync.Map` for read-heavy patterns.
-- **Setting capacity without profiling.** A cache that's too small has an abysmal hit rate; one that's too large wastes memory and may cause GC pressure. Always profile the working set size and tune capacity to hit the target hit-rate threshold (typically > 80%).
-- **Using LRU when access frequency matters more than recency.** If a few items are accessed hundreds of times and others only once, LRU treats them identically. LFU or ARC better exploit frequency skew to keep genuinely hot items resident.
+- **Scan Thrashing:** sequential reads push useful data out. Use LRU-2 or ARC to resist.
+- **Global Locks:** Unprotected maps fail in concurrent Go. wrap in mutex or use sharded caches.
+- **Blind Capacity:** Too small kills hit rate. Too large triggers GC pressure.
+- **Frequency Ignore:** Use LFU if item popularity stays static over long windows.
 
-## 48.6. Quick Reference
+## 47.6. Quick Reference
 
-| Parameter | Typical Value |
-|-----------|---------------|
-| Capacity | Application-dependent |
-| Hit rate target | > 80% |
-| Memory overhead | ~2x entry size |
+| Parameter | Value |
+|-----------|-------|
+| Hit Rate Target | > 80% |
+| Pointer Overhead | ~48 bytes/entry |
+| Memory usage | ~2x entry size |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `container/list` | Can build LRU (but custom list is faster) |
-| `github.com/hashicorp/golang-lru` | Production LRU implementation |
+| `container/list` | Generic doubly linked list. |
+| `github.com/hashicorp/golang-lru` | Production-ready implementation. |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 47:</strong> The LRU cache is a masterclass in combining data structures: hash tables for <code>O(1)</code> lookup and doubly linked lists for <code>O(1)</code> reordering. It powers databases, operating systems, and web servers. Understanding LRU means understanding that the best eviction strategy depends on your access patterns, not abstract perfection.
+LRU caches combine hash tables for speed and linked lists for order. Powers database query layers and web servers.
 {{% /alert %}}
 
 ## See Also

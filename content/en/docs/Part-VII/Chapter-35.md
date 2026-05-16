@@ -15,30 +15,30 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 36 explores approximation algorithms: greedy heuristics, local search, and randomized rounding tailored specifically for solving NP-hard problems.
+Chapter 35 covers approximation algorithms: greedy heuristics, local search, and randomized rounding for NP-hard problems.
 {{% /alert %}}
 
 ## 36.1. Greedy Approximation
 
-**Definition:** Greedy algorithms continuously select the locally optimal choice at every isolated step. For a variety of <abbr title="A class of problems at least as hard as NP-Complete problems.">NP-hard</abbr> problems, a greedy approach yields a mathematically provable, bounded <abbr title="A guarantee of how close an approximation is to the optimal solution.">approximation ratio</abbr>.
+**Definition:** Greedy algorithms select local optimal choice at every step. NP-hard problems receive bounded <abbr title="A guarantee of how close an approximation is to the optimal solution.">approximation ratio</abbr>.
 
-**Background & Philosophy:**
-The philosophy embraces pragmatic imperfection. When a problem is <abbr title="A class of problems at least as hard as NP-Complete problems.">NP-Hard</abbr> (like calculating the flawless shortest route for 1,000 delivery trucks), finding the perfect mathematical answer might take a supercomputer millions of years. Approximate algorithms proudly trade absolute perfection for guaranteed speed, securing answers that are "good enough" (e.g., guaranteed to be no worse than 2x the optimal cost).
+**Background:**
+NP-Hard problems take excessive time for exact solutions. Approximate algorithms trade perfection for speed. Results stay within guaranteed bounds: cost never exceeds 2x optimal.
 
 **Use Cases:**
-Heuristic routing in Google Maps, grouping millions of distinct products into the fewest possible shipping boxes (Set Cover), and optimizing layouts for microchip circuitry.
+Google Maps routing. Set Cover for shipping optimization. Microchip circuitry layout.
 
 **Memory Mechanics:**
-Because approximate algorithms often fall back on greedy sorting or minimum spanning trees (MST), their memory footprint heavily depends on the underlying graph structures. A common greedy approximation requires sorting edge weights <code>O(E log E)</code>, relying entirely on <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> slices that process quickly in <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr>. Randomization (like Max-Cut) simply iterates through memory flipping bits randomly, which operates efficiently but places heavy demands on the entropy generator's shared memory lock if not isolated per thread.
+Algorithms use greedy sorting or MST. Edge weight sorting takes <code>O(E log E)</code>. <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">Contiguous</abbr> slices improve <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> locality. Randomization flips bits in memory. Entropy generators require shared memory locks.
 
 ### Operations & Complexity
 
 | Problem | Approx Ratio | Time | Description |
 |---------|-------------|------|------------|
-| Set Cover | H(n) ≈ ln n | <code>O(n log n)</code> | Greedy iteratively picks the maximum coverage |
-| <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover | 2 | <code>O(V + E)</code> | Pick both endpoints of an uncovered <abbr title="A connection between two vertices in a graph.">edge</abbr> |
-| Knapsack (fractional) | 1 (Exact) | <code>O(n log n)</code> | Strictly optimal for fractional variables |
-| TSP (metric) | 2 (MST-based) | <code>O(V²)</code> | Employs the double-tree technique |
+| Set Cover | H(n) ≈ ln n | <code>O(n log n)</code> | Picks maximum coverage iteratively |
+| <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover | 2 | <code>O(V + E)</code> | Picks both endpoints of uncovered <abbr title="A connection between two vertices in a graph.">edge</abbr> |
+| Knapsack (fractional) | 1 (Exact) | <code>O(n log n)</code> | Optimal for fractional variables |
+| TSP (metric) | 2 (MST-based) | <code>O(V²)</code> | Uses double-tree technique |
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
@@ -86,12 +86,12 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Fractional knapsack is optimal because it can act greedily based on the <abbr title="The data associated with a key in a key-value pair.">value</abbr>/weight ratio. The 0/1 Knapsack is not optimal using a greedy approach; you must deploy DP or a Fully <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">Polynomial Time</abbr> Approximation Scheme (<abbr title="Fully Polynomial Time Approximation Scheme - finds near-optimal solutions in polynomial time.">FPTAS</abbr>).
+Fractional knapsack is optimal using value/weight ratio. 0/1 Knapsack requires DP or <abbr title="Fully Polynomial Time Approximation Scheme - finds near-optimal solutions in polynomial time.">FPTAS</abbr>.
 {{% /alert %}}
 
 ## 36.2. <abbr title="A fundamental unit of a graph, also called a node.">Vertex</abbr> Cover 2-Approximation
 
-**Definition:** A <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover is a curated set of vertices that seamlessly touches every single <abbr title="A connection between two vertices in a graph.">edge</abbr> within a <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>. A greedy 2-approximation vigorously selects both endpoints of any <abbr title="A connection between two vertices in a graph.">edge</abbr> that currently remains uncovered.
+**Definition:** Vertex cover touches every <abbr title="A connection between two vertices in a graph.">edge</abbr>. Greedy 2-approximation selects both endpoints of uncovered edges.
 
 ### Operations & Complexity
 
@@ -99,7 +99,7 @@ Fractional knapsack is optimal because it can act greedily based on the <abbr ti
 |-----------|-------------|------|-------|
 | Greedy (both endpoints) | 2 | <code>O(V + E)</code> | <code>O(V)</code> |
 | LP Rounding | 2 | <code>O(poly)</code> | <code>O(V + E)</code> |
-| Best known mathematical | 2 - o(1) | . | A formal PTAS does not exist yet |
+| Best known mathematical | 2 - o(1) | . | PTAS does not exist |
 
 ### Idiomatic Go Implementation
 
@@ -149,26 +149,26 @@ func main() {
 
 | Scenario | Best Algorithm | Approx Ratio | Notes |
 |----------|---------------|-------------|-------|
-| Small vertex cover | ILP exact | 1 (exact) | Only for V < ~30 |
-| Large vertex cover | Greedy both-endpoints | 2 | Simple, fast |
+| Small vertex cover | ILP exact | 1 (exact) | V < 30 |
+| Large vertex cover | Greedy both-endpoints | 2 | Simple and fast |
 | Sparse graphs | Greedy vertex cover | 2 | O(V+E) |
-| Metric TSP (fast) | Nearest Neighbor | O(log n) | Fast but no constant guarantee |
+| Metric TSP (fast) | Nearest Neighbor | O(log n) | No constant guarantee |
 | Metric TSP (provable) | Christofides | 1.5 | MST + min-weight matching |
-| Max-Cut (simple) | Random partition | E/2 expected | Run k times for amplification |
-| Fractional Knapsack | Greedy by ratio | 1 (exact) | Optimal for fractional variant |
+| Max-Cut (simple) | Random partition | E/2 expected | Run k times |
+| Fractional Knapsack | Greedy by ratio | 1 (exact) | Optimal |
 | 0/1 Knapsack | DP or FPTAS | 1 (exact) or (1−ε) | Use FPTAS for large n |
 
 ### Edge Cases & Pitfalls
 
-- **Fractional vs 0/1:** Greedy is optimal only for fractional knapsack. Applying it to 0/1 knapsack produces arbitrarily bad results.
-- **Triangle inequality:** Christofides' 1.5-approximation only works on metric TSP (distances satisfy triangle inequality). If distances violate it, the guarantee evaporates.
-- **Random amplification:** One run of randomized Max-Cut gives expected E/2. Run it k times and keep the best cut to drive the failure probability down to 2^{-k}.
-- **Vertex cover tie-breaking:** The greedy 2-approximation picks both endpoints of an uncovered edge. The result depends on edge iteration order — different orders produce different covers of the same approximation quality.
-- **TSP nearest neighbor trap:** Nearest neighbor can produce tours up to O(log n) times optimal, and its output depends heavily on the starting city.
+- **Fractional vs 0/1:** Greedy works for fractional only. 0/1 knapsack yields bad results with greedy.
+- **Triangle inequality:** Christofides requires metric TSP. Violating triangle inequality breaks guarantees.
+- **Random amplification:** Single run gives expected E/2. Run k times to reduce failure probability.
+- **Vertex cover tie-breaking:** Results depend on edge order. Quality remains constant at 2x.
+- **TSP nearest neighbor trap:** Tours reach O(log n) times optimal. Start city choice changes output.
 
 ## 36.3. Metric TSP Heuristic (Nearest Neighbor)
 
-**Definition:** A Metric TSP explicitly fulfills the triangle inequality. The Nearest Neighbor heuristic constructs a tour by repeatedly visiting the closest unvisited city. This is a practical heuristic (not a constant-factor approximation) — in the worst case, nearest neighbor can produce tours up to O(log n) times the optimal. For a provable 2-approximation, use the MST double-tree approach: compute an MST, double its edges, form an Euler tour, and shortcut repeated vertices.
+**Definition:** Metric TSP follows triangle inequality. Nearest Neighbor visits closest unvisited city. Not a constant-factor approximation. Max error is O(log n). MST double-tree provides provable 2-approximation.
 
 ### Idiomatic Go Implementation
 
@@ -230,7 +230,7 @@ func main() {
 
 ## 36.4. Randomized Approximation
 
-**Definition:** Randomized algorithms inject calculated random choices to forge an expected, highly reliable approximation ratio.
+**Definition:** Randomized algorithms use random choices. Achieve expected approximation ratios.
 
 ### Idiomatic Go Implementation
 
@@ -269,14 +269,14 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amplification tactic: execute the algorithm <code>k</code> times, selecting the best result to reduce the probability of failure exponentially.
+Randomized Max-Cut produces expected cut size ≥ |E|/2. Run <code>k</code> times to reduce failure probability.
 {{% /alert %}}
 
 ### Anti-Patterns
 
-- **Applying greedy to 0/1 Knapsack:** The greedy value/weight ratio strategy is optimal only for fractional knapsack. For 0/1 Knapsack, use DP or an FPTAS — greedy produces arbitrarily bad results.
-- **Assuming TSP nearest neighbor gives a constant-factor guarantee:** Nearest neighbor can produce results O(log n) times optimal. For a proven 1.5-approximation on metric TSP, use Christofides' algorithm.
-- **Running randomized Max-Cut only once:** A single random partition gives expected E/2 but high variance. Run k independent trials and keep the best to reduce failure probability exponentially.
+- **Greedy for 0/1 Knapsack:** Strategy fails. Use DP or FPTAS.
+- **TSP Nearest Neighbor guarantee:** No constant guarantee exists. Use Christofides for 1.5-approx.
+- **Single Max-Cut run:** High variance occurs. Perform k trials.
 
 ## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
 
@@ -291,7 +291,7 @@ Randomized Max-Cut reliably produces an expected cut size roughly ≥ |E|/2. Amp
 | Knapsack 0/1 | DP | 1 | <code>O(nW)</code> | `[][]int` matrix |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 35:</strong> This chapter discusses approximation algorithms designed for NP-hard problems: greedy fractional knapsack (provably optimal), a 2-approximation for <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> cover, nearest neighbor and Christofides methods for metric TSP, alongside a randomized Max-Cut approach. Leverage greedy techniques for lightning-fast solutions, randomized algorithms for consistent expected ratios, and Christofides for a rigorous 1.5 guarantee on metric TSPs.
+<strong>Summary Chapter 35:</strong> Chapter covers approximation algorithms for NP-hard problems. Greedy fractional knapsack is optimal. Vertex cover has 2-approximation. Metric TSP uses Nearest Neighbor or Christofides. Randomized Max-Cut provides expected ratios. Use greedy for speed, randomization for expected bounds, and Christofides for 1.5 guarantee.
 {{% /alert %}}
 
 ## See Also

@@ -15,29 +15,29 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 17 focuses on Network Flow Algorithms (Ford-Fulkerson, Edmonds-Karp, Dinic's). It demonstrates how to maximize network <abbr title="The amount of data processed in a given amount of time.">throughput</abbr> and minimize transportation costs effectively within dense graphs.
+Chapter 17: Network Flow Algorithms. Covers Ford-Fulkerson, Edmonds-Karp, and Dinic's algorithms. Focuses on throughput optimization.
 {{% /alert %}}
 
 ## 17.1. Ford-Fulkerson Method
 
-**Definition:** Ford-Fulkerson iteratively increases flow by finding an augmenting <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> from the source to the sink using DFS, until no such <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> exists.
+**Definition:** Increases flow by finding augmenting paths via DFS. Stops when no paths exist between source and sink.
 
-**Background & Philosophy:**
-Network flow problems model the transport of goods, liquids, or data across a constrained network. Ford-Fulkerson is a "method" rather than an algorithm because it does not strictly specify how to find the path. The philosophy is greedy incrementation: find any path that can take more flow, fill it up to its bottleneck, and crucially, create "residual" back-edges. These back-edges act as an "undo" button, allowing future paths to push flow back the other way if it leads to a globally higher total flow.
+**Logic:**
+Greedy incrementation. Fills paths to bottleneck limit. Uses residual back-edges for flow "undo". Back-edges ensure global optimization.
 
 **Use Cases:**
-Used in pipeline logistics (water or oil routing), allocating bandwidth in telecom networks, and calculating maximum bipartite matching (e.g., matching job applicants to open positions).
+Pipeline logistics. Telecom bandwidth allocation. Bipartite matching.
 
 **Memory Mechanics:**
-The algorithm heavily relies on a "Residual Graph", typically implemented as an <abbr title="A 2D array representing a graph, where rows and columns correspond to vertices.">Adjacency Matrix</abbr> (`[][]int`). In Go, mutating a 2D slice directly modifies the underlying <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. DFS traverses this matrix recursively, adding to the <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. Because Ford-Fulkerson uses DFS, it can pathologically ping-pong back and forth between two nodes if the capacities are chosen poorly, making it incredibly inefficient in terms of CPU cycles, though its <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">space complexity</abbr> remains a steady <code>O(V^2)</code>.
+Relies on residual adjacency matrix `[][]int`. DFS adds to call stack. Pathologically slow for large capacities. Space complexity: O(V^2).
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Augmenting <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> | <code>O(E)</code> | Using DFS |
-| Total | <code>O(E × max_flow)</code> | Not guaranteed to be polynomial |
-| Residual <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> | <code>O(V²)</code> | <abbr title="A 2D array representing a graph, where rows and columns correspond to vertices.">Adjacency matrix</abbr> |
+| Augmenting path | <code>O(E)</code> | Using DFS |
+| Total | <code>O(E × max_flow)</code> | Capacity-dependent |
+| Residual graph | <code>O(V²)</code> | Adjacency matrix storage |
 
 ### Pseudocode
 
@@ -115,33 +115,33 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| A simple implementation is needed | Capacities are large — runtime can be exponential |
-| The graph is extremely small | A strict polynomial guarantee is required |
+| Implementation simplicity required | Large capacities present. Runtime can be exponential. |
+| Graph is very small | Polynomial guarantee required |
 
 ### Edge Cases & Pitfalls
 
-- **Integer capacities:** Ensure `bottleneck := 1 << 30` does not trigger an integer overflow.
-- **Augmenting path DFS:** This can be extremely slow for large capacities; use Edmonds-Karp instead.
+- **Overflow:** Ensure bottleneck values stay within `int` range.
+- **DFS Pathing:** Slow for high capacities. Use Edmonds-Karp instead.
 
 ## 17.2. Edmonds-Karp Algorithm
 
-**Definition:** Edmonds-Karp is an implementation of the Ford-Fulkerson method that uses BFS to find the shortest augmenting path, guaranteeing a polynomial complexity of <code>O(V E²)</code>.
+**Definition:** Ford-Fulkerson variant using BFS for shortest augmenting paths. Polynomial complexity: <code>O(V E²)</code>.
 
-**Background & Philosophy:**
-Edmonds-Karp fixes the pathological flaw in Ford-Fulkerson by formalizing the path-finding rule: "Always take the shortest path by edge count." This philosophy of Breadth-First traversal eliminates the possibility of bouncing back and forth on large capacity edges, bounding the algorithm's runtime mathematically to the number of nodes and edges, regardless of how massive the integer capacities are.
+**Logic:**
+Rule: Always take shortest path by edge count. BFS prevents bouncing on high-capacity edges. Runtime bounded by graph size.
 
 **Use Cases:**
-The standard fallback algorithm for general-purpose max flow calculations when the graph is small to medium-sized and capacity numbers vary wildly.
+General-purpose max flow. Small to medium graphs with variable capacities.
 
 **Memory Mechanics:**
-By using BFS, Edmonds-Karp replaces the DFS <abbr title="Memory used to execute functions and store local variables.">call stack</abbr> with a heap-allocated Queue (`[]int`). In Go, tracking the path requires a `parent` array. As the BFS scans the matrix, it constantly reads from the queue, checks the capacity matrix, and updates the parent slice. Since these slices are accessed dynamically, <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> misses are common on large graphs, making Edmonds-Karp strictly slower than Dinic's for dense configurations.
+Replaces recursion with `[]int` Queue. Requires `parent` array for path reconstruction. Dynamic slice access may cause CPU cache misses on large graphs.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| BFS augmenting | <code>O(V)</code> | Shortest path by edge count |
-| Iterations | <code>O(VE)</code> | Bound on the number of augmenting paths |
+| BFS augmenting | <code>O(V)</code> | Shortest path count |
+| Iterations | <code>O(VE)</code> | Path count bound |
 | Total | <code>O(V E²)</code> | Strictly polynomial |
 
 ### Idiomatic Go Implementation
@@ -196,30 +196,30 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Need a polynomial time guarantee | The graph is massive — Dinic's is much faster |
-| A straightforward implementation is preferred | The graph is very dense |
+| Polynomial guarantee needed | Massive graphs. Dinic's is faster. |
+| Straightforward implementation | Very dense graphs |
 
 ## 17.3. Dinic’s Algorithm
 
-**Definition:** Dinic's algorithm utilizes a level graph (built via BFS) and blocking flows (found via DFS) to dramatically accelerate maximum flow computations, achieving <code>O(V²E)</code> complexity in the general case and <code>O(E√V)</code> for bipartite matching.
+**Definition:** Uses level graphs (BFS) and blocking flows (DFS). Complexity: <code>O(V²E)</code> general, <code>O(E√V)</code> for bipartite matching.
 
-**Background & Philosophy:**
-Dinic's philosophy is "batch processing". Instead of finding one path at a time (like Edmonds-Karp), it builds a "Level Graph" mapping distance from the source. Then, it pushes multiple flows simultaneously through this graph until the entire level structure is blocked. It combines the rigorous pathing of BFS with the aggressive exploration of DFS.
+**Logic:**
+Batch processing. Level Graph maps source distance via BFS. Pushes multiple flows simultaneously via DFS. Levels blocked when exhausted.
 
 **Use Cases:**
-The absolute gold standard for competitive programming and heavy-duty network calculations, such as bipartite matching where its time complexity drops miraculously to <code>O(E √V)</code>.
+Competitive programming. Heavy network calculations. Bipartite matching.
 
 **Memory Mechanics:**
-Dinic’s introduces a `level` slice alongside the `flow` and `capacity` matrices. During the DFS phase, a `ptr` (or `dead-end`) array is often used to avoid re-exploring edges that can no longer take flow. This requires slightly more <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> than Edmonds-Karp, but the avoidance of redundant memory fetches makes Dinic's algorithm remarkably sympathetic to the CPU architecture. The combination of state arrays forces Go's Garbage Collector to trace slightly more data, but the execution speedup heavily outweighs this.
+Uses `level` and `ptr` slices. Prevents redundant exploration. High CPU architecture sympathy. Higher RAM overhead than Edmonds-Karp.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-|| Build level graph | <code>O(E)</code> | Using BFS |
-|| Blocking flow | <code>O(VE)</code> | Using DFS |
-|| Total (general) | <code>O(V²E)</code> | General graphs |
-|| Total (bipartite) | <code>O(E√V)</code> | Bipartite matching |
+| Build level graph | <code>O(E)</code> | BFS step |
+| Blocking flow | <code>O(VE)</code> | DFS step |
+| Total (general) | <code>O(V²E)</code> | Dense networks |
+| Total (bipartite) | <code>O(E√V)</code> | Optimal matching |
 
 ### Idiomatic Go Implementation
 
@@ -283,28 +283,28 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Dense graphs | A simpler implementation is preferred (choose Edmonds-Karp) |
-| High performance is critical | The graph is trivially small |
+| Dense graphs | Simple implementation works |
+| Critical performance | Trivially small graphs |
 
 ## 17.4. Minimum-Cost Flow
 
-**Definition:** Minimum-cost flow finds the maximum flow that incurs the absolute minimum total cost, utilizing the successive shortest path algorithm equipped with Dijkstra on the residual graph.
+**Definition:** Finds max flow with minimum total cost. Uses successive shortest path algorithm via Dijkstra.
 
-**Background & Philosophy:**
-Max flow tells you *how much* you can ship; Min-Cost Flow tells you the *cheapest way* to ship it. The philosophy combines the greedy routing of Dijkstra with the residual tracking of Ford-Fulkerson. It proves that by always pushing flow through the cheapest available path until capacity is met, the final flow configuration is mathematically optimal in cost.
+**Logic:**
+Cheapest shipping strategy. Combines capacity tracking with greedy cost routing. Mathematically optimal cost configuration.
 
 **Use Cases:**
-Supply chain optimization (e.g., shipping goods from multiple factories to multiple warehouses at the lowest freight cost), and the assignment problem (e.g., assigning Uber drivers to riders minimizing total travel distance).
+Supply chain optimization. Uber driver assignment.
 
 **Memory Mechanics:**
-Min-Cost Flow requires tracking `capacity`, `flow`, and `cost` matrices. It runs a Priority Queue (Min-Heap) for Dijkstra in every phase. Because Go creates a new slice for the Priority Queue upon every Dijkstra invocation, the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> experiences high churn. Allocating the `dist` and `parent` arrays outside the loop and reusing them avoids unnecessary heap allocations and stabilizes memory performance.
+Tracks capacity, flow, and cost. High GC churn from repeated slice creation. Reuse `dist` and `parent` slices for performance stability.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Successive shortest path | <code>O(F · E log V)</code> | F = max flow |
-| Total | <code>O(F · E log V)</code> | Driven by Dijkstra |
+| Shortest path | <code>O(F · E log V)</code> | F = max flow |
+| Total | <code>O(F · E log V)</code> | Dijkstra-driven |
 
 ### Idiomatic Go Implementation
 
@@ -375,7 +375,6 @@ func minCostFlow(cap, cost [][]int, s, t, maxf int) int {
 }
 
 func main() {
-    // Basic demonstration values
 	cap := [][]int{{0, 3}, {0, 0}}
 	cost := [][]int{{0, 5}, {0, 0}}
 	fmt.Println(minCostFlow(cap, cost, 0, 1, 3))
@@ -386,26 +385,26 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Need to minimize transportation or assignment cost | You only need max flow without caring about cost |
-| All edge costs are positive | There is a negative cost cycle |
+| Minimizing transportation cost | Cost is irrelevant |
+| Positive edge costs | Negative cost cycles exist |
 
 ### Anti-Patterns
 
-- **DFS-based Ford-Fulkerson on large-capacity graphs:** The O(E · maxFlow) bound can be catastrophic when capacities are large. Always prefer Edmonds-Karp (BFS) or Dinic for polynomial guarantees.
-- **Omitting reverse edges in the residual graph:** Without reverse edges, flow cannot be "undone," preventing the algorithm from finding augmenting paths that redirect existing flow. Always add `cap = 0` reverse edges.
-- **Storing capacities in `int8` or `int16`:** Flow values quickly overflow narrow integer types. Use `int` (64-bit on most platforms) or `int64` for realistic network problems.
+- **DFS Ford-Fulkerson on high capacity:** Pathological runtime. Use Edmonds-Karp or Dinic.
+- **Missing reverse edges:** Prevents flow "undo". Residual graph becomes invalid.
+- **Narrow integer types:** Capacity overflows int8/16. Use `int` or `int64`.
 
 ## 17.5. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| Ford-Fulkerson | Recursive DFS | <code>O(E · maxFlow)</code> | <code>O(V²)</code> | Educational / Conceptual |
-| Edmonds-Karp | BFS + Queue | <code>O(V E²)</code> | <code>O(V²)</code> | General purpose max flow |
-| Dinic | BFS level + DFS | <code>O(V²E)</code> general / <code>O(E√V)</code> bipartite | <code>O(V²)</code> | Dense networks / bipartite matching |
-| Min-Cost Flow | Dijkstra + PQ | <code>O(F · E log V)</code> | <code>O(V²)</code> | Logistics, optimal assignment |
+| Ford-Fulkerson | Recursive DFS | <code>O(E · maxFlow)</code> | <code>O(V²)</code> | Educational |
+| Edmonds-Karp | BFS + Queue | <code>O(V E²)</code> | <code>O(V²)</code> | General purpose |
+| Dinic | BFS + DFS | <code>O(V²E)</code> | <code>O(V²)</code> | Dense graphs / Bipartite |
+| Min-Cost Flow | Dijkstra + PQ | <code>O(F · E log V)</code> | <code>O(V²)</code> | Logistics optimization |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 17:</strong> This chapter discusses network flow algorithms: Ford-Fulkerson, Edmonds-Karp, Dinic's, and min-cost flow. Use Edmonds-Karp for <abbr title="An algorithm whose running time is upper bounded by a polynomial expression.">polynomial time</abbr> guarantees, Dinic's for dense networks requiring high performance, and min-cost flow when minimizing transportation or assignment cost.
+<strong>Summary Chapter 17:</strong> Network flow optimization. Use Edmonds-Karp for stability, Dinic for performance, and Min-Cost Flow for logistics.
 {{% /alert %}}
 
 ## See Also

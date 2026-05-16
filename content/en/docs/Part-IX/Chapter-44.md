@@ -15,40 +15,40 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 45 covers B-trees, the multi-way search tree optimized for disk access, powering every major database and file system.
+B-trees optimize disk access. Multi-way search trees power databases and file systems.
 {{% /alert %}}
 
-## 45.1. Why B-Trees?
+## 44.1. Purpose
 
-**Definition:** A <abbr title="A self-balancing tree data structure that maintains sorted data and allows searches, sequential access, insertions, and deletions in logarithmic time.">B-tree</abbr> is a self-balancing multi-way search tree designed to minimize disk I/O. Unlike binary trees with one key per node, B-trees store hundreds of keys per node, matching disk block sizes.
+**Definition:** <abbr title="A self-balancing tree data structure that maintains sorted data and allows searches, sequential access, insertions, and deletions in logarithmic time.">B-tree</abbr> minimizes disk I/O. Multi-way search tree stores hundreds of keys per node to match disk block sizes.
 
-**Background & Philosophy:**
-The philosophy is structural density. Binary trees grow tall quickly, meaning many node traversals. A B-Tree grows wide instead of tall. By packing hundreds of keys into a single node, it mathematically slashes the tree's height, drastically reducing the number of jumps required to find data.
+**Structure:**
+B-Tree grows wide. Nodes pack hundreds of keys. Width reduces tree height and disk jumps.
 
 **Use Cases:**
-Database indices (PostgreSQL, MySQL), file systems (NTFS, ext4), and any system where retrieving data from a disk drive is the primary bottleneck.
+Database indices (PostgreSQL, MySQL). File systems (NTFS, ext4). High-latency storage bottlenecks.
 
 **Memory Mechanics:**
-Disk I/O is notoriously slow. A B-Tree node is specifically sized to perfectly match the hardware's block size (usually 4KB or 8KB). When the CPU requests a single key from disk, the OS pulls the entire 4KB block into <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> regardless. By ensuring the B-Tree node fits exactly inside this block, the algorithm achieves 100% data utilization per disk seek. Furthermore, scanning the keys inside that 4KB node in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> leverages flawless <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>, maximizing the L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
+Nodes match hardware block size (4KB or 8KB). CPU pulls entire blocks into <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Algorithm achieves 100% data utilization per seek. Scanning keys in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> leverages <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and L1 <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>.
 
-### The Disk I/O Problem
+### Disk I/O Bottleneck
 
 | Operation | RAM Latency | Disk Latency |
 |-----------|-------------|--------------|
 | Random access | 100 ns | 10 ms |
 | Sequential read | 10 GB/s | 200 MB/s |
 
-A <abbr title="A tree where each node has at most two children">binary tree</abbr> with 1 million items requires ~20 disk seeks. A B-tree with 500 keys/node requires only ~3.
+Binary trees require ~20 seeks for 1M items. B-trees require ~3.
 
-## 45.2. B-Tree Properties
+## 44.2. B-Tree Properties
 
-For a B-tree of order <abbr title="The maximum number of children a node can have in a B-tree.">m</abbr>:
+Order <abbr title="The maximum number of children a node can have in a B-tree.">m</abbr> rules:
 
-- Every node has at most m children
-- Every internal node (except root) has at least ⌈m/2⌉ children
-- The root has at least 2 children if it is not a leaf
-- All leaves appear on the same level
-- A non-leaf node with k children contains k-1 keys
+- Nodes have max m children.
+- Internal nodes (except root) have min ⌈m/2⌉ children.
+- Root has min 2 children if not a leaf.
+- Leaves appear on same level.
+- Non-leaf node with k children contains k-1 keys.
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: B-Tree Node
 
@@ -76,69 +76,69 @@ func (n *BTreeNode) search(k int) bool {
 }
 
 func main() {
-    // Placeholder for structural demonstration
+    // Structural demonstration
 }
 ```
 
-## 45.3. Operations
+## 44.3. Operations
 
 | Operation | Time | Description |
 |-----------|------|-------------|
-| Search | <code>O(log_m n)</code> | Traverse from root to leaf |
-| Insert | <code>O(log_m n)</code> | May split nodes bottom-up |
-| Delete | <code>O(log_m n)</code> | May merge or redistribute |
+| Search | <code>O(log_m n)</code> | Root to leaf traversal. |
+| Insert | <code>O(log_m n)</code> | Split nodes bottom-up. |
+| Delete | <code>O(log_m n)</code> | Merge or redistribute. |
 
 ### Insertion with Split
 
-When a node overflows (exceeds m-1 keys), it splits into two nodes and promotes the median key to the parent, keeping the tree perfectly balanced.
+Nodes overflow at m keys. Node splits in two. Median key promotes to parent. Tree stays balanced.
 
-## 45.4. B+ Trees
+## 44.4. B+ Trees
 
-**Definition:** In a <abbr title="A variant of B-tree where all data is stored in leaves and internal nodes only store keys for navigation.">B+ tree</abbr>, all data lives in leaves; internal nodes are pure navigation. Leaves are linked for fast range scans.
+**Definition:** <abbr title="A variant of B-tree where all data is stored in leaves and internal nodes only store keys for navigation.">B+ tree</abbr> stores all data in leaves. Internal nodes navigate. Leaves link for fast range scans.
 
 | Feature | B-Tree | B+ Tree |
 |---------|--------|---------|
-| Data in internal nodes | Yes | No |
-| Sequential scan | <code>O(n log n)</code> | <code>O(n)</code> |
-| Space utilization | Lower | Higher |
-| Use case | General | Databases, file systems |
+| Internal Data | Yes | No |
+| Sequential Scan | <code>O(n log n)</code> | <code>O(n)</code> |
+| Space Utilization | Lower | Higher |
+| Primary Use | General | DBs, File Systems |
 
-## 45.5. Decision Matrix
+## 44.5. Decision Matrix
 
 | Use B-Trees When... | Use Hash Tables When... |
 |---------------------|-------------------------|
-| Data exceeds RAM | Data fits entirely in memory |
-| Range queries are needed | Only point lookups are executed |
-| Sequential access matters | Random access only is acceptable |
+| Data exceeds RAM | Data fits in memory |
+| Range queries needed | Point lookups only |
+| Sequential access matters | Random access only |
 
-### Edge Cases & Pitfalls
+### Constraints & Risks
 
-- **Small m:** Undermines the entire purpose. Disk blocks are usually 4KB.
-- **Concurrency:** Locking a node vs. the entire tree requires careful latching protocols (e.g., crabbing).
-- **Write amplification:** Each single insert may cascade splits entirely up the tree.
+- **Small m:** Nodes smaller than blocks waste I/O bandwidth.
+- **Concurrency:** Requires latching protocols (crabbing).
+- **Write Amplification:** Inserts may trigger cascading splits.
 
 ### Anti-Patterns
 
-- **Using B-Trees for data that fits entirely in RAM.** When all data resides in memory, B-trees lose their primary advantage — minimizing disk seeks. A hash table or in-memory balanced BST (AVL, red-black) is faster because they avoid the overhead of wide nodes designed for block-sized I/O.
-- **Choosing an order (m) that doesn't match the disk block size.** A B-tree node should fill exactly one disk block (typically 4 KB or 8 KB). An order that produces nodes smaller than a block wastes I/O bandwidth; nodes larger than a block trigger multiple reads per access.
-- **Ignoring the fill factor after heavy deletions.** Delete-heavy workloads fragment B-trees, leaving nodes significantly underfull. This wastes disk reads on sparse nodes. Production databases schedule periodic rebalancing or bulk-rebuild indices to restore density.
-- **Using a B+ Tree for point lookups only.** B+ trees shine on range scans because leaves are linked. If your workload is purely single-key lookups with no sequential access, a hash table provides <code>O(1)</code> average lookups without the navigation overhead of internal nodes.
+- **Small Data:** Hash tables beat B-trees for in-memory data.
+- **Mismatched m:** Node size must match disk block size (4KB/8KB).
+- **Deletions:** Fragmented trees waste reads. Rebalance required.
+- **Point Lookups:** B+ Trees overhead slows single-key lookups.
 
-## 45.6. Quick Reference
+## 44.6. Quick Reference
 
 | Concept | Value | Rationale |
 |---------|-------|-----------|
-| Typical order | 100 to 500 | Matches disk block size |
-| Height for 1B items | 3 to 4 | Minimizes physical disk seeks |
-| Fill factor | ~67% | Expected density after deletions |
+| Order | 100 to 500 | Matches disk block size. |
+| Height (1B items) | 3 to 4 | Minimizes physical seeks. |
+| Fill factor | ~67% | Expected density. |
 
 | Go stdlib | Usage |
 |-----------|-------|
-| `database/sql` | Backed deeply by B-trees |
-| `go.etcd.io/bbolt` | Pure Go B+ tree implementation |
+| `database/sql` | Uses B-trees internally. |
+| `go.etcd.io/bbolt` | B+ tree implementation. |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 44:</strong> B-trees bridge the gap between algorithmic theory and physical reality by optimizing not for CPU cycles but for massive disk seeks. By matching node size to disk blocks and keeping all leaves at the identical depth, B-trees transformed database performance. The B+ tree variant, with its linked leaves, ensures range queries execute as fast as sequential scans.
+B-trees optimize for massive disk seeks. Nodes match disk blocks. B+ trees enable fast range queries via linked leaves.
 {{% /alert %}}
 
 ## See Also

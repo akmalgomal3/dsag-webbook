@@ -15,29 +15,29 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 18 focuses on Matchings in Bipartite Graphs, detailing the Hungarian Algorithm for optimal weighted assignments and Hopcroft-Karp for executing maximum cardinality matching efficiently.
+Chapter 18: Bipartite Matching. Covers Hungarian Algorithm for weighted assignments and Hopcroft-Karp for maximum cardinality matching.
 {{% /alert %}}
 
 ## 18.1. Bipartite Graphs and Matching
 
-**Definition:** A bipartite <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> is a <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> whose vertices can be partitioned into two disjoint sets, U and V, such that every <abbr title="A connection between two vertices in a graph.">edge</abbr> connects a <abbr title="A fundamental unit of a graph, also called a node.">vertex</abbr> in U to one in V. A matching is a set of edges that do not share any vertices.
+**Definition:** Bipartite graphs partition vertices into disjoint sets U and V. Edges only connect U to V. Matching creates vertex-disjoint edge sets.
 
-**Background & Philosophy:**
-Bipartite graphs model two distinct classes of objects that only interact across class lines. The philosophy of matching is conflict resolution: given a set of resources (U) and a set of consumers (V), how do we pair them exclusively without any overlaps? By mathematically proving a graph is bipartite (using two-coloring), we can unlock hyper-optimized algorithms (like Hopcroft-Karp) that would otherwise fail on general graphs.
+**Logic:**
+Conflict resolution. Pairs resources (U) with consumers (V). Proving bipartiteness via two-coloring enables optimized algorithms like Hopcroft-Karp.
 
 **Use Cases:**
-Used in ride-sharing apps (matching Riders to Drivers), dating apps (matching Users), and job scheduling algorithms in cloud infrastructure (matching Pods to available Worker Nodes).
+Ride-sharing dispatch. Job scheduling. Dating apps.
 
 **Memory Mechanics:**
-Checking if a graph is bipartite uses a standard BFS. The `color` array (acting as both the `visited` map and the partition tracker) takes <code>O(V)</code> memory. Because BFS explores layer by layer, it accesses the `color` array randomly based on edge connections. However, since the array merely stores small integer states (`-1`, `0`, `1`), the memory footprint is minimal and fits comfortably in the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> even for millions of nodes.
+Bipartite check uses BFS. `color` array tracks partitions. O(V) memory usage. Stores small integer states. High CPU cache efficiency for massive node counts.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
 | Bipartite check | <code>O(V+E)</code> | BFS coloring |
-| Maximum matching (HK) | <code>O(E√V)</code> | Hopcroft-Karp |
-| Minimum weight (Hungarian) | <code>O(V³)</code> | Assignment problem |
+| Maximum matching | <code>O(E√V)</code> | Hopcroft-Karp |
+| Weighted assignment | <code>O(V³)</code> | Hungarian Algorithm |
 
 ### Pseudocode
 
@@ -61,7 +61,6 @@ IsBipartite(graph):
 
 ### Idiomatic Go Implementation
 
-Bipartite check using BFS:
 ```go
 package main
 
@@ -95,33 +94,33 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| The U-V structure is clearly defined | Dealing with general graphs — use the Blossom algorithm |
-| Solving assignment problems | Solving non-bipartite matchings |
+| U-V structure is defined | Dealing with general graphs. Use Blossom algorithm. |
+| Solving assignment problems | Non-bipartite matching required |
 
 ### Edge Cases & Pitfalls
 
-- **Disconnected <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>:** Ensure all components are checked.
-- **Self-loop:** Immediately causes a bipartite check failure.
+- **Disconnected graph:** Check all components.
+- **Self-loop:** Bipartite check fails immediately.
 
 ## 18.2. Hungarian Algorithm
 
-**Definition:** The Hungarian Algorithm solves the assignment problem by finding the minimum total cost matching in a weighted bipartite <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>.
+**Definition:** Solves weighted assignment problems. Finds minimum cost matching in bipartite graphs.
 
-**Background & Philosophy:**
-The Hungarian algorithm approaches the assignment problem using matrix manipulation (specifically, adding and subtracting potentials). The philosophy is based on the theorem that if a number is added to or subtracted from all entries of any row or column of a cost matrix, an optimal assignment for the resulting cost matrix is also an optimal assignment for the original matrix. The goal is to manipulate the matrix until a perfect matching of zeroes appears.
+**Logic:**
+Matrix manipulation. Theorem: modifying row/column potentials preserves optimal assignment. Goal: produce matrix with zero-cost perfect matching.
 
 **Use Cases:**
-Perfect for allocating tasks to workers where each worker has a different cost or time to complete a specific task, aiming to minimize the overall payroll or execution time.
+Task allocation. Payroll minimization. Resource-heavy optimization.
 
 **Memory Mechanics:**
-The algorithm heavily manipulates a 2D `cost` matrix, making its memory access patterns dense. Go implementations typically use several parallel arrays (`u`, `v`, `p`, `way`, `minv`, `used`) to track dual variables and path construction. By allocating these arrays once upfront (`make([]int, n+1)`), the <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> overhead is practically zero during the loop execution. Because it constantly scans rows and columns, <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> happen when scanning columns vertically, leading to the strict <code>O(V^3)</code> empirical runtime on large sets.
+Manipulates 2D cost matrix. Uses parallel arrays for dual variables. Upfront allocation minimizes GC overhead. Vertical column scans may cause cache misses on large datasets.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Potentials update | <code>O(V^2)</code> | Per <abbr title="The repetition of a process, typically using loops.">iteration</abbr> |
-| Total | <code>O(V³)</code> | For V iterations |
+| Potentials update | <code>O(V^2)</code> | Per iteration |
+| Total | <code>O(V³)</code> | For all iterations |
 
 ### Pseudocode
 
@@ -179,7 +178,6 @@ func hungarian(cost [][]int) int {
 }
 
 func main() {
-    // 2 workers, 2 tasks. Costs: Worker 1 (5, 10), Worker 2 (15, 20)
 	cost := [][]int{{5, 10}, {15, 20}}
 	fmt.Println(hungarian(cost)) // Outputs: 25
 }
@@ -189,34 +187,34 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Solving weighted assignments | Graph is unweighted — use Hopcroft-Karp |
-| The cost matrix is strictly square | Rectangular matrices — requires dummy padding |
+| Weighted assignment problem | Unweighted graph. Use Hopcroft-Karp. |
+| Square cost matrix | Rectangular matrix. Requires padding. |
 
 ### Edge Cases & Pitfalls
 
-- **Negative costs:** Add a large constant offset to all edge weights.
-- **Rectangular matrix:** Pad it with dummy nodes and edges of weight 0 to make it square.
+- **Negative costs:** Offset weights with large constant.
+- **Rectangular matrices:** Pad with weight-0 dummy nodes.
 
 ## 18.3. Hopcroft-Karp Algorithm
 
-**Definition:** Hopcroft-Karp finds the maximum cardinality matching in a bipartite graph by combining BFS to build a layered level graph and DFS to find augmenting paths efficiently.
+**Definition:** Finds maximum cardinality matching in unweighted bipartite graphs. Combines BFS level graphs with DFS augmenting paths.
 
-**Background & Philosophy:**
-Hopcroft-Karp mirrors the logic of Dinic's Algorithm (from Network Flow) but applies it exclusively to unweighted bipartite graphs. The philosophy is "batch augmentation." Instead of finding one matching at a time, it runs BFS to partition the un-matched nodes into distance layers, then runs DFS to snatch up every possible disjoint augmenting path of that specific length simultaneously. 
+**Logic:**
+Batch augmentation. BFS partitions unmatched nodes into distance layers. DFS finds all disjoint augmenting paths of current length simultaneously.
 
 **Use Cases:**
-Massive unweighted assignment problems, such as matching thousands of university students to available courses based purely on their preference lists (without any priority weights).
+Massive unweighted assignments. University course enrollment.
 
 **Memory Mechanics:**
-Hopcroft-Karp requires an <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency list</abbr> `[][]int` and pairs of tracking arrays (`pairU`, `pairV`, `dist`). Because it operates entirely on 1D slices and avoids complex 2D capacity matrices, it scales exceptionally well. The BFS phase allocates a temporary queue in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. Reusing a pre-allocated slice for this queue across the <code>O(√V)</code> phases drastically reduces the Go <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector's</abbr> burden, enabling millions of nodes to be matched in milliseconds.
+Uses adjacency lists and 1D tracking slices. Reusing BFS queue reduces GC pressure. Scales to millions of nodes.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| BFS level | <code>O(E)</code> | Per phase |
-| DFS augment | <code>O(V)</code> | Per phase |
-| Total | <code>O(E √V)</code> | Up to `√V` phases |
+| BFS phase | <code>O(E)</code> | Level construction |
+| DFS phase | <code>O(V)</code> | Path augmentation |
+| Total | <code>O(E √V)</code> | High scalability |
 
 ### Idiomatic Go Implementation
 
@@ -277,19 +275,14 @@ func main() {
 
 | Use This When... | Avoid If... |
 |-------------------|------------------|
-| Exploring unweighted bipartite matching | It is a weighted graph — use Hungarian |
-| Maximizing the cardinality of the matching | It is a general graph — use the Blossom algorithm |
-
-### Edge Cases & Pitfalls
-
-- **Left-right partition:** Double-check that left and right partition sizes accurately match your inputs.
-- **Multiple edges:** Hopcroft-Karp handles duplicate edges gracefully without breaking.
+| Unweighted bipartite matching | Weighted graph. Use Hungarian. |
+| Maximum cardinality required | General graph. Use Blossom algorithm. |
 
 ### Anti-Patterns
 
-- **Greedy matching without augmenting paths:** Greedily picking edges does not guarantee maximum matching. Always use Hungarian augmenting paths or Hopcroft-Karp for optimality.
-- **Forgetting to reset `visited` per augmenting-BFS iteration:** In Hopcroft-Karp, the distance layering (`dist []int`) is rebuilt each phase, but the per-DFS `seen` set must be cleared per vertex, not globally.
-- **Using `map[int][]int` for adjacency on small integer vertex IDs:** A `[][]int` adjacency list with pre-allocated capacity is faster and produces less GC pressure than map-based adjacency.
+- **Greedy matching without augmentation:** Fails to guarantee maximum matching. Use augmenting paths.
+- **Incorrect BFS reset:** Clear layering logic (`dist []int`) per phase.
+- **Inefficient adjacency storage:** Use `[][]int` adjacency lists. Avoid `map[int][]int` for performance.
 
 ## 18.4. Quick Reference
 
@@ -300,7 +293,7 @@ func main() {
 | Hopcroft-Karp | `[][]int` adj | <code>O(E √V)</code> | <code>O(V)</code> | Max cardinality matching |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 18:</strong> This chapter covers bipartite <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> validation, the Hungarian algorithm for weighted assignment, and Hopcroft-Karp for maximum cardinality matching. Use Hungarian for square cost matrices and Hopcroft-Karp for large unweighted bipartite matching problems.
+<strong>Summary Chapter 18:</strong> Bipartite matching optimization. Use Hungarian for weighted costs. Use Hopcroft-Karp for large-scale unweighted matching.
 {{% /alert %}}
 
 ## See Also

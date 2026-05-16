@@ -15,21 +15,17 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 7 focuses on <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables, covering Go's built-in map, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and <abbr title="Hashing that minimizes rehashing when the table resizes">consistent hashing</abbr> architectures for distributed systems.
+Chapter 7 covers Go maps, FNV hashes, SHA-256 digests, and consistent hashing for distributed systems.
 {{% /alert %}}
 
 ## 7.1. Hash Tables
 
-**Definition:** A <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> maps keys to values using a <abbr title="A function mapping data of arbitrary size to fixed-size values">hash function</abbr>. Go provides the built-in `map[K]V` which is backed by a <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr>.
+**Definition:** Hash table maps keys to values using hash function. Go `map[K]V` uses hash table.
 
-**Background & Philosophy:**
-The primary philosophy of a hash table is trading space for time. By allocating a larger memory footprint than strictly necessary, we can probabilistically guarantee <code>O(1)</code> access time. Hash tables convert a search problem (which would otherwise require iterating through elements) into a direct mathematical computation of an index. 
+**Mechanics:**
+Hash table trades space for time. Extra memory footprint buys constant-time access. Search problem becomes index computation.
 
-**Use Cases:**
-Hash tables are ubiquitous: from implementing caches (like Redis) and counting word frequencies in a text, to mapping database connections to active session IDs in a web server.
-
-**Memory Mechanics:**
-In Go, a `map` is a <abbr title="A variable that stores a memory address.">pointer</abbr> to a runtime `hmap` struct. The core of this struct is an array of `bmap` (buckets). Each bucket holds up to 8 key-value pairs. When a key is inserted, Go computes a <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hash</abbr> and uses the low-order bits to pick a bucket. The high-order bits are cached inside the bucket array to rapidly check for equality without following <abbr title="A variable that stores a memory address.">pointers</abbr>. If multiple keys fall into the same bucket (a <abbr title="An event when two keys hash to the same index.">collision</abbr>), Go uses a <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr> of overflow buckets. Because these buckets are scattered across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>, map iteration causes frequent <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
+In Go, `map` is pointer to `hmap` struct. `hmap` stores array of `bmap` (buckets). Each bucket holds 8 key-value pairs. Hash low-order bits pick bucket. High-order bits cache equality check. Collision uses linked list of overflow buckets. Map iteration causes cache misses: buckets scatter in heap.
 
 ### Operations & Complexity
 
@@ -37,7 +33,7 @@ In Go, a `map` is a <abbr title="A variable that stores a memory address.">point
 |---------|--------------|------------|
 | Insert | <code>O(1)</code> amortized | Rehashes when growing |
 | Lookup | <code>O(1)</code> amortized | Worst case <code>O(n)</code> |
-| Delete | <code>O(1)</code> amortized | Does not automatically shrink |
+| Delete | <code>O(1)</code> amortized | Does not shrink memory |
 
 ### Pseudocode
 
@@ -74,34 +70,28 @@ func main() {
 
 | Use This When... | Avoid If... |
 |---------------------|------------------|
-| Need fast <abbr title="A field or set of fields used to identify a record.">key</abbr> lookups | Need ordered data |
-| Keys are unique and comparable | Complex keys lack equality definitions |
+| Need fast key lookups | Need ordered data |
+| Keys are unique and comparable | Keys lack equality definition |
 
 ### Edge Cases & Pitfalls
 
-- **Unordered:** Map <abbr title="The repetition of a process, typically using loops.">iteration</abbr> is not sequential.
-- **Concurrent write:** Causes a panic if written concurrently without synchronization.
-- **<abbr title="A field or set of fields used to identify a record.">Key</abbr> mutability:** Slices or maps cannot be used as keys.
+- **Unordered:** Map iteration is not sequential.
+- **Concurrent write:** Panics without synchronization.
+- **Key mutability:** Slices and maps cannot be keys.
 
 ## 7.2. Custom Hash Functions
 
-**Definition:** For non-cryptographic hashing needs, use the `hash/fnv` package or implement a manual hash like FNV-1a.
+**Definition:** Use `hash/fnv` or FNV-1a for non-cryptographic hashing.
 
-**Background & Philosophy:**
-A hash function is a one-way mathematical meat-grinder. The philosophy behind non-cryptographic hashes like FNV-1a (Fowler-Noll-Vo) or MurmurHash is to prioritize speed, excellent avalanche behavior (changing one input bit flips many output bits), and low <abbr title="An event when two keys hash to the same index.">collision</abbr> rates, explicitly sacrificing cryptographic security.
-
-**Use Cases:**
-Used when writing custom hash tables, distributing network packets evenly across servers (load balancing), or quickly comparing large files by generating checksums.
-
-**Memory Mechanics:**
-Non-cryptographic hash functions process bytes sequentially. FNV-1a, for example, XORs the incoming byte with the current hash value and then multiplies by a large prime number. This algorithm runs entirely in the CPU registers (without touching <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>) and utilizes <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> if the input string is a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> byte slice. Thus, it operates at memory-bandwidth speeds.
+**Mechanics:**
+Non-cryptographic hashes prioritize speed and low collision. FNV-1a XORs bytes and multiplies by prime. Logic runs in CPU registers. Spatial locality improves speed on contiguous byte slices.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
 | FNV-1a | <code>O(n)</code> | n = data length |
-| Murmur3 | <code>O(n)</code> | Better distribution (requires external <abbr title="A collection of precompiled routines that a program can use.">library</abbr>) |
+| Murmur3 | <code>O(n)</code> | Better distribution |
 
 ### Pseudocode
 
@@ -138,25 +128,19 @@ func main() {
 
 | Use This When... | Avoid If... |
 |---------------------|------------------|
-| Need a fast, deterministic hash | Cryptographic security is required |
+| Need fast, deterministic hash | Need cryptographic security |
 
 ### Edge Cases & Pitfalls
 
-- **<abbr title="An event when two keys hash to the same index.">Collision</abbr>:** A custom hash must distribute values evenly.
-- **Seed:** FNV does not require a seed; for large hash tables, consider a seeded hash.
+- **Collision:** Custom hash must distribute values evenly.
+- **Seed:** Consider seeded hash for large tables.
 
 ## 7.3. Cryptographic Hashing
 
-**Definition:** A cryptographic hash function produces a fixed-size digest that is computationally infeasible to reverse. Go provides `crypto/sha256` and `crypto/sha512`.
+**Definition:** Cryptographic hash produces fixed-size digest. Infeasible to reverse. Go provides `crypto/sha256` and `crypto/sha512`.
 
-**Background & Philosophy:**
-The philosophy here shifts from "speed" to "resistance". A cryptographic hash function is explicitly designed to resist preimage attacks (finding the input given the hash) and <abbr title="An event when two keys hash to the same index.">collision</abbr> attacks (finding two inputs that yield the same hash). 
-
-**Use Cases:**
-Essential for storing user passwords (using specialized slow hashes like bcrypt), generating digital signatures for JWT tokens, or verifying the integrity of downloaded binaries.
-
-**Memory Mechanics:**
-Algorithms like SHA-256 operate on fixed-size blocks (e.g., 64 bytes). They maintain an internal state array (working variables) that resides in the CPU registers. However, unlike FNV-1a, SHA-256 involves dozens of complex logical operations (rotations, XORs, additions) per block. This heavily taxes the ALU (Arithmetic Logic Unit) of the CPU, making it inherently slower. Go's standard library often uses assembly language to optimize these operations utilizing specific CPU instructions (like Intel SHA extensions).
+**Mechanics:**
+Digest resists preimage and collision attacks. SHA-256 processes 64-byte blocks. Logical operations tax ALU. Go uses assembly and Intel SHA extensions for speed.
 
 ### Operations & Complexity
 
@@ -194,34 +178,28 @@ func main() {
 
 | Use This When... | Avoid If... |
 |---------------------|------------------|
-| Need data integrity | Need raw speed (non-crypto hashes are faster) |
-| Password hashing (with a salt/KDF) | Simple hashing without security needs |
+| Need data integrity | Need raw speed |
+| Password storage (with salt) | Simple hashing |
 
 ### Edge Cases & Pitfalls
 
-- **Timing attack:** Use `hmac.Equal` to compare digests safely.
-- **Passwords:** Never use raw SHA-256 for passwords; use `bcrypt` or `argon2`.
+- **Timing attack:** Use `hmac.Equal` for comparison.
+- **Passwords:** Use `bcrypt` or `argon2`. Raw SHA-256 is too fast.
 
 ## 7.4. Consistent Hashing
 
-**Definition:** Consistent hashing minimizes <abbr title="A field or set of fields used to identify a record.">key</abbr> remapping when nodes are added or removed by placing both nodes and keys on a hash ring.
+**Definition:** Consistent hashing maps keys and nodes to a ring. Minimizes remapping during node changes.
 
-**Background & Philosophy:**
-In a traditional distributed hash table (`hash(key) % N_servers`), adding one server changes the modulo for almost every key, forcing massive data migrations. The philosophy of consistent hashing is to decouple the key's hash from the total number of servers. Instead, both keys and servers are mapped to a massive circular integer space (the "ring").
-
-**Use Cases:**
-The backbone of modern distributed systems, including load balancing in API gateways, data sharding in distributed databases (like Cassandra or DynamoDB), and cache clustering (like Memcached).
-
-**Memory Mechanics:**
-A consistent hashing ring is usually implemented as a sorted slice of integers in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. When a request arrives, the system hashes the key to produce a 32-bit or 64-bit integer, then performs a <abbr title="A search algorithm that finds the position of a target value within a sorted array.">binary search</abbr> <code>O(log n)</code> on the slice to find the first server whose hash is greater than the key's hash. Because the ring is a <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array, the binary search is extremely <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> efficient.
+**Mechanics:**
+Modulo hashing (`hash % N`) triggers mass migration when N changes. Consistent hashing decouples key from server count. Both map to circular integer space. Sorted slice in RAM implements ring. Binary search finds server.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Add <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> | <code>O(log n)</code> | Insert into a sorted ring |
-| Lookup | <code>O(log n)</code> | <abbr title="A search algorithm that finds the position of a target value within a sorted array.">Binary search</abbr> |
-| Remove <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> | <code>O(log n)</code> | Delete from the ring |
+| Add node | <code>O(log n)</code> | Insert into sorted ring |
+| Lookup | <code>O(log n)</code> | Binary search |
+| Remove node | <code>O(log n)</code> | Delete from ring |
 
 ### Pseudocode
 
@@ -272,33 +250,33 @@ func main() {
 | Use This When... | Avoid If... |
 |---------------------|------------------|
 | Distributed caching | Single-node deployment |
-| Nodes frequently go up/down | Very small datasets |
+| Dynamic node counts | Small datasets |
 
 ### Edge Cases & Pitfalls
 
-- **Skew:** Use virtual nodes to ensure even distribution.
-- **Clockwise wrap:** Ensure logic correctly handles wrapping around from the last ring <abbr title="A data structure that improves the speed of data retrieval operations.">index</abbr> to the first.
+- **Skew:** Use virtual nodes for even distribution.
+- **Clockwise wrap:** Handle logic transition from ring end to start.
 
 ### Anti-Patterns
 
-- **Unsynced Map Access:** Concurrent reads and writes to a `map` without `sync.Mutex` or `sync.Map` causes a runtime fatal error in Go. Always synchronize map access in concurrent code.
-- **Using Slices/Maps as Map Keys:** Attempting to use a slice or another map as a key type causes a compile error. Convert slices to strings or use a struct key with comparable fields.
-- **SHA-256 for Passwords:** Using a fast cryptographic hash like SHA-256 for password storage. Passwords need slow, salted key derivation functions (`bcrypt`, `argon2`) to resist brute-force attacks.
-- **Modulo Hashing for Distributed Systems:** Using `hash(key) % N` for load distribution. Adding or removing a node re-maps nearly all keys. Use consistent hashing with virtual nodes instead.
-- **Ignoring Map Delete Memory:** Deleting keys from a Go map does not shrink its bucket array. If a map holds many temporary keys, replace it with a fresh `make(map[K]V)` to reclaim memory.
-- **Comparing Digests with `==`:** Using `==` to compare cryptographic hashes exposes your system to timing attacks. Use `hmac.Equal()` or `subtle.ConstantTimeCompare()` instead.
+- **Unsynced Map Access:** Concurrent write causes fatal error. Use `sync.Mutex`.
+- **Mutable Keys:** Slices cannot be keys. Convert to string first.
+- **SHA-256 for Passwords:** Too fast for safety. Use `bcrypt`.
+- **Modulo Hashing:** Triggers re-mapping. Use consistent hashing for clusters.
+- **Stale Memory:** Map buckets do not shrink. Recreate map to reclaim RAM.
+- **Unsafe Comparison:** `==` allows timing attacks. Use `hmac.Equal`.
 
-## Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
 | Map | built-in | <code>O(1)</code> avg | . | Key-value store |
-| FNV | `hash/fnv` | <code>O(n)</code> | . | Checksum, <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> |
-| SHA-256 | `crypto/sha256` | <code>O(n)</code> | . | Integrity, signing |
-| Consistent Hash | custom | <code>O(log n)</code> | . | Distributed systems |
+| FNV | `hash/fnv` | <code>O(n)</code> | . | Checksum |
+| SHA-256 | `crypto/sha256` | <code>O(n)</code> | . | Integrity |
+| Consistent Hash | custom | <code>O(log n)</code> | . | Clusters |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 7:</strong> This chapter explores <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hashing</abbr> and hash tables in Go, including built-in maps, custom non-cryptographic hashes (FNV), cryptographic digests (SHA-256), and <abbr title="Hashing that minimizes rehashing when the table resizes">consistent hashing</abbr> for distributed systems. Use built-in maps for general key-value storage, FNV for checksums, SHA-256 for data integrity, and <abbr title="Hashing that minimizes rehashing when the table resizes">consistent hashing</abbr> when nodes frequently join or leave a cluster.
+<strong>Summary:</strong> Use maps for lookups. Use FNV for checksums. Use SHA-256 for integrity. Use consistent hashing for distributed clusters.
 {{% /alert %}}
 
 ## See Also

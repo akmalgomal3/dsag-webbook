@@ -11,42 +11,42 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Greed, for lack of a better word, is good.</em>" : Gordon Gekko</strong>
+<strong>Local optimization wins. : Gordon Gekko</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 25 covers <abbr title="An algorithm making locally optimal choices at each step.">greedy algorithms</abbr>: making locally optimal choices at each step to find a <abbr title="The best possible solution over the entire search space">global optimum</abbr>. Learn when greediness works and when it fails.
+Greedy algorithms make locally optimal choices. Goal: find <abbr title="The best possible solution over the entire search space">global optimum</abbr>. Fast but structure-dependent.
 {{% /alert %}}
 
-## 25.1. Greedy Strategy
+## 24.1. Greedy Strategy
 
-**Definition:** A <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> builds a solution piece by piece, always choosing the next piece that offers the most immediate benefit. It works only when the problem has the **greedy choice property** and **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>**.
+**Definition:** A <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> builds solutions incrementally. It picks the immediate best choice. Requires **greedy choice property** and **<abbr title="Property where optimal solution contains optimal sub-solutions">optimal substructure</abbr>**.
 
-**Background & Philosophy:**
-The philosophy of Greed is local optimization. Instead of examining all possible futures (like <abbr title="An algorithmic technique for solving problems recursively by trying to build a solution incrementally.">Backtracking</abbr>) or storing all past states (like <abbr title="A method for solving complex problems by breaking them into simpler subproblems and storing solutions.">DP</abbr>), a <abbr title="An algorithm making locally optimal choices at each step">greedy algorithm</abbr> makes the mathematically best choice right now and never reconsiders it. It trades guarantees of absolute correctness for blinding speed.
+**Mechanics:**
+Greedy ignores the future. It never reconsiders past choices. Speed is the priority. Correctness depends on problem structure.
 
 **Use Cases:**
-Network packet routing (<abbr title="An algorithm finding shortest paths in non-negative weighted graphs.">Dijkstra</abbr>), data compression (<abbr title="A greedy algorithm for lossless data compression using variable-length codes.">Huffman coding</abbr>), and resource scheduling where constraints allow sorting to define priority.
+- Network routing (<abbr title="An algorithm finding shortest paths in non-negative weighted graphs.">Dijkstra</abbr>).
+- Data compression (<abbr title="A greedy algorithm for lossless data compression using variable-length codes.">Huffman coding</abbr>).
+- Resource scheduling.
 
-**Memory Mechanics:**
-Greedy algorithms almost always require the data to be sorted first. This means their memory profile is dictated by the sorting algorithm (usually <code>O(log n)</code> auxiliary space for Quick Sort). Once sorted, the greedy phase is a simple linear scan (<code>O(n)</code>). This sequential access pattern provides flawless <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> and <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> performance.
+**Memory Management:**
+Sorting precedes greedy choice. Sorting consumes <code>O(log n)</code> space. The greedy phase is a linear <code>O(n)</code> scan. Sequential access ensures high <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>.
 
-### When Greedy Works
+### Effective Greedy Choices
 
-| Problem | Greedy Choice | Proof |
-|---------|--------------|-------|
-| Fractional Knapsack | Highest value/weight ratio | Exchange argument |
+| Problem | Choice | Proof |
+|---------|--------|-------|
+| Fractional Knapsack | Max value/weight ratio | Exchange argument |
 | Activity Selection | Earliest finish time | Staying ahead |
 | Huffman Coding | Lowest frequency pair | Cut-and-paste |
 | Minimum Spanning Tree | Lightest safe edge | Cut property |
 
-## 25.2. Fractional Knapsack
+## 24.2. Fractional Knapsack
 
-**Definition:** Given items with weights and values, fill a knapsack to maximize value. Unlike 0/1 knapsack, you can take fractions of items.
+**Fact:** Items can be divided. Sort items by value/weight ratio. Take highest first.
 
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
-
-Sort by value-to-weight ratio in descending order.
+### Go Implementation
 
 ```go
 package main
@@ -87,13 +87,11 @@ func main() {
 }
 ```
 
-## 25.3. Activity Selection
+## 24.3. Activity Selection
 
-**Definition:** Given activities with start and finish times, select the maximum number of non-overlapping activities.
+**Fact:** Maximize non-overlapping tasks. Sort by earliest finish time. Pick first available.
 
-### Idiomatic Go Implementation
-
-Always pick the activity with the earliest finish time.
+### Go Implementation
 
 ```go
 package main
@@ -130,13 +128,11 @@ func main() {
 }
 ```
 
-## 25.4. Huffman Coding
+## 24.4. Huffman Coding
 
-**Definition:** Huffman coding constructs an optimal prefix-free binary code by greedily merging the two least frequent symbols.
+**Fact:** Optimal prefix codes. Merge two lowest frequencies repeatedly. Use priority queue.
 
-### Idiomatic Go Implementation
-
-Use `container/heap` for the priority queue.
+### Go Implementation
 
 ```go
 package main
@@ -187,41 +183,41 @@ func main() {
 }
 ```
 
-## 25.5. Decision Matrix
+## 24.5. Selection Matrix
 
-| Use Greedy When... | Avoid If... |
-|--------------------|-------------|
-| Greedy choice property provably holds | Local optimum ≠ global optimum |
-| Need fast, simple approximation | Exact optimal solution required |
-| Problem structure supports exchange argument | Counterexamples exist (e.g., 0/1 knapsack) |
+| Use Greedy If... | Avoid If... |
+|------------------|-------------|
+| Greedy choice is optimal | Local choice blocks global best |
+| Speed is required | Exact solution needed |
+| Exchange argument holds | Counterexamples exist |
 
-### Edge Cases & Pitfalls
+### Pitfalls & Errors
 
-- **Proving correctness:** Always verify the greedy choice property before implementing.
-- **Fractional vs 0/1:** Greedy works for fractional knapsack but fails for 0/1 knapsack.
-- **Tie-breaking:** When multiple choices have equal value, the tie-breaking strategy matters.
+- **Verification:** Prove greedy choice before coding.
+- **Knapsack:** Greedy fails for 0/1 knapsack. Use DP.
+- **Sorting:** Use stable sort if equal weights exist.
 
 ### Anti-Patterns
 
-- **Applying greedy to 0/1 Knapsack:** Greedy by value/weight ratio is optimal only for fractional knapsack. For 0/1 Knapsack, it produces arbitrarily bad results — use DP or FPTAS instead.
-- **Skipping the exchange argument proof:** Implementing a greedy algorithm without proving the exchange argument leads to incorrect results on edge cases. Write a proof or find a counterexample before coding.
-- **Unstable sort with equal weights:** `sort.Slice` is not stable; equal-weight items may reorder unpredictably. Use `sort.SliceStable` or include a secondary tie-breaker in the comparison.
+- **Greedy for 0/1 Knapsack:** Returns sub-optimal results. DP is required.
+- **No Proof:** Coding without proving the exchange argument leads to silent failure.
+- **Unstable Sorting:** Equal weights reorder unpredictably. Use `sort.SliceStable`.
 
-## 25.6. Quick Reference
+## 24.6. Quick Reference
 
 | Problem | Greedy Choice | Time | Space | Optimal? |
-|---------|--------------|------|-------|----------|
+|---------|---------------|------|-------|----------|
 | Fractional Knapsack | Max value/weight | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
 | Activity Selection | Earliest finish | <code>O(n log n)</code> | <code>O(1)</code> | Yes |
 | Huffman Coding | Min frequency pair | <code>O(n log n)</code> | <code>O(n)</code> | Yes |
-| 0/1 Knapsack | . | . | . | No (use DP) |
+| 0/1 Knapsack | N/A | N/A | N/A | No |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 24:</strong> Greedy algorithms provide fast, straightforward solutions when the greedy choice property holds. Always verify correctness with an exchange argument or counterexample before relying on a greedy approach. In Go, leverage `sort.Slice` and `container/heap` for efficient implementation.
+<strong>Summary:</strong> Greedy algorithms trade reconsideration for speed. Verify with exchange argument. Use `sort.Slice` and `container/heap` in Go.
 {{% /alert %}}
 
 ## See Also
 
-- [Chapter 23: <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>](/docs/part-vi/chapter-23/)
-- [Chapter 25: <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr>](/docs/part-vi/chapter-25/)
+- [Chapter 23: Dynamic Programming](/docs/part-vi/chapter-23/)
+- [Chapter 25: Backtracking](/docs/part-vi/chapter-25/)
 - [Chapter 35: Approximate Algorithms](/docs/part-vii/chapter-35/)

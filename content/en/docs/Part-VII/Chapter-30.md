@@ -15,29 +15,29 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 31 explores cryptographic primitives: hash functions, symmetric encryption, asymmetric encryption, and digital signatures utilizing Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr>.
+Chapter 31 explores cryptographic primitives. Covers hash functions, symmetric encryption, asymmetric encryption, and digital signatures. Uses Go standard library.
 {{% /alert %}}
 
 ## 31.1. Hash Functions
 
-**Definition:** A <abbr title="A function mapping data of arbitrary size to fixed-size values">hash function</abbr> maps arbitrary inputs to deterministic fixed-size outputs. Cryptographic hashes must be robustly preimage-resistant and collision-resistant.
+**Definition:** Hash function maps arbitrary input to fixed-size output. Cryptographic hashes must resist preimages and collisions.
 
 **Background & Philosophy:**
-The philosophy is mathematical asymmetry and mathematical impossibility. Cryptography relies on one-way functions (like factoring large primes or elliptic curve discrete logarithms) that are trivial to compute in one direction but take billions of years to reverse without a key.
+Cryptography uses one-way functions. Trivial to compute forward. Computationally impossible to reverse without key. Relies on mathematical asymmetry.
 
 **Use Cases:**
-HTTPS encryption, securing user passwords via bcrypt, and verifying blockchain transactions through ECDSA signatures.
+HTTPS encryption. Password security via bcrypt. Blockchain transaction verification.
 
 **Memory Mechanics:**
-Cryptographic hashing requires constant-time memory execution to prevent "timing attacks". If comparing an unauthorized hash `A` against a stored password hash `B`, a naive string comparison exits early on the first mismatched byte. An attacker can precisely measure this execution time to deduce the correct bytes one by one. The `subtle.ConstantTimeCompare` function forces the CPU to iterate through the entire memory slice regardless of matches, neutralizing the timing side-channel.
+Cryptographic hashing needs constant-time execution. Prevents timing attacks. Naive comparison exits early on mismatch. Reveals byte information to attackers. `subtle.ConstantTimeCompare` forces full slice iteration. Neutralizes timing side-channel.
 
 ### Operations & Complexity
 
-| Algorithm | Output Size | Security <abbr title="The set of all nodes at a given depth.">Level</abbr> | Description |
+| Algorithm | Output Size | Security Level | Description |
 |-----------|-------------|----------|------------|
 | SHA-256 | 256 bits | Secure | Industry standard |
-| SHA-512 | 512 bits | Secure | Slower, but larger bounds |
-| MD5 | 128 bits | Broken | Do not use |
+| SHA-512 | 512 bits | Secure | Slower: larger bounds |
+| MD5 | 128 bits | Broken | Unsafe |
 | SHA-1 | 160 bits | Broken | Deprecated |
 
 ### Pseudocode
@@ -71,32 +71,32 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Strictly rely on `crypto/sha256` or `crypto/sha512` from the stdlib. Avoid MD5 and SHA-1 for security contexts entirely. For password hashing, utilize `golang.org/x/crypto/bcrypt` or `argon2`.
+Use `crypto/sha256` or `crypto/sha512`. MD5 and SHA-1 are broken. Use `bcrypt` or `argon2` for passwords.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use SHA-256 When... | Avoid If... |
 |------------------------|------------------|
-| Performing data integrity checks | Storing passwords (use bcrypt/argon2 instead) |
-| Generating cryptographic checksums | You need raw speed without security (use xxhash) |
+| Data integrity checks required | Storing passwords: use bcrypt/argon2 |
+| Cryptographic checksums needed | Raw speed is priority: use xxhash |
 
 ### Edge Cases & Pitfalls
 
-- **Length extension attacks:** SHA-256 is vulnerable to length extension attacks. Employ HMACs when necessary.
-- **Timing attacks:** Never compare hashes utilizing the standard `==` operator. Always use `hmac.Equal` or `subtle.ConstantTimeCompare`.
+- **Length extension:** SHA-256 is vulnerable. Use HMACs for protection.
+- **Timing attacks:** Avoid `==` for hash comparison. Use `hmac.Equal` or `subtle.ConstantTimeCompare`.
 
 ## 31.2. Symmetric Encryption
 
-**Definition:** Symmetric encryption utilizes the exact same <abbr title="A field or set of fields used to identify a record.">key</abbr> for both encryption and decryption. <abbr title="An authenticated encryption algorithm using AES in Galois/Counter Mode.">AES-GCM</abbr> stands as the heavily recommended standard mode.
+**Definition:** Symmetric encryption uses same key for encryption and decryption. AES-GCM is the standard mode.
 
 ### Operations & Complexity
 
-| Algorithm | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Size | Mode | Security <abbr title="The set of all nodes at a given depth.">Level</abbr> |
+| Algorithm | Key Size | Mode | Security Level |
 |-----------|----------|------|----------|
 | AES-128 | 128 bits | GCM | Secure |
 | AES-256 | 256 bits | GCM | Secure |
-| ChaCha20-Poly1305 | 256 bits | AEAD | Secure, strong alternative |
+| ChaCha20-Poly1305 | 256 bits | AEAD | Secure alternative |
 
 ### Pseudocode
 
@@ -186,34 +186,34 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-The <abbr title="A random number used once in cryptographic operations.">nonce</abbr> MUST be completely unique per encryption event when utilizing the same <abbr title="A field or set of fields used to identify a record.">key</abbr>. The standard GCM nonce size is 12 bytes. Never reuse nonces under any circumstance.
+Nonce must be unique per encryption. Standard GCM nonce is 12 bytes. Nonce reuse breaks security.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use AES-GCM When... | Avoid If... |
 |------------------------|------------------|
-| Encrypting data at rest or in transit | Lacking authentication (use CBC+HMAC, or strictly GCM) |
-| Hardware AES-NI is physically available | Operating on embedded systems lacking AES support (use ChaCha20 instead) |
+| Encrypting data at rest/transit | Authentication missing: use AEAD mode |
+| Hardware AES-NI available | Embedded systems lack AES: use ChaCha20 |
 
 ### Edge Cases & Pitfalls
 
-- **<abbr title="A field or set of fields used to identify a record.">Key</abbr> reuse with identical nonce:** A fatal security flaw for GCM. Consistently generate cryptographically random nonces.
-- **Unauthenticated encryption:** ECB and CBC modes (without HMAC) are vulnerable to tampering and modifications.
-- **IV reuse in CTR mode:** This error completely shatters the encryption's security.
+- **Nonce reuse:** Fatal flaw for GCM. Use cryptographically random nonces.
+- **Unauthenticated encryption:** ECB and CBC (without HMAC) allow tampering.
+- **IV reuse:** Destroys security in CTR mode.
 
 ## 31.3. Asymmetric Encryption
 
-**Definition:** Asymmetric encryption utilizes a specific pair of <abbr title="A key shared publicly for encryption or signature verification.">public</abbr> (encryption) and <abbr title="A secret key used for decryption or signing.">private</abbr> (decryption) keys. RSA and <abbr title="An elliptic curve digital signature algorithm providing security and efficiency.">ECDSA</abbr> serve as the established standards.
+**Definition:** Asymmetric encryption uses public/private key pairs. RSA and ECDSA are standards.
 
 ### Operations & Complexity
 
-| Algorithm | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Size | Sign | Verify | Description |
+| Algorithm | Key Size | Sign | Verify | Description |
 |-----------|----------|------|--------|------------|
-| RSA-2048 | 2048 bits | <code>O(n³)</code> | <code>O(n^2)</code> | Aging standard |
-| RSA-4096 | 4096 bits | <code>O(n³)</code> | <code>O(n^2)</code> | More secure, much slower |
-| ECDSA P-256 | 256 bits | <code>O(n^2)</code> | <code>O(n^2)</code> | Considerably faster, shorter |
-| Ed25519 | 256 bits | <code>O(n^2)</code> | <code>O(n^2)</code> | Modern, heavily recommended |
+| RSA-2048 | 2048 bits | $O(n^3)$ | $O(n^2)$ | Aging standard |
+| RSA-4096 | 4096 bits | $O(n^3)$ | $O(n^2)$ | Secure: slow |
+| ECDSA P-256 | 256 bits | $O(n^2)$ | $O(n^2)$ | Fast: short |
+| Ed25519 | 256 bits | $O(n^2)$ | $O(n^2)$ | Modern: recommended |
 
 ### Pseudocode
 
@@ -280,7 +280,6 @@ func main() {
     if err != nil {
         panic(err)
     }
-    // Reconstruct big.Int values from signature bytes for verification
     r := new(big.Int).SetBytes(sig[:len(sig)/2])
     s := new(big.Int).SetBytes(sig[len(sig)/2:])
     valid := ecdsa.Verify(&priv.PublicKey, hash, r, s)
@@ -289,32 +288,32 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-`crypto/ecdsa` yields a raw signature (r, s) that frequently requires encoding (ASN.1 DER) for broad interoperability. For modern applications, strongly prefer `crypto/ed25519` as it's considerably simpler.
+`crypto/ecdsa` uses raw (r, s) signatures. Modern apps should prefer `crypto/ed25519`.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use Ed25519 When... | Avoid If... |
 |------------------------|------------------|
-| Needing new digital signatures | Working within legacy systems demanding RSA |
-| Performance is highly critical | Actually needing raw encryption (Ed25519 only signs data) |
+| New digital signatures needed | Legacy systems require RSA |
+| Performance is critical | Raw encryption required: Ed25519 only signs |
 
 ### Edge Cases & Pitfalls
 
-- **Randomness quality:** Keys and signatures depend intensely upon `crypto/rand`. Never utilize the insecure `math/rand`.
-- **Timing attacks:** ECDSA verification must run in strict constant-time. Go's standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> reliably handles this.
+- **Randomness quality:** Keys depend on `crypto/rand`. Avoid `math/rand`.
+- **Timing attacks:** Verification must be constant-time. Go stdlib handles this.
 
 ## 31.4. Digital Signatures and HMAC
 
-**Definition:** <abbr title="A hash-based message authentication code for verifying data integrity.">HMAC</abbr> (Hash-based Message Authentication Code) leverages a secret <abbr title="A field or set of fields used to identify a record.">key</abbr> to authenticate data integrity. Digital signatures use asymmetric keys to ensure robust non-repudiation.
+**Definition:** HMAC uses secret key to authenticate data. Digital signatures use asymmetric keys for non-repudiation.
 
 ### Operations & Complexity
 
-| Primitive | <abbr title="A field or set of fields used to identify a record.">Key</abbr> Type | Size | Description |
+| Primitive | Key Type | Size | Description |
 |----------|----------|------|------------|
 | HMAC-SHA256 | Symmetric | 256 bits | Message authentication |
-| ECDSA | Asymmetric | 512 bits signature | Ensures non-repudiation |
-| Ed25519 | Asymmetric | 64 bytes signature | Modern, exceptionally fast |
+| ECDSA | Asymmetric | 512 bits signature | Non-repudiation |
+| Ed25519 | Asymmetric | 64 bytes signature | Modern: fast |
 
 ### Pseudocode
 
@@ -362,32 +361,32 @@ func main() {
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Always utilize `hmac.Equal` to perform constant-time comparisons. Never execute a standard `==` to evaluate a MAC.
+Use `hmac.Equal` for constant-time comparison. Avoid `==` for MACs.
 {{% /alert %}}
 
 ### Decision Matrix
 
 | Use HMAC When... | Use Digital Signature When... |
 |---------------------|----------------------------------|
-| Both involved parties possess the shared secret <abbr title="A field or set of fields used to identify a record.">key</abbr> | Genuine non-repudiation is mandatory |
-| Performance is highly critical | The verification step occurs via a third party |
+| Shared secret key exists | Non-repudiation is mandatory |
+| Performance is critical | Third-party verification required |
 
 ### Edge Cases & Pitfalls
 
-- **<abbr title="A field or set of fields used to identify a record.">Key</abbr> length < hash size:** HMAC automatically hashes the key first. Keys shorter than the block size are acceptable.
-- **Truncated MAC:** Do not truncate an HMAC signature without undergoing a rigorous security analysis.
+- **Short keys:** HMAC hashes keys shorter than block size automatically.
+- **Truncated MAC:** Avoid truncation without security analysis.
 
 ## 31.5. Password Hashing
 
-**Definition:** Password hashing (distinct from encryption) represents a deliberately slow one-way function engineered specifically to thwart brute-force attacks.
+**Definition:** Slow one-way function. Designed to thwart brute-force attacks.
 
 ### Operations & Complexity
 
 | Algorithm | Work Factor | Memory | Description |
 |-----------|-------------|--------|------------|
-| bcrypt | Cost 10-14 | Low | Legacy standard, sufficiently secure |
-| scrypt | N, r, p | Configurable | Memory-hard defense |
-| Argon2 | Time, Memory | High | PHC winner, highly recommended |
+| bcrypt | Cost 10-14 | Low | Legacy standard |
+| scrypt | N, r, p | Configurable | Memory-hard |
+| Argon2 | Time, Memory | High | Modern: recommended |
 
 ### Idiomatic Go Implementation
 
@@ -396,57 +395,47 @@ package main
 
 import (
 	"fmt"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
 	password := []byte("my-secure-password")
-
-	// Hash dengan bcrypt, cost factor 12
-	hashed, err := bcrypt.GenerateFromPassword(password, 12)
-	if err != nil {
-		panic(err)
-	}
+	hashed, _ := bcrypt.GenerateFromPassword(password, 12)
 	fmt.Printf("bcrypt hash: %s\n", hashed)
-
-	// Verifikasi
-	err = bcrypt.CompareHashAndPassword(hashed, password)
-	if err != nil {
-		fmt.Println("Password mismatch")
-	} else {
-		fmt.Println("Password verified")
+	err := bcrypt.CompareHashAndPassword(hashed, password)
+	if err == nil {
+		fmt.Println("Verified")
 	}
 }
 ```
 
 {{% alert icon="📌" context="warning" %}}
-Never use SHA-256 for password hashing. SHA-256 is designed for speed and can be brute-forced at billions of hashes per second with GPUs. Always use a dedicated password hashing algorithm like **bcrypt**, **scrypt**, or **Argon2** (PHC winner). These algorithms are deliberately slow and memory-hard.
+Avoid SHA-256 for passwords. Use bcrypt, scrypt, or Argon2. These are slow and memory-hard.
 {{% /alert %}}
 
-For production, prefer `golang.org/x/crypto/argon2` over bcrypt for its memory-hard properties.
+Prefer `golang.org/x/crypto/argon2` for production.
 
 ### Anti-Patterns
 
-- **Using MD5 or SHA-1 for security:** Both are broken with known collision attacks. Use SHA-256 for integrity and bcrypt/Argon2 for password hashing.
-- **Reusing nonces in AES-GCM:** Reusing a nonce with the same key destroys AEAD security entirely. Always generate a fresh 12-byte nonce from `crypto/rand` for each encryption.
-- **Comparing hashes or MACs with `==`:** The `==` operator short-circuits on mismatched bytes, enabling timing attacks. Use `hmac.Equal` or `subtle.ConstantTimeCompare` instead.
+- **Broken algorithms:** MD5/SHA-1 have collisions. Use SHA-256 for integrity. Use bcrypt/Argon2 for passwords.
+- **Nonce reuse:** Destroys GCM security. Generate fresh 12-byte nonce per encryption.
+- **Timing leaks:** `==` allows side-channel attacks. Use `hmac.Equal` or `subtle.ConstantTimeCompare`.
 
 ## Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| SHA-256 | `crypto/sha256` | <code>O(n)</code> | 32 bytes | Data integrity |
-| AES-GCM | `crypto/aes` + `crypto/cipher` | <code>O(n)</code> | varies | Standard symmetric encryption |
-| HMAC | `crypto/hmac` | <code>O(n)</code> | . | Authenticate messages |
-| ECDSA | `crypto/ecdsa` | <code>O(n)</code> | . | Standard digital signatures |
-| Ed25519 | `crypto/ed25519` | <code>O(n)</code> | . | Fast, modern signatures |
-| bcrypt | `golang.org/x/crypto/bcrypt` | <code>O(cost)</code> | . | Hash passwords |
-| Argon2 | `golang.org/x/crypto/argon2` | . | . | Advanced password hashing |
-| TLS | `crypto/tls` | . | . | Secure transport layers |
+| SHA-256 | `crypto/sha256` | $O(n)$ | 32 bytes | Data integrity |
+| AES-GCM | `crypto/aes` | $O(n)$ | . | Symmetric encryption |
+| HMAC | `crypto/hmac` | $O(n)$ | . | Message authentication |
+| ECDSA | `crypto/ecdsa` | $O(n)$ | . | Digital signatures |
+| Ed25519 | `crypto/ed25519` | $O(n)$ | . | Modern signatures |
+| bcrypt | `bcrypt` | $O(cost)$ | . | Password hashing |
+| Argon2 | `argon2` | . | . | Advanced password hashing |
+| TLS | `crypto/tls` | . | . | Secure transport |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 30:</strong> This chapter dissects cryptographic primitives in Go: hashing (SHA-256), symmetric encryption (AES-GCM), asymmetric encryption (ECDSA/Ed25519), HMACs, digital signatures, and password hashing (bcrypt/Argon2). Rely exclusively on the standard <abbr title="A collection of precompiled routines that a program can use.">library</abbr> `crypto/` package for cryptographic operations and rigorously avoid MD5/SHA-1 for anything security-related.
+<strong>Summary Chapter 30:</strong> Use SHA-256 for integrity. AES-GCM for symmetric encryption. ECDSA/Ed25519 for signatures. bcrypt/Argon2 for passwords. Rely on `crypto/` package. Avoid MD5/SHA-1.
 {{% /alert %}}
 
 ## See Also

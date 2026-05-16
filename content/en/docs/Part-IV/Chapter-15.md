@@ -15,29 +15,29 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 15 covers all-pairs shortest path algorithms: Floyd-Warshall and Johnson's algorithm. Learn when to use each based on graph density and edge weights.
+Chapter 15: Floyd-Warshall and Johnson's algorithms. Compares usage for dense vs sparse graphs.
 {{% /alert %}}
 
 ## 15.1. Floyd-Warshall Algorithm
 
-**Definition:** Floyd-Warshall computes shortest paths between all pairs of vertices using <abbr title="A method combining solutions to overlapping subproblems">dynamic programming</abbr>. It works with negative edges (but no negative cycles) and handles dense graphs efficiently.
+**Definition:** Computes shortest paths between all vertex pairs. Uses dynamic programming. Supports negative edges. Handles dense graphs efficiently.
 
-**Background & Philosophy:**
-Instead of computing paths from a single starting point, Floyd-Warshall calculates the shortest path between *every* pair of nodes simultaneously. The philosophy is grounded in <abbr title="A method combining solutions to overlapping subproblems">Dynamic Programming</abbr>: solving subproblems incrementally. It asks, "Is the path from A to B shorter if we route it through intermediate node K?" by slowly expanding the set of allowed intermediate nodes.
+**Logic:**
+Simultaneous calculation of all paths. Incrementally expands set of intermediate nodes. Checks if node K improves path between A and B.
 
 **Use Cases:**
-Used in analyzing transportation networks (e.g., calculating transit distances between all major cities), computing routing tables in complex network topologies, and analyzing social network connections to determine the "degrees of separation" between all users.
+Transportation network analysis. Network routing tables. Social network connectivity.
 
 **Memory Mechanics:**
-Floyd-Warshall requires a 2D matrix (in Go, typically a `[][]float64` or `[][]int`). This creates a memory footprint of <code>O(V^2)</code>. While an array of slice headers in Go causes slight <abbr title="Inefficient RAM usage creating small unusable blocks">memory fragmentation</abbr>, processing rows sequentially leverages <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr>. The three tight nested loops (`k, i, j`) fit perfectly into modern branch predictors. However, for a graph with 10,000 nodes, the distance matrix requires allocating 100 million integers, consuming hundreds of megabytes of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>.
+Requires 2D matrix. Memory: O(V^2). Sequential row access maximizes spatial locality. Large graphs (V > 10,000) risk massive RAM consumption.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
-| Triple nested loop | <code>O(V^3)</code> | Three nested loops over vertices |
-| Memory | <code>O(V^2)</code> | Distance matrix |
-| <abbr title="A path that starts and ends at the same vertex.">Cycle</abbr> detect | <code>O(V)</code> | Check negative diagonal |
+| Triple loop | <code>O(V^3)</code> | Iterate over all vertex triplets |
+| Memory | <code>O(V^2)</code> | Matrix storage |
+| Cycle detect | <code>O(V)</code> | Negative diagonal check |
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
@@ -83,24 +83,24 @@ func main() {
 
 ## 15.2. Johnson's Algorithm
 
-**Definition:** Johnson's algorithm reweights edges to eliminate negative weights, then runs Dijkstra from each vertex. It is efficient for sparse graphs.
+**Definition:** Reweights edges to remove negatives. Executes Dijkstra from all vertices. Optimal for sparse graphs.
 
-**Background & Philosophy:**
-Johnson's algorithm is a hybrid mathematical trick. Dijkstra is incredibly fast but breaks if negative weights exist. Bellman-Ford handles negative weights but is slow. The philosophy of Johnson's algorithm is to use the slow algorithm (Bellman-Ford) just *once* to mathematically "reweight" all edges to be positive, allowing the system to safely execute the fast algorithm (Dijkstra) `V` times.
+**Logic:**
+Hybrid method. Runs Bellman-Ford once to ensure positive weights. Runs Dijkstra V times for performance.
 
 **Use Cases:**
-Essential when calculating all-pairs shortest paths on massive, sparse networks (like road networks or internet routing where nodes only connect to a few neighbors) that happen to include negative weights (like routing costs that factor in discounts or incentives).
+Massive sparse networks. Road networks with discounts or negative costs.
 
 **Memory Mechanics:**
-Johnson's algorithm avoids allocating massive <code>O(V^2)</code> matrices upfront. Instead, it relies on <abbr title="A collection of lists representing a graph, where each list describes the neighbors of a vertex.">adjacency lists</abbr> which take <code>O(V+E)</code> memory. Running Dijkstra repeatedly means dynamically allocating a <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority Queue</abbr> per node. Go's <abbr title="Automatic memory management that attempts to reclaim memory occupied by objects no longer in use.">Garbage Collector</abbr> efficiently manages and recycles this short-lived <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory during the execution, keeping the overall <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> consumption significantly lower than Floyd-Warshall's rigid matrix requirements for sparse graphs.
+Uses adjacency lists. Memory: O(V+E). Go GC handles temporary priority queues. More RAM-efficient than Floyd-Warshall for sparse graphs.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
-| Bellman-Ford | <code>O(VE)</code> | Reweight edges |
-| V × Dijkstra | <code>O(VE log V)</code> | Sparse <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> advantage |
-|| Total | <code>O(VE log V)</code> | Better than Floyd-Warshall for sparse graphs |
+| Bellman-Ford | <code>O(VE)</code> | Edge reweighting step |
+| V × Dijkstra | <code>O(VE log V)</code> | Repeated Dijkstra runs |
+| Total | <code>O(VE log V)</code> | Optimal for sparse graphs |
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
 
@@ -128,12 +128,9 @@ func (p *PQ) Pop() any {
 	return old[n-1]
 }
 
-// bellmanFord computes shortest distances from a virtual source
-// connected to all vertices with weight-0 edges.
 func bellmanFord(adj [][]Edge) ([]int, bool) {
 	n := len(adj)
 	h := make([]int, n)
-	for i := range h { h[i] = 0 } // virtual source edges are 0-weight
 	for i := 0; i < n-1; i++ {
 		for u := 0; u < n; u++ {
 			for _, e := range adj[u] {
@@ -143,11 +140,10 @@ func bellmanFord(adj [][]Edge) ([]int, bool) {
 			}
 		}
 	}
-	// Check for negative cycles
 	for u := 0; u < n; u++ {
 		for _, e := range adj[u] {
 			if h[u]+e.w < h[e.to] {
-				return nil, false // negative cycle detected
+				return nil, false
 			}
 		}
 	}
@@ -165,14 +161,12 @@ func dijkstra(adj [][]Edge, src int, h []int) []int {
 		cur := heap.Pop(pq).(Item)
 		if cur.d > dist[cur.v] { continue }
 		for _, e := range adj[cur.v] {
-			// Reweighted edge ensures non-negative weights
 			if dist[cur.v]+e.w < dist[e.to] {
 				dist[e.to] = dist[cur.v] + e.w
 				heap.Push(pq, Item{e.to, dist[e.to] + h[src] - h[e.to]})
 			}
 		}
 	}
-	// Restore original distances
 	for i := range dist {
 		if dist[i] < math.MaxInt32 {
 			dist[i] = dist[i] - h[src] + h[i]
@@ -193,7 +187,6 @@ func johnson(adj [][]Edge) ([][]int, bool) {
 }
 
 func main() {
-	// Graph with negative edges (no negative cycles)
 	adj := [][]Edge{
 		{{1, -2}, {2, 4}},
 		{{2, 3}, {3, 2}},
@@ -215,33 +208,33 @@ func main() {
 
 | Use Floyd-Warshall When... | Use Johnson's When... |
 |----------------------------|------------------------|
-| Dense <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> | Sparse <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> |
-| Simple implementation needed | Performance critical |
+| Graph is dense | Graph is sparse |
+| Implementation simplicity | Execution speed priority |
 | Negative edges present | Negative edges present |
-| V < 500 | V is large but E is small |
+| V < 500 | Large V, small E |
 
 ### Edge Cases & Pitfalls
 
-- **Negative <abbr title="A path that starts and ends at the same vertex.">cycle</abbr>:** Both algorithms fail; detect with Bellman-Ford first.
-- **Overflow:** Use `math.Inf(1)` to represent infinity without wrap-around.
-- **Dense graphs:** <code>O(V^3)</code> is prohibitively expensive for V > 10^4.
+- **Negative cycle:** Both fail. Detect with Bellman-Ford.
+- **Overflow:** Use `math.Inf(1)` to avoid wrap-around errors.
+- **Dense graphs:** O(V^3) scales poorly for V > 10^4.
 
 ### Anti-Patterns
 
-- **Running Floyd-Warshall on sparse graphs:** When E ≈ V, Johnson's algorithm (O(V² log V + VE)) is far faster than O(V³). Prefer Johnson's for sparse or moderately dense graphs.
-- **Using `int` max value as infinity:** Integer addition on `math.MaxInt` overflows silently. Use `math.MaxInt/2` so that `inf + weight` stays within bounds, or use `math.Inf(1)` with `float64`.
-- **Allocating a new dist matrix per iteration:** The three nested loops should update in-place. Creating `[][]float64` copies inside the k-loop turns O(V³) time into O(V⁴) memory traffic.
+- **Floyd-Warshall on sparse graphs:** Inefficient if E ≈ V. Johnson's is faster.
+- **Unsafe infinity values:** Integer addition on MaxInt overflows. Use `math.MaxInt/2` or `math.Inf(1)`.
+- **Inefficient matrix updates:** Update in-place. Matrix copying kills throughput.
 
-## 15.3. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## 15.3. Quick Reference
 
-| Algorithm | Time | Space | <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">Graph</abbr> Type | Negative Edges |
+| Algorithm | Time | Space | Graph Type | Negative Edges |
 |-----------|------|-------|------------|----------------|
 | Floyd-Warshall | <code>O(V^3)</code> | <code>O(V^2)</code> | Dense | Yes |
 | Johnson | <code>O(VE log V)</code> | <code>O(V^2)</code> | Sparse | Yes |
-| Naive V×Dijkstra | <code>O(VE log V)</code> | <code>O(V^2)</code> | Non-negative | No |
+| V×Dijkstra | <code>O(VE log V)</code> | <code>O(V^2)</code> | Non-negative | No |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 15:</strong> Floyd-Warshall provides a simple <code>O(V^3)</code> solution for dense graphs, while Johnson's algorithm achieves better <code>O(VE log V)</code> performance on sparse graphs with negative weights. Choose based on <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> density and always check for negative cycles first.
+<strong>Summary Chapter 15:</strong> Floyd-Warshall for dense graphs. Johnson's for sparse graphs with negatives. Density determines algorithm choice.
 {{% /alert %}}
 
 ## See Also

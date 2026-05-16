@@ -15,34 +15,32 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 14 covers single-source shortest path algorithms: Dijkstra's algorithm and Bellman-Ford. Learn when to use each and how to implement them in Go.
+Chapter 14: Dijkstra and Bellman-Ford algorithms. Covers usage, logic, and Go implementation.
 {{% /alert %}}
 
 ## 14.1. Dijkstra's Algorithm
 
-**Definition:** Dijkstra's algorithm finds the shortest paths from a source vertex to all other vertices in a <abbr title="A graph where each edge is assigned a weight or cost.">weighted graph</abbr> with non-negative <abbr title="A connection between two vertices in a graph.">edge</abbr> weights.
+**Definition:** Dijkstra finds shortest paths from source to all vertices. Required: weighted graph, non-negative edge weights.
 
-**Background & Philosophy:**
-The core philosophy of Dijkstra is "greedy expansion with guaranteed finality." It fundamentally assumes that once the cheapest possible path to a node is discovered from the current frontier, no future path extending from other longer paths can ever be cheaper. This assumption mathematically holds true, but *only* if negative weights do not exist.
+**Logic:**
+Greedy expansion. Assumes cheapest frontier path is final. Logic holds if negative weights are absent.
 
 **Use Cases:**
-Dijkstra is the foundation of network routing (like OSPF in IP networks) and mapping software (like finding the fastest driving route considering distance and speed limits).
+Network routing (OSPF). Mapping software. GPS navigation.
 
 **Memory Mechanics:**
-Dijkstra algorithm's efficiency relies heavily on a <abbr title="A heap where each parent is less than or equal to its children">Min-Heap</abbr> (<abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority Queue</abbr>). In Go, this is a dynamically resizing slice that utilizes <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. When the algorithm "relaxes" an edge, it pushes a new `State` struct into the heap. Because the heap is contiguous, <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality during bubbling up/down operations is excellent. However, the `dist` (distance) array is accessed randomly based on graph topology, which can trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> in massive, highly-connected graphs.
+Relies on <abbr title="A heap where each parent is less than or equal to its children">Min-Heap</abbr>. Go implementations use contiguous slices. High <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality during heap operations. Large graphs trigger <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr> during random distance array access.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
-| Init | <code>O(V)</code> | Set distances to infinity |
-| Extract min | <code>O(log V)</code> per extraction | <abbr title="A queue where each element has a priority and the highest priority element is served first.">Priority queue</abbr> |
-| Relax edges | <code>O(E)</code> total | Update distances |
-| Total | <code>O((V + E) log V)</code> | With <abbr title="A heap implemented using a binary tree.">binary heap</abbr> |
+| Init | <code>O(V)</code> | Initialize distances |
+| Extract min | <code>O(log V)</code> | Priority queue operation |
+| Relax edges | <code>O(E)</code> | Total distance updates |
+| Total | <code>O((V + E) log V)</code> | With binary heap |
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
-
-Use `container/heap` for the <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr>.
 
 ```go
 package main
@@ -101,24 +99,24 @@ func main() {
 
 ## 14.2. Bellman-Ford Algorithm
 
-**Definition:** Bellman-Ford finds shortest paths from a single source in graphs with negative <abbr title="A connection between two vertices in a graph.">edge</abbr> weights (but no negative cycles).
+**Definition:** Finds shortest paths from source. Supports negative edge weights. Detects negative cycles.
 
-**Background & Philosophy:**
-While Dijkstra is greedy, Bellman-Ford is cautious and exhaustive. Its philosophy is based on dynamic programming: it assumes that any shortest path can have at most `V-1` edges. Therefore, by blindly relaxing all edges `V-1` times, the shortest distances must logically propagate to their final correct states.
+**Logic:**
+Dynamic programming. Path contains max `V-1` edges. Relax all edges `V-1` times to ensure correct distances.
 
 **Use Cases:**
-Essential in financial trading systems to detect arbitrage opportunities (currency exchange loops that yield net profit) by identifying negative weight cycles, and in certain distance-vector routing protocols.
+Financial arbitrage detection. Distance-vector routing protocols.
 
 **Memory Mechanics:**
-Bellman-Ford doesn't require complex data structures like a Priority Queue. It strictly iterates over a simple 1D slice of distances and an `[]Edge` list. Because it iterates over the linear `[]Edge` list repeatedly, the CPU's branch predictor and prefetcher can stream the edge data from <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> into the L1 <abbr title="A smaller, faster memory closer to a processor core.">cache</abbr> with incredible efficiency. Despite its higher mathematical time complexity <code>O(VE)</code>, its memory access pattern is so hardware-friendly that it often performs well on small-to-medium graphs.
+Uses simple distance slices and edge lists. Linear access pattern. CPU prefetcher friendly. Performs well on small graphs despite `O(VE)` complexity.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
-| Relax all edges | <code>O(E)</code> per <abbr title="The repetition of a process, typically using loops.">iteration</abbr> | V-1 iterations |
-| Detect negative <abbr title="A path that starts and ends at the same vertex.">cycle</abbr> | <code>O(E)</code> | One extra <abbr title="The repetition of a process, typically using loops.">iteration</abbr> |
-| Total | <code>O(VE)</code> | Slower than Dijkstra |
+| Relax edges | <code>O(E)</code> | Per iteration |
+| Detect cycle | <code>O(E)</code> | Extra iteration |
+| Total | <code>O(VE)</code> | All iterations |
 
 ### Idiomatic Go Implementation
 
@@ -162,31 +160,31 @@ func main() {
 
 | Use Dijkstra When... | Use Bellman-Ford When... |
 |----------------------|--------------------------|
-| All <abbr title="A connection between two vertices in a graph.">edge</abbr> weights non-negative | Negative weights present |
-| Performance is critical | Negative <abbr title="A path that starts and ends at the same vertex.">cycle</abbr> detection needed |
-| Standard routing problems | Sparse graphs with negatives |
+| Weights are non-negative | Negative weights present |
+| Speed is priority | Cycle detection required |
+| Standard routing | Sparse graphs with negatives |
 
 ### Edge Cases & Pitfalls
 
-- **Negative weights:** Dijkstra fails with negative weights; use Bellman-Ford.
-- **Disconnected <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>:** Distance remains infinity for unreachable vertices.
-- **<abbr title="A specialized tree-based data structure that satisfies the heap property.">Heap</abbr> stale entries:** Lazy deletion in <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr> is common in implementations.
+- **Negative weights:** Dijkstra fails. Use Bellman-Ford.
+- **Disconnected graph:** Unreachable vertices stay at infinite distance.
+- **Heap stale entries:** Handle outdated items in priority queue.
 
 ### Anti-Patterns
 
-- **Using Dijkstra with negative edge weights:** Dijkstra assumes non-negative weights; negative edges produce wrong answers. Use Bellman-Ford or SPFA instead.
-- **Re-creating the distance map each iteration:** Allocate `dist []int` once with `make`, then `copy(dist, inf)` between runs — avoids O(V) allocations per call.
-- **Storing the full path slice per vertex:** Use a `parent []int` predecessor array and reconstruct on demand. Storing `[]int` paths per vertex wastes O(V²) memory.
+- **Dijkstra with negative edges:** Assumes positive weights. Negative edges yield incorrect results.
+- **Constant slice allocation:** Reuse `dist` slice. Avoids overhead.
+- **Storing full paths:** Use parent pointers. Saves O(V²) memory.
 
-## 14.4. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
+## 14.4. Quick Reference
 
-| Algorithm | Time | Space | Negative Weights | <abbr title="A path that starts and ends at the same vertex.">Cycle</abbr> Detect |
+| Algorithm | Time | Space | Negative Weights | Cycle Detect |
 |-----------|------|-------|------------------|--------------|
 | Dijkstra | <code>O((V+E) log V)</code> | <code>O(V)</code> | No | No |
 | Bellman-Ford | <code>O(VE)</code> | <code>O(V)</code> | Yes | Yes |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 14:</strong> Dijkstra's algorithm is the go-to for non-negative weighted shortest paths with its efficient <code>O((V+E) log V)</code> complexity. Bellman-Ford handles negative weights and detects negative cycles at the cost of <code>O(VE)</code> time. In Go, use <code>container/heap</code> for Dijkstra's <abbr title="A queue where each element has a priority and the highest priority element is served first.">priority queue</abbr>.
+<strong>Summary Chapter 14:</strong> Dijkstra is optimal for positive weights. Bellman-Ford handles negatives and cycles. Use <code>container/heap</code> for Dijkstra in Go.
 {{% /alert %}}
 
 ## See Also

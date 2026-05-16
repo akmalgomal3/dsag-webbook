@@ -15,185 +15,56 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 5 focuses on fundamental data structures in Go (arrays, slices, maps, linked lists). It contrasts their memory layouts and explains how slices leverage <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality for superior performance.
+Chapter 5 covers Go fundamental data structures. Topics: arrays, slices, maps, linked lists. Explores memory layouts. Demonstrates slice cache locality advantages. Integrates modern `slices` and `maps` packages.
 {{% /alert %}}
 
 ## 5.1. Arrays and Slices
 
-**Definition:** An <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">array</abbr> is a collection of elements with the same type and a fixed size. A slice is a dynamic view into an array that allows for variable sizing.
+**Definition:** Array is fixed-size collection. Slice is dynamic view into array.
 
 **Background & Philosophy:**
-In C and C++, arrays and pointers are tightly coupled, which often leads to buffer overflow vulnerabilities. Go's philosophy introduces the "slice" as a safe, first-class citizen. A slice abstracts away manual <abbr title="Performing mathematical operations on memory addresses.">pointer arithmetic</abbr> and bounds checking, providing the flexibility of dynamic arrays with the safety of modern programming languages.
+C/C++ arrays lack bounds checking. Go introduces "slice" as safe, first-class citizen. Abstracts pointer arithmetic. Retains dynamic array flexibility. Ensures safety.
 
 **Use Cases:**
-Slices are the default choice for almost all ordered collections in Go, used in everything from reading lines of a file, buffering network packets, to returning rows from a database query.
+Default choice for ordered collections. Read file lines. Buffer network packets. Store database query rows.
 
 **Memory Mechanics:**
-An array is a single, <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> block of memory allocated either on the <abbr title="Memory used to execute functions and store local variables.">stack</abbr> or the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. A slice is a small 24-byte struct (on 64-bit architectures) consisting of a <abbr title="A variable that stores a memory address.">pointer</abbr> to the backing array, an integer representing the current length, and an integer for the capacity. Appending to a slice whose capacity is full forces the runtime to allocate a new, larger contiguous block of <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr> and copy the old elements over, which is an <code>O(n)</code> operation in memory but amortizes to <code>O(1)</code>.
+Array uses single contiguous RAM block. Allocates on stack or heap. Slice uses 24-byte struct (64-bit). Holds pointer, length, capacity. Appending beyond capacity forces reallocation. Copies elements to new, larger contiguous memory block. Reallocation costs `O(n)` time, amortizes to `O(1)`.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| <abbr title="A data structure that improves the speed of data retrieval operations.">Index</abbr> access | <code>O(1)</code> | Random access |
-| Append | <code>O(1)</code> amortized | Re-allocation if capacity is full |
-| Copy | <code>O(n)</code> | Element by element |
+| Index access | `O(1)` | Random access |
+| Append | `O(1)` amortized | Re-allocation if capacity full |
+| Copy | `O(n)` | Element by element |
+| Sort | `O(n log n)` | `slices.Sort` (pdqsort) |
+| Binary Search | `O(log n)` | `slices.BinarySearch` |
 
-### Pseudocode
+### Idiomatic Go 1.21+ Implementation
 
-```text
-ArrayAndSlice():
-    arr = fixed array of size 5
-    slice = view of arr from index 1 to 3
-    dyn = dynamic slice [10, 20]
-    append 30 to dyn
-    return arr, slice, dyn
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-    var arr [5]int = [5]int{1, 2, 3, 4, 5}
-    slice := arr[1:4]           // slice of an array
-    dyn := []int{10, 20}        // dynamic slice
-    dyn = append(dyn, 30)       // add element
-
-    fmt.Println(arr, slice, dyn)
-}
-```
-
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|---------------------|------------------|
-| Data size is definitively known | Data size is unknown (use slices) |
-| Need a zero-copy view | Need frequent insertions in the middle |
-
-### Edge Cases & Pitfalls
-
-- **Slice header leak:** A small slice of a large array keeps a <abbr title="A value that enables a program to indirectly access a particular datum.">reference</abbr> to the entire backing array in memory.
-- **Append aliasing:** Two slices sharing a backing array; appending to one might overwrite data in the other.
-- **Out of bounds:** Accessing beyond `len()` causes a panic.
-
-## 5.2. Maps
-
-**Definition:** A map is Go's built-in <abbr title="A data structure that implements an associative array using a hash function.">hash table</abbr> that stores key-value pairs with an average <code>O(1)</code> access time.
-
-**Background & Philosophy:**
-The philosophy behind Go maps is to provide a highly optimized, built-in associative data structure so developers do not need to rely on external libraries for basic key-value storage. By embedding it in the language, the Go runtime can optimize memory allocation, rehashing, and <abbr title="The process of mapping data of arbitrary size to fixed-size values.">hash</abbr> seed generation to prevent security vulnerabilities like hash collision denial-of-service attacks.
-
-**Use Cases:**
-Used for caching database query results, counting frequency of elements, and building fast lookup tables like routing registries in web frameworks.
-
-**Memory Mechanics:**
-Maps in Go are implemented as an array of buckets. Each bucket typically holds up to 8 key-value pairs. Because maps are <abbr title="Memory blocks allocated in fragmented, separate locations.">non-contiguous</abbr> data structures, they scatter data across the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. When the map grows beyond its <abbr title="Ratio of stored entries to bucket count">load factor</abbr>, Go allocates a new array of buckets twice the size and incrementally moves the data over. This incremental rehashing prevents massive latency spikes during map insertion, but it still incurs <abbr title="Input/Output operations involving reading from or writing to a physical disk.">memory allocation</abbr> overhead.
-
-### Operations & Complexity
-
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Insert | <code>O(1)</code> amortized | Rehashes when growing |
-| Lookup | <code>O(1)</code> amortized | Worst case <code>O(n)</code> during extreme collisions |
-| Delete | <code>O(1)</code> amortized | Does not immediately free backing memory |
-
-### Pseudocode
-
-```text
-MapOps():
-    m = empty hashmap with capacity 100
-    insert ("foo", 1) into m
-    insert ("bar", 2) into m
-    if "foo" exists in m:
-        output value of "foo"
-    remove "bar" from m
-```
-
-### Idiomatic Go Implementation
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-    m := make(map[string]int, 100) // pre-allocate
-    m["foo"] = 1
-    m["bar"] = 2
-
-    if v, ok := m["foo"]; ok {
-        fmt.Println(v)
-    }
-    delete(m, "bar")
-}
-```
-
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|---------------------|------------------|
-| Need fast <abbr title="A field or set of fields used to identify a record.">key</abbr> lookups | Need ordered data (use <abbr title="The process of arranging elements in a specific order.">sorting</abbr>) |
-| Keys are unique and comparable | Complex keys lack equality definitions |
-
-### Edge Cases & Pitfalls
-
-- **Unordered:** Map <abbr title="The repetition of a process, typically using loops.">iteration</abbr> is not sequential.
-- **Concurrent write:** Causes a panic if written concurrently without synchronization.
-- **<abbr title="A field or set of fields used to identify a record.">Key</abbr> mutability:** Slices or maps cannot be used as keys.
-
-## 5.3. Linked Lists
-
-**Definition:** A <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">linked list</abbr> is a linear data structure where each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> points to the next <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr>. Go provides `container/list` for a <abbr title="A linked list where each node points to both the next and previous nodes.">doubly linked list</abbr> implementation.
-
-**Background & Philosophy:**
-Before dynamic arrays were highly optimized, linked lists were the standard for variable-length data. The philosophy of a linked list is to optimize for insertions and deletions at arbitrary positions without shifting elements. However, in modern computing, the poor <abbr title="The tendency of a processor to access memory addresses that are near each other.">spatial locality</abbr> of linked lists often makes slices faster even for insertions, relegating linked lists to highly specialized use cases.
-
-**Use Cases:**
-Used in implementing <abbr title="Least Recently Used cache eviction policy">LRU</abbr> (Least Recently Used) caches where elements are constantly moved to the front, or in lock-free concurrent queues where node pointers can be atomically swapped.
-
-**Memory Mechanics:**
-Every element in a linked list is a separate struct allocated independently on the <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>. This means traversing a linked list forces the CPU to constantly chase pointers across completely random memory addresses, resulting in frequent <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>. Additionally, a doubly linked list requires an extra 16 bytes per node just for the `next` and `prev` pointers, introducing significant memory bloat compared to slices.
-
-### Operations & Complexity
-
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| PushFront/Back | <code>O(1)</code> | <abbr title="A linked list where each node points to both the next and previous nodes.">Doubly linked list</abbr> |
-| Remove | <code>O(1)</code> | If you hold a <abbr title="A variable that stores a memory address.">pointer</abbr> to the element |
-| Traverse | <code>O(n)</code> | Sequential access |
-
-### Pseudocode
-
-```text
-LinkedList():
-    l = empty doubly linked list
-    append 1 to back of l
-    prepend 2 to front of l
-    for each element e in l:
-        output e.value
-```
-
-### Idiomatic Go Implementation
+Use `slices` package for safe, fast operations.
 
 ```go
 package main
 
 import (
-    "container/list"
-    "fmt"
+	"fmt"
+	"slices"
 )
 
 func main() {
-    l := list.New()
-    l.PushBack(1)
-    l.PushFront(2)
+    nums := []int{30, 10, 20}
+    nums = append(nums, 40)
 
-    for e := l.Front(); e != nil; e = e.Next() {
-        fmt.Println(e.Value)
+    slices.Sort(nums)
+    fmt.Println("Sorted:", nums)
+
+    idx, found := slices.BinarySearch(nums, 20)
+    fmt.Printf("Found 20 at index %d: %v\n", idx, found)
+
+    if slices.Contains(nums, 30) {
+        fmt.Println("Slice contains 30")
     }
 }
 ```
@@ -202,49 +73,119 @@ func main() {
 
 | Use This When... | Avoid If... |
 |---------------------|------------------|
-| Frequent inserts/deletes at the ends | Need random access (use slices) |
-| Need a simple <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr>/<abbr title="A double-ended queue allowing insertion and deletion at both ends.">deque</abbr> | Need high <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality |
+| Data size is known | Data size unknown (use slice) |
+| Need zero-copy view | Frequent middle insertions required |
+| Prioritize cache locality | Frequent resizing expected |
 
 ### Edge Cases & Pitfalls
+- **Slice header leak:** Small slice on large backing array prevents GC. Use `slices.Clone`.
+- **Append aliasing:** Slices sharing backing array overwrite each other on append.
+- **Out of bounds:** Accessing beyond `len()` panics.
 
-- **Memory overhead:** Each <abbr title="A basic unit of a data structure, containing data and possibly links to other nodes.">node</abbr> has the overhead of two pointers.
-- **Type assertion:** `container/list` stores `any`; requires type assertions.
-- **Cache miss:** Linked lists are scattered in memory, resulting in poor <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr> locality.
+## 5.2. Maps
 
-## 5.4. Structs and Methods
-
-**Definition:** A <abbr title="Composite data type grouping fields">struct</abbr> is a composite <abbr title="A classification identifying one of various types of data.">data type</abbr> that groups fields. A method is a function attached to a specific type, serving as the equivalent of `impl` blocks or classes.
+**Definition:** Go built-in hash table. Stores key-value pairs. Average `O(1)` access.
 
 **Background & Philosophy:**
-Go abandons traditional class-based inheritance in favor of composition. Structs group data, and methods attach behaviors to that data. The philosophy is to keep data structures as plain, transparent records, while interfaces define behaviors. This prevents the deep, tangled inheritance hierarchies common in Java or C++.
+Provides optimized, built-in associative storage. Eliminates third-party dependencies. Runtime optimizes allocation, rehashing, hash seeds. Prevents hash collision DoS attacks.
 
 **Use Cases:**
-Structs are the building blocks of every complex type in Go: from representing a User model in an ORM, to defining the nodes of a Binary Tree, or holding the configuration state of an HTTP server.
+Cache database query results. Count element frequencies. Build fast lookup tables (routing registries).
 
 **Memory Mechanics:**
-Fields in a struct are laid out sequentially in <abbr title="Random Access Memory, the main volatile storage of a computer.">RAM</abbr>. The Go compiler automatically aligns fields to memory word boundaries (e.g., 8 bytes on a 64-bit system). Changing the order of fields in a struct definition can actually reduce its overall memory footprint by minimizing alignment padding. When a method uses a <abbr title="A variable that stores a memory address.">pointer</abbr> receiver (`*Struct`), no data is copied. When it uses a <abbr title="The data associated with a key in a key-value pair.">value</abbr> receiver, the entire struct is copied byte-by-byte into a new memory location on the <abbr title="Memory used to execute functions and store local variables.">stack</abbr>.
+Implemented as array of buckets. Each bucket holds up to 8 key-value pairs. Non-contiguous. Scatters data across heap. Exceeding load factor triggers incremental rehashing. Go allocates new array twice the size. Moves data incrementally. Prevents latency spikes. Incurs allocation overhead.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |---------|--------------|------------|
-| Field access | <code>O(1)</code> | Direct memory offset |
-| Method call | <code>O(1)</code> | Static dispatch |
-| Copy by <abbr title="The data associated with a key in a key-value pair.">value</abbr> | <code>O(n)</code> | n = struct size |
+| Insert | `O(1)` amortized | Rehashes when growing |
+| Lookup | `O(1)` amortized | Worst case `O(n)` |
+| Delete | `O(1)` amortized | Memory not freed immediately |
+| Clear | `O(n)` | `clear(m)` (Go 1.21+) |
 
-### Pseudocode
+### Idiomatic Go 1.21+ Implementation
 
-```text
-StackPush(s, v):
-    append v to s.items
+Use `maps` package and `clear` builtin.
 
-StackPop(s):
-    if s.items is empty:
-        return error
-    v = last element of s.items
-    remove last element
-    return v
+```go
+package main
+
+import (
+	"fmt"
+	"maps"
+)
+
+func main() {
+    m := make(map[string]int, 100)
+    m["foo"] = 1
+    m["bar"] = 2
+
+    if v, ok := m["foo"]; ok {
+        fmt.Println("foo:", v)
+    }
+
+    m2 := maps.Clone(m)
+    
+    if maps.Equal(m, m2) {
+        fmt.Println("Maps are equal")
+    }
+
+    clear(m)
+    fmt.Println("Length after clear:", len(m))
+}
 ```
+
+### Decision Matrix
+
+| Use This When... | Avoid If... |
+|---------------------|------------------|
+| Fast key lookups needed | Ordered data required (maps are unordered) |
+| Unique, comparable keys | Complex uncomparable keys |
+
+### Edge Cases & Pitfalls
+- **Unordered:** Iteration sequence random. Sort keys using `slices.Sort` for consistency.
+- **Concurrent write:** Unsynchronized concurrent writes cause fatal panic. Use `sync.Mutex`.
+- **Key mutability:** Slices, maps, functions are uncomparable. Cannot act as keys.
+
+## 5.3. Linked Lists
+
+**Definition:** Linear structure. Nodes point to next node. `container/list` provides doubly linked list.
+
+**Background & Philosophy:**
+Historically standard for variable-length data. Optimizes arbitrary insertions/deletions without shifting elements. Modern CPU architecture changes reality. Poor spatial locality makes slices faster. Relegates linked lists to specialized niches.
+
+**Use Cases:**
+LRU caches (frequent front moves). Lock-free concurrent queues (atomic pointer swaps).
+
+**Memory Mechanics:**
+Node structs allocate independently on heap. Traversal chases pointers across random memory addresses. Causes frequent cache misses. Doubly linked list adds 16-byte overhead (next, prev) per node. Bloats memory footprint vs slices.
+
+### Operations & Complexity
+
+| Operation | Complexity | Description |
+|---------|--------------|------------|
+| PushFront/Back | `O(1)` | Doubly linked list |
+| Remove | `O(1)` | Requires pointer to element |
+| Traverse | `O(n)` | Sequential access |
+
+### Edge Cases & Pitfalls
+- **Memory overhead:** High pointer overhead per node.
+- **Type assertion:** `container/list` stores `any`. Runtime type assertions add overhead.
+- **Cache miss:** Scattered memory breaks CPU prefetcher.
+
+## 5.4. Structs and Methods
+
+**Definition:** Struct groups fields. Method attaches function to specific type.
+
+**Background & Philosophy:**
+Favors composition over inheritance. Structs group data. Methods attach behaviors. Keeps data plain. Prevents deep inheritance hierarchies.
+
+**Use Cases:**
+ORM User models. Binary Tree nodes. HTTP server configuration state.
+
+**Memory Mechanics:**
+Struct fields sit sequentially in RAM. Compiler aligns fields to memory boundaries (8 bytes on 64-bit). Reordering fields reduces alignment padding. Pointer receiver (`*Struct`) avoids copying. Value receiver copies struct byte-by-byte to new stack location.
 
 ### Idiomatic Go Implementation
 
@@ -253,69 +194,56 @@ package main
 
 import "fmt"
 
-type Stack struct {
-    items []int
+type Stack[T any] struct {
+    items []T
 }
 
-func (s *Stack) Push(v int) {
+func (s *Stack[T]) Push(v T) {
     s.items = append(s.items, v)
 }
 
-func (s *Stack) Pop() (int, bool) {
+func (s *Stack[T]) Pop() (T, bool) {
+    var zero T
     if len(s.items) == 0 {
-        return 0, false
+        return zero, false
     }
     v := s.items[len(s.items)-1]
+    s.items[len(s.items)-1] = zero // avoid memory leak
     s.items = s.items[:len(s.items)-1]
     return v, true
 }
 
 func main() {
-    s := &Stack{}
-    s.Push(10)
-    v, ok := s.Pop()
-    fmt.Println(v, ok)
+    s := &Stack[int]{}
+    s.Push(42)
+    if v, ok := s.Pop(); ok {
+        fmt.Println("Popped:", v)
+    }
 }
 ```
 
-### Decision Matrix
-
-| Use This When... | Avoid If... |
-|---------------------|------------------|
-| Need data abstraction | Need inheritance (Go does not support it) |
-| Logic is tied directly to the data | Need complex generics (though Go 1.18+ supports basic generics) |
-
-### Edge Cases & Pitfalls
-
-- **Pointer vs value receiver:** Use <abbr title="A variable that stores a memory address.">pointer</abbr> receivers for modifications; <abbr title="The data associated with a key in a key-value pair.">value</abbr> receivers create copies.
-- **Nil receiver:** Methods can be called on nil pointers if handled properly inside the method.
-- **Zero value:** Structs have zero values; ensure initialization is handled if required.
-
 ### Anti-Patterns
-
-- **Slice Reslicing Memory Leak:** Slicing a large array or slice `big[:2]` retains a reference to the entire backing array. Copy to a new slice to release the old data: `copy(make([]T, 2), big[:2])`.
-- **Append to Nil Map:** Writing to an uninitialized `nil` map panics at runtime. Always use `make(map[K]V)` or a map literal before insertion.
-- **Slice Append Overwrite:** Two slices sharing a backing array where `append` on one overwrites data visible through the other. Use full-slice expressions `s[low:high:max]` to control capacity and prevent aliasing.
-- **Linked List for Sequential Access:** Using `container/list` when a slice traverses faster due to cache locality. In Go, a slice-based stack or ring buffer almost always outperforms a linked list.
-- **Value Receiver Mutation:** Defining methods with a value receiver `(s Stack)` when the method modifies the struct. Mutations are lost; use a pointer receiver `(s *Stack)` instead.
-- **Not Pre-allocating Maps:** Growing a map incrementally triggers repeated rehashing. Hint the capacity with `make(map[K]V, n)` when the approximate size is known.
+- **Slice Reslicing Memory Leak:** `big[:2]` retains reference to entire array. Use `slices.Clone`.
+- **Append to Nil Map:** Write to uninitialized map panics. Use `make(map[K]V)`.
+- **Linked List for Speed:** Using `container/list` over slices. Slices outperform due to cache locality.
+- **Value Receiver Mutation:** `(s Stack)` drops mutations. Use pointer receiver `(s *Stack)`.
+- **Not Pre-allocating Maps:** Incremental growth triggers repeated rehashing. Hint capacity `make(map[K]V, n)`.
 
 ## 5.5. Quick Reference
 
 | Name | Go Type | Time | Space | Use Case |
 |------|---------|------|-------|----------|
-| <abbr title="A collection of items stored at <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous memory</abbr> locations.">Array</abbr> | `[N]T` | <code>O(1)</code> access | . | Fixed size, <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
-| Slice | `[]T` | <code>O(1)</code> access | . | Dynamic array |
-| Map | `map[K]V` | <code>O(1)</code> avg | . | Key-value store |
-| <abbr title="A linear collection of data elements whose order is not given by physical placement in memory.">Linked List</abbr> | `container/list` | <code>O(n)</code> access | . | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr>, <abbr title="A double-ended queue allowing insertion and deletion at both ends.">deque</abbr> |
-| <abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> | `[]T` + methods | <code>O(1)</code> push/pop | . | <abbr title="Last In, First Out stack discipline">LIFO</abbr> |
+| Array | `[N]T` | `O(1)` access | . | Fixed size, stack |
+| Slice | `[]T` | `O(1)` access | . | Dynamic array (default) |
+| Map | `map[K]V` | `O(1)` avg | . | Key-value store |
+| Linked List | `container/list` | `O(n)` access | . | Specialized FIFO/Deque |
+| Stack | `[]T` + Generics | `O(1)` pop | . | LIFO |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 5:</strong> This chapter covers fundamental data structures in Go: arrays, slices, maps, linked lists, and structs with methods. Use slices for dynamic collections, maps for fast key-value lookups, linked lists for frequent insertions/deletions at ends, and structs with methods to build custom abstractions like stacks.
+<strong>Summary Chapter 5:</strong> Slices remain primary Go collection. Maps provide fast `O(1)` lookup. Modern `slices` and `maps` packages simplify usage. Structs maintain hardware sympathy via contiguous memory layout.
 {{% /alert %}}
 
 ## See Also
-
 - [Chapter 6: Elementary Data Structures](/docs/part-ii/chapter-6/)
 - [Chapter 7: Hashing and Hash Tables](/docs/part-ii/chapter-7/)
 - [Chapter 8: Linked Lists](/docs/part-ii/chapter-8/)

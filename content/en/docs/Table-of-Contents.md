@@ -10,10 +10,10 @@ toc: true
 ---
 
 {{% alert icon="📘" context="info" %}}
-Explore the chapters below to dive deep into the advanced programming data structures and algorithms using Go.
+Chapters list. Access content. Technical deep dive.
 {{% /alert %}}
 
-### **Main Sections**
+### Sections
 
 - [**Modern Data Structures and Algorithms in Go**](/)
 - [**Preface**](/docs/preface/)
@@ -25,5 +25,5 @@ Explore the chapters below to dive deep into the advanced programming data struc
 ---
 
 {{% alert icon="ℹ️" context="info" %}}
-Navigate through the detailed chapters to enhance your understanding of Go and its application in modern data structures and algorithms.
+Detailed links. Navigate text. Mastery of Go.
 {{% /alert %}}

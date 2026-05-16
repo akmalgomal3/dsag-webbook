@@ -10,11 +10,11 @@ toc: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>The greatest ideas are the simplest.</em>" — William Golding</strong>
+<strong>"<em>The greatest ideas are the simplest.</em>" : William Golding</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Part VII explores advanced and specialized topics in algorithms and data structures, including linear algebra operations, parallel computing, cryptography, blockchain, optimization techniques, and advanced string processing.
+Part VII details advanced topics. Text explores linear algebra, parallel computing, cryptography, blockchain, optimization, and string processing.
 {{% /alert %}}
 
 <center>

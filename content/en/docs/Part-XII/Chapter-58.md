@@ -11,25 +11,25 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Mo's algorithm: when you have many range queries, sort them cleverly.</em>" : Unknown</strong>
+Mo's algorithm sorts range queries cleverly. Reordering minimizes recalculation.
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 59 introduces Mo's algorithm: a <abbr title="A technique that divides a problem into blocks of size sqrt(N) to optimize query processing.">sqrt-decomposition</abbr> technique for efficiently answering offline range queries by reordering them to minimize recalculation.
+Mo's algorithm uses <abbr title="A technique that divides a problem into blocks of size sqrt(N) to optimize query processing.">sqrt-decomposition</abbr> for offline range queries. Reordering queries minimizes pointer movement.
 {{% /alert %}}
 
 ## 59.1. The Offline Query Problem
 
-**Definition:** Given an array and multiple range queries, <abbr title="An algorithm that answers range queries by sorting them in a specific order to minimize pointer movement.">Mo's algorithm</abbr> reorders queries so that each query's answer can be derived from the previous with minimal adjustment.
+**Definition:** <abbr title="An algorithm that answers range queries by sorting them in a specific order to minimize pointer movement.">Mo's algorithm</abbr> reorders queries. It derives answers from previous states via minimal adjustment.
 
-**Background & Philosophy:**
-The philosophy is query caching via geometric sorting. Instead of processing queries exactly as the user inputs them (which might bounce randomly from the start of the array to the end and back), Mo's algorithm batches them together into blocks. It embraces the philosophy that moving pointers left or right is substantially faster than restarting a search from zero.
+**Mechanics:**
+Geometric sorting caches queries. Batching queries into blocks prevents random array traversal. Moving pointers is faster than full recomputation.
 
 **Use Cases:**
-Competitive programming, batched offline data analytics, and historical database queries where all query requests are known entirely in advance.
+Competitive programming, batched offline data analytics, and historical database queries. All query requests must be known in advance.
 
 **Memory Mechanics:**
-Mo's Algorithm reduces <code>O(N)</code> memory sweeps. By grouping queries into `√N` blocks and sorting them, the `curL` and `curR` pointers move incrementally along the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array. This creates a predictable memory access pattern. The CPU hardware prefetcher recognizes the pattern and loads the required array segments into the <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>, reducing <abbr title="A state where the data requested for processing is not found in the cache memory.">cache misses</abbr>.
+Batching queries into `√N` blocks reduces memory sweeps. Incremental pointer movement along the <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> array creates predictable access patterns. CPU prefetchers load segments into <abbr title="A smaller, faster memory closer to a processor core.">CPU cache</abbr>. Cache misses decrease.
 
 ### Why Reorder Queries?
 
@@ -38,12 +38,12 @@ Mo's Algorithm reduces <code>O(N)</code> memory sweeps. By grouping queries into
 | <code>O(Q × range)</code> | <code>O((N + Q) × √N)</code> |
 | Process queries in given order | Sort queries by block, then endpoint |
 
-## 59.2. The Algorithm
+## 59.2. Algorithm Steps
 
-1. Divide array into blocks of size ≈ √N
-2. Sort queries by (block index, right endpoint)
-3. Maintain a "current window" [L, R] and its answer
-4. Expand/shrink L and R to match each query
+1. Divide array into blocks of size ≈ √N.
+2. Sort queries by block index, then right endpoint.
+3. Maintain current window [L, R] and answer.
+4. Expand or shrink L and R to match next query.
 
 ### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr>: Mo's Algorithm
 
@@ -136,7 +136,7 @@ func main() {
 }
 ```
 
-## 59.3. When It Works
+## 59.3. Functionality
 
 | Problem | Add/Remove | Complexity |
 |---------|-----------|------------|
@@ -148,22 +148,22 @@ func main() {
 
 | Use Mo's When... | Use Segment Tree When... |
 |-----------------|---------------------------|
-| Offline queries (all known upfront) | Online queries (arrive dynamically) |
+| Offline queries | Online queries |
 | Add/remove is <code>O(1)</code> or <code>O(log n)</code> | Queries need arbitrary combine |
-| Array is static | Array updates frequently |
+| Static array | Frequent array updates |
 
 ### Edge Cases & Pitfalls
 
-- **Online queries:** Mo's only works offline — all queries must be known.
-- **Update operations:** Standard Mo's doesn't handle point updates (use Mo's with modifications).
-- **Block size tuning:** √N is theoretical; experiment with N^0.5 to N^0.7.
+- **Online queries:** Method requires all queries upfront.
+- **Update operations:** Point updates require algorithm modifications.
+- **Block size tuning:** √N is theoretical. Experiment with N^0.5 to N^0.7.
 
 ### Anti-Patterns
 
-- **Using Mo's for online queries:** Mo's algorithm requires all queries upfront for sorting; if queries arrive dynamically, a segment tree or Fenwick tree is the correct choice.
-- **Forgetting to reset state between test cases:** The global frequency map and answer accumulator persist between runs; failing to reset them silently corrupts subsequent test cases.
-- **O(n) add/remove operations:** Mo's speedup requires O(1) or O(log n) add/remove; if maintaining your query answer costs O(n) per pointer move, total complexity balloons to O(Q × N × √N).
-- **Using naive block order instead of Hilbert curves:** Standard block sorting alternates left-to-right and right-to-left sweeps, causing poor cache behavior; Hilbert curve ordering preserves spatial locality better.
+- **Online execution:** Using Mo's for dynamic queries causes failure. Segment trees are required.
+- **State persistence:** Failing to reset frequency maps between cases corrupts data.
+- **Expensive updates:** Slow add or remove operations balloon complexity to O(Q × N × √N).
+- **Suboptimal sorting:** Simple block sorting causes cache misses. Hilbert curves preserve spatial locality.
 
 ## 59.5. Quick Reference
 
@@ -178,7 +178,7 @@ func main() {
 | `sort` | Query sorting |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 58:</strong> Mo's algorithm demonstrates that algorithmic efficiency sometimes comes not from smarter computation, but from smarter ordering. By sorting range queries to minimize boundary movement, it transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. It is a niche but effective technique for competitive programming and offline batch processing.
+**Summary Chapter 58:** Mo's algorithm reorders queries to minimize boundary movement. It transforms <code>O(Q × N)</code> <abbr title="A straightforward approach trying all possible solutions">brute force</abbr> into <code>O((N+Q)√N)</code>. 
 {{% /alert %}}
 
 ## See Also

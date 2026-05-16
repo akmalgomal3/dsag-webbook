@@ -15,110 +15,158 @@ katex: true
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 13 covers graph traversal algorithms: depth-first search (DFS) and breadth-first search (BFS). Learn how to systematically explore graphs and their applications.
+Chapter 13 covers graph traversal algorithms: depth-first search (DFS) and breadth-first search (BFS). Uses modern Go patterns (Generics, Iterators).
 {{% /alert %}}
 
 ## 13.1. Depth-First Search (DFS)
 
-**Definition:** DFS explores as far as possible along each branch before <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr>. It uses a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> (explicit or recursive <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>).
+**Definition:** Explores branch deeply before backtracking. Uses stack (explicit or recursive).
 
 **Background & Philosophy:**
-The philosophy of DFS is "aggressive exploration". It dives into the unknown, chasing a single <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> until it hits a dead end. This strategy naturally maps to how human problem-solving often works: follow an idea to its conclusion before trying an alternative.
+Aggressive exploration. Dives into unknown. Chases single path to dead end. Mimics human puzzle-solving.
 
 **Use Cases:**
-Essential for detecting cycles in a dependency <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> (like finding deadlocks in database transactions), generating mazes, solving Sudoku puzzles via <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr>, and computing <abbr title="A linear ordering of vertices such that for every directed edge uv, u comes before v.">topological sorts</abbr> for build systems.
+Detect cycles in dependency graphs (deadlocks). Generate mazes. Solve Sudoku via backtracking. Compute topological sorts.
 
 **Memory Mechanics:**
-DFS is intrinsically linked to <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> memory. When written recursively, each visited node pushes a new frame onto the CPU's <abbr title="Memory used to execute functions and store local variables.">call stack</abbr>. If the <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> is an incredibly long chain of nodes (e.g., 1 million nodes), this deep recursion can trigger a <abbr title="An error caused by using more stack memory than allocated.">stack overflow</abbr>, crashing the program. To avoid this, Go engineers often write iterative DFS using an explicit slice `[]int` acting as a <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>. This shifts the memory burden from the limited execution stack to the vast <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr>.
+Relies on stack memory. Recursive DFS pushes frames onto CPU call stack. Deep graphs trigger stack overflow. Iterative DFS shifts memory burden to heap via explicit slice stack.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
-| Time | <code>O(V + E)</code> | Visit every vertex and edge |
-| Space | <code>O(V)</code> | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr> <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> or explicit <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr> |
-| Path finding | Yes | Any <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr>, not necessarily shortest |
+| Time | `O(V + E)` | Visit every vertex and edge |
+| Space | `O(V)` | Recursion stack or explicit stack |
+| Traversal | `O(1)` overhead | Using `iter.Seq` (Go 1.23+) |
 
-### <abbr title="Code style considered standard and natural for Go">Idiomatic Go</abbr> Implementation
+### Idiomatic Go 1.23+ Implementation
+
+Generics and Iterators enable clean traversal.
 
 ```go
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"iter"
+)
 
-func dfs(g [][]int, start int) []int {
-	visited := make([]bool, len(g))
-	var order []int
-	var explore func(v int)
-	explore = func(v int) {
-		visited[v] = true
-		order = append(order, v)
-		for _, u := range g[v] {
-			if !visited[u] {
-				explore(u)
+type Graph[K comparable] struct {
+	Adj map[K][]K
+}
+
+func (g *Graph[K]) DFS(start K) iter.Seq[K] {
+	return func(yield func(K) bool) {
+		visited := make(map[K]bool)
+		var visit func(K) bool
+		visit = func(v K) bool {
+			visited[v] = true
+			if !yield(v) {
+				return false
 			}
+			for _, neighbor := range g.Adj[v] {
+				if !visited[neighbor] {
+					if !visit(neighbor) {
+						return false
+					}
+				}
+			}
+			return true
 		}
+		visit(start)
 	}
-	explore(start)
-	return order
 }
 
 func main() {
-	g := [][]int{{1, 2}, {0, 3}, {0}, {1}}
-	fmt.Println(dfs(g, 0)) // [0 1 3 2]
+	g := &Graph[int]{
+		Adj: map[int][]int{
+			0: {1, 2},
+			1: {0, 3},
+			2: {0},
+			3: {1},
+		},
+	}
+
+	fmt.Print("DFS: ")
+	for v := range g.DFS(0) {
+		fmt.Print(v, " ")
+	}
 }
 ```
 
 ## 13.2. Breadth-First Search (BFS)
 
-**Definition:** BFS explores all vertices at the present depth before moving to vertices at the next depth level. It uses a <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr> and finds shortest paths in unweighted graphs.
+**Definition:** Explores all vertices at present depth before moving deeper. Uses queue. Finds shortest paths.
 
 **Background & Philosophy:**
-The philosophy of BFS is "cautious expansion". It radiates outward concentrically, completely mapping its immediate surroundings before venturing further. Because it expands uniformly step-by-step, it provides a mathematical guarantee: the first time BFS discovers a node, it has found the shortest possible <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> to that node in an unweighted <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr>.
+Cautious expansion. Radiates concentrically. Maps immediate surroundings. Guarantees shortest path on first discovery in unweighted graphs.
 
 **Use Cases:**
-Used fundamentally in routing algorithms (e.g., fewest hops between routers), social network analysis ("degrees of separation"), and web crawling.
+Network routing algorithms. Social network analysis. Web crawling.
 
 **Memory Mechanics:**
-Unlike DFS, BFS cannot be easily implemented recursively. It relies on a <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr>, which in Go is best implemented using a dynamically resizing slice (<abbr title="Fixed-size buffer that wraps around using modulo">ring buffer</abbr>). As BFS expands, the queue holds the "frontier" of exploration. In a highly dense graph, this frontier can grow massively wide, consuming substantial <abbr title="Memory used for dynamic allocation, distinct from the call stack.">heap</abbr> memory. The `visited` map or slice ensures that memory isn't wasted queueing nodes multiple times, maintaining <code>O(V)</code> <abbr title="A computational complexity that describes the amount of memory space taken by an algorithm.">space complexity</abbr>.
+Requires queue (ring buffer). Holds exploration frontier. Wide graphs consume substantial heap memory. `visited` map prevents redundant enqueueing. Maintains `O(V)` space complexity.
 
 ### Operations & Complexity
 
 | Operation | Complexity | Description |
 |-----------|------------|-------------|
-| Time | <code>O(V + E)</code> | Visit every vertex and edge |
-| Space | <code>O(V)</code> | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr> storage |
-| Shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> | Yes | In unweighted graphs |
+| Time | `O(V + E)` | Visit every vertex and edge |
+| Space | `O(V)` | Queue storage |
+| Shortest Path | Yes | In unweighted graphs |
 
-### Idiomatic Go Implementation
+### Idiomatic Go 1.23+ Implementation
 
 ```go
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"iter"
+)
 
-func bfs(g [][]int, start int) []int {
-	visited := make([]bool, len(g))
-	queue := []int{start}
-	visited[start] = true
-	var order []int
-	for len(queue) > 0 {
-		v := queue[0]
-		queue = queue[1:]
-		order = append(order, v)
-		for _, u := range g[v] {
-			if !visited[u] {
-				visited[u] = true
-				queue = append(queue, u)
+type Graph[K comparable] struct {
+	Adj map[K][]K
+}
+
+func (g *Graph[K]) BFS(start K) iter.Seq[K] {
+	return func(yield func(K) bool) {
+		visited := make(map[K]bool)
+		queue := []K{start}
+		visited[start] = true
+
+		for len(queue) > 0 {
+			v := queue[0]
+			queue = queue[1:]
+
+			if !yield(v) {
+				return
+			}
+
+			for _, neighbor := range g.Adj[v] {
+				if !visited[neighbor] {
+					visited[neighbor] = true
+					queue = append(queue, neighbor)
+				}
 			}
 		}
 	}
-	return order
 }
 
 func main() {
-	g := [][]int{{1, 2}, {0, 3}, {0}, {1}}
-	fmt.Println(bfs(g, 0)) // [0 1 2 3]
+	g := &Graph[int]{
+		Adj: map[int][]int{
+			0: {1, 2},
+			1: {0, 3},
+			2: {0},
+			3: {1},
+		},
+	}
+
+	fmt.Print("BFS: ")
+	for v := range g.BFS(0) {
+		fmt.Print(v, " ")
+	}
 }
 ```
 
@@ -126,36 +174,27 @@ func main() {
 
 | Use DFS When... | Use BFS When... |
 |-----------------|-----------------|
-| Need to detect cycles | Shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> in unweighted <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> |
-| <abbr title="A linear ordering of vertices such that for every directed edge uv, u comes before v.">Topological sorting</abbr> | <abbr title="Tree traversal visiting nodes level by level">Level-order traversal</abbr> |
-| Finding connected components | Finding shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> |
-| <abbr title="Building candidates incrementally and abandoning dead ends">Backtracking</abbr> problems | Web crawling breadth-first |
-
-### Edge Cases & Pitfalls
-
-- **<abbr title="An error caused by using more stack memory than allocated.">Stack overflow</abbr>:** Deep <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> in DFS can overflow; use iterative DFS for deep graphs.
-- **Disconnected graphs:** Run DFS/BFS from every unvisited vertex.
-- **Visited tracking:** Always mark visited when enqueueing in BFS, not when dequeuing.
+| Need to detect cycles | Shortest path in unweighted graph |
+| Topological sorting | Level-order traversal |
+| Finding connected components | Finding shortest path |
+| Backtracking problems | Web crawling breadth-first |
 
 ### Anti-Patterns
+- **Marking visited on dequeue:** Duplicates work. Same vertex enters queue multiple times. Mark visited at enqueue time.
+- **Recursive DFS on deep graphs:** Go stacks limit ~2 KB. Deep chain panics. Use explicit stack.
+- **Naive Slice Queue:** `queue = queue[1:]` fragments memory on large graphs. Use circular buffer.
 
-- **Marking visited on dequeue instead of enqueue in BFS:** This duplicates work because the same vertex enters the queue from multiple neighbours. Always mark visited at enqueue time.
-- **Recursive DFS on deep/degenerate graphs:** Go stacks are ~1 KB per frame; a chain of 100k vertices panics. Use an explicit `[]int` stack for iterative DFS.
-- **Re-allocating visited per top-level call:** Allocate `visited []byte` once with `make([]byte, n)` and `clear(visited)` between calls — avoids per-traversal GC pressure.
+## 13.4. Quick Reference
 
-## 13.4. Quick <abbr title="A value that enables a program to indirectly access a particular datum.">Reference</abbr>
-
-| Algorithm | Go Type | Time | Space | Path | Use Case |
+| Algorithm | Implementation | Time | Space | Path | Use Case |
 |-----------|---------|------|-------|------|----------|
-| DFS | <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">Recursion</abbr>/<abbr title="A LIFO (Last In, First Out) abstract data type.">Stack</abbr> | <code>O(V+E)</code> | <code>O(V)</code> | Any | <abbr title="A path that starts and ends at the same vertex.">Cycle</abbr> detection, <abbr title="Building candidates incrementally and abandoning dead ends">backtracking</abbr> |
-| BFS | <abbr title="A FIFO (First In, First Out) abstract data type.">Queue</abbr> | <code>O(V+E)</code> | <code>O(V)</code> | Shortest | Unweighted shortest <abbr title="A sequence of edges connecting a sequence of distinct vertices.">path</abbr> |
+| DFS | Recursion/Stack | `O(V+E)` | `O(V)` | Any | Cycle detection |
+| BFS | Queue | `O(V+E)` | `O(V)` | Shortest | Shortest path |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary Chapter 13:</strong> DFS and BFS are fundamental <abbr title="A non-linear data structure consisting of nodes (vertices) and edges.">graph</abbr> traversal techniques. DFS excels at exploration and <abbr title="A path that starts and ends at the same vertex.">cycle</abbr> detection using <abbr title="A method where the solution to a problem depends on solutions to smaller instances of the same problem.">recursion</abbr> or an explicit <abbr title="A LIFO (Last In, First Out) abstract data type.">stack</abbr>. BFS guarantees shortest paths in unweighted graphs using a <abbr title="A FIFO (First In, First Out) abstract data type.">queue</abbr>. In Go, use slices as stacks and queues for efficient traversal.
+<strong>Summary Chapter 13:</strong> DFS explores deeply. BFS maps radially. Modern Go leverages Generics and Iterators for clean traversal.
 {{% /alert %}}
 
 ## See Also
-
 - [Chapter 12: Graphs and Graph Representations](/docs/part-iii/chapter-12/)
 - [Chapter 14: Single-Source Shortest Paths](/docs/part-iv/chapter-14/)
-- [Chapter 15: All-Pairs Shortest Paths](/docs/part-iv/chapter-15/)
