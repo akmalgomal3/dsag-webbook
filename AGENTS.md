@@ -35,8 +35,20 @@ When using `delegate_task` to spawn subagents for parallel work:
 
 ## Project Context
 
-- Hugo static site, 59 chapters, 12 parts
-- Template compliance: Quick Reference, Decision Matrix, anti-patterns required per chapter
-- Go code must be idiomatic (not Rust/C++/Python disguised)
-- Python scripts exist for structural compliance scanning
-- Style guide and formatting rules are enforced strictly
+- Hugo static site, 60 chapters, 12 parts
+- Template compliance:
+    1. **Definition**: Concise technical summary.
+    2. **Background & Philosophy**: Theoretical grounding and design rationale.
+    3. **Use Cases**: Practical applications.
+    4. **Memory Mechanics**: Low-level details (cache, stack/heap, GC).
+    5. **Operations & Complexity**: Table with Big-O bounds.
+    6. **Idiomatic Go Implementation**: Generic-aware, clean Go code.
+    7. **Decision Matrix**: Comparison of when to use vs. avoid.
+    8. **Edge Cases & Pitfalls**: Common bugs and boundary conditions.
+    9. **Anti-Patterns**: What NOT to do.
+    10. **Quick Reference**: Summary table per chapter.
+    11. **See Also**: Links to related chapters.
+- Go code must be idiomatic (not Rust/C++/Python disguised).
+- Python scripts exist for structural compliance scanning.
+- Style guide and formatting rules are enforced strictly.
+

@@ -56,7 +56,7 @@ Use the following tables as a quick reference to understand the time and space c
 | Kruskal | <code>O(E log E)</code> | <code>O(V)</code> | MST |
 | Prim | <code>O((V + E) log V)</code> | <code>O(V)</code> | MST |
 | Topological Sort | <code>O(V + E)</code> | <code>O(V)</code> | Dependency ordering |
-| A* | <code>O(E log V)</code> typical, <code>O(b^d)</code> worst | <code>O(V)</code> | Pathfinding with heuristic |
+| A* | <code>O((V + E) log V)</code> typical / <code>O(b^d)</code> worst | <code>O(V)</code> | Pathfinding with heuristic |
 
 ### Array/String Techniques
 
@@ -74,9 +74,3 @@ Use the following tables as a quick reference to understand the time and space c
 Use this guide as a starting point for consultation and continuous learning through real-world implementation. Refer to the specific chapters for detailed implementations and edge-case handling.
 {{% /alert %}}
 
-## See Also
-
-- [Chapter 1: The Role of Algorithms in Modern Software](/docs/part-i/chapter-1/)
-- [Chapter 6: Elementary Data Structures](/docs/part-ii/chapter-6/)
-- [Table of Contents](/docs/table-of-contents/)
-ts](/docs/table-of-contents/)

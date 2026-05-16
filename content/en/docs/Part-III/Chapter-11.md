@@ -1,7 +1,7 @@
 ---
 weight: 30300
-title: "Chapter 11: Binary Search Trees and Self-Balancing Trees"
-description: "Binary Search Trees and Self-Balancing Trees"
+title: "Chapter 11: Disjoint Sets (Union-Find)"
+description: "Disjoint Sets (Union-Find) data structure and algorithms"
 icon: "article"
 date: "2026-05-12T00:00:00+07:00"
 lastmod: "2026-05-12T00:00:00+07:00"
@@ -11,272 +11,141 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>Trees are the lifeblood of computer science. Master them, and you master the flow of data.</em>"</strong>
+<strong>"<em>Divide and conquer is good, but knowing how to unite is better.</em>"</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
-Chapter 11 covers Generic BSTs, AVL trees, and augmentation techniques for rank queries.
+Chapter 11 covers the Disjoint Set Union (DSU) data structure, focusing on path compression and union-by-rank optimizations.
 {{% /alert %}}
 
-## 11.1. Binary Search Tree (BST)
+## 11.1. Disjoint Set Union (DSU)
 
-**Definition:** BST stores ordered data where left subtree is smaller and right is larger than root.
+**Definition:** <abbr title="A data structure that tracks a partition of a set into disjoint, non-overlapping subsets.">Disjoint Set Union</abbr> (also called Union-Find) maintains a collection of non-overlapping sets. It supports two primary operations: finding which set an element belongs to and uniting two sets.
 
 **Mechanics:**
-BST embeds binary search into dynamic structure. Hierarchical pointers allow O(log n) insertion without memory shifting. Maintains order through structural linking rather than layout.
+DSU represents sets as trees where each node points to its parent. The root of the tree serves as the representative of the set.
+- **Find:** Follows parent pointers until it reaches the root.
+- **Union:** Connects the root of one tree to the root of another.
 
-Nodes reside on heap as distinct allocations. Pointer chasing causes cache misses. Go generics `[K cmp.Ordered, V any]` eliminate interface boxing overhead and improve spatial locality.
+To maintain efficiency, two optimizations are used:
+1. **Path Compression:** During a `Find` operation, make every node on the path point directly to the root. This flattens the tree.
+2. **Union by Rank/Size:** Always attach the smaller tree under the root of the larger tree. This keeps the tree height minimal.
+
+**Use Cases:**
+- **Network Connectivity:** Determining if two nodes in a graph are in the same component.
+- **Kruskal's Algorithm:** Finding the Minimum Spanning Tree (MST) of a graph.
+- **Image Processing:** Connected component labeling.
+- **Dynamic Connectivity:** Maintaining connectivity information as edges are added.
+
+**Memory Mechanics:**
+DSU is typically implemented using arrays (slices in Go).
+- `parent[]`: Stores the parent of each element.
+- `rank[]` or `size[]`: Stores the height or number of elements in each tree.
+Using arrays ensures <abbr title="Memory blocks allocated in a single unbroken sequence of addresses.">contiguous</abbr> memory allocation, which is cache-friendly and minimizes pointer chasing.
 
 ### Operations & Complexity
 
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Search | <code>O(h)</code> | O(log n) if balanced |
-| Insert | <code>O(h)</code> | Traverses down to leaf |
-| Delete | <code>O(h)</code> | Reassigns pointers |
+| Operation | Complexity (Naive) | Complexity (Optimized) | Description |
+|-----------|--------------------|------------------------|-------------|
+| Find | <code>O(n)</code> | <code>O(α(n))</code> | Returns representative of the set |
+| Union | <code>O(n)</code> | <code>O(α(n))</code> | Merges two sets into one |
 
-### Idiomatic Go 1.18+ Generic Implementation
+*Note: <code>α(n)</code> is the inverse Ackermann function, which grows extremely slowly (nearly constant <code>O(1)</code> for all practical purposes).*
+
+### Idiomatic Go Implementation
 
 ```go
 package main
 
-import (
-	"fmt"
-	"cmp"
-)
+import "fmt"
 
-type Node[K cmp.Ordered, V any] struct {
-	Key   K
-	Value V
-	Left  *Node[K, V]
-	Right *Node[K, V]
+// DSU represents the Disjoint Set Union data structure.
+type DSU struct {
+	parent []int
+	rank   []int
 }
 
-func (n *Node[K, V]) Insert(key K, val V) *Node[K, V] {
-	if n == nil {
-		return &Node[K, V]{Key: key, Value: val}
+// NewDSU creates a new DSU with n elements.
+func NewDSU(n int) *DSU {
+	parent := make([]int, n)
+	rank := make([]int, n)
+	for i := range parent {
+		parent[i] = i
 	}
-	if key < n.Key {
-		n.Left = n.Left.Insert(key, val)
-	} else if key > n.Key {
-		n.Right = n.Right.Insert(key, val)
+	return &DSU{parent: parent, rank: rank}
+}
+
+// Find returns the representative (root) of the set containing x.
+// It implements path compression.
+func (d *DSU) Find(x int) int {
+	if d.parent[x] != x {
+		d.parent[x] = d.Find(d.parent[x])
+	}
+	return d.parent[x]
+}
+
+// Union merges the sets containing x and y.
+// It implements union by rank.
+func (d *DSU) Union(x, y int) bool {
+	rootX := d.Find(x)
+	rootY := d.Find(y)
+	if rootX == rootY {
+		return false
+	}
+
+	// Union by rank
+	if d.rank[rootX] < d.rank[rootY] {
+		d.parent[rootX] = rootY
+	} else if d.rank[rootX] > d.rank[rootY] {
+		d.parent[rootY] = rootX
 	} else {
-		n.Value = val 
+		d.parent[rootY] = rootX
+		d.rank[rootX]++
 	}
-	return n
-}
-
-func (n *Node[K, V]) Search(key K) *Node[K, V] {
-	if n == nil || n.Key == key {
-		return n
-	}
-	if key < n.Key {
-		return n.Left.Search(key)
-	}
-	return n.Right.Search(key)
+	return true
 }
 
 func main() {
-	var root *Node[int, string]
-	root = root.Insert(10, "Ten")
-	root = root.Insert(5, "Five")
-	root = root.Insert(15, "Fifteen")
+	dsu := NewDSU(5)
+	dsu.Union(0, 2)
+	dsu.Union(4, 2)
+	dsu.Union(3, 1)
 
-	if found := root.Search(5); found != nil {
-		fmt.Println("Found:", found.Value)
-	}
-}
-```
-
-**GC Pressure:**
-Millions of nodes scatter memory across heap. Garbage collector must trace every pointer during sweeps. Use flat slices with integer indexes for static trees to reduce GC load.
-
-## 11.2. Self-Balancing Trees (AVL)
-
-**Definition:** AVL trees execute structural rotations to maintain O(log n) height. Prevents degradation into linked lists.
-
-**Mechanics:**
-Standard BST shape depends on insertion order. Self-balancing trees execute proactive rotations to prevent O(n) degradation. Maintains mathematical bounds on worst-case performance.
-
-Nodes track height. Rotations swap pointers locally. Operations cost O(1) time and zero new heap allocations.
-
-### Operations & Complexity
-
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Rotation | <code>O(1)</code> | Re-links local child pointers |
-| Insert | <code>O(log n)</code> | Max 2 rotations per insert |
-| Search | <code>O(log n)</code> | Guaranteed height bound |
-
-### Idiomatic Generic AVL Rotations
-
-```go
-package main
-
-import (
-	"fmt"
-	"cmp"
-)
-
-func main() {
-	// AVL tree demonstration
-	fmt.Println("AVL tree operations")
-}
-
-type AVLNode[K cmp.Ordered, V any] struct {
-	Key    K
-	Value  V
-	Height int
-	Left   *AVLNode[K, V]
-	Right  *AVLNode[K, V]
-}
-
-func avlInsert[K cmp.Ordered, V any](root *AVLNode[K, V], key K, val V) *AVLNode[K, V] {
-	if root == nil { return &AVLNode[K, V]{Key: key, Value: val, Height: 1} }
-	if key < root.Key {
-		root.Left = avlInsert(root.Left, key, val)
-	} else if key > root.Key {
-		root.Right = avlInsert(root.Right, key, val)
-	} else {
-		root.Value = val
-		return root
-	}
-	root.Height = 1 + max(avlHeight(root.Left), avlHeight(root.Right))
-	bf := avlBalance(root)
-	if bf > 1 && key < root.Left.Key { return avlRotateRight(root) }
-	if bf < -1 && key > root.Right.Key { return avlRotateLeft(root) }
-	if bf > 1 && key > root.Left.Key {
-		root.Left = avlRotateLeft(root.Left)
-		return avlRotateRight(root)
-	}
-	if bf < -1 && key < root.Right.Key {
-		root.Right = avlRotateRight(root.Right)
-		return avlRotateLeft(root)
-	}
-	return root
-}
-
-func avlHeight[K cmp.Ordered, V any](n *AVLNode[K, V]) int {
-	if n == nil { return 0 }
-	return n.Height
-}
-
-func avlBalance[K cmp.Ordered, V any](n *AVLNode[K, V]) int {
-	if n == nil { return 0 }
-	return avlHeight(n.Left) - avlHeight(n.Right)
-}
-
-func avlRotateRight[K cmp.Ordered, V any](y *AVLNode[K, V]) *AVLNode[K, V] {
-	x := y.Left
-	t2 := x.Right
-	x.Right = y
-	y.Left = t2
-	y.Height = 1 + max(avlHeight(y.Left), avlHeight(y.Right))
-	x.Height = 1 + max(avlHeight(x.Left), avlHeight(x.Right))
-	return x
-}
-
-func avlRotateLeft[K cmp.Ordered, V any](x *AVLNode[K, V]) *AVLNode[K, V] {
-	y := x.Right
-	t2 := y.Left
-	y.Left = x
-	x.Right = t2
-	x.Height = 1 + max(avlHeight(x.Left), avlHeight(x.Right))
-	y.Height = 1 + max(avlHeight(y.Left), avlHeight(y.Right))
-	return y
+	fmt.Printf("Same set (0, 4): %v\n", dsu.Find(0) == dsu.Find(4)) // true
+	fmt.Printf("Same set (0, 1): %v\n", dsu.Find(0) == dsu.Find(1)) // false
 }
 ```
 
 ### Decision Matrix
 
-| Use Balanced Trees When... | Avoid If... |
-|---------------------|------------------|
-| Need guaranteed O(log n) | Data is static (use sorted slice) |
-| Managing dynamic indexes | Pointer overhead slows application |
-
-## 11.3. Tree Augmentation
-
-**Definition:** Augmentation stores specialized metadata like subtree size in node structs. Enables rank queries.
-
-**Mechanics:**
-Trees are recursive. Augmentation caches subtree aggregates at the root of subtrees. Prevents repeated recursive calculations.
-
-Adding fields increases node size. Updates happen during insertion or deletion by traversing up to root. Uses integer arithmetic in CPU cache.
-
-### Operations & Complexity
-
-| Operation | Complexity | Description |
-|---------|--------------|------------|
-| Subtree Size | <code>O(1)</code> | Read from node field |
-| Rank Query | <code>O(h)</code> | Calculate via subtree sizes |
-
-### Idiomatic Generic Augmentation
-
-```go
-package main
-
-import (
-	"cmp"
-)
-
-type AugNode[K cmp.Ordered] struct {
-	Key         K
-	SubtreeSize int
-	Left, Right *AugNode[K]
-}
-
-func augInsert[K cmp.Ordered](n *AugNode[K], key K) *AugNode[K] {
-	if n == nil { return &AugNode[K]{Key: key, SubtreeSize: 1} }
-	if key < n.Key {
-		n.Left = augInsert(n.Left, key)
-	} else if key > n.Key {
-		n.Right = augInsert(n.Right, key)
-	}
-	n.SubtreeSize = 1 + size(n.Left) + size(n.Right)
-	return n
-}
-
-func (n *AugNode[K]) Rank(key K) int {
-	if n == nil { return 0 }
-	if key < n.Key { return n.Left.Rank(key) }
-	leftSize := size(n.Left)
-	if key == n.Key { return leftSize }
-	return leftSize + 1 + n.Right.Rank(key)
-}
-
-func size[K cmp.Ordered](n *AugNode[K]) int {
-	if n == nil { return 0 }
-	return n.SubtreeSize
-}
-```
+| Use DSU When... | Avoid If... |
+|--------------------|------------------|
+| Tracking connected components | You need to delete edges (use more complex structures) |
+| Kruskal's MST algorithm | Working with dense graphs where Prim's might be faster |
+| Cycle detection in undirected graphs | Graph is directed (use DFS-based detection) |
 
 ### Edge Cases & Pitfalls
-
-- **Empty Tree:** Operations must handle nil root.
-- **Duplicates:** Decide between overwrite or multiset policy.
-- **Stack Overflow:** Deep trees break recursion. Use iterative DFS.
-- **GC Pressure:** Millions of nodes tax tracing. Use slices for static data.
+- **Index out of bounds:** Ensure elements are within the `[0, n-1]` range.
+- **Unoptimized implementations:** Without path compression or union by rank, DSU can degrade to `O(n)`.
+- **Initialization:** Forgetting to set `parent[i] = i` leads to incorrect results.
 
 ### Anti-Patterns
-
-- **Unbalanced BST:** Sorted input turns BST into O(n) list. Use balancing.
-- **Deep Recursion:** AVL deletes can trigger deep call chains. Use iterative logic.
-- **Pointer Bloat:** Many heap allocations hurt performance. Use sorted slices for batch workloads.
+- **Recursive Find without Path Compression:** Leads to slow operations and potential stack overflow on large sets.
+- **Ignoring Return Values:** `Union` should often return a boolean indicating if a merge actually happened.
+- **Manual Parent Access:** Always use `Find` to ensure path compression and correct representative retrieval.
 
 ## Quick Reference
 
-| Name | Go Type | Time | Memory / GC | Use Case |
-|------|---------|------|-------|----------|
-| Generic BST | `*Node[K, V]` | <code>O(h)</code> | High | Dynamic order |
-| AVL Tree | `*AVLNode[K, V]` | <code>O(log n)</code> | High | Guaranteed bounds |
-| Sorted Slice | `[]T` | <code>O(log n)</code> | Zero | Static read-heavy |
+| Operation | Function | Complexity | Description |
+|-----------|----------|------------|-------------|
+| Initialization | `NewDSU(n)` | <code>O(n)</code> | Create n sets |
+| Find | `Find(x)` | <code>O(α(n))</code> | Get set root |
+| Union | `Union(x, y)` | <code>O(α(n))</code> | Merge two sets |
 
 {{% alert icon="🎯" context="success" %}}
-<strong>Summary:</strong> Use generics for type-safe trees. Monitor GC costs of pointer-based structures. Slices are better for static data.
+<strong>Summary Chapter 11:</strong> Disjoint Set Union (DSU) is an efficient structure for tracking connectivity. Path compression and union-by-rank achieve nearly constant time complexity. It is essential for algorithms like Kruskal's MST.
 {{% /alert %}}
 
 ## See Also
-
-- [Chapter 9: Trees and Balanced Trees](/docs/part-iii/chapter-9/)
 - [Chapter 12: Graphs and Graph Representations](/docs/part-iii/chapter-12/)
-- [Chapter 44: B-Trees](/docs/part-ix/chapter-44/)
+- [Chapter 25: Minimum Spanning Trees (Kruskal & Prim)](/docs/part-vi/chapter-25/)

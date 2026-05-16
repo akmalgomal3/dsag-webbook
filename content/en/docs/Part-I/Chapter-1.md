@@ -11,7 +11,7 @@ katex: true
 ---
 
 {{% alert icon="💡" context="info" %}}
-<strong>"<em>An algorithm must be seen to be believed.</em>" — Donald Knuth</strong>
+<strong>"<em>An algorithm must be seen to be believed.</em>" : Donald Knuth</strong>
 {{% /alert %}}
 
 {{% alert icon="📘" context="success" %}}
@@ -267,15 +267,6 @@ func main() {
 | Slice | `[]T` | `O(1)` access | `O(n)` | Dynamic array |
 | Map | `map[K]V` | `O(1)` avg | `O(n)` | Key-value lookup |
 | Heap | `container/heap` | `O(log n)` ops | `O(n)` | Priority queue |
-
-
-## Quick Reference
-
-| Topic | Recommendation |
-|------|-----------------|
-| Primary strategy | Prefer the method with proven bounds for your workload. |
-| Data size | Benchmark with realistic input distributions. |
-| Memory behavior | Favor contiguous layouts where possible. |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 1:</strong> Algorithms rely on data structures. Big-O bounds performance. Memory layout drives real-world speed. Build ethical constraints directly into code.

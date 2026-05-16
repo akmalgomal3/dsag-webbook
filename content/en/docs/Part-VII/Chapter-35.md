@@ -288,10 +288,18 @@ Randomized Max-Cut produces expected cut size ≥ |E|/2. Run <code>k</code> time
 | TSP Metric | `[]int` tour | <code>O(n^3)</code> | <code>O(n)</code> | 1.5-approx Christofides |
 | Max-Cut | `map[int]bool` | <code>O(E)</code> | <code>O(V)</code> | Random partition |
 | Knapsack Frac | `[]Item` | <code>O(n log n)</code> | <code>O(n)</code> | Greedy optimal |
-| Knapsack 0/1 | DP | 1 | <code>O(nW)</code> | `[][]int` matrix |
+| Knapsack 0/1 | `[][]int` matrix | <code>O(nW)</code> | <code>O(nW)</code> | DP-based approach |
 
 {{% alert icon="🎯" context="success" %}}
 <strong>Summary Chapter 35:</strong> Chapter covers approximation algorithms for NP-hard problems. Greedy fractional knapsack is optimal. Vertex cover has 2-approximation. Metric TSP uses Nearest Neighbor or Christofides. Randomized Max-Cut provides expected ratios. Use greedy for speed, randomization for expected bounds, and Christofides for 1.5 guarantee.
+{{% /alert %}}
+
+## See Also
+
+- [Chapter 24: Greedy Algorithms](/docs/part-vi/chapter-24/)
+- [Chapter 27: Probabilistic and Randomized Algorithms](/docs/part-vi/chapter-27/)
+- [Chapter 42: Modern Algorithmic Thinking](/docs/part-viii/chapter-42/)
+. Use greedy for speed, randomization for expected bounds, and Christofides for 1.5 guarantee.
 {{% /alert %}}
 
 ## See Also
